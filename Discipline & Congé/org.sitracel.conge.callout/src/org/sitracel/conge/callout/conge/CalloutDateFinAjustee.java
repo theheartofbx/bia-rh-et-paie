@@ -56,22 +56,24 @@ public class CalloutDateFinAjustee implements IColumnCallout{
 			}			
 		}
 		Integer idConge = (Integer)mTab.getValue(MHRHoliday.COLUMNNAME_Emission_Conge_ID);
-		MHRTypeConge typeConge = new MHRTypeConge(Env.getCtx(), idConge, null);
-		if(typeConge!=null) {
-			if(typeConge.isCongeAnnuel()) {
-				dateDebut = (Timestamp) mTab.getValue(MHRHoliday.COLUMNNAME_Date_Debut_Ajustee);
-				dateFin = (Timestamp) mTab.getValue(MHRHoliday.COLUMNNAME_Date_Fin_Ajustee);
-				if(dateDebut!=null) {
-					mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Effective, dateDebut);
-				}
-				else {
-					mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Effective, null);
-				}
-				if(dateFin!=null) {
-					mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, dateFin);
-				}
-				else {
-					mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, null);
+		if(idConge!=null) {
+			MHRTypeConge typeConge = new MHRTypeConge(Env.getCtx(), idConge, null);
+			if(typeConge!=null) {
+				if(typeConge.isCongeAnnuel()) {
+					dateDebut = (Timestamp) mTab.getValue(MHRHoliday.COLUMNNAME_Date_Debut_Ajustee);
+					dateFin = (Timestamp) mTab.getValue(MHRHoliday.COLUMNNAME_Date_Fin_Ajustee);
+					if(dateDebut!=null) {
+						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Effective, dateDebut);
+					}
+					else {
+						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Effective, null);
+					}
+					if(dateFin!=null) {
+						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, dateFin);
+					}
+					else {
+						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, null);
+					}
 				}
 			}
 		}

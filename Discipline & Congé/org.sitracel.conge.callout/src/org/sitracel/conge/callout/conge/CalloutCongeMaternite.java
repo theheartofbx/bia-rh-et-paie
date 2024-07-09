@@ -28,23 +28,25 @@ public class CalloutCongeMaternite implements IColumnCallout{
 		cal.add(Calendar.MONTH, 4);
 		Timestamp dateMax = new Timestamp(cal.getTime().getTime());		
 		Integer idConge = (Integer) mTab.getValue(MHRHoliday.COLUMNNAME_Emission_Conge_ID);
-		MHRTypeConge typeConge = new MHRTypeConge(Env.getCtx(), idConge, null);
-		if(dateEcheance!=null) {
-			if(dateEcheance.before(dateMax)) {
-				mTab.setValue(MHRHoliday.COLUMNNAME_Date_Probable_Accouchement, null);
-				mTab.setValue(MHRHoliday.COLUMNNAME_IsMessageAlerteDisplayed, "Y");
-				mTab.setValue(MHRHoliday.COLUMNNAME_Message_Alerte, "La date d'échéance doit être enregistrée 4 mois au moins avant !");
-			}
-			else {
-				BeanPeriodeConge resultat = CalloutControllerConge.getPeriodeCongeMaternite(dateEcheance, typeConge.getHR_Type_Conge_ID());
-				if(resultat != null) {
-					if(resultat.getDateDebutConge()!=null && resultat.getDateFinConge()!=null) {
-						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Souhaitee, resultat.getDateDebutConge());
-						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Ajustee, resultat.getDateDebutConge());
-						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Effective, resultat.getDateDebutConge());
-						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Souhaitee, resultat.getDateFinConge());
-						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Ajustee, resultat.getDateFinConge());
-						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, resultat.getDateFinConge());
+		if(idConge!=null) {
+			MHRTypeConge typeConge = new MHRTypeConge(Env.getCtx(), idConge, null);
+			if(dateEcheance!=null) {
+				if(dateEcheance.before(dateMax)) {
+					mTab.setValue(MHRHoliday.COLUMNNAME_Date_Probable_Accouchement, null);
+					mTab.setValue(MHRHoliday.COLUMNNAME_IsMessageAlerteDisplayed, "Y");
+					mTab.setValue(MHRHoliday.COLUMNNAME_Message_Alerte, "La date d'échéance doit être enregistrée 4 mois au moins avant !");
+				}
+				else {
+					BeanPeriodeConge resultat = CalloutControllerConge.getPeriodeCongeMaternite(dateEcheance, typeConge.getHR_Type_Conge_ID());
+					if(resultat != null) {
+						if(resultat.getDateDebutConge()!=null && resultat.getDateFinConge()!=null) {
+							mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Souhaitee, resultat.getDateDebutConge());
+							mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Ajustee, resultat.getDateDebutConge());
+							mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Effective, resultat.getDateDebutConge());
+							mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Souhaitee, resultat.getDateFinConge());
+							mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Ajustee, resultat.getDateFinConge());
+							mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, resultat.getDateFinConge());
+						}
 					}
 				}
 			}

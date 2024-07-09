@@ -15,9 +15,11 @@ public class CalloutTypeCongeEmploye implements IColumnCallout{
 	public String start(Properties ctx, int WindowNo, GridTab mTab, GridField mField, Object value, Object oldValue) {
 		// TODO Auto-generated method stub
 		Integer idConge = (Integer)mTab.getValue(MHRHoliday.COLUMNNAME_Emission_Conge_Employe_ID);
-		MHRTypeConge typeConge = new MHRTypeConge(Env.getCtx(), idConge, null);
-		if(typeConge!=null) {
-			mTab.setValue(MHRHoliday.COLUMNNAME_Emission_Conge_ID, typeConge.getHR_Type_Conge_ID());
+		if(idConge!=null) {
+			MHRTypeConge typeConge = new MHRTypeConge(Env.getCtx(), idConge, null);
+			if(typeConge!=null) {
+				mTab.setValue(MHRHoliday.COLUMNNAME_Emission_Conge_ID, typeConge.getHR_Type_Conge_ID());
+			}
 		}
 		return null;
 	}
