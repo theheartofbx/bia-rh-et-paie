@@ -34,12 +34,7 @@ public class CalloutTypeConge implements IColumnCallout{
 			
 				if(idEmploye!=null) {
 					bic = CalloutSqlControllerConge.getInfoConge(idEmploye,typeConge.getHR_Type_Conge_ID(), null);
-					if(bic != null) {
-						mTab.setValue(MHRHoliday.COLUMNNAME_IsCongeAnnuel, typeConge.isCongeAnnuel());
-						mTab.setValue(MHRHoliday.COLUMNNAME_IsDefinir_Periode_Conge, typeConge.isDefinir_Periode_Conge());
-						mTab.setValue(MHRHoliday.COLUMNNAME_Sex, typeConge.getGenre_Employe());
-						
-						
+					if(bic != null) {							
 						mTab.setValue(MHRHoliday.COLUMNNAME_Enfant_Conge, bic.getNombreEnfantPetit());
 						mTab.setValue(MHRHoliday.COLUMNNAME_Jours_Conge_Total, bic.getNombreJourCongeTotal());
 						mTab.setValue(MHRHoliday.COLUMNNAME_Jours_Conge_Deja_Utilise, bic.getNombreJourCongeUtilise());

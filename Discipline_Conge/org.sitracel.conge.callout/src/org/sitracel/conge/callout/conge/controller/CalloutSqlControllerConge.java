@@ -10,6 +10,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import org.compiere.model.PO;
+import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.sitracel.callout.bean.BeanConge;
@@ -30,6 +32,7 @@ import org.sitracel.model.MHRJob;
 public class CalloutSqlControllerConge {
 
 
+	private static CLogger	log = CLogger.getCLogger (PO.class);
 	public static BeanConge getInfoConge(Integer idCBPartner, Integer idTypeConge,String trxName) {
 		BeanConge beanConge =BeanFactory.getBeanConge();
 		if(idCBPartner!=null && idTypeConge!=null) {
@@ -48,11 +51,11 @@ public class CalloutSqlControllerConge {
 					cal.setTime(now);
 					cal.add(Calendar.YEAR, -6);
 					Timestamp petit = new Timestamp(cal.getTime().getTime());
-					
+
 					StringBuilder sql = new StringBuilder("SELECT cb.");
 					sql.append(MCBPartner.COLUMNNAME_Sex).append(", cb.").append(MCBPartner.COLUMNNAME_DateFrom).append(", child.").append(MHREmployeeChildren.COLUMNNAME_Date_Naissance)
 					.append(" FROM ").append(MCBPartner.Table_Name).append(" cb LEFT JOIN ").append(MHREmployeeChildren.Table_Name)
-					.append("child ON cb.").append(MCBPartner.COLUMNNAME_C_BPartner_ID).append("=child").append(MHREmployeeChildren.COLUMNNAME_C_BPartner_ID).append(" AND child.")
+					.append(" child ON cb.").append(MCBPartner.COLUMNNAME_C_BPartner_ID).append("=child.").append(MHREmployeeChildren.COLUMNNAME_C_BPartner_ID).append(" AND child.")
 					.append(MHREmployeeChildren.COLUMNNAME_Date_Naissance).append(">?").append(" WHERE cb.").append(MCBPartner.COLUMNNAME_C_BPartner_ID).append("=?")
 					;
 					PreparedStatement pstmt = null;
@@ -94,15 +97,20 @@ public class CalloutSqlControllerConge {
 					}
 					catch (SQLException e)
 					{
+						log.warning(e.getMessage());
+						e.printStackTrace();
 						return null;
 					}
 					finally {
 						DB.close(rs, pstmt);
 						rs = null; pstmt = null;
 					}
-					beanConge = CalloutSqlControllerConge.getDateDernierConge(idCBPartner, beanConge);
-					beanConge.setDateDebutDernierConge(getDateDernierCongeAnnuel(idCBPartner).getDateDebutConge());
-					beanConge.setDateFindernierConge(getDateDernierCongeAnnuel(idCBPartner).getDateFinConge());
+					beanConge = getDateDernierConge(idCBPartner, beanConge);
+					BeanPeriode dernierConge = getDateDernierCongeAnnuel(idCBPartner);
+					if(dernierConge!=null && beanConge!=null) {
+						beanConge.setDateDebutDernierConge(dernierConge.getDateDebutConge());
+						beanConge.setDateFindernierConge(dernierConge.getDateFinConge());
+					}
 					beanConge.setDetteConge(getNombreJourAbsencesConge(new Timestamp(System.currentTimeMillis()), null));
 				}
 			}
@@ -110,15 +118,15 @@ public class CalloutSqlControllerConge {
 		return beanConge;		
 	}
 	
-	public static BeanConge getDateDernierConge(Integer idCBPartner, BeanConge bif) {
-		
+	public static BeanConge getDateDernierConge(Integer idCBPartner, BeanConge beanInfoConge) {
+
 		StringBuilder sql = new StringBuilder("SELECT hol.");
 		sql.append(MHRHoliday.COLUMNNAME_Date_Debut_Effective).append(", hol.").append(MHRHoliday.COLUMNNAME_Date_Fin_Effective)
 		.append(" FROM ").append(MHRHoliday.Table_Name).append(" hol ")
 		.append(" LEFT JOIN ").append(MHRAutorisationConge.Table_Name)
 		.append(" droitconge ON droitconge.").append(MHRAutorisationConge.COLUMNNAME_HR_Autorisation_Conge_ID).append("=hol.").append(MHRHoliday.COLUMNNAME_Emission_Conge_ID)
 		.append(" LEFT JOIN ").append(MHRTypeConge.Table_Name)
-		.append(" typeconge ON typeconge.").append(MHRTypeConge.COLUMNNAME_HR_Type_Conge_ID).append("=droitconge.").append(MHRAutorisationConge.Table_Name)
+		.append(" typeconge ON typeconge.").append(MHRTypeConge.COLUMNNAME_HR_Type_Conge_ID).append("=droitconge.").append(MHRAutorisationConge.COLUMNNAME_HR_Autorisation_Conge_ID)
 		.append(" WHERE hol.").append(MHRHoliday.COLUMNNAME_C_BPartner_ID).append("=? AND typeconge.").append(MHRTypeConge.COLUMNNAME_IsCongeAnnuel).append("=? AND hol.")
 		.append(MHRHoliday.COLUMNNAME_Date_Fin_Effective).append(" < NOW() FETCH FIRST ROW ONLY")
 		;
@@ -131,20 +139,22 @@ public class CalloutSqlControllerConge {
 			pstmt.setString(2, "Y");
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
-				bif.setDateDebutDernierConge(rs.getTimestamp(MHRHoliday.COLUMNNAME_Date_Debut_Effective));
-				bif.setDateFindernierConge(rs.getTimestamp(MHRHoliday.COLUMNNAME_Date_Fin_Effective));
+				beanInfoConge.setDateDebutDernierConge(rs.getTimestamp(MHRHoliday.COLUMNNAME_Date_Debut_Effective));
+				beanInfoConge.setDateFindernierConge(rs.getTimestamp(MHRHoliday.COLUMNNAME_Date_Fin_Effective));
 			}
 		}
 		catch (SQLException e)
 		{
+			log.warning(e.getMessage());
+			e.printStackTrace();
 			return null;
 		}
 		finally {
 			DB.close(rs, pstmt);
 			rs = null; pstmt = null;
 		}
-		
-		return bif;
+
+		return beanInfoConge;
 	}
 	
 	public static BeanPeriode[] getAllCongesDepFromCBPartnerID (Timestamp dateDebut, Timestamp dateFin, Integer cbpartnerid, String trxName)
@@ -192,6 +202,7 @@ public class CalloutSqlControllerConge {
 			}
 			catch (SQLException e)
 			{
+				log.warning(e.getMessage());
 				return null;
 			}
 			finally {
@@ -243,6 +254,7 @@ public class CalloutSqlControllerConge {
 			}
 			catch (SQLException e)
 			{
+				log.warning(e.getMessage());
 				return null;
 			}
 			finally {
@@ -277,6 +289,7 @@ public class CalloutSqlControllerConge {
 		}
 		catch (SQLException e)
 		{
+			log.warning(e.getMessage());
 			e.printStackTrace();
 			return null;
 		}
@@ -306,6 +319,7 @@ public class CalloutSqlControllerConge {
 		}
 		catch (SQLException e)
 		{
+			log.warning(e.getMessage());
 			e.printStackTrace();
 			return null;
 		}
@@ -343,6 +357,7 @@ public class CalloutSqlControllerConge {
 		}
 		catch (SQLException e)
 		{
+			log.warning(e.getMessage());
 			return resultat;
 		}
 		finally {
@@ -358,7 +373,7 @@ public class CalloutSqlControllerConge {
 			StringBuilder sql = new StringBuilder("SELECT hol."+MHRHoliday.COLUMNNAME_Date_Debut_Effective+", ");
 			sql.append("hol."+MHRHoliday.COLUMNNAME_Date_Fin_Effective+" FROM ")
 			.append(MHRHoliday.Table_Name)			
-			.append(" WHERE "+MHRHoliday.COLUMNNAME_C_BPartner_ID+"=? AND hol."+MHRHoliday.COLUMNNAME_IsCongeAnnuel+"=?")
+			.append(" hol WHERE hol."+MHRHoliday.COLUMNNAME_C_BPartner_ID+"=? AND hol."+MHRHoliday.COLUMNNAME_IsCongeAnnuel+"=?")
 			.append(" AND hol."+MHRHoliday.COLUMNNAME_Date_Debut_Effective+"=(SELECT MAX("+MHRHoliday.COLUMNNAME_Date_Debut_Effective+")")
 			.append(" FROM "+MHRHoliday.Table_Name+" WHERE "+MHRHoliday.COLUMNNAME_C_BPartner_ID+"=? AND ")
 			.append(MHRHoliday.COLUMNNAME_IsCongeAnnuel+"=?)");
@@ -387,6 +402,7 @@ public class CalloutSqlControllerConge {
 			}
 			catch (SQLException e)
 			{
+				log.warning(e.getMessage());
 				return resultat;
 			}
 			finally {

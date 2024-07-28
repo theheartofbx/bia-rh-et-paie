@@ -36,6 +36,6 @@ public class ModelValidatorDisciplineController {
 			punishment.setIsValidation_Createur(false);
 			punishment.setDate_Emission(new Timestamp(System.currentTimeMillis()));
 		}	
-	}
+	}	
 	
 }

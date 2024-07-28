@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import org.compiere.model.PO;
+import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.sitracel.callout.bean.BeanAbsence;
@@ -22,8 +24,8 @@ import org.sitracel.discipline.model.MHRTypeSanction;
 import org.sitracel.model.MHROrganigramme;
 import org.sitracel.model.MHRParametreNumerique;
 
-public interface GeneralSqlController {
-	
+public class GeneralSqlController {
+	private static CLogger	log = CLogger.getCLogger (PO.class);
 	public static Timestamp[] getAllJoursFeries (Timestamp dateDebut, Timestamp dateFin, String trxName)
 	{
 		ArrayList<Timestamp> list = new ArrayList<Timestamp>();
@@ -44,6 +46,7 @@ public interface GeneralSqlController {
 		}
 		catch (SQLException e)
 		{
+			log.warning(e.getMessage());
 			return null;
 		}
 		finally {
@@ -70,7 +73,7 @@ public interface GeneralSqlController {
 			.append("LEFT JOIN ").append(MHRAutorisationConge.Table_Name).append(" droitconge ON droitconge.")
 			.append(MHRAutorisationConge.COLUMNNAME_HR_Autorisation_Conge_ID).append("=hol.").append(MHRHoliday.COLUMNNAME_Emission_Conge_ID)
 			.append(" LEFT JOIN ").append(MHRTypeConge.Table_Name).append(" typeconge ON typeconge.")
-			.append(MHRTypeConge.COLUMNNAME_HR_Type_Conge_ID).append("droitconge.").append(MHRAutorisationConge.COLUMNNAME_HR_Type_Conge_ID)
+			.append(MHRTypeConge.COLUMNNAME_HR_Type_Conge_ID).append("=droitconge.").append(MHRAutorisationConge.COLUMNNAME_HR_Type_Conge_ID)
 			.append(" WHERE hol."+MHRHoliday.COLUMNNAME_C_BPartner_ID).append("=?")
 			.append(" AND hol.").append(MHRHoliday.COLUMNNAME_Date_Debut_Effective).append(" BETWEEN ? AND ?")
 			.append(" AND hol.").append(MHRHoliday.COLUMNNAME_Date_Fin_Effective).append(" BETWEEN ? AND ?")
@@ -84,20 +87,21 @@ public interface GeneralSqlController {
 				pstmt.setInt(1, idCBPartner);
 				pstmt.setTimestamp(2, firstDayOfYear);
 				pstmt.setTimestamp(3, lastDayOfYear);
-				pstmt.setTimestamp(2, firstDayOfYear);
-				pstmt.setTimestamp(3, lastDayOfYear);
-				pstmt.setString(4, "Y");
-				pstmt.setString(5, "Y");
+				pstmt.setTimestamp(4, firstDayOfYear);
+				pstmt.setTimestamp(5, lastDayOfYear);
+				pstmt.setString(6, "Y");
+				pstmt.setString(7, "Y");
 				rs = pstmt.executeQuery();
 				while (rs.next()) {
 					BeanPeriode bp =BeanFactory.getBeanPeriode();
 					bp.setDateDebutConge(rs.getTimestamp(MHRHoliday.COLUMNNAME_Date_Debut_Effective));
-					bp.setDateFinConge(rs.getTimestamp(MHRHoliday.COLUMNNAME_Date_Debut_Effective));
+					bp.setDateFinConge(rs.getTimestamp(MHRHoliday.COLUMNNAME_Date_Fin_Effective));
 					list.add(bp);
 				}
 			}
 			catch (SQLException e)
 			{
+				log.warning(e.getMessage());
 				return null;
 			}
 			finally {
@@ -139,12 +143,13 @@ public interface GeneralSqlController {
 				while (rs.next()) {
 					BeanPeriode bp =BeanFactory.getBeanPeriode();
 					bp.setDateDebutConge(rs.getTimestamp(MHRHoliday.COLUMNNAME_Date_Debut_Effective));
-					bp.setDateFinConge(rs.getTimestamp(MHRHoliday.COLUMNNAME_Date_Debut_Effective));
+					bp.setDateFinConge(rs.getTimestamp(MHRHoliday.COLUMNNAME_Date_Fin_Effective));
 					list.add(bp);
 				}
 			}
 			catch (SQLException e)
 			{
+				log.warning(e.getMessage());
 				return null;
 			}
 			finally {
@@ -172,7 +177,7 @@ public interface GeneralSqlController {
 			.append("LEFT JOIN ").append(MHRSanctionAutorisation.Table_Name).append(" droitSanction ON droitSanction.")
 			.append(MHRSanctionAutorisation.COLUMNNAME_HR_Sanction_Autorisation_ID).append("=pun.").append(MHRPunishment.COLUMNNAME_Emission_Sanction_ID)
 			.append(" LEFT JOIN ").append(MHRTypeSanction.Table_Name).append(" typeSanction ON typeSanction.")
-			.append(MHRTypeSanction.COLUMNNAME_HR_TypeSanction_ID).append("droitSanction.").append(MHRSanctionAutorisation.COLUMNNAME_HR_TypeSanction_ID)
+			.append(MHRTypeSanction.COLUMNNAME_HR_TypeSanction_ID).append("=droitSanction.").append(MHRSanctionAutorisation.COLUMNNAME_HR_TypeSanction_ID)
 			.append(" WHERE pun."+MHRPunishment.COLUMNNAME_C_BPartner_ID).append("=?")
 			.append(" AND pun.").append(MHRPunishment.COLUMNNAME_Date_Debut_Application).append(" BETWEEN ? AND ?")
 			.append(" OR pun.").append(MHRPunishment.COLUMNNAME_Date_Fin_Application).append(" BETWEEN ? AND ?")
@@ -180,26 +185,28 @@ public interface GeneralSqlController {
 			.append(" AND typeSanction.").append(MHRTypeSanction.COLUMNNAME_Incidence_Sanction_ID).append("=?");
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
+			log.warning("\n1REQUETE SQL : "+sql);
 			try
 			{
 				pstmt = DB.prepareStatement(sql.toString(), trxName);
 				pstmt.setInt(1, idCBPartner);
 				pstmt.setTimestamp(2, firstDayOfYear);
 				pstmt.setTimestamp(3, lastDayOfYear);
-				pstmt.setTimestamp(2, firstDayOfYear);
-				pstmt.setTimestamp(3, lastDayOfYear);
-				pstmt.setString(4, "N");
-				pstmt.setString(5, MHRTypeSanction.INCIDENCE_SANCTION_ID_PériodeDeSuspension);
+				pstmt.setTimestamp(4, firstDayOfYear);
+				pstmt.setTimestamp(5, lastDayOfYear);
+				pstmt.setString(6, "N");
+				pstmt.setString(7, MHRTypeSanction.INCIDENCE_SANCTION_ID_PériodeDeSuspension);
 				rs = pstmt.executeQuery();
 				while (rs.next()) {
 					BeanPeriode beanPeriode =BeanFactory.getBeanPeriode();
-					beanPeriode.setDateDebutConge(rs.getTimestamp(MHRHoliday.COLUMNNAME_Date_Debut_Effective));
-					beanPeriode.setDateFinConge(rs.getTimestamp(MHRHoliday.COLUMNNAME_Date_Debut_Effective));
+					beanPeriode.setDateDebutConge(rs.getTimestamp(MHRPunishment.COLUMNNAME_Date_Debut_Application));
+					beanPeriode.setDateFinConge(rs.getTimestamp(MHRPunishment.COLUMNNAME_Date_Fin_Application));
 					listePeriodesSusoensions.add(beanPeriode);
 				}
 			}
 			catch (SQLException e)
 			{
+				log.warning(e.getMessage());
 				return null;
 			}
 			finally {
@@ -243,6 +250,7 @@ public interface GeneralSqlController {
 			}
 			catch (SQLException e)
 			{
+				log.warning(e.getMessage());
 				return null;
 			}
 			finally {
@@ -277,6 +285,7 @@ public interface GeneralSqlController {
 			}
 			catch (SQLException e)
 			{
+				log.warning(e.getMessage());
 				return resultat;
 			}
 			finally {
@@ -313,6 +322,7 @@ public interface GeneralSqlController {
 		}
 		catch (Exception e)
 		{
+			log.warning(e.getMessage());
 			e.printStackTrace();				
 		}
 		finally {

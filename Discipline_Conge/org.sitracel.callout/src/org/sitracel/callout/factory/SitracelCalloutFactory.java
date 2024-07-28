@@ -6,7 +6,6 @@ import java.util.List;
 import org.adempiere.base.IColumnCallout;
 import org.adempiere.base.IColumnCalloutFactory;
 import org.sitracel.callout.organigramme.CalloutOrganigrammeMessageDoublonPosteResponsable;
-import org.sitracel.model.MHROrganigramme;
 
 public class SitracelCalloutFactory implements IColumnCalloutFactory{
 
@@ -15,7 +14,7 @@ public class SitracelCalloutFactory implements IColumnCalloutFactory{
 		// TODO Auto-generated method stub
 		List<IColumnCallout> list = new ArrayList<IColumnCallout>();
 
-		if(tableName.equalsIgnoreCase(MHROrganigramme.Table_Name) && (columnName.equalsIgnoreCase(MHROrganigramme.COLUMNNAME_Poste_Responsable_ID))) {
+		if(tableName.equalsIgnoreCase("hr_organigramme") && (columnName.equalsIgnoreCase("poste_responsable_id"))) {
 			list.add(new CalloutOrganigrammeMessageDoublonPosteResponsable());
 		}
 

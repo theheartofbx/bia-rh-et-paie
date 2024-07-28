@@ -4,10 +4,12 @@ import org.compiere.model.MClient;
 import org.compiere.model.ModelValidationEngine;
 import org.compiere.model.ModelValidator;
 import org.compiere.model.PO;
+import org.compiere.util.CLogger;
 import org.sitracel.conge.model.MHRHoliday;
 import org.sitracel.conge.modelvalidator.SitracelCongeGeneralModelValidator;
 
 public class SitracelModelValidatorConge implements ModelValidator{
+	private static CLogger	log = CLogger.getCLogger (PO.class);
 
 	@Override
 	public void initialize(ModelValidationEngine engine, MClient client) {
@@ -30,8 +32,9 @@ public class SitracelModelValidatorConge implements ModelValidator{
 	@Override
 	public String modelChange(PO po, int type) throws Exception {
 		// TODO Auto-generated method stub
-		MHRHoliday holidays = (MHRHoliday)po;
-		SitracelCongeGeneralModelValidator.conge(holidays, type);		
+		if(po.get_TableName().equalsIgnoreCase(MHRHoliday.Table_Name)) {
+			SitracelCongeGeneralModelValidator.conge(po, type);	
+		}	
 		return null;
 	}
 

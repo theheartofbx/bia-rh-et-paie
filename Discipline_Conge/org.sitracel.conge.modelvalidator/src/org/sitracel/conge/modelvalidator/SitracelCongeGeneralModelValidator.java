@@ -4,17 +4,16 @@ import java.sql.Timestamp;
 
 import org.compiere.model.ModelValidator;
 import org.compiere.model.PO;
-import org.compiere.util.Env;
+import org.compiere.util.CLogger;
 import org.sitracel.conge.model.MHRAbsence;
 import org.sitracel.conge.model.MHRAbsenceCompensation;
-import org.sitracel.conge.model.MHRHoliday;
 import org.sitracel.conge.modelvalidator.controller.absence.ModelValidatorControllerAbsence;
 import org.sitracel.conge.modelvalidator.controller.conge.ModelValidatorControllerConge;
-import org.sitracel.discipline.model.MHRDemandeExplication;
-import org.sitracel.discipline.model.MHRPunishment;
 import org.sitracel.model.MHREmployeeJob;
 
 public class SitracelCongeGeneralModelValidator {
+
+	private static CLogger	log = CLogger.getCLogger (PO.class);
 	
 	public static void absence(PO po, MHRAbsence absence, int type) {
 		if(ModelValidator.TYPE_BEFORE_NEW == type) {
@@ -35,11 +34,11 @@ public class SitracelCongeGeneralModelValidator {
 		}
 	}
 	
-	public static void conge(MHRHoliday holidays, int type) {
+	public static void conge(PO holidays, int type) {
 		if(ModelValidator.TYPE_BEFORE_NEW==type) {
-			holidays.setIsApprobation_Createur(false);
-			holidays.setIsValidation_Createur(false);
-			holidays.setDate_Emission(new Timestamp(System.currentTimeMillis()));
+			holidays.set_ValueOfColumn("isapprobation_createur", false);
+			holidays.set_ValueOfColumn("isvalidation_createur",false);
+			holidays.set_ValueOfColumn("date_emission",new Timestamp(System.currentTimeMillis()));
 		}
 	}
 	
