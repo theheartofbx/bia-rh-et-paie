@@ -9,11 +9,11 @@ import org.adempiere.base.IColumnCallout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.util.Env;
-import org.sitracel.callout.bean.BeanAbsence;
-import org.sitracel.callout.bean.BeanPeriode;
+import org.sitracel.bean.BeanAbsence;
+import org.sitracel.bean.BeanPeriode;
+import org.sitracel.controller.GeneralController;
 import org.sitracel.discipline.model.MHRDureeSanction;
 import org.sitracel.discipline.model.MHRPunishment;
-import org.sitracel.general.controller.GeneralController;
 
 public class CalloutDureeSuspension implements IColumnCallout{
 

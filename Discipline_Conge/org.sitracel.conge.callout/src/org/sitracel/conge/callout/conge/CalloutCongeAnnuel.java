@@ -11,13 +11,13 @@ import org.adempiere.base.IColumnCallout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.util.Env;
-import org.sitracel.callout.bean.BeanAbsence;
-import org.sitracel.callout.bean.BeanInfoCongeDepartement;
-import org.sitracel.callout.bean.BeanPeriode;
+import org.sitracel.bean.BeanAbsence;
+import org.sitracel.bean.BeanInfoCongeDepartement;
+import org.sitracel.bean.BeanPeriode;
 import org.sitracel.conge.callout.conge.controller.CalloutControllerConge;
 import org.sitracel.conge.model.MHRHoliday;
 import org.sitracel.conge.model.MHRTypeConge;
-import org.sitracel.general.controller.GeneralController;
+import org.sitracel.controller.GeneralController;
 
 public class CalloutCongeAnnuel implements IColumnCallout {
 

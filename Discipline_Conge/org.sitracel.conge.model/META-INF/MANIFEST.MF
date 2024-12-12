@@ -10,4 +10,3 @@ Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
 Service-Component: OSGI-INF/*.xml
 Automatic-Module-Name: org.sitracel.conge.model
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.sitracel.conge.model

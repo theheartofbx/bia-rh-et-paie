@@ -6,7 +6,7 @@ import org.adempiere.base.IColumnCallout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.util.Env;
-import org.sitracel.callout.bean.BeanConge;
+import org.sitracel.bean.BeanConge;
 import org.sitracel.conge.callout.conge.controller.CalloutSqlControllerConge;
 import org.sitracel.conge.model.MHRHoliday;
 import org.sitracel.conge.model.MHRTypeConge;

@@ -59,7 +59,7 @@ public class SitracelCongeCalloutFactory implements IColumnCalloutFactory{
 
 		if(tableName.equalsIgnoreCase(MHRAbsence.Table_Name) && (columnName.equalsIgnoreCase(MHRAbsence.COLUMNNAME_Date_Absence))) { 
 			  list.add(new CalloutDateAbsenceConforme()); 
-			} 
+		} 
 		
 
 		return list !=null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];

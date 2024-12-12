@@ -5,7 +5,7 @@ import java.util.Properties;
 import org.adempiere.base.IColumnCallout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
-import org.sitracel.general.controller.GeneralSqlController;
+import org.sitracel.controller.GeneralSqlController;
 import org.sitracel.model.MHROrganigramme;
 
 public class CalloutOrganigrammeMessageDoublonPosteResponsable implements IColumnCallout{

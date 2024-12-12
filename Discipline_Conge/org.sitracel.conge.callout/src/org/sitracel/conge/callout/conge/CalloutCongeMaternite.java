@@ -8,7 +8,7 @@ import org.adempiere.base.IColumnCallout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.util.Env;
-import org.sitracel.callout.bean.BeanPeriodeConge;
+import org.sitracel.bean.BeanPeriodeConge;
 import org.sitracel.conge.callout.conge.controller.CalloutControllerConge;
 import org.sitracel.conge.model.MHRAutorisationConge;
 import org.sitracel.conge.model.MHRHoliday;

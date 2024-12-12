@@ -10,7 +10,7 @@ import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.sitracel.conge.callout.absence.controller.CalloutSqlControllerAbsence;
 import org.sitracel.conge.model.MHRAbsence;
-import org.sitracel.general.controller.GeneralController;
+import org.sitracel.controller.GeneralController;
 
 public class CalloutDateAbsenceConforme implements IColumnCallout{
 
