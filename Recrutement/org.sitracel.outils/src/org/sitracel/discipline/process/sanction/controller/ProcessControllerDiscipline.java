@@ -289,6 +289,10 @@ public class ProcessControllerDiscipline {
 									absence.setDate_Absence(debutApplicationAbs);
 									absence.setDate_Emission(new Timestamp(System.currentTimeMillis()));
 									absence.setHR_Type_Absence_ID(typeAbsenceID);
+									absence.setIsDemandeExplication(false);
+									absence.setIsConge(false);
+									absence.setIsDemandeExplicationTraite(true);
+									absence.setIsCongeTraite(true);
 									absence.save(null);
 								}
 								debutApplicationAbs=GeneralController.ajouterNombreJour(debutApplicationAbs, 1);

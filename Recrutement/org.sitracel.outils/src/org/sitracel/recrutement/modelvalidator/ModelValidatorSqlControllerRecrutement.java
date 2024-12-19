@@ -18,7 +18,8 @@ public class ModelValidatorSqlControllerRecrutement {
 	{
 		ArrayList<BeanEvaluationCompetence> resultat = new ArrayList<BeanEvaluationCompetence>();
 		if(hr_offreTestEvaluation_ID!=null) {
-			String sql = "SELECT "+MHROffreCritereEvaluation.COLUMNNAME_HR_Competences_ID 
+			String sql = "SELECT "
+					+ MHROffreCritereEvaluation.COLUMNNAME_HR_Competences_ID 
 					+ ", "+MHROffreCritereEvaluation.COLUMNNAME_ScoreMax 
 					+ " , "+MHROffreCritereEvaluation.COLUMNNAME_Ponderation 
 					+ " FROM "+MHROffreCritereEvaluation.Table_Name

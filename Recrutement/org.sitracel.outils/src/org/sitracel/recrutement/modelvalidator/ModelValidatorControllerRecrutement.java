@@ -134,29 +134,23 @@ public class ModelValidatorControllerRecrutement {
 	}
 	
 	public static BeanCandidatEvaluation caluculerScoreCandidature(BeanCandidatEvaluation beanCandidatEvaluation, MHRCandidatEvaluation candidatEvaluation) {
-		if(beanCandidatEvaluation!=null) {
+		if(beanCandidatEvaluation!=null && candidatEvaluation!=null) {
 			if(beanCandidatEvaluation.getCandidatureID()>0) {
 				ArrayList<BeanEvaluationCompetence> competences = ModelValidatorSqlControllerRecrutement.getScoresCandidature(beanCandidatEvaluation.getCandidatureID(), null);
 				beanCandidatEvaluation.setScoreTotal(BigDecimal.valueOf(0));
 				for(BeanEvaluationCompetence competence:competences) {
 					if(competence!=null) {
-						if(competence.getScore()!=null) {
-							if(candidatEvaluation!=null) {
-								if(competence.getCandidatEvaluationID()==candidatEvaluation.getHR_CandidatEvaluation_ID()) {
-									beanCandidatEvaluation.setScoreTotal(beanCandidatEvaluation.getScoreTotal().add((candidatEvaluation.getScore().multiply(BigDecimal.valueOf(candidatEvaluation.getPonderation())))));
-								}
-								else {
-									beanCandidatEvaluation.setScoreTotal(beanCandidatEvaluation.getScoreTotal().add((competence.getScore().multiply(BigDecimal.valueOf(competence.getPonderation())))));
-								}	
-							}
-							else {
-								beanCandidatEvaluation.setScoreTotal(beanCandidatEvaluation.getScoreTotal().add((competence.getScore().multiply(BigDecimal.valueOf(competence.getPonderation())))));
+						if(competence.getCandidatEvaluationID()==candidatEvaluation.getHR_CandidatEvaluation_ID()) {
+							if(candidatEvaluation.getScore()!=null) {
+								beanCandidatEvaluation.setScoreTotal(beanCandidatEvaluation.getScoreTotal().add((candidatEvaluation.getScore().multiply(BigDecimal.valueOf(candidatEvaluation.getPonderation())))));
 							}
 						}
+						else {
+							if(competence.getScore()!=null) {
+								beanCandidatEvaluation.setScoreTotal(beanCandidatEvaluation.getScoreTotal().add((competence.getScore().multiply(BigDecimal.valueOf(competence.getPonderation())))));
+							}
+						}	
 					}
-				}
-				if(!GeneralSqlController.idExists(MHRCandidatEvaluation.COLUMNNAME_HR_CandidatEvaluation_ID, MHRCandidatEvaluation.Table_Name, candidatEvaluation.getHR_CandidatEvaluation_ID(), null)) {
-					beanCandidatEvaluation.setScoreTotal(beanCandidatEvaluation.getScoreTotal().add((candidatEvaluation.getScore().multiply(BigDecimal.valueOf(candidatEvaluation.getPonderation())))));
 				}
 			}
 		}
