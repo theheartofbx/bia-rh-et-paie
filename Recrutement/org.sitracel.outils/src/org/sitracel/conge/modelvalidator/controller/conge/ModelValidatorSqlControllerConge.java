@@ -14,10 +14,10 @@ public class ModelValidatorSqlControllerConge {
 	{
 		Integer resultat = null;
 		if(c_BPartber_id!=null) {
-			String sql = "SELECT HR_EmployeeJob.HR_Job_ID FROM HR_EmployeeJob WHERE "
+			StringBuilder sql = new StringBuilder("SELECT HR_EmployeeJob.HR_Job_ID FROM HR_EmployeeJob WHERE "
 					+ "HR_EmployeeJob.C_Bpartner_ID=? AND "
 					+ "HR_EmployeeJob.DateFrom=(SELECT MAX(HR_EmployeeJob.DateFrom) "
-					+ "FROM HR_EmployeeJob WHERE HR_EmployeeJob.C_Bpartner_ID=?)";
+					+ "FROM HR_EmployeeJob WHERE HR_EmployeeJob.C_Bpartner_ID=?)");
 			
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
@@ -48,10 +48,10 @@ public class ModelValidatorSqlControllerConge {
 	{
 		Integer resultat = null;
 		if(hr_Job_id!=null) {
-			String sql = "SELECT HR_EmployeeJob.C_Bpartner_ID FROM HR_EmployeeJob WHERE "
+			StringBuilder sql = new StringBuilder("SELECT HR_EmployeeJob.C_Bpartner_ID FROM HR_EmployeeJob WHERE "
 					+ "HR_EmployeeJob.HR_Job_ID=? AND "
 					+ "HR_EmployeeJob.DateFrom=(SELECT MAX(HR_EmployeeJob.DateFrom) "
-					+ "FROM HR_EmployeeJob WHERE HR_EmployeeJob.HR_Job_ID=?)";
+					+ "FROM HR_EmployeeJob WHERE HR_EmployeeJob.HR_Job_ID=?)");
 			
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
@@ -82,10 +82,9 @@ public class ModelValidatorSqlControllerConge {
 	{
 		Integer resultat = null;
 		if(HR_punishment_ID!=null) {
-			String sql = "SELECT "+MHRDossierDisciplinaire.Table_Name+"."+MHRDossierDisciplinaire.COLUMNNAME_HR_Dossier_Disciplinaire_ID
-					+" FROM "+MHRDossierDisciplinaire.Table_Name+" WHERE "
-					+ MHRDossierDisciplinaire.Table_Name+"."+MHRDossierDisciplinaire.COLUMNNAME_HR_Punishment_ID
-					+ "=?";
+			StringBuilder sql = new StringBuilder("SELECT "+MHRDossierDisciplinaire.Table_Name+"."+MHRDossierDisciplinaire.COLUMNNAME_HR_Dossier_Disciplinaire_ID
+					+" FROM "+MHRDossierDisciplinaire.Table_Name
+					+" WHERE "+ MHRDossierDisciplinaire.Table_Name+"."+MHRDossierDisciplinaire.COLUMNNAME_HR_Punishment_ID+ "=?");
 			
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
@@ -115,10 +114,10 @@ public class ModelValidatorSqlControllerConge {
 		ArrayList<String> resultat = new ArrayList<String>();
 		String mail;
 		if(ad_Role_ID!=null) {
-			String sql = "SELECT cb.Email mail FROM C_BPartner cb "
+			StringBuilder sql = new StringBuilder("SELECT cb.Email mail FROM C_BPartner cb "
 					+ "LEFT JOIN AD_User ad on ad.C_BPartner_ID = cb.C_BPartner_ID "
 					+ "LEFT JOIN AD_User_Roles adr on adr.Ad_user_ID=ad.AD_User_ID "
-					+ "where adr.Ad_Role_ID=?";
+					+ "where adr.Ad_Role_ID=?");
 			
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;

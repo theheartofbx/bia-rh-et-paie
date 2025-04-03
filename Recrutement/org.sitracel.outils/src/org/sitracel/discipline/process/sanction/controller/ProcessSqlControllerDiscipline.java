@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.compiere.model.PO;
@@ -15,6 +16,7 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.sitracel.bean.BeanIdentifiant;
 import org.sitracel.beanfactory.BeanFactory;
+import org.sitracel.conge.model.MHRAbsence;
 import org.sitracel.discipline.model.MHRDossierDisciplinaire;
 import org.sitracel.model.MCBPartner;
 import org.sitracel.model.MHREmployeeJob;
@@ -90,6 +92,39 @@ public class ProcessSqlControllerDiscipline {
 					if(hr_dossier_disciplinaire_id!=null) {
 						resultat = new MHRDossierDisciplinaire(Env.getCtx(), hr_dossier_disciplinaire_id, trxName);
 					}
+				}
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+				return null;
+			}
+			finally {
+				DB.close(rs, pstmt);
+				rs = null; pstmt = null;
+			}
+		}
+		return resultat;
+	}
+	
+	public static Boolean isAbsenceExist (Integer cBPArtnerID, Timestamp dateAbsence, String trxName)
+	{
+		Boolean resultat = false;
+		if(cBPArtnerID!=null && dateAbsence!=null) {
+			String sql = "SELECT EXISTS (SELECT 1 FROM "+MHRAbsence.Table_Name+" WHERE "
+					+MHRAbsence.COLUMNNAME_C_BPartner_ID+" = ?"
+					+ " AND "+MHRAbsence.COLUMNNAME_Date_Absence+"=?)";
+			
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			try
+			{
+				pstmt = DB.prepareStatement(sql.toString(), trxName);
+				pstmt.setInt(1, cBPArtnerID);
+				pstmt.setTimestamp(2, dateAbsence);
+				rs = pstmt.executeQuery();
+				if (rs.next()) {
+					resultat = rs.getBoolean(1);
 				}
 			}
 			catch (SQLException e)

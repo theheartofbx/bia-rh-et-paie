@@ -24,7 +24,7 @@ import org.sitracel.model.I_HR_Categorie_Responsabilite;
 
 /** Generated Interface for HR_Autorisation_Absence
  *  @author iDempiere (generated) 
- *  @version Release 11
+ *  @version Release 12
  */
 @SuppressWarnings("all")
 public interface I_HR_Autorisation_Absence 

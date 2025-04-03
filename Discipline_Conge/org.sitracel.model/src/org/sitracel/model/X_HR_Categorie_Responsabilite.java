@@ -24,7 +24,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Categorie_Responsabilite
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Categorie_Responsabilite")
 public class X_HR_Categorie_Responsabilite extends PO implements I_HR_Categorie_Responsabilite, I_Persistent
 {
@@ -32,7 +32,7 @@ public class X_HR_Categorie_Responsabilite extends PO implements I_HR_Categorie_
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240322L;
+	private static final long serialVersionUID = 20250318L;
 
     /** Standard Constructor */
     public X_HR_Categorie_Responsabilite (Properties ctx, int HR_Categorie_Responsabilite_ID, String trxName)

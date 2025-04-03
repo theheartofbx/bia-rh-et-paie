@@ -19,13 +19,17 @@ package org.sitracel.conge.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
 import org.sitracel.model.I_HR_Categorie_Responsabilite;
 
 /** Generated Model for HR_Autorisation_Conge
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Autorisation_Conge")
 public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Conge, I_Persistent
 {
@@ -33,7 +37,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240418L;
+	private static final long serialVersionUID = 20250318L;
 
     /** Standard Constructor */
     public X_HR_Autorisation_Conge (Properties ctx, int HR_Autorisation_Conge_ID, String trxName)

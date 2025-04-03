@@ -1,19 +1,23 @@
 package org.sitracel.beanfactory;
 
 import org.sitracel.bean.BeanAbsence;
+import org.sitracel.bean.BeanBareme;
 import org.sitracel.bean.BeanCandidatEvaluation;
 import org.sitracel.bean.BeanConge;
+import org.sitracel.bean.BeanElmtPaie;
 import org.sitracel.bean.BeanEvaluationCompetence;
 import org.sitracel.bean.BeanIdentifiant;
 import org.sitracel.bean.BeanIndemniteConge;
 import org.sitracel.bean.BeanInfoAbsence;
 import org.sitracel.bean.BeanInfoCongeDepartement;
+import org.sitracel.bean.BeanJourNonTravaille;
 import org.sitracel.bean.BeanMiseaPieds;
 import org.sitracel.bean.BeanNotification;
 import org.sitracel.bean.BeanNotificationConge;
 import org.sitracel.bean.BeanPeriode;
 import org.sitracel.bean.BeanPeriodeConge;
 import org.sitracel.bean.BeanResumeAbsence;
+import org.sitracel.bean.BeanSN;
 
 public class BeanFactory {	
 	public static BeanPeriode getBeanPeriode() {
@@ -70,5 +74,21 @@ public class BeanFactory {
 
 	public static BeanCandidatEvaluation getBeanCandidatEvaluation() {
 		return new BeanCandidatEvaluation();
+	}
+	
+	public static BeanJourNonTravaille getBeanJourNonTravaille() {
+		return new BeanJourNonTravaille();
+	}
+
+	public static BeanElmtPaie getBeanElmtPaie() {
+		return new BeanElmtPaie();
+	}
+
+	public static BeanSN getBeanSN() {
+		return new BeanSN();
+	}
+
+	public static BeanBareme getBareme() {
+		return new BeanBareme();
 	}
 }

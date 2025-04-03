@@ -24,7 +24,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_TypeSanction
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_TypeSanction")
 public class X_HR_TypeSanction extends PO implements I_HR_TypeSanction, I_Persistent
 {
@@ -32,7 +32,7 @@ public class X_HR_TypeSanction extends PO implements I_HR_TypeSanction, I_Persis
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240418L;
+	private static final long serialVersionUID = 20250318L;
 
     /** Standard Constructor */
     public X_HR_TypeSanction (Properties ctx, int HR_TypeSanction_ID, String trxName)

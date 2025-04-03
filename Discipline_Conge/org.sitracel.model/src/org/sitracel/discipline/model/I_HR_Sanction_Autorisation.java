@@ -18,13 +18,14 @@ package org.sitracel.discipline.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
+import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
 import org.sitracel.model.I_HR_Categorie_Responsabilite;
 
 /** Generated Interface for HR_Sanction_Autorisation
  *  @author iDempiere (generated) 
- *  @version Release 11
+ *  @version Release 12
  */
 @SuppressWarnings("all")
 public interface I_HR_Sanction_Autorisation 

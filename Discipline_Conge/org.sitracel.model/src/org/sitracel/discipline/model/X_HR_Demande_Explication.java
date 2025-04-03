@@ -20,17 +20,13 @@ package org.sitracel.discipline.model;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
-
-import org.compiere.model.I_Persistent;
-import org.compiere.model.MTable;
-import org.compiere.model.PO;
-import org.compiere.model.POInfo;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 import org.sitracel.model.I_HR_Ampliation;
 
 /** Generated Model for HR_Demande_Explication
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Demande_Explication")
 public class X_HR_Demande_Explication extends PO implements I_HR_Demande_Explication, I_Persistent
 {
@@ -38,7 +34,7 @@ public class X_HR_Demande_Explication extends PO implements I_HR_Demande_Explica
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240220L;
+	private static final long serialVersionUID = 20250318L;
 
     /** Standard Constructor */
     public X_HR_Demande_Explication (Properties ctx, int HR_Demande_Explication_ID, String trxName)
@@ -421,29 +417,6 @@ public class X_HR_Demande_Explication extends PO implements I_HR_Demande_Explica
 		return false;
 	}
 
-	/** Set Personnaliser le Rapport.
-		@param isRapport_Personnalise Personnaliser le Rapport
-	*/
-	public void setisRapport_Personnalise (boolean isRapport_Personnalise)
-	{
-		set_Value (COLUMNNAME_isRapport_Personnalise, Boolean.valueOf(isRapport_Personnalise));
-	}
-
-	/** Get Personnaliser le Rapport.
-		@return Personnaliser le Rapport
-	  */
-	public boolean isRapport_Personnalise()
-	{
-		Object oo = get_Value(COLUMNNAME_isRapport_Personnalise);
-		if (oo != null)
-		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
-			return "Y".equals(oo);
-		}
-		return false;
-	}
-
 	/** Set Matricule de l&#039;Employé.
 		@param Matricule_Employe Matricule de l&#039;Employé
 	*/
@@ -606,5 +579,28 @@ public class X_HR_Demande_Explication extends PO implements I_HR_Demande_Explica
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);
+	}
+
+	/** Set Personnaliser le Rapport.
+		@param isRapport_Personnalise Personnaliser le Rapport
+	*/
+	public void setisRapport_Personnalise (boolean isRapport_Personnalise)
+	{
+		set_Value (COLUMNNAME_isRapport_Personnalise, Boolean.valueOf(isRapport_Personnalise));
+	}
+
+	/** Get Personnaliser le Rapport.
+		@return Personnaliser le Rapport
+	  */
+	public boolean isRapport_Personnalise()
+	{
+		Object oo = get_Value(COLUMNNAME_isRapport_Personnalise);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
 	}
 }

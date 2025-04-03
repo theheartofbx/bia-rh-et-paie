@@ -24,7 +24,7 @@ import org.sitracel.model.I_HR_Ampliation;
 
 /** Generated Interface for HR_Holiday
  *  @author iDempiere (generated) 
- *  @version Release 11
+ *  @version Release 12
  */
 @SuppressWarnings("all")
 public interface I_HR_Holiday 
@@ -43,15 +43,6 @@ public interface I_HR_Holiday
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
     /** Load Meta Data */
-
-    /** Column name Actualiser_Absences */
-    public static final String COLUMNNAME_Actualiser_Absences = "Actualiser_Absences";
-
-	/** Set Actualiser Absences	  */
-	public void setActualiser_Absences (String Actualiser_Absences);
-
-	/** Get Actualiser Absences	  */
-	public String getActualiser_Absences();
 
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
@@ -73,6 +64,15 @@ public interface I_HR_Holiday
 	  * Organizational entity within client
 	  */
 	public int getAD_Org_ID();
+
+    /** Column name Actualiser_Absences */
+    public static final String COLUMNNAME_Actualiser_Absences = "Actualiser_Absences";
+
+	/** Set Actualiser Absences	  */
+	public void setActualiser_Absences (String Actualiser_Absences);
+
+	/** Get Actualiser Absences	  */
+	public String getActualiser_Absences();
 
     /** Column name Annee_Anciennete */
     public static final String COLUMNNAME_Annee_Anciennete = "Annee_Anciennete";
@@ -194,6 +194,19 @@ Ancienneté
 	  * User who created this records
 	  */
 	public int getCreatedBy();
+
+    /** Column name DateTrx */
+    public static final String COLUMNNAME_DateTrx = "DateTrx";
+
+	/** Set Transaction Date.
+	  * Transaction Date
+	  */
+	public void setDateTrx (Timestamp DateTrx);
+
+	/** Get Transaction Date.
+	  * Transaction Date
+	  */
+	public Timestamp getDateTrx();
 
     /** Column name Date_Absence_Compense_Debut */
     public static final String COLUMNNAME_Date_Absence_Compense_Debut = "Date_Absence_Compense_Debut";
@@ -410,19 +423,6 @@ Accouchement
 	  * Date de Rejet
 	  */
 	public Timestamp getDate_Rejet();
-
-    /** Column name DateTrx */
-    public static final String COLUMNNAME_DateTrx = "DateTrx";
-
-	/** Set Transaction Date.
-	  * Transaction Date
-	  */
-	public void setDateTrx (Timestamp DateTrx);
-
-	/** Get Transaction Date.
-	  * Transaction Date
-	  */
-	public Timestamp getDateTrx();
 
     /** Column name Date_Validation */
     public static final String COLUMNNAME_Date_Validation = "Date_Validation";
@@ -739,19 +739,6 @@ Alerte Affiché.
 Alerte Affiché
 	  */
 	public boolean isMessageAlerteDisplayed();
-
-    /** Column name isRapport_Personnalise */
-    public static final String COLUMNNAME_isRapport_Personnalise = "isRapport_Personnalise";
-
-	/** Set Personnaliser le Rapport.
-	  * Personnaliser le Rapport
-	  */
-	public void setisRapport_Personnalise (boolean isRapport_Personnalise);
-
-	/** Get Personnaliser le Rapport.
-	  * Personnaliser le Rapport
-	  */
-	public boolean isRapport_Personnalise();
 
     /** Column name IsRejetee */
     public static final String COLUMNNAME_IsRejetee = "IsRejetee";
@@ -1081,32 +1068,6 @@ Employé
 	  */
 	public int getUpdatedBy();
 
-    /** Column name Valider */
-    public static final String COLUMNNAME_Valider = "Valider";
-
-	/** Set Valider .
-	  * Valider 
-	  */
-	public void setValider (String Valider);
-
-	/** Get Valider .
-	  * Valider 
-	  */
-	public String getValider();
-
-    /** Column name Valider_Createur */
-    public static final String COLUMNNAME_Valider_Createur = "Valider_Createur";
-
-	/** Set Valider .
-	  * Valider 
-	  */
-	public void setValider_Createur (String Valider_Createur);
-
-	/** Get Valider .
-	  * Valider 
-	  */
-	public String getValider_Createur();
-
     /** Column name Valide_Rejete_Par_Matricule */
     public static final String COLUMNNAME_Valide_Rejete_Par_Matricule = "Valide_Rejete_Par_Matricule";
 
@@ -1149,4 +1110,43 @@ Employé
 	public int getValide_Rejete_Par_Poste_ID();
 
 	public org.eevolution.model.I_HR_Job getValide_Rejete_Par_Poste() throws RuntimeException;
+
+    /** Column name Valider */
+    public static final String COLUMNNAME_Valider = "Valider";
+
+	/** Set Valider .
+	  * Valider 
+	  */
+	public void setValider (String Valider);
+
+	/** Get Valider .
+	  * Valider 
+	  */
+	public String getValider();
+
+    /** Column name Valider_Createur */
+    public static final String COLUMNNAME_Valider_Createur = "Valider_Createur";
+
+	/** Set Valider .
+	  * Valider 
+	  */
+	public void setValider_Createur (String Valider_Createur);
+
+	/** Get Valider .
+	  * Valider 
+	  */
+	public String getValider_Createur();
+
+    /** Column name isRapport_Personnalise */
+    public static final String COLUMNNAME_isRapport_Personnalise = "isRapport_Personnalise";
+
+	/** Set Personnaliser le Rapport.
+	  * Personnaliser le Rapport
+	  */
+	public void setisRapport_Personnalise (boolean isRapport_Personnalise);
+
+	/** Get Personnaliser le Rapport.
+	  * Personnaliser le Rapport
+	  */
+	public boolean isRapport_Personnalise();
 }

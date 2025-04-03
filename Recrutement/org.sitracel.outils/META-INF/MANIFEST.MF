@@ -6,6 +6,12 @@ Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
  org.adempiere.plugin.utils;bundle-version="4.1.0",
  org.sitracel.model;bundle-version="1.0.0"
+Bundle-ClassPath: .,
+ lib/commons-jexl3-3.2.jar,
+ lib/javax.mail.jar,
+ lib/javax.mail-api-1.6.2.jar,
+ lib/commons-logging-1.2.jar,
+ lib/rhino-1.7.9.jar
 Automatic-Module-Name: org.sitracel.outils
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.sitracel.bean,
@@ -20,6 +26,8 @@ Export-Package: org.sitracel.bean,
  org.sitracel.discipline.callout.sanction.controller,
  org.sitracel.discipline.process.demandeexplication.controller,
  org.sitracel.discipline.process.sanction.controller,
+ org.sitracel.paie.callout,
+ org.sitracel.paie.process.controller,
  org.sitracel.recrutement.modelvalidator,
  org.sitracel.recrutement.process.controller
 Import-Package: javax.mail;version="1.6.0",

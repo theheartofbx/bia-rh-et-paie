@@ -142,6 +142,14 @@ public class ProcessControllerDiscipline {
 			BeanIdentifiant beanIdentifiant = ProcessSqlControllerDiscipline.getBeanIdentifiant(idADUser, null);
 			if(punishment!=null && beanIdentifiant!=null) {
 				if(beanIdentifiant.getNumEmploye()!=null) {
+					if(punishment.getDate_Debut_Application()!=null) {
+						Timestamp dateFin = punishment.getDate_Debut_Application();
+						MHRDureeSanction duree = new MHRDureeSanction(Env.getCtx(), punishment.getHR_Duree_Sanction_ID(), null);
+						if(duree!=null) {
+							dateFin = GeneralController.ajouterNombreJour(dateFin, duree.getNombre_De_Jour()-1);
+							punishment.setDate_Fin_Application(dateFin);
+						}
+					}
 					punishment.setValide_Rejete_Par_Nom_ID(beanIdentifiant.getNumEmploye());
 					punishment.setValide_Rejete_Par_Poste_ID(beanIdentifiant.getNumeroPoste());
 					punishment.setValide_Rejete_Par_Matricule(beanIdentifiant.getMatriculeEmploye());
@@ -164,6 +172,8 @@ public class ProcessControllerDiscipline {
 			BeanIdentifiant beanIdentifiant = ProcessSqlControllerDiscipline.getBeanIdentifiant(idADUser, null);
 			if(punishment!=null && beanIdentifiant!=null) {
 				if(beanIdentifiant.getNumEmploye()!=null) {
+					ProcessControllerDiscipline.gererAbsenceApresRejetSanction(punishment, beanIdentifiant);
+					ProcessControllerDiscipline.gererDossierDisciplinaireApresRejetSanction(idSanction);
 					punishment.setValide_Rejete_Par_Nom_ID(beanIdentifiant.getNumEmploye());
 					punishment.setValide_Rejete_Par_Poste_ID(beanIdentifiant.getNumeroPoste());
 					punishment.setValide_Rejete_Par_Matricule(beanIdentifiant.getMatriculeEmploye());
@@ -174,8 +184,6 @@ public class ProcessControllerDiscipline {
 					punishment.setIsRejetee(true);
 					punishment.setIsTraitee(true);
 					punishment.save(null);
-					ProcessControllerDiscipline.gererAbsenceApresRejetSanction(punishment, beanIdentifiant);
-					ProcessControllerDiscipline.gererDossierDisciplinaireApresRejetSanction(idSanction);
 				}
 			}
 		}		
@@ -278,22 +286,31 @@ public class ProcessControllerDiscipline {
 							else {
 								punishment.setDate_Fin_Application(null);
 							}
+							int i = 1;
 							while(debutApplicationAbs.before(finApplicationAbs)) {
 								Calendar cal = Calendar.getInstance();		
 								cal.setTime(debutApplicationAbs);
 								if(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY || !GeneralController.isJourFerie(debutApplicationAbs)) {
-									MHRAbsence absence = new MHRAbsence(Env.getCtx(), null, null);
-									absence.setEmis_Par_Nom_ID(beanIdentifiant.getNumEmploye());
-									absence.setEmis_Par_Poste_ID(beanIdentifiant.getNumeroPoste());
-									absence.setEmis_Par_Matricule(beanIdentifiant.getMatriculeEmploye());
-									absence.setDate_Absence(debutApplicationAbs);
-									absence.setDate_Emission(new Timestamp(System.currentTimeMillis()));
-									absence.setHR_Type_Absence_ID(typeAbsenceID);
-									absence.setIsDemandeExplication(false);
-									absence.setIsConge(false);
-									absence.setIsDemandeExplicationTraite(true);
-									absence.setIsCongeTraite(true);
-									absence.save(null);
+									if(!ProcessSqlControllerDiscipline.isAbsenceExist(punishment.getC_BPartner_ID(), debutApplicationAbs, null)) {
+										MHRAbsence absence = new MHRAbsence(Env.getCtx(), null, null);
+										absence.setC_BPartner_ID(punishment.getC_BPartner_ID());
+										absence.setPoste_Employe_ID(punishment.getPoste_Employe_ID());
+										absence.setMatricule_Employe(punishment.getMatricule_Employe());
+										absence.setEmis_Par_Nom_ID(beanIdentifiant.getNumEmploye());
+										absence.setEmis_Par_Poste_ID(beanIdentifiant.getNumeroPoste());
+										absence.setEmis_Par_Matricule(beanIdentifiant.getMatriculeEmploye());
+										absence.setDate_Absence(debutApplicationAbs);
+										absence.setDate_Emission(new Timestamp(System.currentTimeMillis()));
+										absence.setHR_Type_Absence_ID(typeAbsenceID);
+										absence.setIsDemandeExplication(false);
+										absence.setIsConge(false);
+										absence.setIsDemandeExplicationTraite(true);
+										absence.setIsCongeTraite(true);
+										absence.save(null);
+									}
+								}
+								else {
+									finApplicationAbs=GeneralController.ajouterNombreJour(finApplicationAbs, 1);
 								}
 								debutApplicationAbs=GeneralController.ajouterNombreJour(debutApplicationAbs, 1);
 							}
@@ -315,7 +332,7 @@ public class ProcessControllerDiscipline {
 				MHRTypeSanction typeSanction = new MHRTypeSanction(Env.getCtx(), autorisation.getHR_TypeSanction_ID(), null);
 				if(typeSanction!=null) {
 					if(typeSanction.getIncidence_Sanction_ID().equalsIgnoreCase(MHRTypeSanction.INCIDENCE_SANCTION_ID_PériodeDeSuspension)) {
-						ArrayList<Integer> listeAbsenceID = CalloutSqlControllerAbsence.getListeAbsenceID(punishment.getC_BPartner_ID(), "Suspendu", punishment.getDate_Debut_Application(), punishment.getDate_Fin_Application(), null);
+						ArrayList<Integer> listeAbsenceID = CalloutSqlControllerAbsence.getListeAbsenceIDByName(punishment.getC_BPartner_ID(), "Suspendu", punishment.getDate_Debut_Application(), punishment.getDate_Fin_Application(), null);
 						for(Integer absenceID:listeAbsenceID) {
 							MHRAbsence absence = new MHRAbsence(Env.getCtx(), absenceID,null);
 							if(absence!=null) {
@@ -363,15 +380,17 @@ public class ProcessControllerDiscipline {
 
 	private static void gererDossierDisciplinaireApresRejetSanction(Integer idSanction) {
 		MHRDossierDisciplinaire dossier =ProcessSqlControllerDiscipline.getDossierDisciplinaire(idSanction, null);
-		try {
-			if(dossier!=null) {
-				dossier.delete(false);			
-			}
-			DB.commit(true, dossier.get_TrxName());
-		} catch (IllegalStateException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
+		if(dossier!=null) {
+			try {
+				if(dossier!=null) {
+					dossier.delete(false);			
+				}
+				DB.commit(true, dossier.get_TrxName());
+			} catch (IllegalStateException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
 	}
 	
 	private static String getNotifierSanctionMessage(Integer idSanction) {

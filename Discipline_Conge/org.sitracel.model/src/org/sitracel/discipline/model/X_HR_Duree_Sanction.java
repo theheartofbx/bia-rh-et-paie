@@ -19,15 +19,12 @@ package org.sitracel.discipline.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-
-import org.compiere.model.I_Persistent;
-import org.compiere.model.PO;
-import org.compiere.model.POInfo;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Duree_Sanction
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Duree_Sanction")
 public class X_HR_Duree_Sanction extends PO implements I_HR_Duree_Sanction, I_Persistent
 {
@@ -35,7 +32,7 @@ public class X_HR_Duree_Sanction extends PO implements I_HR_Duree_Sanction, I_Pe
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240220L;
+	private static final long serialVersionUID = 20250318L;
 
     /** Standard Constructor */
     public X_HR_Duree_Sanction (Properties ctx, int HR_Duree_Sanction_ID, String trxName)

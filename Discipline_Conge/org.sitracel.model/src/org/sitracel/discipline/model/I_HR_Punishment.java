@@ -24,7 +24,7 @@ import org.sitracel.model.I_HR_Ampliation;
 
 /** Generated Interface for HR_Punishment
  *  @author iDempiere (generated) 
- *  @version Release 11
+ *  @version Release 12
  */
 @SuppressWarnings("all")
 public interface I_HR_Punishment 
@@ -165,6 +165,19 @@ public interface I_HR_Punishment
 	  */
 	public int getCreatedBy();
 
+    /** Column name DateTrx */
+    public static final String COLUMNNAME_DateTrx = "DateTrx";
+
+	/** Set Transaction Date.
+	  * Transaction Date
+	  */
+	public void setDateTrx (Timestamp DateTrx);
+
+	/** Get Transaction Date.
+	  * Transaction Date
+	  */
+	public Timestamp getDateTrx();
+
     /** Column name Date_Approbation */
     public static final String COLUMNNAME_Date_Approbation = "Date_Approbation";
 
@@ -292,19 +305,6 @@ Explication.
 Explication
 	  */
 	public Timestamp getDate_Reponse_DE();
-
-    /** Column name DateTrx */
-    public static final String COLUMNNAME_DateTrx = "DateTrx";
-
-	/** Set Transaction Date.
-	  * Transaction Date
-	  */
-	public void setDateTrx (Timestamp DateTrx);
-
-	/** Get Transaction Date.
-	  * Transaction Date
-	  */
-	public Timestamp getDateTrx();
 
     /** Column name Date_Validation */
     public static final String COLUMNNAME_Date_Validation = "Date_Validation";
@@ -615,19 +615,6 @@ Alerte Affiché
 	  */
 	public boolean isPeriodSuspension();
 
-    /** Column name isRapport_Personnalise */
-    public static final String COLUMNNAME_isRapport_Personnalise = "isRapport_Personnalise";
-
-	/** Set Personnaliser le Rapport.
-	  * Personnaliser le Rapport
-	  */
-	public void setisRapport_Personnalise (boolean isRapport_Personnalise);
-
-	/** Get Personnaliser le Rapport.
-	  * Personnaliser le Rapport
-	  */
-	public boolean isRapport_Personnalise();
-
     /** Column name IsRejetee */
     public static final String COLUMNNAME_IsRejetee = "IsRejetee";
 
@@ -861,32 +848,6 @@ Explication
 	  */
 	public int getUpdatedBy();
 
-    /** Column name Valider */
-    public static final String COLUMNNAME_Valider = "Valider";
-
-	/** Set Valider .
-	  * Valider 
-	  */
-	public void setValider (String Valider);
-
-	/** Get Valider .
-	  * Valider 
-	  */
-	public String getValider();
-
-    /** Column name Valider_Createur */
-    public static final String COLUMNNAME_Valider_Createur = "Valider_Createur";
-
-	/** Set Valider .
-	  * Valider 
-	  */
-	public void setValider_Createur (String Valider_Createur);
-
-	/** Get Valider .
-	  * Valider 
-	  */
-	public String getValider_Createur();
-
     /** Column name Valide_Rejete_Par_Matricule */
     public static final String COLUMNNAME_Valide_Rejete_Par_Matricule = "Valide_Rejete_Par_Matricule";
 
@@ -929,4 +890,43 @@ Explication
 	public int getValide_Rejete_Par_Poste_ID();
 
 	public org.eevolution.model.I_HR_Job getValide_Rejete_Par_Poste() throws RuntimeException;
+
+    /** Column name Valider */
+    public static final String COLUMNNAME_Valider = "Valider";
+
+	/** Set Valider .
+	  * Valider 
+	  */
+	public void setValider (String Valider);
+
+	/** Get Valider .
+	  * Valider 
+	  */
+	public String getValider();
+
+    /** Column name Valider_Createur */
+    public static final String COLUMNNAME_Valider_Createur = "Valider_Createur";
+
+	/** Set Valider .
+	  * Valider 
+	  */
+	public void setValider_Createur (String Valider_Createur);
+
+	/** Get Valider .
+	  * Valider 
+	  */
+	public String getValider_Createur();
+
+    /** Column name isRapport_Personnalise */
+    public static final String COLUMNNAME_isRapport_Personnalise = "isRapport_Personnalise";
+
+	/** Set Personnaliser le Rapport.
+	  * Personnaliser le Rapport
+	  */
+	public void setisRapport_Personnalise (boolean isRapport_Personnalise);
+
+	/** Get Personnaliser le Rapport.
+	  * Personnaliser le Rapport
+	  */
+	public boolean isRapport_Personnalise();
 }

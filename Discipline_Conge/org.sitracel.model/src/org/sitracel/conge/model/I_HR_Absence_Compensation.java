@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_Absence_Compensation
  *  @author iDempiere (generated) 
- *  @version Release 11
+ *  @version Release 12
  */
 @SuppressWarnings("all")
 public interface I_HR_Absence_Compensation 
@@ -42,21 +42,6 @@ public interface I_HR_Absence_Compensation
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
     /** Load Meta Data */
-
-    /** Column name Absence_ID */
-    public static final String COLUMNNAME_Absence_ID = "Absence_ID";
-
-	/** Set Absence.
-	  * Absence
-	  */
-	public void setAbsence_ID (int Absence_ID);
-
-	/** Get Absence.
-	  * Absence
-	  */
-	public int getAbsence_ID();
-
-	public I_HR_Absence getAbsence() throws RuntimeException;
 
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
@@ -78,6 +63,21 @@ public interface I_HR_Absence_Compensation
 	  * Organizational entity within client
 	  */
 	public int getAD_Org_ID();
+
+    /** Column name Absence_ID */
+    public static final String COLUMNNAME_Absence_ID = "Absence_ID";
+
+	/** Set Absence.
+	  * Absence
+	  */
+	public void setAbsence_ID (int Absence_ID);
+
+	/** Get Absence.
+	  * Absence
+	  */
+	public int getAbsence_ID();
+
+	public I_HR_Absence getAbsence() throws RuntimeException;
 
     /** Column name C_BPartner_ID */
     public static final String COLUMNNAME_C_BPartner_ID = "C_BPartner_ID";

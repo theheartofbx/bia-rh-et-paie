@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_Type_Conge
  *  @author iDempiere (generated) 
- *  @version Release 11
+ *  @version Release 12
  */
 @SuppressWarnings("all")
 public interface I_HR_Type_Conge 
@@ -167,6 +167,19 @@ Employé(e) Concerné(e)
 	  */
 	public boolean isDefinir_Periode_Conge();
 
+    /** Column name Nom_Conge */
+    public static final String COLUMNNAME_Nom_Conge = "Nom_Conge";
+
+	/** Set Nom du Congé.
+	  * Nom du Congé
+	  */
+	public void setNom_Conge (String Nom_Conge);
+
+	/** Get Nom du Congé.
+	  * Nom du Congé
+	  */
+	public String getNom_Conge();
+
     /** Column name Nombre_Jour_Après_Echeance */
     public static final String COLUMNNAME_Nombre_Jour_Après_Echeance = "Nombre_Jour_Après_Echeance";
 
@@ -192,19 +205,6 @@ Employé(e) Concerné(e)
 	  * Nombre de Jour(s) Avant Echéance
 	  */
 	public int getNombre_Jour_Avant_Echeance();
-
-    /** Column name Nom_Conge */
-    public static final String COLUMNNAME_Nom_Conge = "Nom_Conge";
-
-	/** Set Nom du Congé.
-	  * Nom du Congé
-	  */
-	public void setNom_Conge (String Nom_Conge);
-
-	/** Get Nom du Congé.
-	  * Nom du Congé
-	  */
-	public String getNom_Conge();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";

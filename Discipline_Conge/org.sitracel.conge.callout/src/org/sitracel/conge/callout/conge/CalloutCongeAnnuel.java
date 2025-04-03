@@ -59,7 +59,7 @@ public class CalloutCongeAnnuel implements IColumnCallout {
 									if(beanPeriode==null) {
 										beanAbsence = GeneralController.isAbsenceIn((Integer)mTab.getValue(MHRHoliday.COLUMNNAME_C_BPartner_ID), dateDebut, dateFin);
 										if(beanAbsence==null) {
-											Integer nbJour = CalloutControllerConge.getNombreJourTravaille(dateDebut, dateFin);
+											Integer nbJour = GeneralController.getNombreJourTravaille(dateDebut, dateFin);
 											if(nbJour!=null) {
 												BeanInfoCongeDepartement beanInfoCongeDepartement =CalloutControllerConge.getPeriodeCongeCritique((Integer) mTab.getValue(MHRHoliday.COLUMNNAME_C_BPartner_ID), 
 														dateDebut, dateFin);

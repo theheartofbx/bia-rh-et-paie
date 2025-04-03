@@ -26,7 +26,7 @@ public class GeneralController {
 		if(nombreJour>=0) {
 			int q = nombreJour / 6;
 			int r = nombreJour % 6;
-			for (int i = 0; i < r-1; i++) {
+			for (int i = 0; i <= r-1; i++) {
 				if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY) {
 					cal.add(Calendar.DAY_OF_WEEK, 1);
 				}
@@ -47,7 +47,7 @@ public class GeneralController {
 		if(nombreJour>=0) {
 			int q = nombreJour / 6;
 			int r = nombreJour % 6;
-			for (int i = 0; i < r-1; i++) {
+			for (int i = 0; i <= r-1; i++) {
 				if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY) {
 					cal.add(Calendar.DAY_OF_WEEK, -1);
 				}
@@ -190,7 +190,43 @@ public class GeneralController {
 			
 		}
 		return resultat;
-	}	
+	}		
+
+	
+	public static Integer getNombreJourTravaille(Timestamp dateDebut, Timestamp dateFin) {
+		Integer resultat = null;
+		if(dateDebut!=null && dateFin!=null) {
+			
+			Timestamp[] joursFeries = GeneralSqlController.getAllJoursFeries(dateDebut, dateFin, null);
+			Calendar cal = Calendar.getInstance();		
+			int ferie = 0;
+			for (Timestamp jourFerie : joursFeries) {
+				cal.setTime(jourFerie);
+				if(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY) {
+					ferie++;				
+				}
+			}
+			
+			Long j1 = TimeUnit.MILLISECONDS.toDays(dateDebut.getTime());
+			Long j2 = TimeUnit.MILLISECONDS.toDays(dateFin.getTime());
+			resultat = (int) Math.abs(j2-j1+1);
+			int sem = resultat / 7;
+			int jour = resultat % 7;
+			cal  = Calendar.getInstance();
+			cal.setTime(dateDebut);
+			int jourb = jour; 
+			for (int i = 0; i <= jourb; i++) {
+				cal.setTime(dateDebut);
+				cal.add(Calendar.DAY_OF_WEEK, i);
+				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+					jour = jour-1;
+				}
+			}
+			resultat = (sem*6) + jour - ferie;
+		}		
+		return resultat;
+	}
+	
 
 	public static boolean isCongeAnnuel(Integer cbpartnerid, Timestamp date) {
 		boolean resultat = true;
@@ -202,7 +238,8 @@ public class GeneralController {
 				resultat = true;
 			}
 			else {
-				BeanPeriode[] congesAnnuels = GeneralSqlController.getAllCongesAnnuel(cbpartnerid, date, null);
+				BeanPeriode[] congesAnnuels = GeneralSqlController.getCongesNonRejetebyNameConge(cbpartnerid, "Annuel", 
+						GeneralController.getFirstDayOfThisYear(), GeneralController.getLastDayOfThisYear(), null);
 				for(BeanPeriode congeAnnuel:congesAnnuels) {
 					if(date.after(congeAnnuel.getDateDebutConge()) && date.before(congeAnnuel.getDateFinConge())) {
 						resultat = true;
@@ -224,7 +261,8 @@ public class GeneralController {
 				resultat = true;
 			}
 			else {
-				BeanPeriode[] periodesSuspension = GeneralSqlController.getAllPeriodeSuspension(cbpartnerid, date, null);
+				BeanPeriode[] periodesSuspension = GeneralSqlController.getAllPeriodeSuspensionNonRejete(cbpartnerid, 
+						GeneralController.getFirstDayOfThisYear(), GeneralController.getLastDayOfThisYear(), null);
 				for(BeanPeriode periodeSuspension:periodesSuspension) {
 					if(date.after(periodeSuspension.getDateDebutConge()) && date.before(periodeSuspension.getDateFinConge())) {
 						resultat = true;
@@ -244,7 +282,8 @@ public class GeneralController {
 				dateFin=dateDebut;
 				dateDebut=inter;
 			}
-			BeanPeriode[] periodesSuspension = GeneralSqlController.getAllPeriodeSuspension(cbpartnerid, dateDebut, null);
+			BeanPeriode[] periodesSuspension = GeneralSqlController.getAllPeriodeSuspensionNonRejete(cbpartnerid, 
+					GeneralController.getFirstDayOfThisYear(), GeneralController.getLastDayOfThisYear(), null);
 			for(BeanPeriode periodeSuspension:periodesSuspension) {
 				if((dateDebut.after(periodeSuspension.getDateDebutConge()) && dateDebut.before(periodeSuspension.getDateFinConge())) || 
 						(dateFin.after(periodeSuspension.getDateDebutConge()) && dateFin.before(periodeSuspension.getDateFinConge()))) {
@@ -271,7 +310,8 @@ public class GeneralController {
 
 	public static BeanPeriode isPeriodeInConge(Integer idEmploye, Timestamp dateDebut, Timestamp dateFin) {
 		BeanPeriode resultat = null;
-		BeanPeriode[] bp = GeneralSqlController.getAllConges(idEmploye, null);
+		BeanPeriode[] bp = GeneralSqlController.getAllCongesNonRejete(idEmploye,
+				GeneralController.getFirstDayOfThisYear(), GeneralController.getLastDayOfThisYear(), null);
 		if(bp!=null) {
 			int i = 0;
 			while(i < bp.length && resultat==null) {

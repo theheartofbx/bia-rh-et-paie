@@ -18,14 +18,13 @@ package org.sitracel.discipline.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-
-import org.compiere.model.MTable;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 import org.sitracel.model.I_HR_Ampliation;
 
 /** Generated Interface for HR_Demande_Explication
  *  @author iDempiere (generated) 
- *  @version Release 11
+ *  @version Release 12
  */
 @SuppressWarnings("all")
 public interface I_HR_Demande_Explication 
@@ -268,19 +267,6 @@ Alerte Affiché
 	  */
 	public boolean isMessageAlerteDisplayed();
 
-    /** Column name isRapport_Personnalise */
-    public static final String COLUMNNAME_isRapport_Personnalise = "isRapport_Personnalise";
-
-	/** Set Personnaliser le Rapport.
-	  * Personnaliser le Rapport
-	  */
-	public void setisRapport_Personnalise (boolean isRapport_Personnalise);
-
-	/** Get Personnaliser le Rapport.
-	  * Personnaliser le Rapport
-	  */
-	public boolean isRapport_Personnalise();
-
     /** Column name Matricule_Employe */
     public static final String COLUMNNAME_Matricule_Employe = "Matricule_Employe";
 
@@ -435,4 +421,17 @@ Explication
 	  * Search key for the record in the format required - must be unique
 	  */
 	public String getValue();
+
+    /** Column name isRapport_Personnalise */
+    public static final String COLUMNNAME_isRapport_Personnalise = "isRapport_Personnalise";
+
+	/** Set Personnaliser le Rapport.
+	  * Personnaliser le Rapport
+	  */
+	public void setisRapport_Personnalise (boolean isRapport_Personnalise);
+
+	/** Get Personnaliser le Rapport.
+	  * Personnaliser le Rapport
+	  */
+	public boolean isRapport_Personnalise();
 }

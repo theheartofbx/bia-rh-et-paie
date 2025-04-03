@@ -24,7 +24,7 @@ import org.compiere.model.*;
 
 /** Generated Model for HR_Public_Holiday
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Public_Holiday")
 public class X_HR_Public_Holiday extends PO implements I_HR_Public_Holiday, I_Persistent
 {
@@ -32,7 +32,7 @@ public class X_HR_Public_Holiday extends PO implements I_HR_Public_Holiday, I_Pe
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240418L;
+	private static final long serialVersionUID = 20250318L;
 
     /** Standard Constructor */
     public X_HR_Public_Holiday (Properties ctx, int HR_Public_Holiday_ID, String trxName)

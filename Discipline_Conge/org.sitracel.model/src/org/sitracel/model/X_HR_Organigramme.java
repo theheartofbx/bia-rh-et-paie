@@ -23,7 +23,7 @@ import org.compiere.model.*;
 
 /** Generated Model for HR_Organigramme
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Organigramme")
 public class X_HR_Organigramme extends PO implements I_HR_Organigramme, I_Persistent
 {
@@ -31,7 +31,7 @@ public class X_HR_Organigramme extends PO implements I_HR_Organigramme, I_Persis
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240323L;
+	private static final long serialVersionUID = 20250318L;
 
     /** Standard Constructor */
     public X_HR_Organigramme (Properties ctx, int HR_Organigramme_ID, String trxName)

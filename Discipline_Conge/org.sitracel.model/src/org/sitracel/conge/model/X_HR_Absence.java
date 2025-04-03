@@ -25,7 +25,7 @@ import org.sitracel.discipline.model.I_HR_Demande_Explication;
 
 /** Generated Model for HR_Absence
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Absence")
 public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 {
@@ -33,7 +33,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240418L;
+	private static final long serialVersionUID = 20250318L;
 
     /** Standard Constructor */
     public X_HR_Absence (Properties ctx, int HR_Absence_ID, String trxName)

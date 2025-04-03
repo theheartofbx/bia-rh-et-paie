@@ -18,6 +18,7 @@ import org.sitracel.beanfactory.BeanFactory;
 import org.sitracel.conge.model.MHRAbsence;
 import org.sitracel.conge.model.MHRTypeAbsence;
 import org.sitracel.controller.GeneralController;
+import org.sitracel.controller.GeneralSqlController;
 import org.sitracel.discipline.model.MHRDelaiReponse;
 import org.sitracel.discipline.model.MHRDemandeExplication;
 import org.sitracel.discipline.model.MHRPunishment;
@@ -28,19 +29,19 @@ public class ModelValidatorControllerAbsence {
 	private static String mdp = "vzccxxisbuazhhys";
 
 	public static int getNombreJourCongeAnnuelBase() {
-		return ModelValidatorSqlControllerAbsence.getParametreFromParametreNumerique("Congé Annuel de Base");
+		return GeneralSqlController.getParametreFromParametreNumerique("Congé Annuel de Base");
 	}
 
 	public static int getNombreJourMaxAbsenceAvantDemandeExplication() {
-		return ModelValidatorSqlControllerAbsence.getParametreFromParametreNumerique("Absence Max Avant Demande Explication");
+		return GeneralSqlController.getParametreFromParametreNumerique("Absence Max Avant Demande Explication");
 	}
 
 	public static int getRHSystemID() {
-		return ModelValidatorSqlControllerAbsence.getParametreFromParametreNumerique("RH_Système_ID");
+		return GeneralSqlController.getParametreFromParametreNumerique("RH_Système_ID");
 	}
 	
 	public static int getDelaiReponse() {
-		return ModelValidatorSqlControllerAbsence.getParametreFromParametreNumerique("Délai Réponse Demande Explication");
+		return GeneralSqlController.getParametreFromParametreNumerique("Délai Réponse Demande Explication");
 	}
 	
 	public static void traiterDemandeExplicationSuiteAbsence(MHRAbsence absence) {
@@ -52,11 +53,11 @@ public class ModelValidatorControllerAbsence {
 				int absMax = ModelValidatorControllerAbsence.getNombreJourMaxAbsenceAvantDemandeExplication();
 				int rhSystemID = ModelValidatorControllerAbsence.getRHSystemID();
 				int delaiReponse = ModelValidatorControllerAbsence.getDelaiReponse();
-				BeanIdentifiant beanRHSystem = ModelValidatorSqlControllerAbsence.getBeanIdentifiant(rhSystemID, null);
-				BeanIdentifiant beanPartner = ModelValidatorSqlControllerAbsence.getBeanIdentifiant(absence.getC_BPartner_ID(), null);
+				BeanIdentifiant beanRHSystem = GeneralSqlController.getBeanIdentifiant(rhSystemID, null);
+				BeanIdentifiant beanPartner = GeneralSqlController.getBeanIdentifiant(absence.getC_BPartner_ID(), null);
 				
 				if(typeAbsence!=null) {					
-					BeanInfoAbsence infoAbsence = ModelValidatorSqlControllerAbsence.getAbsenceNonAutorise(absence.getC_BPartner_ID(), null);
+					BeanInfoAbsence infoAbsence = ModelValidatorSqlControllerAbsence.getAbsenceNonAutoriseNonTraite(absence.getC_BPartner_ID(), null);
 					if(typeAbsence.isDemandeExplication()) {
 						if(infoAbsence!=null) {
 							if((infoAbsence.getNombreJour()+1)>=absMax) {							

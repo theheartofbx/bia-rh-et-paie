@@ -26,7 +26,7 @@ import org.sitracel.model.I_HR_Ampliation;
 
 /** Generated Model for HR_Punishment
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Punishment")
 public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 {
@@ -34,7 +34,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240418L;
+	private static final long serialVersionUID = 20250318L;
 
     /** Standard Constructor */
     public X_HR_Punishment (Properties ctx, int HR_Punishment_ID, String trxName)
@@ -284,6 +284,22 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 		return ii.intValue();
 	}
 
+	/** Set Transaction Date.
+		@param DateTrx Transaction Date
+	*/
+	public void setDateTrx (Timestamp DateTrx)
+	{
+		set_ValueNoCheck (COLUMNNAME_DateTrx, DateTrx);
+	}
+
+	/** Get Transaction Date.
+		@return Transaction Date
+	  */
+	public Timestamp getDateTrx()
+	{
+		return (Timestamp)get_Value(COLUMNNAME_DateTrx);
+	}
+
 	/** Set Date Approbation.
 		@param Date_Approbation Date Approbation
 	*/
@@ -410,22 +426,6 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	public Timestamp getDate_Reponse_DE()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Reponse_DE);
-	}
-
-	/** Set Transaction Date.
-		@param DateTrx Transaction Date
-	*/
-	public void setDateTrx (Timestamp DateTrx)
-	{
-		set_ValueNoCheck (COLUMNNAME_DateTrx, DateTrx);
-	}
-
-	/** Get Transaction Date.
-		@return Transaction Date
-	  */
-	public Timestamp getDateTrx()
-	{
-		return (Timestamp)get_Value(COLUMNNAME_DateTrx);
 	}
 
 	/** Set Date de Validation.
@@ -914,29 +914,6 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 		return false;
 	}
 
-	/** Set Personnaliser le Rapport.
-		@param isRapport_Personnalise Personnaliser le Rapport
-	*/
-	public void setisRapport_Personnalise (boolean isRapport_Personnalise)
-	{
-		set_Value (COLUMNNAME_isRapport_Personnalise, Boolean.valueOf(isRapport_Personnalise));
-	}
-
-	/** Get Personnaliser le Rapport.
-		@return Personnaliser le Rapport
-	  */
-	public boolean isRapport_Personnalise()
-	{
-		Object oo = get_Value(COLUMNNAME_isRapport_Personnalise);
-		if (oo != null)
-		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
-			return "Y".equals(oo);
-		}
-		return false;
-	}
-
 	/** Set Rejeté(e).
 		@param IsRejetee Rejeté(e)
 	*/
@@ -1231,38 +1208,6 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 		return (String)get_Value(COLUMNNAME_Reponse_Demande_Explication);
 	}
 
-	/** Set Valider .
-		@param Valider Valider 
-	*/
-	public void setValider (String Valider)
-	{
-		set_Value (COLUMNNAME_Valider, Valider);
-	}
-
-	/** Get Valider .
-		@return Valider 
-	  */
-	public String getValider()
-	{
-		return (String)get_Value(COLUMNNAME_Valider);
-	}
-
-	/** Set Valider .
-		@param Valider_Createur Valider 
-	*/
-	public void setValider_Createur (String Valider_Createur)
-	{
-		set_Value (COLUMNNAME_Valider_Createur, Valider_Createur);
-	}
-
-	/** Get Valider .
-		@return Valider 
-	  */
-	public String getValider_Createur()
-	{
-		return (String)get_Value(COLUMNNAME_Valider_Createur);
-	}
-
 	/** Set Validé/rejeté par (Matricule) :.
 		@param Valide_Rejete_Par_Matricule Validé/rejeté par (Matricule) :
 	*/
@@ -1333,5 +1278,60 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Valider .
+		@param Valider Valider 
+	*/
+	public void setValider (String Valider)
+	{
+		set_Value (COLUMNNAME_Valider, Valider);
+	}
+
+	/** Get Valider .
+		@return Valider 
+	  */
+	public String getValider()
+	{
+		return (String)get_Value(COLUMNNAME_Valider);
+	}
+
+	/** Set Valider .
+		@param Valider_Createur Valider 
+	*/
+	public void setValider_Createur (String Valider_Createur)
+	{
+		set_Value (COLUMNNAME_Valider_Createur, Valider_Createur);
+	}
+
+	/** Get Valider .
+		@return Valider 
+	  */
+	public String getValider_Createur()
+	{
+		return (String)get_Value(COLUMNNAME_Valider_Createur);
+	}
+
+	/** Set Personnaliser le Rapport.
+		@param isRapport_Personnalise Personnaliser le Rapport
+	*/
+	public void setisRapport_Personnalise (boolean isRapport_Personnalise)
+	{
+		set_Value (COLUMNNAME_isRapport_Personnalise, Boolean.valueOf(isRapport_Personnalise));
+	}
+
+	/** Get Personnaliser le Rapport.
+		@return Personnaliser le Rapport
+	  */
+	public boolean isRapport_Personnalise()
+	{
+		Object oo = get_Value(COLUMNNAME_isRapport_Personnalise);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
 	}
 }

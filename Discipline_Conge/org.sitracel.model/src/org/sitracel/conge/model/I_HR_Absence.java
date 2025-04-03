@@ -19,12 +19,12 @@ package org.sitracel.conge.model;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import org.compiere.model.*;
-import org.sitracel.discipline.model.*;
 import org.compiere.util.KeyNamePair;
+import org.sitracel.discipline.model.I_HR_Demande_Explication;
 
 /** Generated Interface for HR_Absence
  *  @author iDempiere (generated) 
- *  @version Release 11
+ *  @version Release 12
  */
 @SuppressWarnings("all")
 public interface I_HR_Absence 

@@ -24,7 +24,7 @@ import org.compiere.model.*;
 
 /** Generated Model for HR_Dossier_Disciplinaire
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Dossier_Disciplinaire")
 public class X_HR_Dossier_Disciplinaire extends PO implements I_HR_Dossier_Disciplinaire, I_Persistent
 {
@@ -32,7 +32,7 @@ public class X_HR_Dossier_Disciplinaire extends PO implements I_HR_Dossier_Disci
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240302L;
+	private static final long serialVersionUID = 20250318L;
 
     /** Standard Constructor */
     public X_HR_Dossier_Disciplinaire (Properties ctx, int HR_Dossier_Disciplinaire_ID, String trxName)

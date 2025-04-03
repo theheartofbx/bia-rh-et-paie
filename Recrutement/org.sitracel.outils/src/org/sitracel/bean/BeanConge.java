@@ -20,6 +20,7 @@ public class BeanConge {
 	private Integer detteConge;
 	private Timestamp dateDebutDernierConge;
 	private Timestamp dateFindernierConge;
+	private Timestamp dateEmbauche;
 	
 	public BeanConge() {
 		
@@ -152,5 +153,12 @@ public class BeanConge {
 	public void setDateFindernierConge(Timestamp dateFindernierConge) {
 		this.dateFindernierConge = dateFindernierConge;
 	}
-	
+
+	public Timestamp getDateEmbauche() {
+		return dateEmbauche;
+	}
+
+	public void setDateEmbauche(Timestamp dateEmbauche) {
+		this.dateEmbauche = dateEmbauche;
+	}
 }

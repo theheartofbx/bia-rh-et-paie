@@ -19,12 +19,16 @@ package org.sitracel.conge.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.sitracel.model.I_HR_Categorie_Responsabilite;
 
 /** Generated Model for HR_Autorisation_Absence
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Autorisation_Absence")
 public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_Absence, I_Persistent
 {
@@ -32,7 +36,7 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240418L;
+	private static final long serialVersionUID = 20250318L;
 
     /** Standard Constructor */
     public X_HR_Autorisation_Absence (Properties ctx, int HR_Autorisation_Absence_ID, String trxName)

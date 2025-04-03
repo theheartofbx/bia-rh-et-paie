@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.compiere.util.DB;
 import org.compiere.util.Env;
@@ -39,48 +38,14 @@ public class CalloutControllerConge {
 		}		
 		return resultat;		
 	}	
-	
-	public static Integer getNombreJourTravaille(Timestamp dateDebut, Timestamp dateFin) {
-		Integer resultat = null;
-		if(dateDebut!=null && dateFin!=null) {
-			
-			Timestamp[] joursFeries = GeneralSqlController.getAllJoursFeries(dateDebut, dateFin, null);
-			Calendar cal = Calendar.getInstance();		
-			int ferie = 0;
-			for (Timestamp jourFerie : joursFeries) {
-				cal.setTime(jourFerie);
-				if(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY) {
-					ferie++;				
-				}
-			}
-			
-			Long j1 = TimeUnit.MILLISECONDS.toDays(dateDebut.getTime());
-			Long j2 = TimeUnit.MILLISECONDS.toDays(dateFin.getTime());
-			resultat = (int) Math.abs(j2-j1+1);
-			int sem = resultat / 7;
-			int jour = resultat % 7;
-			cal  = Calendar.getInstance();
-			cal.setTime(dateDebut);
-			int jourb = jour; 
-			for (int i = 0; i <= jourb; i++) {
-				cal.setTime(dateDebut);
-				cal.add(Calendar.DAY_OF_WEEK, i);
-				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-					jour = jour-1;
-				}
-			}
-			resultat = (sem*6) + jour - ferie;
-		}		
-		return resultat;
-	}
-	
 	public static Integer getNombreJourCongeTotalEmploye(Integer idCBPartner, Integer idTypeConge) {
 		Integer resultat =null;
 		if(idCBPartner!=null && idTypeConge!=null) {
 			resultat = 0;
-			BeanPeriode[] conges = GeneralSqlController.getAllCongesAnnuel(idCBPartner , new Timestamp(System.currentTimeMillis()), null);
+			BeanPeriode[] conges = GeneralSqlController.getCongesValidebyNameConge(idCBPartner , "Annuel",
+					GeneralController.getFirstDayOfThisYear(), GeneralController.getLastDayOfThisYear(), null);
 			for (BeanPeriode beanPeriode : conges) {
-				resultat = resultat + getNombreJourTravaille(beanPeriode.getDateDebutConge(), beanPeriode.getDateFinConge());
+				resultat = resultat + GeneralController.getNombreJourTravaille(beanPeriode.getDateDebutConge(), beanPeriode.getDateFinConge());
 			}
 		}
 		return resultat;		
@@ -108,7 +73,8 @@ public class CalloutControllerConge {
 	
 	public static BeanPeriode isDejaPris(Integer idEmploye, Timestamp dateDebut, Timestamp dateFin) {
 		BeanPeriode resultat = null;
-		BeanPeriode[] bp = GeneralSqlController.getAllConges(idEmploye, null);
+		BeanPeriode[] bp = GeneralSqlController.getAllCongesNonRejete(idEmploye, 
+				GeneralController.getFirstDayOfThisYear(), GeneralController.getLastDayOfThisYear(), null);
 		if(bp!=null) {
 			int i = 0;
 			while(i < bp.length && resultat==null) {

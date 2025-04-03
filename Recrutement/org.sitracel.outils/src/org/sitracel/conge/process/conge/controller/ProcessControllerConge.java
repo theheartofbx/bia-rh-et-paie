@@ -21,10 +21,6 @@ import org.sitracel.conge.model.MHRTypeAbsence;
 import org.sitracel.conge.model.MHRTypeConge;
 import org.sitracel.controller.GeneralController;
 import org.sitracel.controller.GeneralSqlController;
-import org.sitracel.discipline.model.MHRDureeSanction;
-import org.sitracel.discipline.model.MHRPunishment;
-import org.sitracel.discipline.model.MHRSanctionAutorisation;
-import org.sitracel.discipline.model.MHRTypeSanction;
 import org.sitracel.model.MCBPartner;
 
 public class ProcessControllerConge {
@@ -33,12 +29,12 @@ public class ProcessControllerConge {
 
 	public static void validerConge(Integer idConge, Integer adUserID) {
 		if(idConge!=null && adUserID!=null) {
-			BeanIdentifiant beanIdentifiant = ProcessSqlControllerConge.getBeanIdentifiant(adUserID, null);
+			BeanIdentifiant beanIdentifiant = GeneralSqlController.getBeanIdentifiant(adUserID, null);
 			MHRHoliday conge = new MHRHoliday(Env.getCtx(), idConge, null);
 			if(conge!=null && beanIdentifiant!=null) {
 				if(beanIdentifiant.getNomEmploye()!=null) {
 					MHRTypeConge typeConge = new MHRTypeConge(Env.getCtx(), conge.getEmission_Conge_ID(), null);
-					int detteConge = ProcessSqlControllerConge.getNombreJourAbsencesConge(conge.getDate_Debut_Souhaitee(), null);
+					int detteConge = GeneralSqlController.getNombreJourAbsencesCongeNonTraite(conge.getDate_Debut_Souhaitee(), null);
 					if(typeConge!=null) {
 						if(typeConge.isCongeAnnuel()) {
 							if(conge.getJours_Conge_Total()-conge.getJours_Conge_Correspondant()-conge.getJours_Conge_Deja_Utilise()-detteConge<0) {
@@ -69,12 +65,12 @@ public class ProcessControllerConge {
 	
 	public static void rejeterConge(Integer idConge, Integer adUserID) {
 		if(idConge!=null && adUserID!=null) {
-			BeanIdentifiant beanIdentifiant = ProcessSqlControllerConge.getBeanIdentifiant(adUserID, null);
+			BeanIdentifiant beanIdentifiant = GeneralSqlController.getBeanIdentifiant(adUserID, null);
 			MHRHoliday conge = new MHRHoliday(Env.getCtx(), idConge, null);
 			if(conge!=null && beanIdentifiant!=null) {
 				if(beanIdentifiant.getNomEmploye()!=null) {
 					MHRTypeConge typeConge = new MHRTypeConge(Env.getCtx(), conge.getEmission_Conge_ID(), null);
-					int detteConge = ProcessSqlControllerConge.getNombreJourAbsencesConge(conge.getDate_Debut_Souhaitee(), null);
+					int detteConge = GeneralSqlController.getNombreJourAbsencesCongeNonTraite(conge.getDate_Debut_Souhaitee(), null);
 					if(typeConge!=null) {
 						if(typeConge.isCongeAnnuel()) {
 							if(conge.getJours_Conge_Total()-conge.getJours_Conge_Correspondant()-conge.getJours_Conge_Deja_Utilise()-detteConge<0) {
@@ -101,12 +97,12 @@ public class ProcessControllerConge {
 
 	public static void approuverConge(Integer idConge, Integer adUserID) {
 		if(idConge!=null && adUserID!=null) {
-			BeanIdentifiant bi = ProcessSqlControllerConge.getBeanIdentifiant(adUserID, null);
+			BeanIdentifiant bi = GeneralSqlController.getBeanIdentifiant(adUserID, null);
 			MHRHoliday conge = new MHRHoliday(Env.getCtx(), idConge, null);
 			if(conge!=null && bi!=null) {
 				if(bi.getNomEmploye()!=null) {
 					MHRTypeConge typeConge = new MHRTypeConge(Env.getCtx(), conge.getEmission_Conge_ID(), null);
-					int detteConge = ProcessSqlControllerConge.getNombreJourAbsencesConge(conge.getDate_Debut_Souhaitee(), null);
+					int detteConge = GeneralSqlController.getNombreJourAbsencesCongeNonTraite(conge.getDate_Debut_Souhaitee(), null);
 					if(typeConge!=null) {
 						if(typeConge.isCongeAnnuel()) {
 							if(conge.getJours_Conge_Total()-conge.getJours_Conge_Correspondant()-conge.getJours_Conge_Deja_Utilise()-detteConge<0) {
@@ -130,12 +126,12 @@ public class ProcessControllerConge {
 	
 	public static void desapprouverConge(Integer idConge, Integer adUserID) {
 		if(idConge!=null && adUserID!=null) {
-			BeanIdentifiant bi = ProcessSqlControllerConge.getBeanIdentifiant(adUserID, null);
+			BeanIdentifiant bi = GeneralSqlController.getBeanIdentifiant(adUserID, null);
 			MHRHoliday conge = new MHRHoliday(Env.getCtx(), idConge, null);
 			if(conge!=null && bi!=null) {
 				if(bi.getNomEmploye()!=null) {
 					MHRTypeConge typeConge = new MHRTypeConge(Env.getCtx(), conge.getEmission_Conge_ID(), null);
-					int detteConge = ProcessSqlControllerConge.getNombreJourAbsencesConge(conge.getDate_Debut_Souhaitee(), null);
+					int detteConge = GeneralSqlController.getNombreJourAbsencesCongeNonTraite(conge.getDate_Debut_Souhaitee(), null);
 					if(typeConge!=null) {
 						if(typeConge.isCongeAnnuel()) {
 							if(conge.getJours_Conge_Total()-conge.getJours_Conge_Correspondant()-conge.getJours_Conge_Deja_Utilise()-detteConge<0) {
@@ -232,8 +228,8 @@ public class ProcessControllerConge {
 		if(idConge!=null) {
 			MHRHoliday conge = new MHRHoliday(Env.getCtx(), idConge, null);
 			if(conge!=null) {
-				if(!conge.isValidee() && !conge.isRejetee() && conge.getDate_Fin_Effective().after(new Timestamp(System.currentTimeMillis()))) {
-					conge.setJours_Conge_A_Compenser(ProcessSqlControllerConge.getNombreJourAbsencesConge(conge.getDate_Debut_Souhaitee(),null));
+				if(!conge.isValidee() && !conge.isRejetee() && conge.getDate_Debut_Effective().after(new Timestamp(System.currentTimeMillis()))) {
+					conge.setJours_Conge_A_Compenser(GeneralSqlController.getNombreJourAbsencesCongeNonTraite(conge.getDate_Debut_Souhaitee(),null));
 					conge.save();					
 				}
 			}
@@ -283,7 +279,7 @@ public class ProcessControllerConge {
 			if(autorisation!=null) {
 				MHRTypeConge typeConge = new MHRTypeConge(Env.getCtx(), autorisation.getHR_Type_Conge_ID(), null);
 				if(typeConge!=null) {
-					ArrayList<Integer> listeAbsenceID = CalloutSqlControllerAbsence.getListeAbsenceID(holiday.getC_BPartner_ID(), "En Congé", holiday.getDate_Debut_Effective(), holiday.getDate_Fin_Effective(), null);
+					ArrayList<Integer> listeAbsenceID = CalloutSqlControllerAbsence.getListeAbsenceIDByName(holiday.getC_BPartner_ID(), "En Congé", holiday.getDate_Debut_Effective(), holiday.getDate_Fin_Effective(), null);
 					for(Integer absenceID:listeAbsenceID) {
 						MHRAbsence absence = new MHRAbsence(Env.getCtx(), absenceID,null);
 						if(absence!=null) {

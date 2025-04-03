@@ -19,15 +19,12 @@ package org.sitracel.discipline.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-
-import org.compiere.model.I_Persistent;
-import org.compiere.model.PO;
-import org.compiere.model.POInfo;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Delai_Reponse
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Delai_Reponse")
 public class X_HR_Delai_Reponse extends PO implements I_HR_Delai_Reponse, I_Persistent
 {
@@ -35,7 +32,7 @@ public class X_HR_Delai_Reponse extends PO implements I_HR_Delai_Reponse, I_Pers
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240220L;
+	private static final long serialVersionUID = 20250318L;
 
     /** Standard Constructor */
     public X_HR_Delai_Reponse (Properties ctx, int HR_Delai_Reponse_ID, String trxName)

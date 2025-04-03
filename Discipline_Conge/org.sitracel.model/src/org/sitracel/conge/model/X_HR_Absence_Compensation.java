@@ -24,7 +24,7 @@ import org.compiere.model.*;
 
 /** Generated Model for HR_Absence_Compensation
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Absence_Compensation")
 public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compensation, I_Persistent
 {
@@ -32,7 +32,7 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240418L;
+	private static final long serialVersionUID = 20250318L;
 
     /** Standard Constructor */
     public X_HR_Absence_Compensation (Properties ctx, int HR_Absence_Compensation_ID, String trxName)
@@ -358,10 +358,10 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 		return (String)get_Value(COLUMNNAME_Matricule_Employe);
 	}
 
-	/** Compenser à la Fin du Congé = Compenser à la Fin du Congé */
-	public static final String MODE_COMPENSATION_CompenserÀLaFinDuCongé = "Compenser à la Fin du Congé";
 	/** Compenser au Début du Congé = Compenser au Début du Congé */
 	public static final String MODE_COMPENSATION_CompenserAuDébutDuCongé = "Compenser au Début du Congé";
+	/** Compenser à la Fin du Congé = Compenser à la Fin du Congé */
+	public static final String MODE_COMPENSATION_CompenserÀLaFinDuCongé = "Compenser à la Fin du Congé";
 	/** Set Mode de Compensation.
 		@param Mode_Compensation Mode de Compensation
 	*/

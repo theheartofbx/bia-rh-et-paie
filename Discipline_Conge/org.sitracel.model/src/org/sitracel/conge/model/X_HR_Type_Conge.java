@@ -23,7 +23,7 @@ import org.compiere.model.*;
 
 /** Generated Model for HR_Type_Conge
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Type_Conge")
 public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 {
@@ -31,7 +31,7 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240418L;
+	private static final long serialVersionUID = 20250318L;
 
     /** Standard Constructor */
     public X_HR_Type_Conge (Properties ctx, int HR_Type_Conge_ID, String trxName)
@@ -230,6 +230,22 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 		return false;
 	}
 
+	/** Set Nom du Congé.
+		@param Nom_Conge Nom du Congé
+	*/
+	public void setNom_Conge (String Nom_Conge)
+	{
+		set_Value (COLUMNNAME_Nom_Conge, Nom_Conge);
+	}
+
+	/** Get Nom du Congé.
+		@return Nom du Congé
+	  */
+	public String getNom_Conge()
+	{
+		return (String)get_Value(COLUMNNAME_Nom_Conge);
+	}
+
 	/** Set Nombre de Jour(s) Après Echéance.
 		@param Nombre_Jour_Après_Echeance Nombre de Jour(s) Après Echéance
 	*/
@@ -266,22 +282,6 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
-	}
-
-	/** Set Nom du Congé.
-		@param Nom_Conge Nom du Congé
-	*/
-	public void setNom_Conge (String Nom_Conge)
-	{
-		set_Value (COLUMNNAME_Nom_Conge, Nom_Conge);
-	}
-
-	/** Get Nom du Congé.
-		@return Nom du Congé
-	  */
-	public String getNom_Conge()
-	{
-		return (String)get_Value(COLUMNNAME_Nom_Conge);
 	}
 
 	/** Set Search Key.
