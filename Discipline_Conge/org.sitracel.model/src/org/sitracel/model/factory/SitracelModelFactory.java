@@ -26,6 +26,7 @@ import org.sitracel.model.MHRCategorieResponsabilite;
 import org.sitracel.model.MHREmployeeJob;
 import org.sitracel.model.MHROrganigramme;
 import org.sitracel.model.MHRParametreNumerique;
+import org.sitracel.paie.model.MHRCalculPaie;
 import org.sitracel.recrutement.model.MHRCandidatEvaluation;
 import org.sitracel.recrutement.model.MHRCandidatExperience;
 import org.sitracel.recrutement.model.MHRCandidatFormation;
@@ -168,6 +169,11 @@ public class SitracelModelFactory implements IModelFactory{
 		if(tableName.equalsIgnoreCase(MHRTypeEtablissement.Table_Name)) {
 			return MHRTypeEtablissement.class;
 		}
+		
+
+		if(tableName.equalsIgnoreCase(MHRCalculPaie.Table_Name)) {
+			return MHRCalculPaie.class;
+		}
 		return null;
 	}
 
@@ -294,6 +300,10 @@ public class SitracelModelFactory implements IModelFactory{
 		if(tableName.equalsIgnoreCase(MHRTypeEtablissement.Table_Name)) {
 			return new MHRTypeEtablissement(Env.getCtx(), Record_ID, trxName);
 		}
+		
+		if(tableName.equalsIgnoreCase(MHRCalculPaie.Table_Name)) {
+			return new MHRCalculPaie(Env.getCtx(), Record_ID, trxName);
+		}
 		return null;
 	}
 
@@ -419,6 +429,10 @@ public class SitracelModelFactory implements IModelFactory{
 		}
 		if(tableName.equalsIgnoreCase(MHRTypeEtablissement.Table_Name)) {
 			return new MHRTypeEtablissement(Env.getCtx(), rs, trxName);
+		}		
+
+		if(tableName.equalsIgnoreCase(MHRCalculPaie.Table_Name)) {
+			return new MHRCalculPaie(Env.getCtx(), rs, trxName);
 		}
 		return null;
 	}

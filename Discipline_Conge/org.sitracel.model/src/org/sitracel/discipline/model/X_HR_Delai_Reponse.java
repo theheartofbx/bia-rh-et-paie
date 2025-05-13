@@ -32,7 +32,7 @@ public class X_HR_Delai_Reponse extends PO implements I_HR_Delai_Reponse, I_Pers
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250318L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_Delai_Reponse (Properties ctx, int HR_Delai_Reponse_ID, String trxName)

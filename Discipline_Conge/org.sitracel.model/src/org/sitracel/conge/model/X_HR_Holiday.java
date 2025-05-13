@@ -40,7 +40,7 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250318L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_Holiday (Properties ctx, int HR_Holiday_ID, String trxName)

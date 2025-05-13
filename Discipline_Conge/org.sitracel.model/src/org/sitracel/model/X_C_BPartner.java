@@ -35,7 +35,7 @@ public class X_C_BPartner extends PO implements I_C_BPartner, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250318L;
+	private static final long serialVersionUID = 20250506L;
 
     /** Standard Constructor */
     public X_C_BPartner (Properties ctx, int C_BPartner_ID, String trxName)
@@ -771,6 +771,22 @@ public class X_C_BPartner extends PO implements I_C_BPartner, I_Persistent
 	public Timestamp getDateFrom()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_DateFrom);
+	}
+
+	/** Set Contrat débuté à Partir de :.
+		@param Date_Debut_Contrat_Relative Contrat débuté à Partir de :
+	*/
+	public void setDate_Debut_Contrat_Relative (Timestamp Date_Debut_Contrat_Relative)
+	{
+		set_ValueNoCheck (COLUMNNAME_Date_Debut_Contrat_Relative, Date_Debut_Contrat_Relative);
+	}
+
+	/** Get Contrat débuté à Partir de :.
+		@return Contrat débuté à Partir de :
+	  */
+	public Timestamp getDate_Debut_Contrat_Relative()
+	{
+		return (Timestamp)get_Value(COLUMNNAME_Date_Debut_Contrat_Relative);
 	}
 
 	public org.compiere.model.I_C_1099Box getDefault1099Box() throws RuntimeException
@@ -1743,6 +1759,21 @@ public class X_C_BPartner extends PO implements I_C_BPartner, I_Persistent
 	public String getNumeroCni()
 	{
 		return (String)get_Value(COLUMNNAME_NumeroCni);
+	}
+
+	/** Set Numero de Sécurité Sociale.
+		@param NumeroSecuriteSociale Numero de Sécurité Sociale
+	*/
+	public void setNumeroSecuriteSociale (String NumeroSecuriteSociale)
+	{
+		set_Value (COLUMNNAME_NumeroSecuriteSociale, NumeroSecuriteSociale);
+	}
+
+	/** Get Numero de Sécurité Sociale.
+		@return Numero de Sécurité Sociale	  */
+	public String getNumeroSecuriteSociale()
+	{
+		return (String)get_Value(COLUMNNAME_NumeroSecuriteSociale);
 	}
 
 	/** Set Order Reference.

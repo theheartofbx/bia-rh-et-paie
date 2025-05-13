@@ -19,16 +19,12 @@ package org.sitracel.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-
-import org.compiere.model.I_Persistent;
-import org.compiere.model.MTable;
-import org.compiere.model.PO;
-import org.compiere.model.POInfo;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Formation
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Formation")
 public class X_HR_Formation extends PO implements I_HR_Formation, I_Persistent
 {
@@ -36,7 +32,7 @@ public class X_HR_Formation extends PO implements I_HR_Formation, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240220L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_Formation (Properties ctx, int HR_Formation_ID, String trxName)

@@ -37,7 +37,7 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250318L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_Sanction_Autorisation (Properties ctx, int HR_Sanction_Autorisation_ID, String trxName)

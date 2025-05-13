@@ -10,7 +10,7 @@ import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.sitracel.conge.callout.absence.controller.CalloutSqlControllerAbsence;
 import org.sitracel.conge.model.MHRAbsence;
-import org.sitracel.controller.GeneralController;
+import org.sitracel.controller.GeneralSqlController;
 
 public class CalloutDateAbsenceConforme implements IColumnCallout{
 
@@ -27,19 +27,19 @@ public class CalloutDateAbsenceConforme implements IColumnCallout{
 			mTab.setValue(MHRAbsence.COLUMNNAME_Message_Alerte, "une absence a déjà été enregistrée le "
 			+new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH).format(date));
 		}
-		else if(GeneralController.isJourFerie(date)) {
+		else if(GeneralSqlController.isJourFerie(date, null)) {
 			mTab.setValue(MHRAbsence.COLUMNNAME_Date_Absence, null);
 			mTab.setValue(MHRAbsence.COLUMNNAME_IsMessageAlerteDisplayed, true);
 			mTab.setValue(MHRAbsence.COLUMNNAME_Message_Alerte, "le "+new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH).format(date)
 					+" est soit un dimanche, soit un jour férié");
 		}
-		else if(GeneralController.isCongeAnnuel(cBPartnerID, date)) {
+		else if(GeneralSqlController.isJourCongesNonRejetebyNameConge(cBPartnerID, "Annuel", date, null)) {
 			mTab.setValue(MHRAbsence.COLUMNNAME_Date_Absence, null);
 			mTab.setValue(MHRAbsence.COLUMNNAME_IsMessageAlerteDisplayed, true);
 			mTab.setValue(MHRAbsence.COLUMNNAME_Message_Alerte, "le "+new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH).format(date)
 					+" fait partie d'un des jours de congé de l'employé");
 		}
-		else if(GeneralController.isJourSuspension(cBPartnerID, date)) {
+		else if(GeneralSqlController.isJourSuspensionNonRejete(cBPartnerID, date, null)) {
 			mTab.setValue(MHRAbsence.COLUMNNAME_Date_Absence, null);
 			mTab.setValue(MHRAbsence.COLUMNNAME_IsMessageAlerteDisplayed, true);
 			mTab.setValue(MHRAbsence.COLUMNNAME_Message_Alerte, "le "+new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH).format(date)

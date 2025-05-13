@@ -32,7 +32,7 @@ public class X_HR_Dossier_Disciplinaire extends PO implements I_HR_Dossier_Disci
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250318L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_Dossier_Disciplinaire (Properties ctx, int HR_Dossier_Disciplinaire_ID, String trxName)

@@ -1,17 +1,14 @@
 package org.sitracel.discipline.callout.sanction;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 import java.util.Properties;
 
 import org.adempiere.base.IColumnCallout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.util.Env;
-import org.sitracel.bean.BeanAbsence;
-import org.sitracel.bean.BeanPeriode;
 import org.sitracel.controller.GeneralController;
+import org.sitracel.controller.GeneralSqlController;
 import org.sitracel.discipline.model.MHRDureeSanction;
 import org.sitracel.discipline.model.MHRPunishment;
 
@@ -33,40 +30,40 @@ public class CalloutDureeSuspension implements IColumnCallout{
 			}
 			if(dureeSuspension!=null) {
 				Timestamp dateFinApplication = GeneralController.ajouterNombreJour(dateDebutApplication, dureeSuspension.getNombre_De_Jour());
-				BeanPeriode beanPeriode = null;
-				BeanAbsence beanAbsence = null;
-				beanPeriode = GeneralController.isPeriodeSuspensionIn((Integer)mTab.getValue(MHRPunishment.COLUMNNAME_C_BPartner_ID), dateDebutApplication, dateFinApplication);
-				if(beanPeriode==null) {
-					beanPeriode = GeneralController.isPeriodeInConge((Integer)mTab.getValue(MHRPunishment.COLUMNNAME_C_BPartner_ID), dateDebutApplication, dateFinApplication);
-					if(beanPeriode==null) {
-						beanAbsence = GeneralController.isAbsenceIn((Integer)mTab.getValue(MHRPunishment.COLUMNNAME_C_BPartner_ID), dateDebutApplication, dateFinApplication);
-						if(beanAbsence==null) {
-							
+				Integer bpartnerID = (Integer)mTab.getValue(MHRPunishment.COLUMNNAME_C_BPartner_ID);
+				if(bpartnerID!=null) {
+					if(!GeneralSqlController.chevaucheSuspensionNonRejete(bpartnerID, dateDebutApplication, dateFinApplication, null)) {
+						if(!GeneralSqlController.chevaucheAnyCongeNonRejete(bpartnerID, dateDebutApplication, dateFinApplication, null)) {
+							if(!GeneralSqlController.isPeriodeAbsence(bpartnerID, dateDebutApplication, dateFinApplication, null)) {
+								mTab.setValue(MHRPunishment.COLUMNNAME_Date_Debut_Application, null);
+								mTab.setValue(MHRPunishment.COLUMNNAME_HR_Duree_Sanction_ID, null);
+								mTab.setValue(MHRPunishment.COLUMNNAME_IsMessageAlerteDisplayed, true);
+								mTab.setValue(MHRPunishment.COLUMNNAME_Message_Alerte, "un jour d'absence a été enregistrée durant cette période");
+							}
+							else {
+								mTab.setValue(MHRPunishment.COLUMNNAME_Date_Debut_Application, null);
+								mTab.setValue(MHRPunishment.COLUMNNAME_HR_Duree_Sanction_ID, null);
+								mTab.setValue(MHRPunishment.COLUMNNAME_IsMessageAlerteDisplayed, true);
+								mTab.setValue(MHRPunishment.COLUMNNAME_Message_Alerte, "un jour d'absence a été enregistrée durant cette période");
+							}
 						}
 						else {
 							mTab.setValue(MHRPunishment.COLUMNNAME_Date_Debut_Application, null);
 							mTab.setValue(MHRPunishment.COLUMNNAME_HR_Duree_Sanction_ID, null);
 							mTab.setValue(MHRPunishment.COLUMNNAME_IsMessageAlerteDisplayed, true);
-							mTab.setValue(MHRPunishment.COLUMNNAME_Message_Alerte, "un jour d'absence a été enregistrée durant cette période, le "
-							+new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH).format(beanAbsence.getDateAbsence()));
+							mTab.setValue(MHRPunishment.COLUMNNAME_Message_Alerte, "une période de congé a été enregistrée durant cette période");
 						}
 					}
-					else {
-						mTab.setValue(MHRPunishment.COLUMNNAME_Date_Debut_Application, null);
-						mTab.setValue(MHRPunishment.COLUMNNAME_HR_Duree_Sanction_ID, null);
-						mTab.setValue(MHRPunishment.COLUMNNAME_IsMessageAlerteDisplayed, true);
-						mTab.setValue(MHRPunishment.COLUMNNAME_Message_Alerte, "une période de congé a été enregistrée durant cette période, du"
-								+new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH).format(beanPeriode.getDateDebutConge())
-								+" au "+new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH).format(beanPeriode.getDateFinConge()));
-					}
-				}
+					mTab.setValue(MHRPunishment.COLUMNNAME_Date_Debut_Application, null);
+					mTab.setValue(MHRPunishment.COLUMNNAME_HR_Duree_Sanction_ID, null);
+					mTab.setValue(MHRPunishment.COLUMNNAME_IsMessageAlerteDisplayed, true);
+					mTab.setValue(MHRPunishment.COLUMNNAME_Message_Alerte, "une autre période de suspension a été enregistrée durant cette période");
+				}				
 				else {
 					mTab.setValue(MHRPunishment.COLUMNNAME_Date_Debut_Application, null);
 					mTab.setValue(MHRPunishment.COLUMNNAME_HR_Duree_Sanction_ID, null);
 					mTab.setValue(MHRPunishment.COLUMNNAME_IsMessageAlerteDisplayed, true);
-					mTab.setValue(MHRPunishment.COLUMNNAME_Message_Alerte, "une autre période de suspension a été enregistrée durant cette période, du "
-							+new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH).format(beanPeriode.getDateDebutConge())
-							+" au "+new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH).format(beanPeriode.getDateFinConge()));
+					mTab.setValue(MHRPunishment.COLUMNNAME_Message_Alerte, "veuillez renseignez des données corrects svp");
 				}
 			}
 		}

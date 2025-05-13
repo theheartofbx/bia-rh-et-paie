@@ -32,7 +32,7 @@ public class X_HR_Categorie_Responsabilite extends PO implements I_HR_Categorie_
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250318L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_Categorie_Responsabilite (Properties ctx, int HR_Categorie_Responsabilite_ID, String trxName)

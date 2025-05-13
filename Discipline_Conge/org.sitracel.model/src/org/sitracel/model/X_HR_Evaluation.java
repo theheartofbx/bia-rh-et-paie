@@ -27,7 +27,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Evaluation
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Evaluation")
 public class X_HR_Evaluation extends PO implements I_HR_Evaluation, I_Persistent
 {
@@ -35,7 +35,7 @@ public class X_HR_Evaluation extends PO implements I_HR_Evaluation, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240220L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_Evaluation (Properties ctx, int HR_Evaluation_ID, String trxName)
@@ -286,27 +286,6 @@ public class X_HR_Evaluation extends PO implements I_HR_Evaluation, I_Persistent
 		return ii.intValue();
 	}
 
-	/** Set Evaluation.
-		@param HR_Evaluation_ID Evaluation
-	*/
-	public void setHR_Evaluation_ID (int HR_Evaluation_ID)
-	{
-		if (HR_Evaluation_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_HR_Evaluation_ID, null);
-		else
-			set_ValueNoCheck (COLUMNNAME_HR_Evaluation_ID, Integer.valueOf(HR_Evaluation_ID));
-	}
-
-	/** Get Evaluation.
-		@return Evaluation	  */
-	public int getHR_Evaluation_ID()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Evaluation_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
 	public I_HR_Evaluation getHR_EvaluationSource() throws RuntimeException
 	{
 		return (I_HR_Evaluation)MTable.get(getCtx(), I_HR_Evaluation.Table_ID)
@@ -329,6 +308,27 @@ public class X_HR_Evaluation extends PO implements I_HR_Evaluation, I_Persistent
 	public int getHR_EvaluationSource_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_EvaluationSource_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Evaluation.
+		@param HR_Evaluation_ID Evaluation
+	*/
+	public void setHR_Evaluation_ID (int HR_Evaluation_ID)
+	{
+		if (HR_Evaluation_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_HR_Evaluation_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_HR_Evaluation_ID, Integer.valueOf(HR_Evaluation_ID));
+	}
+
+	/** Get Evaluation.
+		@return Evaluation	  */
+	public int getHR_Evaluation_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Evaluation_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();

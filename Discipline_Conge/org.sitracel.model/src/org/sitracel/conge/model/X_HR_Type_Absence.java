@@ -31,7 +31,7 @@ public class X_HR_Type_Absence extends PO implements I_HR_Type_Absence, I_Persis
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250318L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_Type_Absence (Properties ctx, int HR_Type_Absence_ID, String trxName)

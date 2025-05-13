@@ -36,7 +36,7 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250318L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_Autorisation_Absence (Properties ctx, int HR_Autorisation_Absence_ID, String trxName)

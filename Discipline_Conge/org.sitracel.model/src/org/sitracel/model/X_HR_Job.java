@@ -19,16 +19,12 @@ package org.sitracel.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-
-import org.compiere.model.I_Persistent;
-import org.compiere.model.MTable;
-import org.compiere.model.PO;
-import org.compiere.model.POInfo;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Job
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Job")
 public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 {
@@ -36,7 +32,7 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240220L;
+	private static final long serialVersionUID = 20250502L;
 
     /** Standard Constructor */
     public X_HR_Job (Properties ctx, int HR_Job_ID, String trxName)
@@ -257,69 +253,6 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 		return ii.intValue();
 	}
 
-	/** Set Job Constraints.
-		@param job_constraints Job Constraints
-	*/
-	public void setjob_constraints (String job_constraints)
-	{
-		set_Value (COLUMNNAME_job_constraints, job_constraints);
-	}
-
-	/** Get Job Constraints.
-		@return Job Constraints	  */
-	public String getjob_constraints()
-	{
-		return (String)get_Value(COLUMNNAME_job_constraints);
-	}
-
-	/** Set Job Experience.
-		@param job_experience Job Experience
-	*/
-	public void setjob_experience (int job_experience)
-	{
-		set_Value (COLUMNNAME_job_experience, Integer.valueOf(job_experience));
-	}
-
-	/** Get Job Experience.
-		@return Job Experience	  */
-	public int getjob_experience()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_job_experience);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
-	/** Set Job Functional Links.
-		@param job_functional_links Job Functional Links
-	*/
-	public void setjob_functional_links (String job_functional_links)
-	{
-		set_Value (COLUMNNAME_job_functional_links, job_functional_links);
-	}
-
-	/** Get Job Functional Links.
-		@return Job Functional Links	  */
-	public String getjob_functional_links()
-	{
-		return (String)get_Value(COLUMNNAME_job_functional_links);
-	}
-
-	/** Set Job Location.
-		@param job_location Job Location
-	*/
-	public void setjob_location (String job_location)
-	{
-		set_Value (COLUMNNAME_job_location, job_location);
-	}
-
-	/** Get Job Location.
-		@return Job Location	  */
-	public String getjob_location()
-	{
-		return (String)get_Value(COLUMNNAME_job_location);
-	}
-
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
@@ -413,5 +346,68 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);
+	}
+
+	/** Set Job Constraints.
+		@param job_constraints Job Constraints
+	*/
+	public void setjob_constraints (String job_constraints)
+	{
+		set_Value (COLUMNNAME_job_constraints, job_constraints);
+	}
+
+	/** Get Job Constraints.
+		@return Job Constraints	  */
+	public String getjob_constraints()
+	{
+		return (String)get_Value(COLUMNNAME_job_constraints);
+	}
+
+	/** Set Job Experience.
+		@param job_experience Job Experience
+	*/
+	public void setjob_experience (int job_experience)
+	{
+		set_Value (COLUMNNAME_job_experience, Integer.valueOf(job_experience));
+	}
+
+	/** Get Job Experience.
+		@return Job Experience	  */
+	public int getjob_experience()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_job_experience);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Job Functional Links.
+		@param job_functional_links Job Functional Links
+	*/
+	public void setjob_functional_links (String job_functional_links)
+	{
+		set_Value (COLUMNNAME_job_functional_links, job_functional_links);
+	}
+
+	/** Get Job Functional Links.
+		@return Job Functional Links	  */
+	public String getjob_functional_links()
+	{
+		return (String)get_Value(COLUMNNAME_job_functional_links);
+	}
+
+	/** Set Job Location.
+		@param job_location Job Location
+	*/
+	public void setjob_location (String job_location)
+	{
+		set_Value (COLUMNNAME_job_location, job_location);
+	}
+
+	/** Get Job Location.
+		@return Job Location	  */
+	public String getjob_location()
+	{
+		return (String)get_Value(COLUMNNAME_job_location);
 	}
 }

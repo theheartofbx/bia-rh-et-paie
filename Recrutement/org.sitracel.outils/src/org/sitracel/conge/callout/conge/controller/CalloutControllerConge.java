@@ -30,9 +30,9 @@ public class CalloutControllerConge {
 			int periodeApresEcheance = typeConge.getNombre_Jour_Après_Echeance();
 			int periodeAvantEcheance = typeConge.getNombre_Jour_Avant_Echeance();
 			Timestamp dateDebut = GeneralController.retirerNombreJour(dateEcheance, periodeAvantEcheance);
-			dateDebut = GeneralController.ajusterDebut(dateDebut, dateEcheance);
+			dateDebut = GeneralController.ajusterenRetirant(dateDebut);
 			Timestamp dateFin = GeneralController.ajouterNombreJour(dateEcheance, periodeApresEcheance);
-			dateFin = GeneralController.ajusterFin(dateEcheance, dateFin);
+			dateFin = GeneralController.ajusterenRetirant(dateFin);
 			resultat.setDateDebutConge(dateDebut);
 			resultat.setDateFinConge(dateFin);
 		}		
@@ -69,24 +69,8 @@ public class CalloutControllerConge {
 		            }
 			}
 			return resultat;
-	}
-	
-	public static BeanPeriode isDejaPris(Integer idEmploye, Timestamp dateDebut, Timestamp dateFin) {
-		BeanPeriode resultat = null;
-		BeanPeriode[] bp = GeneralSqlController.getAllCongesNonRejete(idEmploye, 
-				GeneralController.getFirstDayOfThisYear(), GeneralController.getLastDayOfThisYear(), null);
-		if(bp!=null) {
-			int i = 0;
-			while(i < bp.length && resultat==null) {
-				if(GeneralController.seChevauche(dateDebut, dateFin, bp[i].getDateDebutConge(), bp[i].getDateFinConge())) {
-					resultat = bp[i];
-				}
-				i++;
-			}
-		}
-		return resultat;
-	}
-	
+	}	
+
 	public static BeanInfoCongeDepartement getPeriodeCongeCritique(Integer cbpartnerid, Timestamp dateDebut, Timestamp dateFin) {
 		BeanInfoCongeDepartement beanInfoCongeDepartement = BeanFactory.getBeanInfoCongeDepartement();
 		if(cbpartnerid!=null && dateDebut!=null && dateFin!=null) {
@@ -97,7 +81,7 @@ public class CalloutControllerConge {
 				int nombreEmployeConge = 0;
 				int nombreEmployeCongeMax = 0;
 				while(jourConge.before(dateFin)) {
-					if(!GeneralController.isJourFerie(jourConge)) {
+					if(!GeneralSqlController.isJourFerie(jourConge, null)) {
 						for(BeanPeriode congeDepartement : tableauCongeDepartement) {
 							if(jourConge.after(congeDepartement.getDateDebutConge()) && jourConge.before(congeDepartement.getDateFinConge())) {
 								nombreEmployeConge++;
@@ -150,15 +134,15 @@ public class CalloutControllerConge {
 			if(conge!=null) {
 				if(aCompenserDebut) {
 					Timestamp dateCompense = GeneralController.ajouterNombreJour(conge.getDate_Debut_Effective(), conge.getJours_Conge_A_Compenser());
-					dateCompense = GeneralController.ajusterFin(conge.getDate_Debut_Effective(), dateCompense);
+					dateCompense = GeneralController.ajusterenAjoutant(dateCompense);
 					resultat.setDateDebutDernierConge(dateCompense);
-					resultat.setDateFindernierConge(conge.getDate_Fin_Effective());
+					resultat.setDateFinDernierConge(conge.getDate_Fin_Effective());
 				}
 				else {
 					Timestamp dateCompense = GeneralController.retirerNombreJour(conge.getDate_Fin_Effective(), conge.getJours_Conge_A_Compenser());
-					dateCompense = GeneralController.ajusterDebut(dateCompense, conge.getDate_Fin_Effective());
+					dateCompense = GeneralController.ajusterenRetirant(dateCompense);
 					resultat.setDateDebutDernierConge(conge.getDate_Debut_Effective());
-					resultat.setDateFindernierConge(dateCompense);
+					resultat.setDateFinDernierConge(dateCompense);
 				}
 			}
 		}

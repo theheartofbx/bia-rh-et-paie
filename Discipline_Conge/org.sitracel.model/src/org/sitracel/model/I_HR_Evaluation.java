@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_Evaluation
  *  @author iDempiere (generated) 
- *  @version Release 11
+ *  @version Release 12
  */
 @SuppressWarnings("all")
 public interface I_HR_Evaluation 
@@ -194,15 +194,6 @@ public interface I_HR_Evaluation
 
 	public org.eevolution.model.I_HR_Department getHR_Department() throws RuntimeException;
 
-    /** Column name HR_Evaluation_ID */
-    public static final String COLUMNNAME_HR_Evaluation_ID = "HR_Evaluation_ID";
-
-	/** Set Evaluation	  */
-	public void setHR_Evaluation_ID (int HR_Evaluation_ID);
-
-	/** Get Evaluation	  */
-	public int getHR_Evaluation_ID();
-
     /** Column name HR_EvaluationSource_ID */
     public static final String COLUMNNAME_HR_EvaluationSource_ID = "HR_EvaluationSource_ID";
 
@@ -213,6 +204,15 @@ public interface I_HR_Evaluation
 	public int getHR_EvaluationSource_ID();
 
 	public I_HR_Evaluation getHR_EvaluationSource() throws RuntimeException;
+
+    /** Column name HR_Evaluation_ID */
+    public static final String COLUMNNAME_HR_Evaluation_ID = "HR_Evaluation_ID";
+
+	/** Set Evaluation	  */
+	public void setHR_Evaluation_ID (int HR_Evaluation_ID);
+
+	/** Get Evaluation	  */
+	public int getHR_Evaluation_ID();
 
     /** Column name HR_Evaluation_UU */
     public static final String COLUMNNAME_HR_Evaluation_UU = "HR_Evaluation_UU";

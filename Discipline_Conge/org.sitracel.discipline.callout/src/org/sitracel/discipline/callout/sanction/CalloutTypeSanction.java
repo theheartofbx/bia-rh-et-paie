@@ -22,19 +22,19 @@ public class CalloutTypeSanction implements IColumnCallout{
 		mTab.setValue(MHRPunishment.COLUMNNAME_IsPeriodSuspension, false);
 		mTab.setValue(MHRPunishment.COLUMNNAME_IsLicenciement, false);
 		Integer emissionSanctionID= (Integer) mTab.getValue(MHRPunishment.COLUMNNAME_Emission_Sanction_ID);
-		if(emissionSanctionID!=null) {
+		Integer posteEmployeID = (Integer)mTab.getValue(MHRPunishment.COLUMNNAME_Poste_Employe_ID);
+		Integer posteEmetteurID = (Integer)mTab.getValue(MHRPunishment.COLUMNNAME_Emis_Par_Poste_ID);
+		if(emissionSanctionID!=null && posteEmployeID!=null && posteEmetteurID!=null) {
 			MHRSanctionAutorisation sanctionAutorisation = new MHRSanctionAutorisation(Env.getCtx(), emissionSanctionID, null);
 			if(sanctionAutorisation!=null) {
 				MHRTypeSanction typeSanction = new MHRTypeSanction(Env.getCtx(), sanctionAutorisation.getHR_TypeSanction_ID(), null);
-				Integer AutorisationSanction = CalloutSqlControllerDiscipline.getAutorisationSanctionID(sanctionAutorisation.getHR_TypeSanction_ID(), 
-						(Integer)mTab.getValue(MHRPunishment.COLUMNNAME_Poste_Employe_ID), 
-						(Integer)mTab.getValue(MHRPunishment.COLUMNNAME_Emis_Par_Poste_ID), 
-							null);
-				MHRSanctionAutorisation sanctionAutorisation2 = new MHRSanctionAutorisation(Env.getCtx(), AutorisationSanction, null);
+				Integer AutorisationSanctionID = CalloutSqlControllerDiscipline.getAutorisationSanctionID(sanctionAutorisation.getHR_TypeSanction_ID(), 
+						posteEmployeID, posteEmetteurID, null);
+				MHRSanctionAutorisation autorisationSanction = new MHRSanctionAutorisation(Env.getCtx(), AutorisationSanctionID, null);
 				if(typeSanction!=null) {
-					if(sanctionAutorisation2!=null) {
-						mTab.setValue(MHRPunishment.COLUMNNAME_IsApprobation_Createur, sanctionAutorisation2.isApprobation());
-						mTab.setValue(MHRPunishment.COLUMNNAME_IsValidation_Createur, sanctionAutorisation2.isValidation());
+					if(autorisationSanction!=null) {
+						mTab.setValue(MHRPunishment.COLUMNNAME_IsApprobation_Createur, autorisationSanction.isApprobation());
+						mTab.setValue(MHRPunishment.COLUMNNAME_IsValidation_Createur, autorisationSanction.isValidation());
 					}
 					if(typeSanction.getIncidence_Sanction_ID().equalsIgnoreCase(MHRTypeSanction.INCIDENCE_SANCTION_ID_PériodeDeSuspension)) {
 						mTab.setValue(MHRPunishment.COLUMNNAME_IsPeriodSuspension, true);

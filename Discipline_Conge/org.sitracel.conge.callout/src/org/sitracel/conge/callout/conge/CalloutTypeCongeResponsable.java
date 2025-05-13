@@ -1,5 +1,6 @@
 package org.sitracel.conge.callout.conge;
 
+import java.sql.Timestamp;
 import java.util.Properties;
 
 import org.adempiere.base.IColumnCallout;
@@ -11,6 +12,7 @@ import org.sitracel.conge.callout.conge.controller.CalloutSqlControllerConge;
 import org.sitracel.conge.model.MHRAutorisationConge;
 import org.sitracel.conge.model.MHRHoliday;
 import org.sitracel.conge.model.MHRTypeConge;
+import org.sitracel.controller.GeneralController;
 
 public class CalloutTypeCongeResponsable implements IColumnCallout{
 
@@ -36,14 +38,14 @@ public class CalloutTypeCongeResponsable implements IColumnCallout{
 					BeanConge bic;
 				
 					if(idEmploye!=null) {
-						bic = CalloutSqlControllerConge.getInfoConge(idEmploye,typeConge.getHR_Type_Conge_ID(), null);
+						bic = GeneralController.getInfoConge(idEmploye,typeConge.getHR_Type_Conge_ID(), new Timestamp(System.currentTimeMillis()), null);
 						if(bic != null) {							
 							mTab.setValue(MHRHoliday.COLUMNNAME_Enfant_Conge, bic.getNombreEnfantPetit());
 							mTab.setValue(MHRHoliday.COLUMNNAME_Jours_Conge_Total, bic.getNombreJourCongeTotal());
 							mTab.setValue(MHRHoliday.COLUMNNAME_Jours_Conge_Deja_Utilise, bic.getNombreJourCongeUtilise());
 							mTab.setValue(MHRHoliday.COLUMNNAME_Annee_Anciennete, bic.getAnneeAnciennete());
 							mTab.setValue(MHRHoliday.COLUMNNAME_Jours_Conge_A_Compenser, bic.getDetteConge());
-							mTab.setValue(MHRHoliday.COLUMNNAME_Date_Dernier_Conge, bic.getDateFindernierConge());
+							mTab.setValue(MHRHoliday.COLUMNNAME_Date_Dernier_Conge, bic.getDateFinDernierConge());
 							/*mTab.setValue(MHRHoliday.COLUMNNAME_Dates_Absences, bic.getDateAbsence());
 							mTab.setValue(MHRHoliday.COLUMNNAME_ID_Absences, bic.getIdAbsence());*/
 						}

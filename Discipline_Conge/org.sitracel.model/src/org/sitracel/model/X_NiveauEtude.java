@@ -19,15 +19,12 @@ package org.sitracel.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-
-import org.compiere.model.I_Persistent;
-import org.compiere.model.PO;
-import org.compiere.model.POInfo;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for NiveauEtude
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="NiveauEtude")
 public class X_NiveauEtude extends PO implements I_NiveauEtude, I_Persistent
 {
@@ -35,7 +32,7 @@ public class X_NiveauEtude extends PO implements I_NiveauEtude, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240220L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_NiveauEtude (Properties ctx, int NiveauEtude_ID, String trxName)

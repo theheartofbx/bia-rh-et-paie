@@ -9,6 +9,7 @@ import java.util.Locale;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
+import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.sitracel.bean.BeanIdentifiant;
 import org.sitracel.bean.BeanNotificationConge;
@@ -251,7 +252,7 @@ public class ProcessControllerConge {
 						while(dateDebutConge.before(dateFinConge)) {
 							Calendar cal = Calendar.getInstance();		
 							cal.setTime(dateDebutConge);
-							if(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY || !GeneralController.isJourFerie(dateDebutConge)) {
+							if(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY || !GeneralSqlController.isJourFerie(dateDebutConge,null)) {
 								MHRAbsence absence = new MHRAbsence(Env.getCtx(), null, null);
 								absence.setEmis_Par_Nom_ID(beanIdentifiant.getNumEmploye());
 								absence.setEmis_Par_Poste_ID(beanIdentifiant.getNumeroPoste());

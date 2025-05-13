@@ -31,7 +31,7 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250318L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_Type_Conge (Properties ctx, int HR_Type_Conge_ID, String trxName)

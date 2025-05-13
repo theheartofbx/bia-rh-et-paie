@@ -32,7 +32,7 @@ public class X_HR_TypeSanction extends PO implements I_HR_TypeSanction, I_Persis
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250318L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_TypeSanction (Properties ctx, int HR_TypeSanction_ID, String trxName)

@@ -28,14 +28,6 @@ public class ModelValidatorControllerAbsence {
 	private static String expediteur = "groupe.sitracel@gmail.com";
 	private static String mdp = "vzccxxisbuazhhys";
 
-	public static int getNombreJourCongeAnnuelBase() {
-		return GeneralSqlController.getParametreFromParametreNumerique("Congé Annuel de Base");
-	}
-
-	public static int getNombreJourMaxAbsenceAvantDemandeExplication() {
-		return GeneralSqlController.getParametreFromParametreNumerique("Absence Max Avant Demande Explication");
-	}
-
 	public static int getRHSystemID() {
 		return GeneralSqlController.getParametreFromParametreNumerique("RH_Système_ID");
 	}
@@ -50,7 +42,7 @@ public class ModelValidatorControllerAbsence {
 			MHRDemandeExplication demandeExplication = new MHRDemandeExplication(Env.getCtx(), null, null);
 			if(typeAbsenceId!=null) {
 				MHRTypeAbsence typeAbsence = new MHRTypeAbsence(Env.getCtx(), typeAbsenceId, null);
-				int absMax = ModelValidatorControllerAbsence.getNombreJourMaxAbsenceAvantDemandeExplication();
+				int absMax = GeneralController.getNombreJourMaxAbsenceAvantDemandeExplication();
 				int rhSystemID = ModelValidatorControllerAbsence.getRHSystemID();
 				int delaiReponse = ModelValidatorControllerAbsence.getDelaiReponse();
 				BeanIdentifiant beanRHSystem = GeneralSqlController.getBeanIdentifiant(rhSystemID, null);
@@ -109,7 +101,7 @@ public class ModelValidatorControllerAbsence {
 		if(absence!=null) {
 			Integer typeAbsenceId = absence.getHR_Type_Absence_ID();
 			MHRDemandeExplication demandeExplication = new MHRDemandeExplication(Env.getCtx(), absence.getHR_Demande_Explication_ID(), null);
-			int absMax = ModelValidatorControllerAbsence.getNombreJourMaxAbsenceAvantDemandeExplication();
+			int absMax = GeneralController.getNombreJourMaxAbsenceAvantDemandeExplication();
 			if(typeAbsenceId!=null && demandeExplication!=null) {	
 				try {
 					BeanInfoAbsence infoAbsence = ModelValidatorSqlControllerAbsence.getAbsenceNonAutoriseFromDemandeExplication(demandeExplication.getHR_Demande_Explication_ID(), null);

@@ -4,6 +4,7 @@ import org.compiere.model.MClient;
 import org.compiere.model.ModelValidationEngine;
 import org.compiere.model.ModelValidator;
 import org.compiere.model.PO;
+import org.compiere.util.CLogger;
 import org.sitracel.discipline.model.MHRPunishment;
 import org.sitracel.discipline.modelvalidator.ModelValidatorDisciplineController;
 
@@ -30,8 +31,21 @@ public class SitracelModelValidatorDiscipline implements ModelValidator{
 	@Override
 	public String modelChange(PO po, int type) throws Exception {
 		// TODO Auto-generated method stub
-		MHRPunishment punishment = (MHRPunishment)po;
-		ModelValidatorDisciplineController.discipline(punishment, type);
+	    
+	    if (!(po instanceof MHRPunishment)) {
+	    	CLogger.get().severe("Objet non attendu dans modelChange : " + po.getClass().getName());
+	        return null;
+	    }
+
+	    MHRPunishment punishment = (MHRPunishment) po;
+
+	    try {
+	        ModelValidatorDisciplineController.discipline(punishment, type);
+	    } catch (Exception e) {
+	    	CLogger.get().severe("Erreur dans discipline() : " + e.getMessage());
+	        e.printStackTrace();
+	        throw e;
+	    }
 		return null;
 	}
 

@@ -32,7 +32,7 @@ public class X_HR_Duree_Sanction extends PO implements I_HR_Duree_Sanction, I_Pe
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250318L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_Duree_Sanction (Properties ctx, int HR_Duree_Sanction_ID, String trxName)

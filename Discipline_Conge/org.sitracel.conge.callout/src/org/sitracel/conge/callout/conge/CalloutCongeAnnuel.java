@@ -2,22 +2,19 @@ package org.sitracel.conge.callout.conge;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.Properties;
 
 import org.adempiere.base.IColumnCallout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.util.Env;
-import org.sitracel.bean.BeanAbsence;
 import org.sitracel.bean.BeanInfoCongeDepartement;
-import org.sitracel.bean.BeanPeriode;
 import org.sitracel.conge.callout.conge.controller.CalloutControllerConge;
 import org.sitracel.conge.model.MHRHoliday;
 import org.sitracel.conge.model.MHRTypeConge;
 import org.sitracel.controller.GeneralController;
+import org.sitracel.controller.GeneralSqlController;
 
 public class CalloutCongeAnnuel implements IColumnCallout {
 
@@ -39,8 +36,6 @@ public class CalloutCongeAnnuel implements IColumnCallout {
 		Timestamp dateFin = (Timestamp) mTab.getValue(MHRHoliday.COLUMNNAME_Date_Fin_Souhaitee);
 		
 		Integer idConge = (Integer)mTab.getValue(MHRHoliday.COLUMNNAME_Emission_Conge_ID);
-		BeanPeriode beanPeriode = null;
-		BeanAbsence beanAbsence =null;
 		
 		if(idConge!=null) {
 			MHRTypeConge typeConge = typeConge = new MHRTypeConge(Env.getCtx(), idConge, null);
@@ -53,12 +48,9 @@ public class CalloutCongeAnnuel implements IColumnCallout {
 						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, dateFin);
 						if(typeConge.isCongeAnnuel()) {
 							if(dateDebut.after(debutAnnee) && dateDebut.before(finAnnee) && dateFin.before(finAnnee) && dateFin.after(debutAnnee)) {
-								beanPeriode = CalloutControllerConge.isDejaPris((Integer) mTab.getValue(MHRHoliday.COLUMNNAME_C_BPartner_ID), dateDebut, dateFin);
-								if(beanPeriode==null) {
-									beanPeriode = GeneralController.isPeriodeSuspensionIn((Integer)mTab.getValue(MHRHoliday.COLUMNNAME_C_BPartner_ID), dateDebut, dateFin);
-									if(beanPeriode==null) {
-										beanAbsence = GeneralController.isAbsenceIn((Integer)mTab.getValue(MHRHoliday.COLUMNNAME_C_BPartner_ID), dateDebut, dateFin);
-										if(beanAbsence==null) {
+								if(!GeneralSqlController.chevaucheAnyCongeNonRejete((Integer) mTab.getValue(MHRHoliday.COLUMNNAME_C_BPartner_ID), dateDebut, dateFin, null)) {
+									if(!GeneralSqlController.chevaucheSuspensionNonRejete((Integer) mTab.getValue(MHRHoliday.COLUMNNAME_C_BPartner_ID), dateDebut, dateFin, null)) {
+										if(!GeneralSqlController.isPeriodeAbsence((Integer) mTab.getValue(MHRHoliday.COLUMNNAME_C_BPartner_ID), dateDebut, dateFin, null)) {
 											Integer nbJour = GeneralController.getNombreJourTravaille(dateDebut, dateFin);
 											if(nbJour!=null) {
 												BeanInfoCongeDepartement beanInfoCongeDepartement =CalloutControllerConge.getPeriodeCongeCritique((Integer) mTab.getValue(MHRHoliday.COLUMNNAME_C_BPartner_ID), 
@@ -96,8 +88,7 @@ public class CalloutCongeAnnuel implements IColumnCallout {
 											mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Effective, null);
 											mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, null);
 											mTab.setValue(MHRHoliday.COLUMNNAME_IsMessageAlerteDisplayed, "Y");
-											mTab.setValue(MHRHoliday.COLUMNNAME_Message_Alerte, "une absence au "+new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH).format(beanAbsence.getDateAbsence())
-											+"a été enregistrée durant la période que vous avez choisi ");
+											mTab.setValue(MHRHoliday.COLUMNNAME_Message_Alerte, "une absence a déjà été enregistrée durant la période que vous avez choisi ");
 											return null;
 										}
 									}
@@ -109,8 +100,7 @@ public class CalloutCongeAnnuel implements IColumnCallout {
 										mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Effective, null);
 										mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, null);
 										mTab.setValue(MHRHoliday.COLUMNNAME_IsMessageAlerteDisplayed, "Y");
-										mTab.setValue(MHRHoliday.COLUMNNAME_Message_Alerte, "une période de suspension allant du "+new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH).format(beanPeriode.getDateDebutConge())
-										+" au "+new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH).format(beanPeriode.getDateFinConge())+" a été émise durant la période choisie");
+										mTab.setValue(MHRHoliday.COLUMNNAME_Message_Alerte, "une période de suspension est déjà émise durant cette période");
 										return null;
 									}
 								}
@@ -122,8 +112,7 @@ public class CalloutCongeAnnuel implements IColumnCallout {
 									mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Effective, null);
 									mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, null);
 									mTab.setValue(MHRHoliday.COLUMNNAME_IsMessageAlerteDisplayed, "Y");
-									mTab.setValue(MHRHoliday.COLUMNNAME_Message_Alerte, "La période que vous avez choisi coincide avec une autre période de congé allant du"
-									+new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH).format(beanPeriode.getDateDebutConge())+" au "+new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH).format(beanPeriode.getDateFinConge())+"!");
+									mTab.setValue(MHRHoliday.COLUMNNAME_Message_Alerte, "La période que vous avez choisi coincide avec une autre période de congé");
 									return null;
 								}
 							}

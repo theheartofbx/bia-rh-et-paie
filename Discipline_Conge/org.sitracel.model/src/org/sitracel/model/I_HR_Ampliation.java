@@ -18,13 +18,12 @@ package org.sitracel.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-
-import org.compiere.model.MTable;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_Ampliation
  *  @author iDempiere (generated) 
- *  @version Release 11
+ *  @version Release 12
  */
 @SuppressWarnings("all")
 public interface I_HR_Ampliation 
@@ -43,19 +42,6 @@ public interface I_HR_Ampliation
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
     /** Load Meta Data */
-
-    /** Column name Abreviation */
-    public static final String COLUMNNAME_Abreviation = "Abreviation";
-
-	/** Set Abreviation.
-	  * Abreviation
-	  */
-	public void setAbreviation (String Abreviation);
-
-	/** Get Abreviation.
-	  * Abreviation
-	  */
-	public String getAbreviation();
 
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
@@ -77,6 +63,19 @@ public interface I_HR_Ampliation
 	  * Organizational entity within client
 	  */
 	public int getAD_Org_ID();
+
+    /** Column name Abreviation */
+    public static final String COLUMNNAME_Abreviation = "Abreviation";
+
+	/** Set Abreviation.
+	  * Abreviation
+	  */
+	public void setAbreviation (String Abreviation);
+
+	/** Get Abreviation.
+	  * Abreviation
+	  */
+	public String getAbreviation();
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";

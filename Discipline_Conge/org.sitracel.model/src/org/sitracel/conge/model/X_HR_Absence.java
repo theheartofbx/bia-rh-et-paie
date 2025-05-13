@@ -20,7 +20,11 @@ package org.sitracel.conge.model;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.sitracel.discipline.model.I_HR_Demande_Explication;
 
 /** Generated Model for HR_Absence
@@ -33,7 +37,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250318L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_Absence (Properties ctx, int HR_Absence_ID, String trxName)

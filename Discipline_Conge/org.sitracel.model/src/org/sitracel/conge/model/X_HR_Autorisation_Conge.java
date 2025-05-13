@@ -37,7 +37,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250318L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_Autorisation_Conge (Properties ctx, int HR_Autorisation_Conge_ID, String trxName)

@@ -415,6 +415,19 @@ public interface I_C_BPartner
 	  */
 	public Timestamp getDateFrom();
 
+    /** Column name Date_Debut_Contrat_Relative */
+    public static final String COLUMNNAME_Date_Debut_Contrat_Relative = "Date_Debut_Contrat_Relative";
+
+	/** Set Contrat débuté à Partir de :.
+	  * Contrat débuté à Partir de :
+	  */
+	public void setDate_Debut_Contrat_Relative (Timestamp Date_Debut_Contrat_Relative);
+
+	/** Get Contrat débuté à Partir de :.
+	  * Contrat débuté à Partir de :
+	  */
+	public Timestamp getDate_Debut_Contrat_Relative();
+
     /** Column name Default1099Box_ID */
     public static final String COLUMNNAME_Default1099Box_ID = "Default1099Box_ID";
 
@@ -969,6 +982,15 @@ Etude	  */
 
 	/** Get Numero de CNI	  */
 	public String getNumeroCni();
+
+    /** Column name NumeroSecuriteSociale */
+    public static final String COLUMNNAME_NumeroSecuriteSociale = "NumeroSecuriteSociale";
+
+	/** Set Numero de Sécurité Sociale	  */
+	public void setNumeroSecuriteSociale (String NumeroSecuriteSociale);
+
+	/** Get Numero de Sécurité Sociale	  */
+	public String getNumeroSecuriteSociale();
 
     /** Column name POReference */
     public static final String COLUMNNAME_POReference = "POReference";

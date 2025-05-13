@@ -24,7 +24,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Formulaire
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Formulaire")
 public class X_HR_Formulaire extends PO implements I_HR_Formulaire, I_Persistent
 {
@@ -32,7 +32,7 @@ public class X_HR_Formulaire extends PO implements I_HR_Formulaire, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240220L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_Formulaire (Properties ctx, int HR_Formulaire_ID, String trxName)

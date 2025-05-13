@@ -26,7 +26,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Parametre_Numerique
  *  @author iDempiere (generated)
- *  @version Release 11 - $Id$ */
+ *  @version Release 12 - $Id$ */
 @org.adempiere.base.Model(table="HR_Parametre_Numerique")
 public class X_HR_Parametre_Numerique extends PO implements I_HR_Parametre_Numerique, I_Persistent
 {
@@ -34,7 +34,7 @@ public class X_HR_Parametre_Numerique extends PO implements I_HR_Parametre_Numer
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20240426L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_Parametre_Numerique (Properties ctx, int HR_Parametre_Numerique_ID, String trxName)

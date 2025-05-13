@@ -290,7 +290,7 @@ public class ProcessControllerDiscipline {
 							while(debutApplicationAbs.before(finApplicationAbs)) {
 								Calendar cal = Calendar.getInstance();		
 								cal.setTime(debutApplicationAbs);
-								if(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY || !GeneralController.isJourFerie(debutApplicationAbs)) {
+								if(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY || !GeneralSqlController.isJourFerie(debutApplicationAbs,null)) {
 									if(!ProcessSqlControllerDiscipline.isAbsenceExist(punishment.getC_BPartner_ID(), debutApplicationAbs, null)) {
 										MHRAbsence absence = new MHRAbsence(Env.getCtx(), null, null);
 										absence.setC_BPartner_ID(punishment.getC_BPartner_ID());

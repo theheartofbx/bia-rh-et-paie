@@ -18,12 +18,12 @@ package org.sitracel.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_Job
  *  @author iDempiere (generated) 
- *  @version Release 11
+ *  @version Release 12
  */
 @SuppressWarnings("all")
 public interface I_HR_Job 
@@ -168,42 +168,6 @@ public interface I_HR_Job
 	/** Get Job Cant	  */
 	public int getJobCant();
 
-    /** Column name job_constraints */
-    public static final String COLUMNNAME_job_constraints = "job_constraints";
-
-	/** Set Job Constraints	  */
-	public void setjob_constraints (String job_constraints);
-
-	/** Get Job Constraints	  */
-	public String getjob_constraints();
-
-    /** Column name job_experience */
-    public static final String COLUMNNAME_job_experience = "job_experience";
-
-	/** Set Job Experience	  */
-	public void setjob_experience (int job_experience);
-
-	/** Get Job Experience	  */
-	public int getjob_experience();
-
-    /** Column name job_functional_links */
-    public static final String COLUMNNAME_job_functional_links = "job_functional_links";
-
-	/** Set Job Functional Links	  */
-	public void setjob_functional_links (String job_functional_links);
-
-	/** Get Job Functional Links	  */
-	public String getjob_functional_links();
-
-    /** Column name job_location */
-    public static final String COLUMNNAME_job_location = "job_location";
-
-	/** Set Job Location	  */
-	public void setjob_location (String job_location);
-
-	/** Get Job Location	  */
-	public String getjob_location();
-
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
 
@@ -271,4 +235,40 @@ public interface I_HR_Job
 	  * Search key for the record in the format required - must be unique
 	  */
 	public String getValue();
+
+    /** Column name job_constraints */
+    public static final String COLUMNNAME_job_constraints = "job_constraints";
+
+	/** Set Job Constraints	  */
+	public void setjob_constraints (String job_constraints);
+
+	/** Get Job Constraints	  */
+	public String getjob_constraints();
+
+    /** Column name job_experience */
+    public static final String COLUMNNAME_job_experience = "job_experience";
+
+	/** Set Job Experience	  */
+	public void setjob_experience (int job_experience);
+
+	/** Get Job Experience	  */
+	public int getjob_experience();
+
+    /** Column name job_functional_links */
+    public static final String COLUMNNAME_job_functional_links = "job_functional_links";
+
+	/** Set Job Functional Links	  */
+	public void setjob_functional_links (String job_functional_links);
+
+	/** Get Job Functional Links	  */
+	public String getjob_functional_links();
+
+    /** Column name job_location */
+    public static final String COLUMNNAME_job_location = "job_location";
+
+	/** Set Job Location	  */
+	public void setjob_location (String job_location);
+
+	/** Get Job Location	  */
+	public String getjob_location();
 }

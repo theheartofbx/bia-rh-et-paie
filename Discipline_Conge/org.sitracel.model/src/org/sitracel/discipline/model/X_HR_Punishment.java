@@ -20,7 +20,11 @@ package org.sitracel.discipline.model;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
 import org.sitracel.model.I_HR_Ampliation;
 
@@ -34,7 +38,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250318L;
+	private static final long serialVersionUID = 20250423L;
 
     /** Standard Constructor */
     public X_HR_Punishment (Properties ctx, int HR_Punishment_ID, String trxName)

@@ -32,7 +32,7 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250318L;
+	private static final long serialVersionUID = 20250421L;
 
     /** Standard Constructor */
     public X_HR_Absence_Compensation (Properties ctx, int HR_Absence_Compensation_ID, String trxName)

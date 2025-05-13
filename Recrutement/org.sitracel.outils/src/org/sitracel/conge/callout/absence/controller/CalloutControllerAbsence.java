@@ -2,7 +2,7 @@ package org.sitracel.conge.callout.absence.controller;
 
 import java.sql.Timestamp;
 
-import org.sitracel.controller.GeneralController;
+import org.sitracel.controller.GeneralSqlController;
 
 public class CalloutControllerAbsence {
 	
@@ -11,7 +11,9 @@ public class CalloutControllerAbsence {
 		if(date!=null && cBpartnerID!=null) {
 			resultat = !CalloutSqlControllerAbsence.isAbsenceExist(date, cBpartnerID, null);
 			if(resultat) {
-				resultat = !GeneralController.isJourFerie(date) && !GeneralController.isCongeAnnuel(cBpartnerID, date) && !GeneralController.isJourSuspension(cBpartnerID, date);
+				resultat = !GeneralSqlController.isJourFerie(date,null) 
+						&& !GeneralSqlController.isJourCongesNonRejetebyNameConge(cBpartnerID, "Annuel", date, null) 
+						&& !GeneralSqlController.isJourSuspensionNonRejete(cBpartnerID, date, null);
 			}
 		}
 		return resultat;

@@ -27,6 +27,7 @@ Export-Package: org.sitracel.bean,
  org.sitracel.discipline.process.demandeexplication.controller,
  org.sitracel.discipline.process.sanction.controller,
  org.sitracel.paie.callout,
+ org.sitracel.paie.modelvalidator.controller,
  org.sitracel.paie.process.controller,
  org.sitracel.recrutement.modelvalidator,
  org.sitracel.recrutement.process.controller

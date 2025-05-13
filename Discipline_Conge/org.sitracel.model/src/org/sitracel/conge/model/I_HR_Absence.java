@@ -18,7 +18,8 @@ package org.sitracel.conge.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
+import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
 import org.sitracel.discipline.model.I_HR_Demande_Explication;
 

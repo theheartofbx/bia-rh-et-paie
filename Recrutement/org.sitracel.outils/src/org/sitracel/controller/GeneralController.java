@@ -1,9 +1,16 @@
 package org.sitracel.controller;
 
 import java.sql.Timestamp;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
+import java.util.Set;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -13,86 +20,139 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.sitracel.bean.BeanAbsence;
+import org.compiere.util.Env;
+import org.sitracel.bean.BeanConge;
 import org.sitracel.bean.BeanPeriode;
-import org.sitracel.bean.BeanPeriodeConge;
+import org.sitracel.beanfactory.BeanFactory;
+import org.sitracel.conge.callout.conge.controller.CalloutSqlControllerConge;
+import org.sitracel.conge.model.MHRTypeConge;
+import org.sitracel.model.MCBPartner;
+import org.sitracel.paie.model.MHRElementBasePaieEmploye;
 
 public class GeneralController {
 
-	public static Timestamp ajouterNombreJour(Timestamp date, int nombreJour) {
-		Calendar cal = Calendar.getInstance();		
-		cal.setTime(date);
-		
-		if(nombreJour>=0) {
-			int q = nombreJour / 6;
-			int r = nombreJour % 6;
-			for (int i = 0; i <= r-1; i++) {
-				if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY) {
-					cal.add(Calendar.DAY_OF_WEEK, 1);
+	public static BeanConge getInfoConge(Integer idCBPartner, Integer idTypeConge, Timestamp dateActuelle,String trxName) {
+		BeanConge beanConge =BeanFactory.getBeanConge();
+		if(idCBPartner!=null && idTypeConge!=null) {
+			int res = 0;
+			MHRTypeConge conge = new MHRTypeConge(Env.getCtx(), idTypeConge, trxName);
+			if(conge!=null) {
+				if(conge.isCongeAnnuel()) {
+					MHRElementBasePaieEmploye dernierContrat = GeneralController.getDateDernierContrat(idCBPartner, dateActuelle);
+					Timestamp dateDebutContrat = null;
+					if(dernierContrat!=null) {
+						dateDebutContrat = dernierContrat.getDate_Debut();
+					}
+					BeanPeriode[] conges = GeneralSqlController.getCongesValidebyNameConge(idCBPartner, "Annuel", 
+							GeneralController.getFirstDayOfaYear(dateActuelle), GeneralController.getLastDayOfaYear(dateActuelle), null);
+					if(conges!=null) {
+						for (BeanPeriode beanPeriode : conges) {
+							res = res + GeneralController.getNombreJourTravaille(beanPeriode.getDateDebutConge(), beanPeriode.getDateFinConge());
+						}
+					}
+					beanConge = CalloutSqlControllerConge.getEnfantMoins6(idCBPartner, dateActuelle, beanConge, trxName);
+					beanConge = GeneralController.setAnciennete(beanConge, dateDebutContrat, dateActuelle);
+					int nombreJourCongeBase = GeneralController.getNombreJourCongeAnnuelBase();
+					int nbBase = 0;
+					if(beanConge.getAnneeAnciennete()!=null) {
+						nbBase = nombreJourCongeBase;
+						nbBase = nbBase + (2*((int)beanConge.getAnneeAnciennete()/3));
+					}
+					if(beanConge.getGenre().equals(MCBPartner.SEX_Femme)) {
+						nbBase = nbBase+(2*beanConge.getNombreEnfantPetit());
+					}
+					beanConge.setNombreJourCongeTotal(nbBase);
+					beanConge.setNombreJourCongeUtilise(res);
+					beanConge = GeneralSqlController.getDateDernierConge(idCBPartner, new Timestamp(System.currentTimeMillis()), dateDebutContrat, "Annuel", beanConge, null);
+					beanConge.setDetteConge(CalloutSqlControllerConge.getNombreJourAbsencesConge(new Timestamp(System.currentTimeMillis()), null));
 				}
-				cal.add(Calendar.DAY_OF_WEEK, 1);
-			}
-			cal.add(Calendar.DAY_OF_WEEK, (q*7));
-			if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY) {
-				cal.add(Calendar.DAY_OF_WEEK, 1);
 			}
 		}
-		return new Timestamp(cal.getTime().getTime());		
+		return beanConge;		
+	}	
+
+	public static BeanConge getNombreJourCongeMax(Integer idCBPartner, Timestamp dateActuelle,String trxName) {
+		BeanConge beanConge = BeanFactory.getBeanConge();
+		if(idCBPartner!=null) {
+			MHRElementBasePaieEmploye dernierContrat = GeneralController.getDateDernierContrat(idCBPartner, dateActuelle);
+			Timestamp dateDebutContrat = null;
+			if(dernierContrat!=null) {
+				dateDebutContrat = dernierContrat.getDate_Debut();
+			}
+			beanConge = CalloutSqlControllerConge.getEnfantMoins6(idCBPartner, dateActuelle, beanConge, trxName);
+			beanConge = GeneralController.setAnciennete(beanConge, dateDebutContrat, dateActuelle);
+			int nombreJourCongeBase = GeneralController.getNombreJourCongeAnnuelBase();
+			int nbBase = 0;
+			if(beanConge.getAnneeAnciennete()!=null) {
+				nbBase = nombreJourCongeBase;
+				nbBase = nbBase + (2*((int)beanConge.getAnneeAnciennete()/3));
+			}
+			if(beanConge.getGenre().equals(MCBPartner.SEX_Femme)) {
+				nbBase = nbBase+(2*beanConge.getNombreEnfantPetit());
+			}
+			beanConge.setNombreJourCongeTotal(nbBase);
+		}
+		return beanConge;		
+	}
+	
+	public static BeanConge setAnciennete(BeanConge beanConge, Timestamp dateDebut, Timestamp dateFin) {
+		if(beanConge!=null && dateDebut!=null && dateFin!=null) {
+			LocalDate date1 = dateDebut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	        LocalDate date2 = dateFin.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	        Period periode = Period.between(date1, date2);
+			beanConge.setAnneeAnciennete(periode.getYears());
+			beanConge.setMoisAnciennete(periode.getMonths());
+			beanConge.setJourAnciennete(periode.getDays());	
+		}
+		return beanConge;
+	}
+	
+	public static MHRElementBasePaieEmploye getDateDernierContrat(Integer bpartnerID, Timestamp dateMax) {
+		MHRElementBasePaieEmploye resultat = null;
+		if(bpartnerID!=null && dateMax!=null) {
+			ArrayList<MHRElementBasePaieEmploye> listeContrat = GeneralSqlController.getDatesDerniersContrats(bpartnerID, dateMax, null);
+			if(!listeContrat.isEmpty()) {
+				 for (int i = 0; i < listeContrat.size(); i++) {
+					 MHRElementBasePaieEmploye contratActuel = listeContrat.get(i);
+					 if (i + 1 < listeContrat.size()) {
+			            MHRElementBasePaieEmploye contratPrecedent = listeContrat.get(i + 1);
+			            if (contratPrecedent.getDate_Fin() != null) {
+			                resultat = contratActuel;
+			                break;
+			            }
+			        } else {
+			            // Pas de précédent, donc c'est la plus ancienne
+			            resultat = contratActuel;
+			            break;
+			        }
+			    }
+			}
+		}		
+		return resultat;
+	}
+	
+	public static Timestamp ajouterNombreJour(Timestamp date, int nombreJour) {
+		if(date!=null) {
+			LocalDate jour = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			for(int i=1;i<=nombreJour;i++) {
+				jour = jour.plusDays(1);
+				date = GeneralController.ajusterenAjoutant(Timestamp.valueOf(LocalDateTime.of(jour, date.toLocalDateTime().toLocalTime())));
+			}
+		}
+		return date;		
 	}	
 
 	public static Timestamp retirerNombreJour(Timestamp date, int nombreJour) {
-		Calendar cal = Calendar.getInstance();		
-		cal.setTime(date);
-		
-		if(nombreJour>=0) {
-			int q = nombreJour / 6;
-			int r = nombreJour % 6;
-			for (int i = 0; i <= r-1; i++) {
-				if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY) {
-					cal.add(Calendar.DAY_OF_WEEK, -1);
-				}
-				cal.add(Calendar.DAY_OF_WEEK, -1);
-			}
-			cal.add(Calendar.DAY_OF_WEEK, (q*-7));
-			if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY) {
-				cal.add(Calendar.DAY_OF_WEEK, -1);
+		if(date!=null) {
+			LocalDate jour = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			for(int i=1;i<=nombreJour;i++) {
+				jour = jour.minusDays(1);
+				date = GeneralController.ajusterenRetirant(Timestamp.valueOf(LocalDateTime.of(jour, date.toLocalDateTime().toLocalTime())));
 			}
 		}
-		return new Timestamp(cal.getTime().getTime());		
+		return date;		
 	}
 	
-	public static Timestamp ajusterDebut(Timestamp dateDebut, Timestamp dateFin) {
-		Timestamp resultat = null;
-		if(dateDebut!=null  && dateFin!=null) {
-			Timestamp[] joursFeries = GeneralSqlController.getAllJoursFeries(dateDebut, dateFin, null);
-			Calendar cal = Calendar.getInstance();
-			for (Timestamp timestamp : joursFeries) {
-				cal.setTime(timestamp);
-				if(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY) {
-					dateDebut = retirerNombreJour(dateDebut, 1);
-				}
-			}
-			resultat = dateDebut;
-		}
-		return resultat;
-	}	
-	
-	public static Timestamp ajusterFin(Timestamp dateDebut, Timestamp dateFin) {
-		Timestamp resultat = null;
-		if(dateDebut!=null  && dateFin!=null) {
-			Timestamp[] joursFeries = GeneralSqlController.getAllJoursFeries(dateDebut, dateFin, null);
-			Calendar cal = Calendar.getInstance();			
-			for (Timestamp timestamp : joursFeries) {
-				cal.setTime(timestamp);
-				if(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY) {
-					dateFin = ajouterNombreJour(dateFin, 1);				
-				}
-			}
-			resultat = dateFin;
-		}
-		return resultat;
-	}
-
 	public static Timestamp getFirstDayOfThisYear() {
 		Calendar cal = Calendar.getInstance();
 		Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -132,17 +192,13 @@ public class GeneralController {
 		cal.set(Calendar.DAY_OF_YEAR, 1);
 		return new Timestamp(cal.getTime().getTime());
 	}	
-
+	
 	public static Timestamp ajusterenRetirant(Timestamp date) {
 		Timestamp resultat = date;
 		if(date!=null) {
-			Timestamp[] joursFeries = GeneralSqlController.getAllJoursFeries(getFirstDayOfaYear(date), getLastDayOfaYear(date), null);
-			Calendar cal = Calendar.getInstance();
-			for (Timestamp jourFerie : joursFeries) {
-				cal.setTime(jourFerie);
-				if(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY && date.compareTo(jourFerie)==0) {
-					resultat = retirerNombreJour(resultat, 1);
-				}
+			LocalDate jour = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			if(jour.getDayOfWeek()==DayOfWeek.SUNDAY || GeneralSqlController.isJourFerie(date, null)) {
+				resultat = Timestamp.valueOf(jour.minusDays(1).atStartOfDay());
 			}
 		}
 		return resultat;
@@ -151,239 +207,69 @@ public class GeneralController {
 	public static Timestamp ajusterenAjoutant(Timestamp date) {
 		Timestamp resultat = date;
 		if(date!=null) {
-			Timestamp[] joursFeries = GeneralSqlController.getAllJoursFeries(getFirstDayOfaYear(date), getLastDayOfaYear(date), null);
-			Calendar cal = Calendar.getInstance();
-			for (Timestamp jourFerie : joursFeries) {
-				cal.setTime(jourFerie);
-				if(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY && date.compareTo(jourFerie)==0) {
-					resultat = ajouterNombreJour(resultat, 1);
-				}
+			LocalDate jour = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			if(jour.getDayOfWeek()==DayOfWeek.SUNDAY || GeneralSqlController.isJourFerie(date, null)) {
+				resultat = Timestamp.valueOf(jour.plusDays(1).atStartOfDay());
 			}
 		}
 		return resultat;
 	}
-
-	public static boolean isJourFerie(Timestamp date) {
-		boolean resultat = true;
-		if(date!=null) {
-			resultat = false;
-			Calendar cal = Calendar.getInstance();		
-			cal.setTime(date);
-			if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY) {
-				resultat = true;
-			}
-			else {
-				cal.add(Calendar.DAY_OF_WEEK, -1);
-				Timestamp hier = new Timestamp(cal.getTime().getTime());
-				cal = Calendar.getInstance();		
-				cal.setTime(date);
-				cal.add(Calendar.DAY_OF_WEEK, 1);
-				Timestamp demain = new Timestamp(cal.getTime().getTime());
-				
-				Timestamp[] joursFeries = GeneralSqlController.getAllJoursFeries(hier, demain, null);
-				for(Timestamp jourFerie:joursFeries) {
-					if(jourFerie.compareTo(date)==0) {
-						resultat = true;
-					}
-				}		
-			}
-			
-		}
-		return resultat;
-	}		
-
 	
 	public static Integer getNombreJourTravaille(Timestamp dateDebut, Timestamp dateFin) {
 		Integer resultat = null;
 		if(dateDebut!=null && dateFin!=null) {
-			
-			Timestamp[] joursFeries = GeneralSqlController.getAllJoursFeries(dateDebut, dateFin, null);
-			Calendar cal = Calendar.getInstance();		
-			int ferie = 0;
-			for (Timestamp jourFerie : joursFeries) {
-				cal.setTime(jourFerie);
-				if(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY) {
-					ferie++;				
+			LocalDate debut = dateDebut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			LocalDate fin = dateFin.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			Set<LocalDate> joursFeries = GeneralSqlController.getAllJoursFeries(dateDebut, dateFin, null);
+			resultat = 0;
+			for(LocalDate date = debut; !date.isAfter(fin); date = date.plusDays(1)) {
+				if(date.getDayOfWeek()!=DayOfWeek.SUNDAY && !joursFeries.contains(date)) {
+					resultat++;
 				}
 			}
-			
-			Long j1 = TimeUnit.MILLISECONDS.toDays(dateDebut.getTime());
-			Long j2 = TimeUnit.MILLISECONDS.toDays(dateFin.getTime());
-			resultat = (int) Math.abs(j2-j1+1);
-			int sem = resultat / 7;
-			int jour = resultat % 7;
-			cal  = Calendar.getInstance();
-			cal.setTime(dateDebut);
-			int jourb = jour; 
-			for (int i = 0; i <= jourb; i++) {
-				cal.setTime(dateDebut);
-				cal.add(Calendar.DAY_OF_WEEK, i);
-				if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-					jour = jour-1;
-				}
-			}
-			resultat = (sem*6) + jour - ferie;
+		}		
+		return resultat;
+	}
+
+	public static Integer getNombreJour(Timestamp dateDebut, Timestamp dateFin) {
+		Integer resultat = null;
+		if(dateDebut!=null && dateFin!=null) {
+			LocalDate debut = dateDebut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			LocalDate fin = dateFin.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			return (int) ChronoUnit.DAYS.between(debut,fin);
+		}		
+		return resultat;
+	}
+
+	public static Integer getNombreMois(Timestamp dateDebut, Timestamp dateFin) {
+		Integer resultat = null;
+		if(dateDebut!=null && dateFin!=null) {
+			LocalDate debut = dateDebut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			LocalDate fin = dateFin.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			return (int) ChronoUnit.MONTHS.between(debut,fin);
 		}		
 		return resultat;
 	}
 	
-
-	public static boolean isCongeAnnuel(Integer cbpartnerid, Timestamp date) {
-		boolean resultat = true;
-		if(date!=null && cbpartnerid!=null) {
-			resultat = false;
-			Calendar cal = Calendar.getInstance();		
-			cal.setTime(date);
-			if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY) {
+	public static boolean isPeriodeDisponible(Integer bpartnerID, Timestamp dateDebut, Timestamp dateFin) {
+		boolean resultat = false;
+		if(bpartnerID!=null && dateDebut!=null && dateFin!=null) {
+			if(!GeneralSqlController.chevaucheAnyCongeNonRejete(bpartnerID, dateDebut, dateFin, null)
+					&& !GeneralSqlController.chevaucheSuspensionNonRejete(bpartnerID, dateDebut, dateFin, null)
+					&& !GeneralSqlController.isPeriodeAbsence(bpartnerID, dateDebut, dateFin, null)) {
 				resultat = true;
 			}
-			else {
-				BeanPeriode[] congesAnnuels = GeneralSqlController.getCongesNonRejetebyNameConge(cbpartnerid, "Annuel", 
-						GeneralController.getFirstDayOfThisYear(), GeneralController.getLastDayOfThisYear(), null);
-				for(BeanPeriode congeAnnuel:congesAnnuels) {
-					if(date.after(congeAnnuel.getDateDebutConge()) && date.before(congeAnnuel.getDateFinConge())) {
-						resultat = true;
-					}
-				}		
-			}
-			
-		}
-		return resultat;
-	}
-	
-	public static boolean isJourSuspension(Integer cbpartnerid, Timestamp date) {
-		boolean resultat = true;
-		if(date!=null && cbpartnerid!=null) {
-			resultat = false;
-			Calendar cal = Calendar.getInstance();		
-			cal.setTime(date);
-			if(cal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY) {
-				resultat = true;
-			}
-			else {
-				BeanPeriode[] periodesSuspension = GeneralSqlController.getAllPeriodeSuspensionNonRejete(cbpartnerid, 
-						GeneralController.getFirstDayOfThisYear(), GeneralController.getLastDayOfThisYear(), null);
-				for(BeanPeriode periodeSuspension:periodesSuspension) {
-					if(date.after(periodeSuspension.getDateDebutConge()) && date.before(periodeSuspension.getDateFinConge())) {
-						resultat = true;
-					}
-				}		
-			}
-			
-		}
-		return resultat;
-	}	
-	
-	public static BeanPeriode isPeriodeSuspensionIn(Integer cbpartnerid, Timestamp dateDebut, Timestamp dateFin) {
-		BeanPeriode resultat = null;
-		if(cbpartnerid!=null && dateDebut!=null && dateFin!=null) {
-			if(dateDebut.after(dateFin)) {
-				Timestamp inter = dateFin;
-				dateFin=dateDebut;
-				dateDebut=inter;
-			}
-			BeanPeriode[] periodesSuspension = GeneralSqlController.getAllPeriodeSuspensionNonRejete(cbpartnerid, 
-					GeneralController.getFirstDayOfThisYear(), GeneralController.getLastDayOfThisYear(), null);
-			for(BeanPeriode periodeSuspension:periodesSuspension) {
-				if((dateDebut.after(periodeSuspension.getDateDebutConge()) && dateDebut.before(periodeSuspension.getDateFinConge())) || 
-						(dateFin.after(periodeSuspension.getDateDebutConge()) && dateFin.before(periodeSuspension.getDateFinConge()))) {
-					resultat = periodeSuspension;
-				}
-			}	
-		}		
-		return resultat;
-	}
-	
-	public static BeanAbsence isAbsenceIn(Integer cbpartnerid, Timestamp dateDebut, Timestamp dateFin) {
-		BeanAbsence resultat = null;
-		if(dateDebut!=null && dateFin!=null && cbpartnerid!=null) {
-			BeanAbsence[] absences = GeneralSqlController.getAllAbsenceConge(cbpartnerid, new Timestamp(System.currentTimeMillis()), null);
-			for(BeanAbsence absence:absences) {
-				if(absence.getDateAbsence().after(dateDebut) && absence.getDateAbsence().before(dateFin)) {
-					resultat = absence;
-				}
-			}	
-			
-		}
-		return resultat;
-	}	
-
-	public static BeanPeriode isPeriodeInConge(Integer idEmploye, Timestamp dateDebut, Timestamp dateFin) {
-		BeanPeriode resultat = null;
-		BeanPeriode[] bp = GeneralSqlController.getAllCongesNonRejete(idEmploye,
-				GeneralController.getFirstDayOfThisYear(), GeneralController.getLastDayOfThisYear(), null);
-		if(bp!=null) {
-			int i = 0;
-			while(i < bp.length && resultat==null) {
-				if(GeneralController.seChevauche(dateDebut, dateFin, bp[i].getDateDebutConge(), bp[i].getDateFinConge())) {
-					resultat = bp[i];
-				}
-				i++;
-			}
 		}
 		return resultat;
 	}
 
-	public static boolean seChevauche(BeanPeriodeConge b1, BeanPeriodeConge b2) {
-		boolean resultat=false;
-		if(b1!=null && b2!=null) {
-			if(b1.getDateDebutConge()!=null && b1.getDateFinConge()!=null 
-					&& b2.getDateDebutConge()!=null && b2.getDateFinConge()!=null) {
-				
-				Long j1 = TimeUnit.MILLISECONDS.toDays(b1.getDateDebutConge().getTime());
-				Long j2 = TimeUnit.MILLISECONDS.toDays(b1.getDateFinConge().getTime());
-				Long gap = Math.abs((j2-j1)/2);
-				Long j3 = gap;
-				if(j2>j1) {
-					j3 = j3+j1;
-				}
-				else {
-					j3 = j3+j2;
-				}
-				j1 = TimeUnit.MILLISECONDS.toDays(b2.getDateDebutConge().getTime());
-				j2 = TimeUnit.MILLISECONDS.toDays(b2.getDateFinConge().getTime());
-				Long gap0 = Math.abs((j2-j1)/2);
-				Long j30 = gap0;
-				if(j2>j1) {
-					j30 = j30+j1;
-				}
-				else {
-					j30 = j30+j2;
-				}
-				if(Math.abs(j3-j30)<Math.abs(gap+gap0)) {
-					resultat = true;
-				}
-			}
-		}
-		return resultat;
-	}
-	
-	public static boolean seChevauche(Timestamp t1, Timestamp t2, Timestamp p1, Timestamp p2) {
-		boolean resultat=false;
-		if(t1!=null && t2!=null 
-				&& p1!=null && p2!=null) {
-			
-			Long j1 = TimeUnit.MILLISECONDS.toDays(t1.getTime());
-			Long j2 = TimeUnit.MILLISECONDS.toDays(t2.getTime());
-			Long gap = Math.abs((j2-j1)/2);
-			Long j3 = gap;
-			if(j2>j1) {
-				j3 = j3+j1;
-			}
-			else {
-				j3 = j3+j2;
-			}
-			j1 = TimeUnit.MILLISECONDS.toDays(p1.getTime());
-			j2 = TimeUnit.MILLISECONDS.toDays(p2.getTime());
-			Long gap0 = Math.abs((j2-j1)/2);
-			Long j30 = gap0;
-			if(j2>j1) {
-				j30 = j30+j1;
-			}
-			else {
-				j30 = j30+j2;
-			}
-			if(Math.abs(j3-j30)<Math.abs(gap+gap0)) {
+	public static boolean isJourDisponible(Integer bpartnerID, Timestamp date) {
+		boolean resultat = false;
+		if(bpartnerID!=null && date!=null) {
+			if(!GeneralSqlController.isJourAnyCongeNonRejete(bpartnerID, date, null)
+					&& !GeneralSqlController.isJourSuspensionNonRejete(bpartnerID, date, null)
+					&& !GeneralSqlController.isJourAbsence(bpartnerID, date, null)
+					&& !GeneralSqlController.isJourFerie(date, null)) {
 				resultat = true;
 			}
 		}
@@ -417,41 +303,6 @@ public class GeneralController {
         Message message = prepareMessage(session, senderMail, recieverMail, subject, msg);
        
 	    try {
-			/*
-			 * message.setFrom(new InternetAddress(senderMail));
-			 * message.setRecipients(Message.RecipientType.TO, recieverMail);
-			 * message.setSubject(subject); message.setText(subject);
-			 * 
-			 * 
-			 * ArrayList<String> adressesMailRH =
-			 * ProcessSqlController.getMailRH(ad_Role_RH_ID, null); for(String adresseMail :
-			 * adressesMailRH) { if(adresseMail!=null) {
-			 * if(adresseMail.matches(".+@.+\\.[a-z]+")) {
-			 * message.addRecipient(RecipientType.CC, new InternetAddress(adresseMail)); } }
-			 * }
-			 * 
-			 * ProcessSqlController.getLogo(ad_Role_RH_ID, null); MimeMultipart multipart =
-			 * new MimeMultipart("related"); BodyPart messageBodyPart = new MimeBodyPart();
-			 * String htmlText = "<H1>Hello</H1><img src=\"cid:image\">";
-			 * messageBodyPart.setContent(htmlText, "text/html");
-			 * multipart.addBodyPart(messageBodyPart);
-			 * 
-			 * MimeBodyPart imagePart = new MimeBodyPart(); String logopath =
-			 * ProcessSqlController.getLogo(ad_Role_RH_ID, null); log.warning("\nOK : "+new
-			 * File(logopath).getAbsolutePath()); //DataSource fds = new FileDataSource(
-			 * logopath);
-			 * 
-			 * 
-			 * //messageBodyPart.setDataHandler(new DataHandler(fds));
-			 * imagePart.setHeader("Content-ID", "<image>");
-			 * imagePart.setDisposition(MimeBodyPart.INLINE);
-			 * imagePart.attachFile(logopath);
-			 * 
-			 * 
-			 * multipart.addBodyPart(imagePart);
-			 * 
-			 * message.setContent(multipart);
-			 */
          	Transport.send(message);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
