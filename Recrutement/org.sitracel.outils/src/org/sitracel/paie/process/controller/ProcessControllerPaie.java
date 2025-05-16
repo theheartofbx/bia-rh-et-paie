@@ -194,6 +194,10 @@ public class ProcessControllerPaie {
 				if(dernierContrat==null || dernierContrat.getDate_Debut()==null) {
 					dernierContrat = GeneralController.getDateDernierContrat(holiday.getC_BPartner_ID(), holiday.getDate_Fin_Effective());
 				}
+				if (dernierContrat != null) {
+					bpartner.setDate_Debut_Contrat_Relative(dernierContrat.getDate_Debut());
+					bpartner.save();
+				}
 				Timestamp dateDebutContrat = null;
 				if(dernierContrat!=null) {
 					dateDebutContrat = dernierContrat.getDate_Debut();
@@ -222,6 +226,7 @@ public class ProcessControllerPaie {
 					MHRElementBasePaie salaireBaseConcept = ProcessSqlControllerPaie.getElementBasePaieFromValue("SB", null);
 					ArrayList<MHRPeriodeSalariale> listePeriodeSalariale = GeneralSqlController.getAllPeriodeSalarialeFromPeriodeReference(
 							dateMin, holiday.getDate_Debut_Effective(), null);
+					ArrayList<MHRGestionPaieEmploye> listeGestionConge = GeneralSqlController.getAllGestionCongeEmploye(null);
 					if(salaireBaseConcept!=null && listePeriodeSalariale!=null && !listePeriodeSalariale.isEmpty()) {
 						int nbJourCongeBase = 0;
 						int annee = 0;
@@ -247,7 +252,6 @@ public class ProcessControllerPaie {
 								return null;
 							}
 							MHRCalculIndemniteConge calculIndemniteConge = new MHRCalculIndemniteConge(Env.getCtx(), 0, null);
-							ArrayList<MHRGestionPaieEmploye> listeGestionConge = GeneralSqlController.getAllGestionCongeEmploye(null);
 							BigDecimal salaireCotisableBrut = BigDecimal.ZERO;
 							if(!listeGestionConge.isEmpty()) {
 								for(MHRGestionPaieEmploye gestionCongeEmploye : listeGestionConge) {
@@ -284,8 +288,8 @@ public class ProcessControllerPaie {
 								ProcessControllerPaie.setCalculCongeElmtBase(bpartner, holiday, BigDecimal.ZERO, "CEMS", variables);
 							}
 							if(dernierConge!=null && dernierConge.getMoisAnciennete()!=null) {
-								int nbAnnee = dernierConge.getMoisAnciennete()/12;
-								nbAnnee = nbAnnee/3;
+								int nbAnnee = dernierConge.getMoisAnciennete()/36;
+								nbAnnee = nbAnnee*2;
 								ProcessControllerPaie.setCalculCongeElmtBase(bpartner, holiday, BigDecimal.valueOf(nbAnnee), "CANC", variables);
 							}
 							else {

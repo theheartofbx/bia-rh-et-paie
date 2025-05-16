@@ -101,8 +101,8 @@ public class GeneralController {
 	        LocalDate date2 = dateFin.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 	        Period periode = Period.between(date1, date2);
 			beanConge.setAnneeAnciennete(periode.getYears());
-			beanConge.setMoisAnciennete(periode.getMonths());
-			beanConge.setJourAnciennete(periode.getDays());	
+			beanConge.setMoisAnciennete((int)ChronoUnit.MONTHS.between(date1, date2));
+			beanConge.setJourAnciennete((int)ChronoUnit.DAYS.between(date1, date2));	
 		}
 		return beanConge;
 	}
