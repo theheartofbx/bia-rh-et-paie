@@ -34,7 +34,7 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250415L;
+	private static final long serialVersionUID = 20250819L;
 
     /** Standard Constructor */
     public X_HR_Element_Base_Paie (Properties ctx, int HR_Element_Base_Paie_ID, String trxName)
@@ -128,9 +128,9 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	public void setBase_Calcul_ID (int Base_Calcul_ID)
 	{
 		if (Base_Calcul_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_Base_Calcul_ID, null);
+			set_Value (COLUMNNAME_Base_Calcul_ID, null);
 		else
-			set_ValueNoCheck (COLUMNNAME_Base_Calcul_ID, Integer.valueOf(Base_Calcul_ID));
+			set_Value (COLUMNNAME_Base_Calcul_ID, Integer.valueOf(Base_Calcul_ID));
 	}
 
 	/** Get Base de Calcul.
@@ -223,9 +223,9 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	public void setHR_Rang_Calcul_ID (int HR_Rang_Calcul_ID)
 	{
 		if (HR_Rang_Calcul_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_HR_Rang_Calcul_ID, null);
+			set_Value (COLUMNNAME_HR_Rang_Calcul_ID, null);
 		else
-			set_ValueNoCheck (COLUMNNAME_HR_Rang_Calcul_ID, Integer.valueOf(HR_Rang_Calcul_ID));
+			set_Value (COLUMNNAME_HR_Rang_Calcul_ID, Integer.valueOf(HR_Rang_Calcul_ID));
 	}
 
 	/** Get Rang de Calcul.
@@ -277,9 +277,9 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	public void setHR_Type_Calcul_ID (int HR_Type_Calcul_ID)
 	{
 		if (HR_Type_Calcul_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_HR_Type_Calcul_ID, null);
+			set_Value (COLUMNNAME_HR_Type_Calcul_ID, null);
 		else
-			set_ValueNoCheck (COLUMNNAME_HR_Type_Calcul_ID, Integer.valueOf(HR_Type_Calcul_ID));
+			set_Value (COLUMNNAME_HR_Type_Calcul_ID, Integer.valueOf(HR_Type_Calcul_ID));
 	}
 
 	/** Get Type de Calcul.
@@ -297,7 +297,7 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	*/
 	public void setIsCalcul_Initial (boolean IsCalcul_Initial)
 	{
-		set_ValueNoCheck (COLUMNNAME_IsCalcul_Initial, Boolean.valueOf(IsCalcul_Initial));
+		set_Value (COLUMNNAME_IsCalcul_Initial, Boolean.valueOf(IsCalcul_Initial));
 	}
 
 	/** Get Est Inclus lors du Calcul Initial.
@@ -336,7 +336,7 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	*/
 	public void setPourcentage (BigDecimal Pourcentage)
 	{
-		set_ValueNoCheck (COLUMNNAME_Pourcentage, Pourcentage);
+		set_Value (COLUMNNAME_Pourcentage, Pourcentage);
 	}
 
 	/** Get Pourcentage.

@@ -79,6 +79,15 @@ public interface I_HR_ElementBasePaieEmploye
 
 	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException;
 
+    /** Column name Charger_Dernier */
+    public static final String COLUMNNAME_Charger_Dernier = "Charger_Dernier";
+
+	/** Set Charger Dernier Enregistrement	  */
+	public void setCharger_Dernier (boolean Charger_Dernier);
+
+	/** Get Charger Dernier Enregistrement	  */
+	public boolean isCharger_Dernier();
+
     /** Column name Complement_Salaire */
     public static final String COLUMNNAME_Complement_Salaire = "Complement_Salaire";
 
@@ -191,6 +200,17 @@ au :
 	/** Get HR_ElementBasePaieEmploye_UU	  */
 	public String getHR_ElementBasePaieEmploye_UU();
 
+    /** Column name HR_GestionPaieEmploye_ID */
+    public static final String COLUMNNAME_HR_GestionPaieEmploye_ID = "HR_GestionPaieEmploye_ID";
+
+	/** Set Gestion des Éléments de Base de la Paie Employé	  */
+	public void setHR_GestionPaieEmploye_ID (int HR_GestionPaieEmploye_ID);
+
+	/** Get Gestion des Éléments de Base de la Paie Employé	  */
+	public int getHR_GestionPaieEmploye_ID();
+
+	public I_HR_GestionPaieEmploye getHR_GestionPaieEmploye() throws RuntimeException;
+
     /** Column name HR_Job_ID */
     public static final String COLUMNNAME_HR_Job_ID = "HR_Job_ID";
 
@@ -201,6 +221,28 @@ au :
 	public int getHR_Job_ID();
 
 	public org.eevolution.model.I_HR_Job getHR_Job() throws RuntimeException;
+
+    /** Column name HR_Taux_Salarial_ID */
+    public static final String COLUMNNAME_HR_Taux_Salarial_ID = "HR_Taux_Salarial_ID";
+
+	/** Set Taux Salarial	  */
+	public void setHR_Taux_Salarial_ID (int HR_Taux_Salarial_ID);
+
+	/** Get Taux Salarial	  */
+	public int getHR_Taux_Salarial_ID();
+
+	public I_HR_Taux_Salarial getHR_Taux_Salarial() throws RuntimeException;
+
+    /** Column name HR_TypeContrat_ID */
+    public static final String COLUMNNAME_HR_TypeContrat_ID = "HR_TypeContrat_ID";
+
+	/** Set Type de Contrat	  */
+	public void setHR_TypeContrat_ID (int HR_TypeContrat_ID);
+
+	/** Get Type de Contrat	  */
+	public int getHR_TypeContrat_ID();
+
+	public I_HR_TypeContrat getHR_TypeContrat() throws RuntimeException;
 
     /** Column name Indemnite_Deces */
     public static final String COLUMNNAME_Indemnite_Deces = "Indemnite_Deces";

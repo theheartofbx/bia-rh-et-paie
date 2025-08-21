@@ -23,7 +23,7 @@ import org.sitracel.discipline.model.MHRSanctionAutorisation;
 import org.sitracel.discipline.model.MHRTypeSanction;
 import org.sitracel.model.MHRAmpliation;
 import org.sitracel.model.MHRCategorieResponsabilite;
-import org.sitracel.model.MHREmployeeJob;
+import org.sitracel.model.MHREmployeeJobf;
 import org.sitracel.model.MHROrganigramme;
 import org.sitracel.model.MHRParametreNumerique;
 import org.sitracel.paie.model.MHRCalculPaie;
@@ -56,8 +56,8 @@ public class SitracelModelFactory implements IModelFactory{
 		if(tableName.equalsIgnoreCase(MHROrganigramme.Table_Name)) {
 			return MHROrganigramme.class;
 		}
-		if(tableName.equalsIgnoreCase(MHREmployeeJob.Table_Name)) {
-			return MHREmployeeJob.class;
+		if(tableName.equalsIgnoreCase(MHREmployeeJobf.Table_Name)) {
+			return MHREmployeeJobf.class;
 		}
 		if(tableName.equalsIgnoreCase(MHRCategorieResponsabilite.Table_Name)) {
 			return MHRCategorieResponsabilite.class;
@@ -186,8 +186,8 @@ public class SitracelModelFactory implements IModelFactory{
 		if(tableName.equalsIgnoreCase(MHROrganigramme.Table_Name)) {
 			return new MHROrganigramme(Env.getCtx(), Record_ID, trxName);
 		}
-		if(tableName.equalsIgnoreCase(MHREmployeeJob.Table_Name)) {
-			return new MHREmployeeJob(Env.getCtx(), Record_ID, trxName);
+		if(tableName.equalsIgnoreCase(MHREmployeeJobf.Table_Name)) {
+			return new MHREmployeeJobf(Env.getCtx(), Record_ID, trxName);
 		}
 		if(tableName.equalsIgnoreCase(MHRCategorieResponsabilite.Table_Name)) {
 			return new MHRCategorieResponsabilite(Env.getCtx(), Record_ID, trxName);
@@ -316,8 +316,8 @@ public class SitracelModelFactory implements IModelFactory{
 		if(tableName.equalsIgnoreCase(MHROrganigramme.Table_Name)) {
 			return new MHROrganigramme(Env.getCtx(), rs, trxName);
 		}
-		if(tableName.equalsIgnoreCase(MHREmployeeJob.Table_Name)) {
-			return new MHREmployeeJob(Env.getCtx(), rs, trxName);
+		if(tableName.equalsIgnoreCase(MHREmployeeJobf.Table_Name)) {
+			return new MHREmployeeJobf(Env.getCtx(), rs, trxName);
 		}
 		if(tableName.equalsIgnoreCase(MHRCategorieResponsabilite.Table_Name)) {
 			return new MHRCategorieResponsabilite(Env.getCtx(), rs, trxName);

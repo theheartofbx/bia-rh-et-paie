@@ -25,6 +25,7 @@ import org.sitracel.bean.BeanConge;
 import org.sitracel.bean.BeanPeriode;
 import org.sitracel.beanfactory.BeanFactory;
 import org.sitracel.conge.callout.conge.controller.CalloutSqlControllerConge;
+import org.sitracel.conge.model.MHREmployeeChildren;
 import org.sitracel.conge.model.MHRTypeConge;
 import org.sitracel.model.MCBPartner;
 import org.sitracel.paie.model.MHRElementBasePaieEmploye;
@@ -50,7 +51,7 @@ public class GeneralController {
 							res = res + GeneralController.getNombreJourTravaille(beanPeriode.getDateDebutConge(), beanPeriode.getDateFinConge());
 						}
 					}
-					beanConge = CalloutSqlControllerConge.getEnfantMoins6(idCBPartner, dateActuelle, beanConge, trxName);
+					beanConge = MHREmployeeChildren.getEnfantMoins6(idCBPartner, dateActuelle, beanConge, trxName);
 					beanConge = GeneralController.setAnciennete(beanConge, dateDebutContrat, dateActuelle);
 					int nombreJourCongeBase = GeneralController.getNombreJourCongeAnnuelBase();
 					int nbBase = 0;
@@ -79,7 +80,7 @@ public class GeneralController {
 			if(dernierContrat!=null) {
 				dateDebutContrat = dernierContrat.getDate_Debut();
 			}
-			beanConge = CalloutSqlControllerConge.getEnfantMoins6(idCBPartner, dateActuelle, beanConge, trxName);
+			beanConge = MHREmployeeChildren.getEnfantMoins6(idCBPartner, dateActuelle, beanConge, trxName);
 			beanConge = GeneralController.setAnciennete(beanConge, dateDebutContrat, dateActuelle);
 			int nombreJourCongeBase = GeneralController.getNombreJourCongeAnnuelBase();
 			int nbBase = 0;

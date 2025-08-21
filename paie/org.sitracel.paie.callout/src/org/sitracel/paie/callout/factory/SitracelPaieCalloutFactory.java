@@ -5,9 +5,13 @@ import java.util.List;
 
 import org.adempiere.base.IColumnCallout;
 import org.adempiere.base.IColumnCalloutFactory;
+import org.sitracel.paie.callout.CalloutAjouterElementPaie;
+import org.sitracel.paie.callout.CalloutChargerDernierElement;
+import org.sitracel.paie.callout.CalloutDateElementPaie;
 import org.sitracel.paie.callout.CalloutMajPeriodeSalariale;
 import org.sitracel.paie.callout.CalloutMajRetenueSalarialeFinPeriode;
 import org.sitracel.paie.callout.CalloutMajRetenueSalarialeMensualite;
+import org.sitracel.paie.model.MHRElementBasePaieEmploye;
 import org.sitracel.paie.model.MHRPeriodeSalariale;
 import org.sitracel.paie.model.MHRRetenueSalariale;
 
@@ -30,7 +34,17 @@ public class SitracelPaieCalloutFactory implements IColumnCalloutFactory{
 		if(tableName.equalsIgnoreCase(MHRRetenueSalariale.Table_Name) && (columnName.equalsIgnoreCase(MHRRetenueSalariale.COLUMNNAME_Debut_Prelevement_ID)
 				|| columnName.equalsIgnoreCase(MHRRetenueSalariale.COLUMNNAME_Nombre_Mensualite))) {
 			list.add(new CalloutMajRetenueSalarialeFinPeriode());
-		}				
+		}
+		if(tableName.equalsIgnoreCase(MHRElementBasePaieEmploye.Table_Name) && (columnName.equalsIgnoreCase(MHRElementBasePaieEmploye.COLUMNNAME_Charger_Dernier))) {
+			list.add(new CalloutChargerDernierElement());
+		}	
+		if(tableName.equalsIgnoreCase(MHRElementBasePaieEmploye.Table_Name) && (columnName.equalsIgnoreCase(MHRElementBasePaieEmploye.COLUMNNAME_HR_GestionPaieEmploye_ID))) {
+			list.add(new CalloutAjouterElementPaie());
+		}		
+		if(tableName.equalsIgnoreCase(MHRElementBasePaieEmploye.Table_Name) && (columnName.equalsIgnoreCase(MHRElementBasePaieEmploye.COLUMNNAME_Date_Debut)
+				|| columnName.equalsIgnoreCase(MHRElementBasePaieEmploye.COLUMNNAME_Date_Fin))) {
+			list.add(new CalloutDateElementPaie());
+		}					
 
 		return list !=null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];
 	}

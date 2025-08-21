@@ -21,7 +21,7 @@ import org.sitracel.bean.BeanBareme;
 import org.sitracel.bean.BeanConge;
 import org.sitracel.bean.BeanElmtPaie;
 import org.sitracel.beanfactory.BeanFactory;
-import org.sitracel.conge.callout.conge.controller.CalloutSqlControllerConge;
+import org.sitracel.conge.model.MHREmployeeChildren;
 import org.sitracel.conge.model.MHRHoliday;
 import org.sitracel.controller.GeneralController;
 import org.sitracel.controller.GeneralSqlController;
@@ -221,7 +221,7 @@ public class ProcessControllerPaie {
 				if(dateMin!=null) {
 					GeneralSqlController.resetCalculConge(bpartnerID, null);
 					GeneralSqlController.resetIndemniteConge(bpartnerID, null);
-					dernierConge = CalloutSqlControllerConge.getEnfantMoins6(bpartnerID, holiday.getDate_Debut_Effective(), dernierConge, null);
+					dernierConge = MHREmployeeChildren.getEnfantMoins6(bpartnerID, holiday.getDate_Debut_Effective(), dernierConge, null);
 					dernierConge = GeneralController.setAnciennete(dernierConge, dernierConge.getDateEmbauche(), holiday.getDate_Debut_Effective());
 					MHRElementBasePaie salaireBaseConcept = ProcessSqlControllerPaie.getElementBasePaieFromValue("SB", null);
 					ArrayList<MHRPeriodeSalariale> listePeriodeSalariale = GeneralSqlController.getAllPeriodeSalarialeFromPeriodeReference(
@@ -331,7 +331,7 @@ public class ProcessControllerPaie {
 			}
 		}
 		return salaireCotisableTotalBrut;
-	}
+	}	
 	
 	private static void genererElementPaie(Integer cbpartnerID, String value, Map<String, BigDecimal> variables, Timestamp validFrom) {
 		if(cbpartnerID!=null && value!=null && validFrom!=null) {

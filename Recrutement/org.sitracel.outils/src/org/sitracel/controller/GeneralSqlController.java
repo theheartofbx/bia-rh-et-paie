@@ -1248,7 +1248,8 @@ public class GeneralSqlController {
 					+" FROM intervals"
 					+" WHERE (CAST(" + MHRElementBasePaieEmploye.COLUMNNAME_Date_Debut + " AS timestamp),"
 					+" CAST(" + MHRElementBasePaieEmploye.COLUMNNAME_Date_Fin + " AS timestamp))"
-					+" OVERLAPS (?, ?)");
+					+" OVERLAPS (?, ?)"
+					+" ORDER BY " + MHRElementBasePaieEmploye.COLUMNNAME_Date_Debut + " ASC");
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
 			try

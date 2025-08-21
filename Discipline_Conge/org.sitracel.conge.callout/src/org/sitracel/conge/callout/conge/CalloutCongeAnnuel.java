@@ -24,7 +24,6 @@ public class CalloutCongeAnnuel implements IColumnCallout {
 		Timestamp now = new Timestamp(System.currentTimeMillis());
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(now);
-		cal.setTime(now);
 		cal.add(Calendar.DAY_OF_YEAR, 7);
 		Timestamp debutAnnee = new Timestamp(cal.getTime().getTime());
 		cal.set(Calendar.YEAR, cal.get(Calendar.YEAR));
@@ -36,9 +35,10 @@ public class CalloutCongeAnnuel implements IColumnCallout {
 		Timestamp dateFin = (Timestamp) mTab.getValue(MHRHoliday.COLUMNNAME_Date_Fin_Souhaitee);
 		
 		Integer idConge = (Integer)mTab.getValue(MHRHoliday.COLUMNNAME_Emission_Conge_ID);
-		
+		String message = "";
+		boolean dateOk = true;
 		if(idConge!=null) {
-			MHRTypeConge typeConge = typeConge = new MHRTypeConge(Env.getCtx(), idConge, null);
+			MHRTypeConge typeConge = new MHRTypeConge(Env.getCtx(), idConge, null);
 			if(typeConge!=null) {
 				if(dateDebut!=null && dateFin!=null) {
 					if(dateDebut.before(dateFin)) {
@@ -59,15 +59,8 @@ public class CalloutCongeAnnuel implements IColumnCallout {
 												Integer nbJourTotal = (Integer) mTab.getValue(MHRHoliday.COLUMNNAME_Jours_Conge_Total);
 												if(nbJourDejaUtilise!=null && nbJourTotal!=null) {
 													if((nbJourTotal-nbJourDejaUtilise-nbJour)<0) {
-														mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Souhaitee, null);
-														mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Souhaitee, null);
-														mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Ajustee, null);
-														mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Ajustee, null);
-														mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Effective, null);
-														mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, null);
-														mTab.setValue(MHRHoliday.COLUMNNAME_IsMessageAlerteDisplayed, "Y");
-														mTab.setValue(MHRHoliday.COLUMNNAME_Message_Alerte, "la période choisie("+nbJour+" jour(s)) dépasse le nombre de jours de congé qu'il vous reste ("+(nbJourTotal-nbJourDejaUtilise)+" jours) !");
-														return null;
+														message = "la période choisie("+nbJour+" jour(s)) dépasse le nombre de jours de congé qu'il vous reste ("+(nbJourTotal-nbJourDejaUtilise)+" jours) !";
+														dateOk = false;
 													}
 												}
 												mTab.setValue(MHRHoliday.COLUMNNAME_Jours_Conge_Correspondant, nbJour);
@@ -81,67 +74,42 @@ public class CalloutCongeAnnuel implements IColumnCallout {
 											mTab.setValue(MHRHoliday.COLUMNNAME_Message_Alerte, "");
 										}
 										else {
-											mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Souhaitee, null);
-											mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Souhaitee, null);
-											mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Ajustee, null);
-											mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Ajustee, null);
-											mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Effective, null);
-											mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, null);
-											mTab.setValue(MHRHoliday.COLUMNNAME_IsMessageAlerteDisplayed, "Y");
-											mTab.setValue(MHRHoliday.COLUMNNAME_Message_Alerte, "une absence a déjà été enregistrée durant la période que vous avez choisi ");
-											return null;
+											dateOk = false;
+											message = "une absence a déjà été enregistrée durant la période que vous avez choisi ";
 										}
 									}
 									else {
-										mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Souhaitee, null);
-										mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Souhaitee, null);
-										mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Ajustee, null);
-										mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Ajustee, null);
-										mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Effective, null);
-										mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, null);
-										mTab.setValue(MHRHoliday.COLUMNNAME_IsMessageAlerteDisplayed, "Y");
-										mTab.setValue(MHRHoliday.COLUMNNAME_Message_Alerte, "une période de suspension est déjà émise durant cette période");
-										return null;
+										dateOk = false;
+										message = "une période de suspension est déjà émise durant cette période";
 									}
 								}
 								else {
-									mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Souhaitee, null);
-									mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Souhaitee, null);
-									mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Ajustee, null);
-									mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Ajustee, null);
-									mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Effective, null);
-									mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, null);
-									mTab.setValue(MHRHoliday.COLUMNNAME_IsMessageAlerteDisplayed, "Y");
-									mTab.setValue(MHRHoliday.COLUMNNAME_Message_Alerte, "La période que vous avez choisi coincide avec une autre période de congé");
-									return null;
+									dateOk = false;
+									message = "La période que vous avez choisi coincide avec une autre période de congé";
 								}
 							}
 							else {
-								mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Souhaitee, null);
-								mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Souhaitee, null);
-								mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Ajustee, null);
-								mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Ajustee, null);
-								mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Effective, null);
-								mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, null);
-								mTab.setValue(MHRHoliday.COLUMNNAME_IsMessageAlerteDisplayed, "Y");
-								mTab.setValue(MHRHoliday.COLUMNNAME_Message_Alerte, "Vous devez prendre des congés 1 semaine au moins à compter d'aujourd'hui et un an au plus !");
-								return null;
+								dateOk = false;
+								message = "Vous devez prendre des congés 1 semaine au moins à compter d'aujourd'hui et un an au plus !";
 							}
 						}
 					}
 					else {
-						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Souhaitee, null);
-						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Souhaitee, null);
-						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Ajustee, null);
-						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Ajustee, null);
-						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Effective, null);
-						mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, null);
-						mTab.setValue(MHRHoliday.COLUMNNAME_IsMessageAlerteDisplayed, "Y");
-						mTab.setValue(MHRHoliday.COLUMNNAME_Message_Alerte, "la date de début ne peut pas être après la date de fin !");
-						return null;
+						dateOk = false;
+						message = "la date de début ne peut pas être après la date de fin !";
 					}
 				}
 			}
+		}		
+		if(!dateOk) {
+			mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Souhaitee, null);
+			mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Souhaitee, null);
+			mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Ajustee, null);
+			mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Ajustee, null);
+			mTab.setValue(MHRHoliday.COLUMNNAME_Date_Debut_Effective, null);
+			mTab.setValue(MHRHoliday.COLUMNNAME_Date_Fin_Effective, null);
+			mTab.setValue(MHRHoliday.COLUMNNAME_IsMessageAlerteDisplayed, "Y");
+			mTab.setValue(MHRHoliday.COLUMNNAME_Message_Alerte, message);
 		}
 		
 		return null;

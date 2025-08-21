@@ -187,6 +187,24 @@ IRPP
 	  */
 	public boolean isPrinted();
 
+    /** Column name IsProportionnelTravail */
+    public static final String COLUMNNAME_IsProportionnelTravail = "IsProportionnelTravail";
+
+	/** Set Est Proportionnel au Temps de Travail	  */
+	public void setIsProportionnelTravail (boolean IsProportionnelTravail);
+
+	/** Get Est Proportionnel au Temps de Travail	  */
+	public boolean isProportionnelTravail();
+
+    /** Column name Libelle */
+    public static final String COLUMNNAME_Libelle = "Libelle";
+
+	/** Set Libellé	  */
+	public void setLibelle (String Libelle);
+
+	/** Get Libellé	  */
+	public String getLibelle();
+
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
 

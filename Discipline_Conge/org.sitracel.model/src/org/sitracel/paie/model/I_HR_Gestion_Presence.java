@@ -167,6 +167,28 @@ au :
 	  */
 	public boolean isActive();
 
+    /** Column name Nombre_Heure_Travaille */
+    public static final String COLUMNNAME_Nombre_Heure_Travaille = "Nombre_Heure_Travaille";
+
+	/** Set Nombre d&#039;
+Heures Travaillés	  */
+	public void setNombre_Heure_Travaille (int Nombre_Heure_Travaille);
+
+	/** Get Nombre d&#039;
+Heures Travaillés	  */
+	public int getNombre_Heure_Travaille();
+
+    /** Column name Nombre_Heure_Travaille_Max */
+    public static final String COLUMNNAME_Nombre_Heure_Travaille_Max = "Nombre_Heure_Travaille_Max";
+
+	/** Set Nombre d&#039;
+Heures Travaillés Max	  */
+	public void setNombre_Heure_Travaille_Max (int Nombre_Heure_Travaille_Max);
+
+	/** Get Nombre d&#039;
+Heures Travaillés Max	  */
+	public int getNombre_Heure_Travaille_Max();
+
     /** Column name Nombre_Jour_Avant_DebutContrat */
     public static final String COLUMNNAME_Nombre_Jour_Avant_DebutContrat = "Nombre_Jour_Avant_DebutContrat";
 

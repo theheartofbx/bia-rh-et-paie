@@ -34,7 +34,7 @@ public class X_HR_Retenue_Salariale extends PO implements I_HR_Retenue_Salariale
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250508L;
+	private static final long serialVersionUID = 20250819L;
 
     /** Standard Constructor */
     public X_HR_Retenue_Salariale (Properties ctx, int HR_Retenue_Salariale_ID, String trxName)
@@ -47,6 +47,7 @@ public class X_HR_Retenue_Salariale extends PO implements I_HR_Retenue_Salariale
 			setHR_Element_Base_Paie_ID (0);
 			setHR_Retenue_Salariale_ID (0);
 			setMontant_Total_Retenue (Env.ZERO);
+			setName (null);
 			setNombre_Mensualite (0);
         } */
     }
@@ -62,6 +63,7 @@ public class X_HR_Retenue_Salariale extends PO implements I_HR_Retenue_Salariale
 			setHR_Element_Base_Paie_ID (0);
 			setHR_Retenue_Salariale_ID (0);
 			setMontant_Total_Retenue (Env.ZERO);
+			setName (null);
 			setNombre_Mensualite (0);
         } */
     }
@@ -77,6 +79,7 @@ public class X_HR_Retenue_Salariale extends PO implements I_HR_Retenue_Salariale
 			setHR_Element_Base_Paie_ID (0);
 			setHR_Retenue_Salariale_ID (0);
 			setMontant_Total_Retenue (Env.ZERO);
+			setName (null);
 			setNombre_Mensualite (0);
         } */
     }
@@ -92,6 +95,7 @@ public class X_HR_Retenue_Salariale extends PO implements I_HR_Retenue_Salariale
 			setHR_Element_Base_Paie_ID (0);
 			setHR_Retenue_Salariale_ID (0);
 			setMontant_Total_Retenue (Env.ZERO);
+			setName (null);
 			setNombre_Mensualite (0);
         } */
     }
@@ -120,7 +124,7 @@ public class X_HR_Retenue_Salariale extends PO implements I_HR_Retenue_Salariale
     public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Retenue_Salariale[")
-        .append(get_ID()).append("]");
+        .append(get_ID()).append(",Name=").append(getName()).append("]");
       return sb.toString();
     }
 
@@ -377,6 +381,22 @@ public class X_HR_Retenue_Salariale extends PO implements I_HR_Retenue_Salariale
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
+	}
+
+	/** Set Name.
+		@param Name Alphanumeric identifier of the entity
+	*/
+	public void setName (String Name)
+	{
+		set_Value (COLUMNNAME_Name, Name);
+	}
+
+	/** Get Name.
+		@return Alphanumeric identifier of the entity
+	  */
+	public String getName()
+	{
+		return (String)get_Value(COLUMNNAME_Name);
 	}
 
 	/** Set Nombre de Mensualité.

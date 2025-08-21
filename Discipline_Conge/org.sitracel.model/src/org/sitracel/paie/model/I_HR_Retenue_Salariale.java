@@ -253,6 +253,19 @@ au :
 	  */
 	public BigDecimal getMontant_Total_Retenue();
 
+    /** Column name Name */
+    public static final String COLUMNNAME_Name = "Name";
+
+	/** Set Name.
+	  * Alphanumeric identifier of the entity
+	  */
+	public void setName (String Name);
+
+	/** Get Name.
+	  * Alphanumeric identifier of the entity
+	  */
+	public String getName();
+
     /** Column name Nombre_Mensualite */
     public static final String COLUMNNAME_Nombre_Mensualite = "Nombre_Mensualite";
 

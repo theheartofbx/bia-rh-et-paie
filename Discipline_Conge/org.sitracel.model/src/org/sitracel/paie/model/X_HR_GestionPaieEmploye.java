@@ -31,7 +31,7 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250507L;
+	private static final long serialVersionUID = 20250813L;
 
     /** Standard Constructor */
     public X_HR_GestionPaieEmploye (Properties ctx, int HR_GestionPaieEmploye_ID, String trxName)
@@ -276,6 +276,43 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 			return "Y".equals(oo);
 		}
 		return false;
+	}
+
+	/** Set Est Proportionnel au Temps de Travail.
+		@param IsProportionnelTravail Est Proportionnel au Temps de Travail
+	*/
+	public void setIsProportionnelTravail (boolean IsProportionnelTravail)
+	{
+		set_Value (COLUMNNAME_IsProportionnelTravail, Boolean.valueOf(IsProportionnelTravail));
+	}
+
+	/** Get Est Proportionnel au Temps de Travail.
+		@return Est Proportionnel au Temps de Travail	  */
+	public boolean isProportionnelTravail()
+	{
+		Object oo = get_Value(COLUMNNAME_IsProportionnelTravail);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Libellé.
+		@param Libelle Libellé
+	*/
+	public void setLibelle (String Libelle)
+	{
+		set_Value (COLUMNNAME_Libelle, Libelle);
+	}
+
+	/** Get Libellé.
+		@return Libellé	  */
+	public String getLibelle()
+	{
+		return (String)get_Value(COLUMNNAME_Libelle);
 	}
 
 	/** Set Name.

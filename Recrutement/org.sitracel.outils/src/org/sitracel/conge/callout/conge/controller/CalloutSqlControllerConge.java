@@ -6,78 +6,22 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 import org.compiere.model.PO;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
-import org.sitracel.bean.BeanConge;
 import org.sitracel.bean.BeanPeriode;
 import org.sitracel.bean.BeanResumeAbsence;
 import org.sitracel.beanfactory.BeanFactory;
 import org.sitracel.conge.model.MHRAbsence;
-import org.sitracel.conge.model.MHREmployeeChildren;
 import org.sitracel.conge.model.MHRHoliday;
 import org.sitracel.controller.GeneralController;
-import org.sitracel.model.MCBPartner;
 import org.sitracel.model.MHREmployeeJob;
 import org.sitracel.model.MHRJob;
 
 public class CalloutSqlControllerConge {
 	private static CLogger	log = CLogger.getCLogger (PO.class);
-	public static BeanConge getEnfantMoins6(Integer bpartnerID, Timestamp dateActuelle, BeanConge beanConge, String trxName) {
-		if(bpartnerID!=null && dateActuelle!=null && beanConge!=null) {
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(dateActuelle);
-			cal.add(Calendar.YEAR, -6);
-			Timestamp moinsDeSixAns = new Timestamp(cal.getTime().getTime());
-			StringBuilder sql = new StringBuilder("SELECT bp."+MCBPartner.COLUMNNAME_Sex
-					//+", bp."+MCBPartner.COLUMNNAME_DateFrom
-					+", child."+MHREmployeeChildren.COLUMNNAME_Date_Naissance
-					+" FROM "+MCBPartner.Table_Name+" bp"
-					+" LEFT JOIN "+MHREmployeeChildren.Table_Name+" child"
-						+" ON child."+MHREmployeeChildren.COLUMNNAME_C_BPartner_ID+"=bp."+MCBPartner.COLUMNNAME_C_BPartner_ID
-						+" AND child."+MHREmployeeChildren.COLUMNNAME_Date_Naissance+">?"
-					+" WHERE bp."+MCBPartner.COLUMNNAME_C_BPartner_ID+"=?");					;
-			PreparedStatement pstmt = null;
-			ResultSet rs = null;
-			try
-			{
-				pstmt = DB.prepareStatement(sql.toString(), trxName);
-				pstmt.setTimestamp(1, moinsDeSixAns);
-				pstmt.setInt(2, bpartnerID);
-				rs = pstmt.executeQuery();
-				int in = 0;
-				List<Integer> list = new ArrayList<Integer>();
-				while (rs.next()) {
-					if(in==0) {								
-						beanConge.setGenre(rs.getString(MCBPartner.COLUMNNAME_Sex));
-					}
-					if(rs.getTimestamp(MHREmployeeChildren.COLUMNNAME_Date_Naissance)!=null) {
-						cal.setTime(rs.getTimestamp(MHREmployeeChildren.COLUMNNAME_Date_Naissance));
-						list.add(cal.get(Calendar.YEAR));
-					}
-					in++;
-				}
-				beanConge.setNombreEnfantPetit(list.size());
-				beanConge.setAnneeNaissance(list);
-			}
-			catch (SQLException e)
-			{
-				log.warning(e.getMessage());
-				e.printStackTrace();
-				return null;
-			}
-			finally {
-				DB.close(rs, pstmt);
-				rs = null; pstmt = null;
-			}
-		}
-		return beanConge;
-	}
-	
 	public static BeanPeriode[] getAllCongesDepFromCBPartnerID (Timestamp dateDebut, Timestamp dateFin, Integer cbpartnerid, String trxName)
 	{
 		ArrayList<BeanPeriode> list = new ArrayList<BeanPeriode>();

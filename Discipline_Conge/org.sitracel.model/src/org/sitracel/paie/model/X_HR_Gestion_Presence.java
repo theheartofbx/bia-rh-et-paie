@@ -32,7 +32,7 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250413L;
+	private static final long serialVersionUID = 20250819L;
 
     /** Standard Constructor */
     public X_HR_Gestion_Presence (Properties ctx, int HR_Gestion_Presence_ID, String trxName)
@@ -224,6 +224,42 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 	public int getHR_Periode_Salariale_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Periode_Salariale_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Nombre d&#039;Heures Travaillés.
+		@param Nombre_Heure_Travaille Nombre d&#039;Heures Travaillés
+	*/
+	public void setNombre_Heure_Travaille (int Nombre_Heure_Travaille)
+	{
+		set_Value (COLUMNNAME_Nombre_Heure_Travaille, Integer.valueOf(Nombre_Heure_Travaille));
+	}
+
+	/** Get Nombre d&#039;Heures Travaillés.
+		@return Nombre d&#039;Heures Travaillés	  */
+	public int getNombre_Heure_Travaille()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Heure_Travaille);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Nombre d&#039;Heures Travaillés Max.
+		@param Nombre_Heure_Travaille_Max Nombre d&#039;Heures Travaillés Max
+	*/
+	public void setNombre_Heure_Travaille_Max (int Nombre_Heure_Travaille_Max)
+	{
+		set_Value (COLUMNNAME_Nombre_Heure_Travaille_Max, Integer.valueOf(Nombre_Heure_Travaille_Max));
+	}
+
+	/** Get Nombre d&#039;Heures Travaillés Max.
+		@return Nombre d&#039;Heures Travaillés Max	  */
+	public int getNombre_Heure_Travaille_Max()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Heure_Travaille_Max);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();

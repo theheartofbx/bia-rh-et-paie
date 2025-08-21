@@ -34,7 +34,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250507L;
+	private static final long serialVersionUID = 20250819L;
 
     /** Standard Constructor */
     public X_HR_ElementBasePaieEmploye (Properties ctx, int HR_ElementBasePaieEmploye_ID, String trxName)
@@ -45,6 +45,9 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 			setC_BPartner_ID (0);
 			setDate_Debut (new Timestamp( System.currentTimeMillis() ));
 			setHR_ElementBasePaieEmploye_ID (0);
+			setHR_Job_ID (0);
+			setHR_Taux_Salarial_ID (0);
+			setHR_TypeContrat_ID (0);
 			setSalaire_Base (Env.ZERO);
         } */
     }
@@ -58,6 +61,9 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 			setC_BPartner_ID (0);
 			setDate_Debut (new Timestamp( System.currentTimeMillis() ));
 			setHR_ElementBasePaieEmploye_ID (0);
+			setHR_Job_ID (0);
+			setHR_Taux_Salarial_ID (0);
+			setHR_TypeContrat_ID (0);
 			setSalaire_Base (Env.ZERO);
         } */
     }
@@ -71,6 +77,9 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 			setC_BPartner_ID (0);
 			setDate_Debut (new Timestamp( System.currentTimeMillis() ));
 			setHR_ElementBasePaieEmploye_ID (0);
+			setHR_Job_ID (0);
+			setHR_Taux_Salarial_ID (0);
+			setHR_TypeContrat_ID (0);
 			setSalaire_Base (Env.ZERO);
         } */
     }
@@ -84,6 +93,9 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 			setC_BPartner_ID (0);
 			setDate_Debut (new Timestamp( System.currentTimeMillis() ));
 			setHR_ElementBasePaieEmploye_ID (0);
+			setHR_Job_ID (0);
+			setHR_Taux_Salarial_ID (0);
+			setHR_TypeContrat_ID (0);
 			setSalaire_Base (Env.ZERO);
         } */
     }
@@ -144,12 +156,34 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 		return ii.intValue();
 	}
 
+	/** Set Charger Dernier Enregistrement.
+		@param Charger_Dernier Charger Dernier Enregistrement
+	*/
+	public void setCharger_Dernier (boolean Charger_Dernier)
+	{
+		set_ValueNoCheck (COLUMNNAME_Charger_Dernier, Boolean.valueOf(Charger_Dernier));
+	}
+
+	/** Get Charger Dernier Enregistrement.
+		@return Charger Dernier Enregistrement	  */
+	public boolean isCharger_Dernier()
+	{
+		Object oo = get_Value(COLUMNNAME_Charger_Dernier);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
 	/** Set Complément Salaire.
 		@param Complement_Salaire Complément Salaire
 	*/
 	public void setComplement_Salaire (BigDecimal Complement_Salaire)
 	{
-		set_Value (COLUMNNAME_Complement_Salaire, Complement_Salaire);
+		set_ValueNoCheck (COLUMNNAME_Complement_Salaire, Complement_Salaire);
 	}
 
 	/** Get Complément Salaire.
@@ -168,7 +202,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setDate_Debut (Timestamp Date_Debut)
 	{
-		set_Value (COLUMNNAME_Date_Debut, Date_Debut);
+		set_ValueNoCheck (COLUMNNAME_Date_Debut, Date_Debut);
 	}
 
 	/** Get à Partir de :.
@@ -184,7 +218,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setDate_Fin (Timestamp Date_Fin)
 	{
-		set_Value (COLUMNNAME_Date_Fin, Date_Fin);
+		set_ValueNoCheck (COLUMNNAME_Date_Fin, Date_Fin);
 	}
 
 	/** Get Jusqu&#039;au :.
@@ -200,7 +234,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setDomesticite (BigDecimal Domesticite)
 	{
-		set_Value (COLUMNNAME_Domesticite, Domesticite);
+		set_ValueNoCheck (COLUMNNAME_Domesticite, Domesticite);
 	}
 
 	/** Get Domesticité.
@@ -304,6 +338,33 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 		return (String)get_Value(COLUMNNAME_HR_ElementBasePaieEmploye_UU);
 	}
 
+	public I_HR_GestionPaieEmploye getHR_GestionPaieEmploye() throws RuntimeException
+	{
+		return (I_HR_GestionPaieEmploye)MTable.get(getCtx(), I_HR_GestionPaieEmploye.Table_ID)
+			.getPO(getHR_GestionPaieEmploye_ID(), get_TrxName());
+	}
+
+	/** Set Gestion des Éléments de Base de la Paie Employé.
+		@param HR_GestionPaieEmploye_ID Gestion des Éléments de Base de la Paie Employé
+	*/
+	public void setHR_GestionPaieEmploye_ID (int HR_GestionPaieEmploye_ID)
+	{
+		if (HR_GestionPaieEmploye_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_HR_GestionPaieEmploye_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_HR_GestionPaieEmploye_ID, Integer.valueOf(HR_GestionPaieEmploye_ID));
+	}
+
+	/** Get Gestion des Éléments de Base de la Paie Employé.
+		@return Gestion des Éléments de Base de la Paie Employé	  */
+	public int getHR_GestionPaieEmploye_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_HR_GestionPaieEmploye_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	public org.eevolution.model.I_HR_Job getHR_Job() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -316,9 +377,9 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	public void setHR_Job_ID (int HR_Job_ID)
 	{
 		if (HR_Job_ID < 1)
-			set_Value (COLUMNNAME_HR_Job_ID, null);
+			set_ValueNoCheck (COLUMNNAME_HR_Job_ID, null);
 		else
-			set_Value (COLUMNNAME_HR_Job_ID, Integer.valueOf(HR_Job_ID));
+			set_ValueNoCheck (COLUMNNAME_HR_Job_ID, Integer.valueOf(HR_Job_ID));
 	}
 
 	/** Get Payroll Job.
@@ -331,12 +392,66 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 		return ii.intValue();
 	}
 
+	public I_HR_Taux_Salarial getHR_Taux_Salarial() throws RuntimeException
+	{
+		return (I_HR_Taux_Salarial)MTable.get(getCtx(), I_HR_Taux_Salarial.Table_ID)
+			.getPO(getHR_Taux_Salarial_ID(), get_TrxName());
+	}
+
+	/** Set Taux Salarial.
+		@param HR_Taux_Salarial_ID Taux Salarial
+	*/
+	public void setHR_Taux_Salarial_ID (int HR_Taux_Salarial_ID)
+	{
+		if (HR_Taux_Salarial_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_HR_Taux_Salarial_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_HR_Taux_Salarial_ID, Integer.valueOf(HR_Taux_Salarial_ID));
+	}
+
+	/** Get Taux Salarial.
+		@return Taux Salarial	  */
+	public int getHR_Taux_Salarial_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Taux_Salarial_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public I_HR_TypeContrat getHR_TypeContrat() throws RuntimeException
+	{
+		return (I_HR_TypeContrat)MTable.get(getCtx(), I_HR_TypeContrat.Table_ID)
+			.getPO(getHR_TypeContrat_ID(), get_TrxName());
+	}
+
+	/** Set Type de Contrat.
+		@param HR_TypeContrat_ID Type de Contrat
+	*/
+	public void setHR_TypeContrat_ID (int HR_TypeContrat_ID)
+	{
+		if (HR_TypeContrat_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_HR_TypeContrat_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_HR_TypeContrat_ID, Integer.valueOf(HR_TypeContrat_ID));
+	}
+
+	/** Get Type de Contrat.
+		@return Type de Contrat	  */
+	public int getHR_TypeContrat_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_HR_TypeContrat_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set Indemnité de Décès.
 		@param Indemnite_Deces Indemnité de Décès
 	*/
 	public void setIndemnite_Deces (BigDecimal Indemnite_Deces)
 	{
-		set_Value (COLUMNNAME_Indemnite_Deces, Indemnite_Deces);
+		set_ValueNoCheck (COLUMNNAME_Indemnite_Deces, Indemnite_Deces);
 	}
 
 	/** Get Indemnité de Décès.
@@ -355,7 +470,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setIndemnite_Logement (BigDecimal Indemnite_Logement)
 	{
-		set_Value (COLUMNNAME_Indemnite_Logement, Indemnite_Logement);
+		set_ValueNoCheck (COLUMNNAME_Indemnite_Logement, Indemnite_Logement);
 	}
 
 	/** Get Indemnité de Logement.
@@ -374,7 +489,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setIndemnite_Logement_Complement (BigDecimal Indemnite_Logement_Complement)
 	{
-		set_Value (COLUMNNAME_Indemnite_Logement_Complement, Indemnite_Logement_Complement);
+		set_ValueNoCheck (COLUMNNAME_Indemnite_Logement_Complement, Indemnite_Logement_Complement);
 	}
 
 	/** Get Complément Indemnité Logement.
@@ -392,7 +507,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setIndemnite_Panier_Nuit (BigDecimal Indemnite_Panier_Nuit)
 	{
-		set_Value (COLUMNNAME_Indemnite_Panier_Nuit, Indemnite_Panier_Nuit);
+		set_ValueNoCheck (COLUMNNAME_Indemnite_Panier_Nuit, Indemnite_Panier_Nuit);
 	}
 
 	/** Get Indemnité de Panier de Nuit.
@@ -411,7 +526,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setIndemnite_Representation (BigDecimal Indemnite_Representation)
 	{
-		set_Value (COLUMNNAME_Indemnite_Representation, Indemnite_Representation);
+		set_ValueNoCheck (COLUMNNAME_Indemnite_Representation, Indemnite_Representation);
 	}
 
 	/** Get Indemnité de Représentation.
@@ -430,7 +545,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setIndemnite_Transport (BigDecimal Indemnite_Transport)
 	{
-		set_Value (COLUMNNAME_Indemnite_Transport, Indemnite_Transport);
+		set_ValueNoCheck (COLUMNNAME_Indemnite_Transport, Indemnite_Transport);
 	}
 
 	/** Get Indemnité de Transport.
@@ -449,7 +564,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setIndemnite_Transport_Complement (BigDecimal Indemnite_Transport_Complement)
 	{
-		set_Value (COLUMNNAME_Indemnite_Transport_Complement, Indemnite_Transport_Complement);
+		set_ValueNoCheck (COLUMNNAME_Indemnite_Transport_Complement, Indemnite_Transport_Complement);
 	}
 
 	/** Get Complément Indemnité Transport.
@@ -467,7 +582,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setPrime_Caisse (BigDecimal Prime_Caisse)
 	{
-		set_Value (COLUMNNAME_Prime_Caisse, Prime_Caisse);
+		set_ValueNoCheck (COLUMNNAME_Prime_Caisse, Prime_Caisse);
 	}
 
 	/** Get Prime de Caisse.
@@ -486,7 +601,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setPrime_Outillage (BigDecimal Prime_Outillage)
 	{
-		set_Value (COLUMNNAME_Prime_Outillage, Prime_Outillage);
+		set_ValueNoCheck (COLUMNNAME_Prime_Outillage, Prime_Outillage);
 	}
 
 	/** Get Prime d&#039;Outillage.
@@ -505,7 +620,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setPrime_Rendement (BigDecimal Prime_Rendement)
 	{
-		set_Value (COLUMNNAME_Prime_Rendement, Prime_Rendement);
+		set_ValueNoCheck (COLUMNNAME_Prime_Rendement, Prime_Rendement);
 	}
 
 	/** Get Prime de Rendement.
@@ -524,7 +639,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setPrime_Responsabilite (BigDecimal Prime_Responsabilite)
 	{
-		set_Value (COLUMNNAME_Prime_Responsabilite, Prime_Responsabilite);
+		set_ValueNoCheck (COLUMNNAME_Prime_Responsabilite, Prime_Responsabilite);
 	}
 
 	/** Get Prime de Responsabilité.
@@ -542,7 +657,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setPrime_Risque (BigDecimal Prime_Risque)
 	{
-		set_Value (COLUMNNAME_Prime_Risque, Prime_Risque);
+		set_ValueNoCheck (COLUMNNAME_Prime_Risque, Prime_Risque);
 	}
 
 	/** Get Prime de Risque.
@@ -561,7 +676,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setRappel_Imposable (BigDecimal Rappel_Imposable)
 	{
-		set_Value (COLUMNNAME_Rappel_Imposable, Rappel_Imposable);
+		set_ValueNoCheck (COLUMNNAME_Rappel_Imposable, Rappel_Imposable);
 	}
 
 	/** Get Rappel Imposable.
@@ -580,7 +695,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setRappel_Non_Imposable (BigDecimal Rappel_Non_Imposable)
 	{
-		set_Value (COLUMNNAME_Rappel_Non_Imposable, Rappel_Non_Imposable);
+		set_ValueNoCheck (COLUMNNAME_Rappel_Non_Imposable, Rappel_Non_Imposable);
 	}
 
 	/** Get Rappel Non Imposable.
@@ -599,7 +714,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	*/
 	public void setSalaire_Base (BigDecimal Salaire_Base)
 	{
-		set_Value (COLUMNNAME_Salaire_Base, Salaire_Base);
+		set_ValueNoCheck (COLUMNNAME_Salaire_Base, Salaire_Base);
 	}
 
 	/** Get Salaire de Base.
