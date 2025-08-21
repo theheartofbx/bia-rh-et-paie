@@ -22,6 +22,7 @@ import org.sitracel.model.MHRJob;
 
 public class CalloutSqlControllerConge {
 	private static CLogger	log = CLogger.getCLogger (PO.class);
+	
 	public static BeanPeriode[] getAllCongesDepFromCBPartnerID (Timestamp dateDebut, Timestamp dateFin, Integer cbpartnerid, String trxName)
 	{
 		ArrayList<BeanPeriode> list = new ArrayList<BeanPeriode>();
