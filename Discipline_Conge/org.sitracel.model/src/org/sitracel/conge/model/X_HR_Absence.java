@@ -116,25 +116,29 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Absence[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
       return sb.toString();
     }
 
+	@Override
 	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -144,28 +148,33 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Business Partner .
 		@param C_BPartner_ID Identifies a Business Partner
 	*/
+	@Override
 	public void setC_BPartner_ID (int C_BPartner_ID)
 	{
-		if (C_BPartner_ID < 1)
+		if (C_BPartner_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, Integer.valueOf(C_BPartner_ID));
+		}
 	}
 
 	/** Get Business Partner .
 		@return Identifies a Business Partner
 	  */
+	@Override
 	public int getC_BPartner_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_BPartner_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Date de l&#039;Absence.
 		@param Date_Absence Date de l&#039;Absence
 	*/
+	@Override
 	public void setDate_Absence (Timestamp Date_Absence)
 	{
 		set_Value (COLUMNNAME_Date_Absence, Date_Absence);
@@ -174,6 +183,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Get Date de l&#039;Absence.
 		@return Date de l&#039;Absence
 	  */
+	@Override
 	public Timestamp getDate_Absence()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Absence);
@@ -182,6 +192,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Date d&#039;Emission.
 		@param Date_Emission Date d&#039;Emission
 	*/
+	@Override
 	public void setDate_Emission (Timestamp Date_Emission)
 	{
 		set_ValueNoCheck (COLUMNNAME_Date_Emission, Date_Emission);
@@ -190,6 +201,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Get Date d&#039;Emission.
 		@return Date d&#039;Emission
 	  */
+	@Override
 	public Timestamp getDate_Emission()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Emission);
@@ -198,6 +210,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -206,6 +219,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -214,6 +228,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Matricule Emetteur.
 		@param Emis_Par_Matricule Matricule Emetteur
 	*/
+	@Override
 	public void setEmis_Par_Matricule (String Emis_Par_Matricule)
 	{
 		set_Value (COLUMNNAME_Emis_Par_Matricule, Emis_Par_Matricule);
@@ -222,11 +237,13 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Get Matricule Emetteur.
 		@return Matricule Emetteur
 	  */
+	@Override
 	public String getEmis_Par_Matricule()
 	{
 		return (String)get_Value(COLUMNNAME_Emis_Par_Matricule);
 	}
 
+	@Override
 	public org.compiere.model.I_C_BPartner getEmis_Par_Nom() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -236,25 +253,30 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Nom Emetteur.
 		@param Emis_Par_Nom_ID Nom Emetteur
 	*/
+	@Override
 	public void setEmis_Par_Nom_ID (int Emis_Par_Nom_ID)
 	{
-		if (Emis_Par_Nom_ID < 1)
+		if (Emis_Par_Nom_ID < 1) {
 			set_Value (COLUMNNAME_Emis_Par_Nom_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Emis_Par_Nom_ID, Integer.valueOf(Emis_Par_Nom_ID));
+		}
 	}
 
 	/** Get Nom Emetteur.
 		@return Nom Emetteur
 	  */
+	@Override
 	public int getEmis_Par_Nom_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Emis_Par_Nom_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public org.eevolution.model.I_HR_Job getEmis_Par_Poste() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -264,49 +286,58 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Poste Emetteur.
 		@param Emis_Par_Poste_ID Poste Emetteur
 	*/
+	@Override
 	public void setEmis_Par_Poste_ID (int Emis_Par_Poste_ID)
 	{
-		if (Emis_Par_Poste_ID < 1)
+		if (Emis_Par_Poste_ID < 1) {
 			set_Value (COLUMNNAME_Emis_Par_Poste_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Emis_Par_Poste_ID, Integer.valueOf(Emis_Par_Poste_ID));
+		}
 	}
 
 	/** Get Poste Emetteur.
 		@return Poste Emetteur
 	  */
+	@Override
 	public int getEmis_Par_Poste_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Emis_Par_Poste_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Absence.
 		@param HR_Absence_ID Absence
 	*/
+	@Override
 	public void setHR_Absence_ID (int HR_Absence_ID)
 	{
-		if (HR_Absence_ID < 1)
+		if (HR_Absence_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Absence_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Absence_ID, Integer.valueOf(HR_Absence_ID));
+		}
 	}
 
 	/** Get Absence.
 		@return Absence	  */
+	@Override
 	public int getHR_Absence_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Absence_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Absence_UU.
 		@param HR_Absence_UU HR_Absence_UU
 	*/
+	@Override
 	public void setHR_Absence_UU (String HR_Absence_UU)
 	{
 		set_Value (COLUMNNAME_HR_Absence_UU, HR_Absence_UU);
@@ -314,11 +345,13 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 
 	/** Get HR_Absence_UU.
 		@return HR_Absence_UU	  */
+	@Override
 	public String getHR_Absence_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Absence_UU);
 	}
 
+	@Override
 	public I_HR_Demande_Explication getHR_Demande_Explication() throws RuntimeException
 	{
 		return (I_HR_Demande_Explication)MTable.get(getCtx(), I_HR_Demande_Explication.Table_ID)
@@ -328,24 +361,29 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Demande d&#039;Explication.
 		@param HR_Demande_Explication_ID Demande d&#039;Explication
 	*/
+	@Override
 	public void setHR_Demande_Explication_ID (int HR_Demande_Explication_ID)
 	{
-		if (HR_Demande_Explication_ID < 1)
+		if (HR_Demande_Explication_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Demande_Explication_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Demande_Explication_ID, Integer.valueOf(HR_Demande_Explication_ID));
+		}
 	}
 
 	/** Get Demande d&#039;Explication.
 		@return Demande d&#039;Explication	  */
+	@Override
 	public int getHR_Demande_Explication_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Demande_Explication_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public I_HR_Holiday getHR_Holiday() throws RuntimeException
 	{
 		return (I_HR_Holiday)MTable.get(getCtx(), I_HR_Holiday.Table_ID)
@@ -355,24 +393,29 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Congé.
 		@param HR_Holiday_ID Congé
 	*/
+	@Override
 	public void setHR_Holiday_ID (int HR_Holiday_ID)
 	{
-		if (HR_Holiday_ID < 1)
+		if (HR_Holiday_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Holiday_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Holiday_ID, Integer.valueOf(HR_Holiday_ID));
+		}
 	}
 
 	/** Get Congé.
 		@return Congé	  */
+	@Override
 	public int getHR_Holiday_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Holiday_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public I_HR_Type_Absence getHR_Type_Absence() throws RuntimeException
 	{
 		return (I_HR_Type_Absence)MTable.get(getCtx(), I_HR_Type_Absence.Table_ID)
@@ -382,27 +425,32 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Type d&#039;Absence.
 		@param HR_Type_Absence_ID Type d&#039;Absence
 	*/
+	@Override
 	public void setHR_Type_Absence_ID (int HR_Type_Absence_ID)
 	{
-		if (HR_Type_Absence_ID < 1)
+		if (HR_Type_Absence_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Type_Absence_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Type_Absence_ID, Integer.valueOf(HR_Type_Absence_ID));
+		}
 	}
 
 	/** Get Type d&#039;Absence.
 		@return Type d&#039;Absence	  */
+	@Override
 	public int getHR_Type_Absence_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Type_Absence_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Compte comme un Congé.
 		@param IsConge Compte comme un Congé
 	*/
+	@Override
 	public void setIsConge (boolean IsConge)
 	{
 		set_Value (COLUMNNAME_IsConge, Boolean.valueOf(IsConge));
@@ -411,13 +459,15 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Get Compte comme un Congé.
 		@return Compte comme un Congé
 	  */
+	@Override
 	public boolean isConge()
 	{
 		Object oo = get_Value(COLUMNNAME_IsConge);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -426,6 +476,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Congé Traité.
 		@param IsCongeTraite Congé Traité
 	*/
+	@Override
 	public void setIsCongeTraite (boolean IsCongeTraite)
 	{
 		set_Value (COLUMNNAME_IsCongeTraite, Boolean.valueOf(IsCongeTraite));
@@ -434,13 +485,15 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Get Congé Traité.
 		@return Congé Traité
 	  */
+	@Override
 	public boolean isCongeTraite()
 	{
 		Object oo = get_Value(COLUMNNAME_IsCongeTraite);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -449,6 +502,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Peut conduire à une Demande d&#039;Explication.
 		@param IsDemandeExplication Peut conduire à une Demande d&#039;Explication
 	*/
+	@Override
 	public void setIsDemandeExplication (boolean IsDemandeExplication)
 	{
 		set_Value (COLUMNNAME_IsDemandeExplication, Boolean.valueOf(IsDemandeExplication));
@@ -457,13 +511,15 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Get Peut conduire à une Demande d&#039;Explication.
 		@return Peut conduire à une Demande d&#039;Explication
 	  */
+	@Override
 	public boolean isDemandeExplication()
 	{
 		Object oo = get_Value(COLUMNNAME_IsDemandeExplication);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -472,6 +528,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Demande d&#039;Explication Traitée.
 		@param IsDemandeExplicationTraite Demande d&#039;Explication Traitée
 	*/
+	@Override
 	public void setIsDemandeExplicationTraite (boolean IsDemandeExplicationTraite)
 	{
 		set_Value (COLUMNNAME_IsDemandeExplicationTraite, Boolean.valueOf(IsDemandeExplicationTraite));
@@ -480,13 +537,15 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Get Demande d&#039;Explication Traitée.
 		@return Demande d&#039;Explication Traitée
 	  */
+	@Override
 	public boolean isDemandeExplicationTraite()
 	{
 		Object oo = get_Value(COLUMNNAME_IsDemandeExplicationTraite);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -495,6 +554,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Message d&#039;Alerte Affiché.
 		@param IsMessageAlerteDisplayed Message d&#039;Alerte Affiché
 	*/
+	@Override
 	public void setIsMessageAlerteDisplayed (boolean IsMessageAlerteDisplayed)
 	{
 		set_Value (COLUMNNAME_IsMessageAlerteDisplayed, Boolean.valueOf(IsMessageAlerteDisplayed));
@@ -503,13 +563,15 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Get Message d&#039;Alerte Affiché.
 		@return Message d&#039;Alerte Affiché
 	  */
+	@Override
 	public boolean isMessageAlerteDisplayed()
 	{
 		Object oo = get_Value(COLUMNNAME_IsMessageAlerteDisplayed);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -518,6 +580,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Matricule de l&#039;Employé.
 		@param Matricule_Employe Matricule de l&#039;Employé
 	*/
+	@Override
 	public void setMatricule_Employe (String Matricule_Employe)
 	{
 		set_Value (COLUMNNAME_Matricule_Employe, Matricule_Employe);
@@ -526,6 +589,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Get Matricule de l&#039;Employé.
 		@return Matricule de l&#039;Employé
 	  */
+	@Override
 	public String getMatricule_Employe()
 	{
 		return (String)get_Value(COLUMNNAME_Matricule_Employe);
@@ -534,6 +598,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Message d&#039;Alerte.
 		@param Message_Alerte Message d&#039;Alerte
 	*/
+	@Override
 	public void setMessage_Alerte (String Message_Alerte)
 	{
 		set_Value (COLUMNNAME_Message_Alerte, Message_Alerte);
@@ -542,6 +607,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Get Message d&#039;Alerte.
 		@return Message d&#039;Alerte
 	  */
+	@Override
 	public String getMessage_Alerte()
 	{
 		return (String)get_Value(COLUMNNAME_Message_Alerte);
@@ -550,6 +616,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -558,11 +625,13 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
 	}
 
+	@Override
 	public org.eevolution.model.I_HR_Job getPoste_Employe() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -572,28 +641,33 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Set Poste de l&#039;Employé.
 		@param Poste_Employe_ID Poste de l&#039;Employé
 	*/
+	@Override
 	public void setPoste_Employe_ID (int Poste_Employe_ID)
 	{
-		if (Poste_Employe_ID < 1)
+		if (Poste_Employe_ID < 1) {
 			set_Value (COLUMNNAME_Poste_Employe_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Poste_Employe_ID, Integer.valueOf(Poste_Employe_ID));
+		}
 	}
 
 	/** Get Poste de l&#039;Employé.
 		@return Poste de l&#039;Employé
 	  */
+	@Override
 	public int getPoste_Employe_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Poste_Employe_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Search Key.
 		@param Value Search key for the record in the format required - must be unique
 	*/
+	@Override
 	public void setValue (String Value)
 	{
 		set_Value (COLUMNNAME_Value, Value);
@@ -602,6 +676,7 @@ public class X_HR_Absence extends PO implements I_HR_Absence, I_Persistent
 	/** Get Search Key.
 		@return Search key for the record in the format required - must be unique
 	  */
+	@Override
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);

@@ -20,7 +20,11 @@ package org.sitracel.model;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 
 /** Generated Model for HR_EmployeeJob
  *  @author iDempiere (generated)
@@ -83,25 +87,29 @@ public class X_HR_EmployeeJob extends PO implements I_HR_EmployeeJob, I_Persiste
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_EmployeeJob[")
         .append(get_ID()).append("]");
       return sb.toString();
     }
 
+	@Override
 	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -111,28 +119,33 @@ public class X_HR_EmployeeJob extends PO implements I_HR_EmployeeJob, I_Persiste
 	/** Set Business Partner .
 		@param C_BPartner_ID Identifies a Business Partner
 	*/
+	@Override
 	public void setC_BPartner_ID (int C_BPartner_ID)
 	{
-		if (C_BPartner_ID < 1)
+		if (C_BPartner_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, Integer.valueOf(C_BPartner_ID));
+		}
 	}
 
 	/** Get Business Partner .
 		@return Identifies a Business Partner
 	  */
+	@Override
 	public int getC_BPartner_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_BPartner_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Date From.
 		@param DateFrom Starting date for a range
 	*/
+	@Override
 	public void setDateFrom (Timestamp DateFrom)
 	{
 		set_Value (COLUMNNAME_DateFrom, DateFrom);
@@ -141,6 +154,7 @@ public class X_HR_EmployeeJob extends PO implements I_HR_EmployeeJob, I_Persiste
 	/** Get Date From.
 		@return Starting date for a range
 	  */
+	@Override
 	public Timestamp getDateFrom()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_DateFrom);
@@ -149,6 +163,7 @@ public class X_HR_EmployeeJob extends PO implements I_HR_EmployeeJob, I_Persiste
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -157,6 +172,7 @@ public class X_HR_EmployeeJob extends PO implements I_HR_EmployeeJob, I_Persiste
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -165,27 +181,32 @@ public class X_HR_EmployeeJob extends PO implements I_HR_EmployeeJob, I_Persiste
 	/** Set Employee Job.
 		@param HR_EmployeeJob_ID Employee Job
 	*/
+	@Override
 	public void setHR_EmployeeJob_ID (int HR_EmployeeJob_ID)
 	{
-		if (HR_EmployeeJob_ID < 1)
+		if (HR_EmployeeJob_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_EmployeeJob_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_EmployeeJob_ID, Integer.valueOf(HR_EmployeeJob_ID));
+		}
 	}
 
 	/** Get Employee Job.
 		@return Employee Job	  */
+	@Override
 	public int getHR_EmployeeJob_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_EmployeeJob_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_EmployeeJob_UU.
 		@param HR_EmployeeJob_UU HR_EmployeeJob_UU
 	*/
+	@Override
 	public void setHR_EmployeeJob_UU (String HR_EmployeeJob_UU)
 	{
 		set_Value (COLUMNNAME_HR_EmployeeJob_UU, HR_EmployeeJob_UU);
@@ -193,11 +214,13 @@ public class X_HR_EmployeeJob extends PO implements I_HR_EmployeeJob, I_Persiste
 
 	/** Get HR_EmployeeJob_UU.
 		@return HR_EmployeeJob_UU	  */
+	@Override
 	public String getHR_EmployeeJob_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_EmployeeJob_UU);
 	}
 
+	@Override
 	public org.eevolution.model.I_HR_Job getHR_Job() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -207,21 +230,25 @@ public class X_HR_EmployeeJob extends PO implements I_HR_EmployeeJob, I_Persiste
 	/** Set Payroll Job.
 		@param HR_Job_ID Payroll Job
 	*/
+	@Override
 	public void setHR_Job_ID (int HR_Job_ID)
 	{
-		if (HR_Job_ID < 1)
+		if (HR_Job_ID < 1) {
 			set_Value (COLUMNNAME_HR_Job_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_HR_Job_ID, Integer.valueOf(HR_Job_ID));
+		}
 	}
 
 	/** Get Payroll Job.
 		@return Payroll Job	  */
+	@Override
 	public int getHR_Job_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Job_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 }

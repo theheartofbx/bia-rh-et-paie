@@ -24,11 +24,11 @@ import org.compiere.util.KeyNamePair;
 import org.sitracel.conge.model.I_HR_Holiday;
 
 /** Generated Interface for HR_Calcul_Conge
- *  @author iDempiere (generated) 
+ *  @author iDempiere (generated)
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_Calcul_Conge 
+public interface I_HR_Calcul_Conge
 {
 
     /** TableName=HR_Calcul_Conge */
@@ -39,7 +39,7 @@ public interface I_HR_Calcul_Conge
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org 
+    /** AccessLevel = 3 - Client - Org
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 

@@ -10,7 +10,7 @@ public class MHRAmpliation extends X_HR_Ampliation{
 		super(ctx, HR_Ampliation_ID, trxName);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	public MHRAmpliation(Properties ctx, ResultSet rs, String trxName) {
 		super(ctx, rs, trxName);
 		// TODO Auto-generated constructor stub

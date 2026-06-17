@@ -7,9 +7,9 @@ public class BeanPeriodeConge {
 	private Timestamp dateDebutConge;
 	private Timestamp dateFinConge;
 	private double frequenceAbscent;
-	
+
 	public BeanPeriodeConge() {
-		
+
 	}
 
 	public Timestamp getDateDebutConge() {

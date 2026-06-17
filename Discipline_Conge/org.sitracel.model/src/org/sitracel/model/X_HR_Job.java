@@ -19,7 +19,11 @@ package org.sitracel.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Job
@@ -87,19 +91,22 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Job[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -109,6 +116,7 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -117,11 +125,13 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
+	@Override
 	public I_HR_Category getHR_Category() throws RuntimeException
 	{
 		return (I_HR_Category)MTable.get(getCtx(), I_HR_Category.Table_ID)
@@ -131,24 +141,29 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 	/** Set Payroll Category.
 		@param HR_Category_ID Payroll Category
 	*/
+	@Override
 	public void setHR_Category_ID (int HR_Category_ID)
 	{
-		if (HR_Category_ID < 1)
+		if (HR_Category_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Category_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Category_ID, Integer.valueOf(HR_Category_ID));
+		}
 	}
 
 	/** Get Payroll Category.
 		@return Payroll Category	  */
+	@Override
 	public int getHR_Category_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Category_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public org.eevolution.model.I_HR_Department getHR_Department() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Department)MTable.get(getCtx(), org.eevolution.model.I_HR_Department.Table_ID)
@@ -158,48 +173,57 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 	/** Set Payroll Department.
 		@param HR_Department_ID Payroll Department
 	*/
+	@Override
 	public void setHR_Department_ID (int HR_Department_ID)
 	{
-		if (HR_Department_ID < 1)
+		if (HR_Department_ID < 1) {
 			set_Value (COLUMNNAME_HR_Department_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_HR_Department_ID, Integer.valueOf(HR_Department_ID));
+		}
 	}
 
 	/** Get Payroll Department.
 		@return Payroll Department	  */
+	@Override
 	public int getHR_Department_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Department_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Payroll Job.
 		@param HR_Job_ID Payroll Job
 	*/
+	@Override
 	public void setHR_Job_ID (int HR_Job_ID)
 	{
-		if (HR_Job_ID < 1)
+		if (HR_Job_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Job_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Job_ID, Integer.valueOf(HR_Job_ID));
+		}
 	}
 
 	/** Get Payroll Job.
 		@return Payroll Job	  */
+	@Override
 	public int getHR_Job_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Job_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Job_UU.
 		@param HR_Job_UU HR_Job_UU
 	*/
+	@Override
 	public void setHR_Job_UU (String HR_Job_UU)
 	{
 		set_Value (COLUMNNAME_HR_Job_UU, HR_Job_UU);
@@ -207,6 +231,7 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 
 	/** Get HR_Job_UU.
 		@return HR_Job_UU	  */
+	@Override
 	public String getHR_Job_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Job_UU);
@@ -215,6 +240,7 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 	/** Set Parent link column.
 		@param IsParent This column is a link to the parent table (e.g. header from lines) - incl. Association key columns
 	*/
+	@Override
 	public void setIsParent (boolean IsParent)
 	{
 		set_Value (COLUMNNAME_IsParent, Boolean.valueOf(IsParent));
@@ -223,13 +249,15 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 	/** Get Parent link column.
 		@return This column is a link to the parent table (e.g. header from lines) - incl. Association key columns
 	  */
+	@Override
 	public boolean isParent()
 	{
 		Object oo = get_Value(COLUMNNAME_IsParent);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -238,6 +266,7 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 	/** Set Job Cant.
 		@param JobCant Job Cant
 	*/
+	@Override
 	public void setJobCant (int JobCant)
 	{
 		set_Value (COLUMNNAME_JobCant, Integer.valueOf(JobCant));
@@ -245,17 +274,20 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 
 	/** Get Job Cant.
 		@return Job Cant	  */
+	@Override
 	public int getJobCant()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_JobCant);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -264,6 +296,7 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -277,6 +310,7 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
         return new KeyNamePair(get_ID(), getName());
     }
 
+	@Override
 	public org.eevolution.model.I_HR_Job getNext_Job() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -286,24 +320,29 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 	/** Set Next Job.
 		@param Next_Job_ID Next Job
 	*/
+	@Override
 	public void setNext_Job_ID (int Next_Job_ID)
 	{
-		if (Next_Job_ID < 1)
+		if (Next_Job_ID < 1) {
 			set_Value (COLUMNNAME_Next_Job_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Next_Job_ID, Integer.valueOf(Next_Job_ID));
+		}
 	}
 
 	/** Get Next Job.
 		@return Next Job	  */
+	@Override
 	public int getNext_Job_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Next_Job_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public org.compiere.model.I_AD_User getSupervisor() throws RuntimeException
 	{
 		return (org.compiere.model.I_AD_User)MTable.get(getCtx(), org.compiere.model.I_AD_User.Table_ID)
@@ -313,28 +352,33 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 	/** Set Supervisor.
 		@param Supervisor_ID Supervisor for this user/organization - used for escalation and approval
 	*/
+	@Override
 	public void setSupervisor_ID (int Supervisor_ID)
 	{
-		if (Supervisor_ID < 1)
+		if (Supervisor_ID < 1) {
 			set_Value (COLUMNNAME_Supervisor_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Supervisor_ID, Integer.valueOf(Supervisor_ID));
+		}
 	}
 
 	/** Get Supervisor.
 		@return Supervisor for this user/organization - used for escalation and approval
 	  */
+	@Override
 	public int getSupervisor_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Supervisor_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Search Key.
 		@param Value Search key for the record in the format required - must be unique
 	*/
+	@Override
 	public void setValue (String Value)
 	{
 		set_Value (COLUMNNAME_Value, Value);
@@ -343,6 +387,7 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 	/** Get Search Key.
 		@return Search key for the record in the format required - must be unique
 	  */
+	@Override
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);
@@ -351,6 +396,7 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 	/** Set Job Constraints.
 		@param job_constraints Job Constraints
 	*/
+	@Override
 	public void setjob_constraints (String job_constraints)
 	{
 		set_Value (COLUMNNAME_job_constraints, job_constraints);
@@ -358,6 +404,7 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 
 	/** Get Job Constraints.
 		@return Job Constraints	  */
+	@Override
 	public String getjob_constraints()
 	{
 		return (String)get_Value(COLUMNNAME_job_constraints);
@@ -366,6 +413,7 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 	/** Set Job Experience.
 		@param job_experience Job Experience
 	*/
+	@Override
 	public void setjob_experience (int job_experience)
 	{
 		set_Value (COLUMNNAME_job_experience, Integer.valueOf(job_experience));
@@ -373,17 +421,20 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 
 	/** Get Job Experience.
 		@return Job Experience	  */
+	@Override
 	public int getjob_experience()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_job_experience);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Job Functional Links.
 		@param job_functional_links Job Functional Links
 	*/
+	@Override
 	public void setjob_functional_links (String job_functional_links)
 	{
 		set_Value (COLUMNNAME_job_functional_links, job_functional_links);
@@ -391,6 +442,7 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 
 	/** Get Job Functional Links.
 		@return Job Functional Links	  */
+	@Override
 	public String getjob_functional_links()
 	{
 		return (String)get_Value(COLUMNNAME_job_functional_links);
@@ -399,6 +451,7 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 	/** Set Job Location.
 		@param job_location Job Location
 	*/
+	@Override
 	public void setjob_location (String job_location)
 	{
 		set_Value (COLUMNNAME_job_location, job_location);
@@ -406,6 +459,7 @@ public class X_HR_Job extends PO implements I_HR_Job, I_Persistent
 
 	/** Get Job Location.
 		@return Job Location	  */
+	@Override
 	public String getjob_location()
 	{
 		return (String)get_Value(COLUMNNAME_job_location);

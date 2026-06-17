@@ -19,7 +19,10 @@ package org.sitracel.conge.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 
 /** Generated Model for HR_Type_Conge
  *  @author iDempiere (generated)
@@ -90,19 +93,22 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Type_Conge[")
         .append(get_ID()).append("]");
@@ -112,6 +118,7 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -120,6 +127,7 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -134,6 +142,7 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/** Set Genre de l&#039;Employé(e) Concerné(e).
 		@param Genre_Employe Genre de l&#039;Employé(e) Concerné(e)
 	*/
+	@Override
 	public void setGenre_Employe (String Genre_Employe)
 	{
 
@@ -143,6 +152,7 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/** Get Genre de l&#039;Employé(e) Concerné(e).
 		@return Genre de l&#039;Employé(e) Concerné(e)
 	  */
+	@Override
 	public String getGenre_Employe()
 	{
 		return (String)get_Value(COLUMNNAME_Genre_Employe);
@@ -151,27 +161,32 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/** Set Type de Congé.
 		@param HR_Type_Conge_ID Type de Congé
 	*/
+	@Override
 	public void setHR_Type_Conge_ID (int HR_Type_Conge_ID)
 	{
-		if (HR_Type_Conge_ID < 1)
+		if (HR_Type_Conge_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Type_Conge_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Type_Conge_ID, Integer.valueOf(HR_Type_Conge_ID));
+		}
 	}
 
 	/** Get Type de Congé.
 		@return Type de Congé	  */
+	@Override
 	public int getHR_Type_Conge_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Type_Conge_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Type_Conge_UU.
 		@param HR_Type_Conge_UU HR_Type_Conge_UU
 	*/
+	@Override
 	public void setHR_Type_Conge_UU (String HR_Type_Conge_UU)
 	{
 		set_Value (COLUMNNAME_HR_Type_Conge_UU, HR_Type_Conge_UU);
@@ -179,6 +194,7 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 
 	/** Get HR_Type_Conge_UU.
 		@return HR_Type_Conge_UU	  */
+	@Override
 	public String getHR_Type_Conge_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Type_Conge_UU);
@@ -187,6 +203,7 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/** Set Est déduit des jours de congé annuel.
 		@param IsCongeAnnuel Est déduit des jours de congé annuel
 	*/
+	@Override
 	public void setIsCongeAnnuel (boolean IsCongeAnnuel)
 	{
 		set_Value (COLUMNNAME_IsCongeAnnuel, Boolean.valueOf(IsCongeAnnuel));
@@ -195,13 +212,15 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/** Get Est déduit des jours de congé annuel.
 		@return Est déduit des jours de congé annuel
 	  */
+	@Override
 	public boolean isCongeAnnuel()
 	{
 		Object oo = get_Value(COLUMNNAME_IsCongeAnnuel);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -210,6 +229,7 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/** Set Définir la période de Congé.
 		@param IsDefinir_Periode_Conge Définir la période de Congé
 	*/
+	@Override
 	public void setIsDefinir_Periode_Conge (boolean IsDefinir_Periode_Conge)
 	{
 		set_Value (COLUMNNAME_IsDefinir_Periode_Conge, Boolean.valueOf(IsDefinir_Periode_Conge));
@@ -218,13 +238,15 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/** Get Définir la période de Congé.
 		@return Définir la période de Congé
 	  */
+	@Override
 	public boolean isDefinir_Periode_Conge()
 	{
 		Object oo = get_Value(COLUMNNAME_IsDefinir_Periode_Conge);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -233,6 +255,7 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/** Set Nom du Congé.
 		@param Nom_Conge Nom du Congé
 	*/
+	@Override
 	public void setNom_Conge (String Nom_Conge)
 	{
 		set_Value (COLUMNNAME_Nom_Conge, Nom_Conge);
@@ -241,6 +264,7 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/** Get Nom du Congé.
 		@return Nom du Congé
 	  */
+	@Override
 	public String getNom_Conge()
 	{
 		return (String)get_Value(COLUMNNAME_Nom_Conge);
@@ -249,6 +273,7 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/** Set Nombre de Jour(s) Après Echéance.
 		@param Nombre_Jour_Après_Echeance Nombre de Jour(s) Après Echéance
 	*/
+	@Override
 	public void setNombre_Jour_Après_Echeance (int Nombre_Jour_Après_Echeance)
 	{
 		set_Value (COLUMNNAME_Nombre_Jour_Après_Echeance, Integer.valueOf(Nombre_Jour_Après_Echeance));
@@ -257,17 +282,20 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/** Get Nombre de Jour(s) Après Echéance.
 		@return Nombre de Jour(s) Après Echéance
 	  */
+	@Override
 	public int getNombre_Jour_Après_Echeance()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Jour_Après_Echeance);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Nombre de Jour(s) Avant Echéance.
 		@param Nombre_Jour_Avant_Echeance Nombre de Jour(s) Avant Echéance
 	*/
+	@Override
 	public void setNombre_Jour_Avant_Echeance (int Nombre_Jour_Avant_Echeance)
 	{
 		set_Value (COLUMNNAME_Nombre_Jour_Avant_Echeance, Integer.valueOf(Nombre_Jour_Avant_Echeance));
@@ -276,17 +304,20 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/** Get Nombre de Jour(s) Avant Echéance.
 		@return Nombre de Jour(s) Avant Echéance
 	  */
+	@Override
 	public int getNombre_Jour_Avant_Echeance()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Jour_Avant_Echeance);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Search Key.
 		@param Value Search key for the record in the format required - must be unique
 	*/
+	@Override
 	public void setValue (String Value)
 	{
 		set_Value (COLUMNNAME_Value, Value);
@@ -295,6 +326,7 @@ public class X_HR_Type_Conge extends PO implements I_HR_Type_Conge, I_Persistent
 	/** Get Search Key.
 		@return Search key for the record in the format required - must be unique
 	  */
+	@Override
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);

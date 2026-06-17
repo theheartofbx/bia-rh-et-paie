@@ -20,7 +20,11 @@ package org.sitracel.recrutement.model;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_OffreTestEvaluation
@@ -100,19 +104,22 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_OffreTestEvaluation[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -122,6 +129,7 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Set Date de Création.
 		@param Date_Creation Date de Création
 	*/
+	@Override
 	public void setDate_Creation (Timestamp Date_Creation)
 	{
 		set_ValueNoCheck (COLUMNNAME_Date_Creation, Date_Creation);
@@ -129,6 +137,7 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 
 	/** Get Date de Création.
 		@return Date de Création	  */
+	@Override
 	public Timestamp getDate_Creation()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Creation);
@@ -137,6 +146,7 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Set Date de Validation.
 		@param Date_Validation Date de Validation
 	*/
+	@Override
 	public void setDate_Validation (Timestamp Date_Validation)
 	{
 		set_Value (COLUMNNAME_Date_Validation, Date_Validation);
@@ -145,6 +155,7 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Get Date de Validation.
 		@return Date de Validation
 	  */
+	@Override
 	public Timestamp getDate_Validation()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Validation);
@@ -153,6 +164,7 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -161,6 +173,7 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -169,6 +182,7 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Set Matricule Emetteur.
 		@param Emis_Par_Matricule Matricule Emetteur
 	*/
+	@Override
 	public void setEmis_Par_Matricule (String Emis_Par_Matricule)
 	{
 		set_Value (COLUMNNAME_Emis_Par_Matricule, Emis_Par_Matricule);
@@ -177,11 +191,13 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Get Matricule Emetteur.
 		@return Matricule Emetteur
 	  */
+	@Override
 	public String getEmis_Par_Matricule()
 	{
 		return (String)get_Value(COLUMNNAME_Emis_Par_Matricule);
 	}
 
+	@Override
 	public org.compiere.model.I_C_BPartner getEmis_Par_Nom() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -191,25 +207,30 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Set Nom Emetteur.
 		@param Emis_Par_Nom_ID Nom Emetteur
 	*/
+	@Override
 	public void setEmis_Par_Nom_ID (int Emis_Par_Nom_ID)
 	{
-		if (Emis_Par_Nom_ID < 1)
+		if (Emis_Par_Nom_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_Emis_Par_Nom_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_Emis_Par_Nom_ID, Integer.valueOf(Emis_Par_Nom_ID));
+		}
 	}
 
 	/** Get Nom Emetteur.
 		@return Nom Emetteur
 	  */
+	@Override
 	public int getEmis_Par_Nom_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Emis_Par_Nom_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public org.eevolution.model.I_HR_Job getEmis_Par_Poste() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -219,49 +240,58 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Set Poste Emetteur.
 		@param Emis_Par_Poste_ID Poste Emetteur
 	*/
+	@Override
 	public void setEmis_Par_Poste_ID (int Emis_Par_Poste_ID)
 	{
-		if (Emis_Par_Poste_ID < 1)
+		if (Emis_Par_Poste_ID < 1) {
 			set_Value (COLUMNNAME_Emis_Par_Poste_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Emis_Par_Poste_ID, Integer.valueOf(Emis_Par_Poste_ID));
+		}
 	}
 
 	/** Get Poste Emetteur.
 		@return Poste Emetteur
 	  */
+	@Override
 	public int getEmis_Par_Poste_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Emis_Par_Poste_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Test d&#039;Évaluation.
 		@param HR_OffreTestEvaluation_ID Test d&#039;Évaluation
 	*/
+	@Override
 	public void setHR_OffreTestEvaluation_ID (int HR_OffreTestEvaluation_ID)
 	{
-		if (HR_OffreTestEvaluation_ID < 1)
+		if (HR_OffreTestEvaluation_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_OffreTestEvaluation_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_OffreTestEvaluation_ID, Integer.valueOf(HR_OffreTestEvaluation_ID));
+		}
 	}
 
 	/** Get Test d&#039;Évaluation.
 		@return Test d&#039;Évaluation	  */
+	@Override
 	public int getHR_OffreTestEvaluation_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_OffreTestEvaluation_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_OffreTestEvaluation_UU.
 		@param HR_OffreTestEvaluation_UU HR_OffreTestEvaluation_UU
 	*/
+	@Override
 	public void setHR_OffreTestEvaluation_UU (String HR_OffreTestEvaluation_UU)
 	{
 		set_Value (COLUMNNAME_HR_OffreTestEvaluation_UU, HR_OffreTestEvaluation_UU);
@@ -269,6 +299,7 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 
 	/** Get HR_OffreTestEvaluation_UU.
 		@return HR_OffreTestEvaluation_UU	  */
+	@Override
 	public String getHR_OffreTestEvaluation_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_OffreTestEvaluation_UU);
@@ -277,6 +308,7 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Set Validé(e).
 		@param IsValidee Validé(e)
 	*/
+	@Override
 	public void setIsValidee (boolean IsValidee)
 	{
 		set_Value (COLUMNNAME_IsValidee, Boolean.valueOf(IsValidee));
@@ -285,13 +317,15 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Get Validé(e).
 		@return Validé(e)
 	  */
+	@Override
 	public boolean isValidee()
 	{
 		Object oo = get_Value(COLUMNNAME_IsValidee);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -300,6 +334,7 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -308,6 +343,7 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -324,6 +360,7 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Set Validé/rejeté par (Matricule) :.
 		@param Valide_Rejete_Par_Matricule Validé/rejeté par (Matricule) :
 	*/
+	@Override
 	public void setValide_Rejete_Par_Matricule (String Valide_Rejete_Par_Matricule)
 	{
 		set_Value (COLUMNNAME_Valide_Rejete_Par_Matricule, Valide_Rejete_Par_Matricule);
@@ -332,11 +369,13 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Get Validé/rejeté par (Matricule) :.
 		@return Validé/rejeté par (Matricule) :
 	  */
+	@Override
 	public String getValide_Rejete_Par_Matricule()
 	{
 		return (String)get_Value(COLUMNNAME_Valide_Rejete_Par_Matricule);
 	}
 
+	@Override
 	public org.compiere.model.I_C_BPartner getValide_Rejete_Par_Nom() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -346,25 +385,30 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Set Validé/rejeté par (Nom) :.
 		@param Valide_Rejete_Par_Nom_ID Validé/rejeté par (Nom) :
 	*/
+	@Override
 	public void setValide_Rejete_Par_Nom_ID (int Valide_Rejete_Par_Nom_ID)
 	{
-		if (Valide_Rejete_Par_Nom_ID < 1)
+		if (Valide_Rejete_Par_Nom_ID < 1) {
 			set_Value (COLUMNNAME_Valide_Rejete_Par_Nom_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Valide_Rejete_Par_Nom_ID, Integer.valueOf(Valide_Rejete_Par_Nom_ID));
+		}
 	}
 
 	/** Get Validé/rejeté par (Nom) :.
 		@return Validé/rejeté par (Nom) :
 	  */
+	@Override
 	public int getValide_Rejete_Par_Nom_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Valide_Rejete_Par_Nom_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public org.eevolution.model.I_HR_Job getValide_Rejete_Par_Poste() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -374,36 +418,42 @@ public class X_HR_OffreTestEvaluation extends PO implements I_HR_OffreTestEvalua
 	/** Set Validé/rejeté par (Poste) :.
 		@param Valide_Rejete_Par_Poste_ID Validé/rejeté par (Poste) :
 	*/
+	@Override
 	public void setValide_Rejete_Par_Poste_ID (int Valide_Rejete_Par_Poste_ID)
 	{
-		if (Valide_Rejete_Par_Poste_ID < 1)
+		if (Valide_Rejete_Par_Poste_ID < 1) {
 			set_Value (COLUMNNAME_Valide_Rejete_Par_Poste_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Valide_Rejete_Par_Poste_ID, Integer.valueOf(Valide_Rejete_Par_Poste_ID));
+		}
 	}
 
 	/** Get Validé/rejeté par (Poste) :.
 		@return Validé/rejeté par (Poste) :
 	  */
+	@Override
 	public int getValide_Rejete_Par_Poste_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Valide_Rejete_Par_Poste_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Valider .
-		@param Valider Valider 
+		@param Valider Valider
 	*/
+	@Override
 	public void setValider (String Valider)
 	{
 		set_Value (COLUMNNAME_Valider, Valider);
 	}
 
 	/** Get Valider .
-		@return Valider 
+		@return Valider
 	  */
+	@Override
 	public String getValider()
 	{
 		return (String)get_Value(COLUMNNAME_Valider);

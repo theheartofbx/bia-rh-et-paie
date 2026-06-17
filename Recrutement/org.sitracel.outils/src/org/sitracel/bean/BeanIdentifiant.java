@@ -7,9 +7,9 @@ public class BeanIdentifiant {
 	private String matriculeEmploye;
 	private Integer numeroPoste;
 	private Integer numEmploye;
-	
+
 	public BeanIdentifiant() {
-		
+
 	}
 
 	public String getNomPoste() {
@@ -50,5 +50,5 @@ public class BeanIdentifiant {
 
 	public void setNumEmploye(Integer numEmploye) {
 		this.numEmploye = numEmploye;
-	}	
+	}
 }

@@ -31,9 +31,9 @@ public class BeanNotificationConge {
 	private String mailEmetteur;
 	private String mailValidateur;
 	private String mailEmploye;
-	
+
 	public BeanNotificationConge() {
-		
+
 	}
 
 	public String getNomEmetteur() {
@@ -243,5 +243,5 @@ public class BeanNotificationConge {
 	public void setMailEmploye(String mailEmploye) {
 		this.mailEmploye = mailEmploye;
 	}
-	
+
 }

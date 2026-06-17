@@ -20,7 +20,11 @@ package org.sitracel.paie.model;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.Env;
 import org.compiere.util.KeyNamePair;
 
@@ -97,25 +101,29 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Element_Base_Paie[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
       return sb.toString();
     }
 
+	@Override
 	public I_HR_Element_Base_Paie getBase_Calcul() throws RuntimeException
 	{
 		return (I_HR_Element_Base_Paie)MTable.get(getCtx(), I_HR_Element_Base_Paie.Table_ID)
@@ -125,28 +133,33 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	/** Set Base de Calcul.
 		@param Base_Calcul_ID Base de Calcul
 	*/
+	@Override
 	public void setBase_Calcul_ID (int Base_Calcul_ID)
 	{
-		if (Base_Calcul_ID < 1)
+		if (Base_Calcul_ID < 1) {
 			set_Value (COLUMNNAME_Base_Calcul_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Base_Calcul_ID, Integer.valueOf(Base_Calcul_ID));
+		}
 	}
 
 	/** Get Base de Calcul.
 		@return Base de Calcul
 	  */
+	@Override
 	public int getBase_Calcul_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Base_Calcul_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_ValueNoCheck (COLUMNNAME_Description, Description);
@@ -155,6 +168,7 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -163,6 +177,7 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	/** Set Formule.
 		@param Formule Formule
 	*/
+	@Override
 	public void setFormule (String Formule)
 	{
 		set_Value (COLUMNNAME_Formule, Formule);
@@ -170,6 +185,7 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 
 	/** Get Formule.
 		@return Formule	  */
+	@Override
 	public String getFormule()
 	{
 		return (String)get_Value(COLUMNNAME_Formule);
@@ -178,27 +194,32 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	/** Set Élément de Paie.
 		@param HR_Element_Base_Paie_ID Élément de Paie
 	*/
+	@Override
 	public void setHR_Element_Base_Paie_ID (int HR_Element_Base_Paie_ID)
 	{
-		if (HR_Element_Base_Paie_ID < 1)
+		if (HR_Element_Base_Paie_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Element_Base_Paie_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Element_Base_Paie_ID, Integer.valueOf(HR_Element_Base_Paie_ID));
+		}
 	}
 
 	/** Get Élément de Paie.
 		@return Élément de Paie	  */
+	@Override
 	public int getHR_Element_Base_Paie_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Element_Base_Paie_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Element_Base_Paie_UU.
 		@param HR_Element_Base_Paie_UU HR_Element_Base_Paie_UU
 	*/
+	@Override
 	public void setHR_Element_Base_Paie_UU (String HR_Element_Base_Paie_UU)
 	{
 		set_Value (COLUMNNAME_HR_Element_Base_Paie_UU, HR_Element_Base_Paie_UU);
@@ -206,11 +227,13 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 
 	/** Get HR_Element_Base_Paie_UU.
 		@return HR_Element_Base_Paie_UU	  */
+	@Override
 	public String getHR_Element_Base_Paie_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Element_Base_Paie_UU);
 	}
 
+	@Override
 	public I_HR_Rang_Calcul getHR_Rang_Calcul() throws RuntimeException
 	{
 		return (I_HR_Rang_Calcul)MTable.get(getCtx(), I_HR_Rang_Calcul.Table_ID)
@@ -220,24 +243,29 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	/** Set Rang de Calcul.
 		@param HR_Rang_Calcul_ID Rang de Calcul
 	*/
+	@Override
 	public void setHR_Rang_Calcul_ID (int HR_Rang_Calcul_ID)
 	{
-		if (HR_Rang_Calcul_ID < 1)
+		if (HR_Rang_Calcul_ID < 1) {
 			set_Value (COLUMNNAME_HR_Rang_Calcul_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_HR_Rang_Calcul_ID, Integer.valueOf(HR_Rang_Calcul_ID));
+		}
 	}
 
 	/** Get Rang de Calcul.
 		@return Rang de Calcul	  */
+	@Override
 	public int getHR_Rang_Calcul_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Rang_Calcul_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public I_HR_TypeDeCharge getHR_TypeDeCharge() throws RuntimeException
 	{
 		return (I_HR_TypeDeCharge)MTable.get(getCtx(), I_HR_TypeDeCharge.Table_ID)
@@ -247,24 +275,29 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	/** Set Type de Charge.
 		@param HR_TypeDeCharge_ID Type de Charge
 	*/
+	@Override
 	public void setHR_TypeDeCharge_ID (int HR_TypeDeCharge_ID)
 	{
-		if (HR_TypeDeCharge_ID < 1)
+		if (HR_TypeDeCharge_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_TypeDeCharge_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_TypeDeCharge_ID, Integer.valueOf(HR_TypeDeCharge_ID));
+		}
 	}
 
 	/** Get Type de Charge.
 		@return Type de Charge	  */
+	@Override
 	public int getHR_TypeDeCharge_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_TypeDeCharge_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public I_HR_Type_Calcul getHR_Type_Calcul() throws RuntimeException
 	{
 		return (I_HR_Type_Calcul)MTable.get(getCtx(), I_HR_Type_Calcul.Table_ID)
@@ -274,27 +307,32 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	/** Set Type de Calcul.
 		@param HR_Type_Calcul_ID Type de Calcul
 	*/
+	@Override
 	public void setHR_Type_Calcul_ID (int HR_Type_Calcul_ID)
 	{
-		if (HR_Type_Calcul_ID < 1)
+		if (HR_Type_Calcul_ID < 1) {
 			set_Value (COLUMNNAME_HR_Type_Calcul_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_HR_Type_Calcul_ID, Integer.valueOf(HR_Type_Calcul_ID));
+		}
 	}
 
 	/** Get Type de Calcul.
 		@return Type de Calcul	  */
+	@Override
 	public int getHR_Type_Calcul_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Type_Calcul_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Est Inclus lors du Calcul Initial.
 		@param IsCalcul_Initial Est Inclus lors du Calcul Initial
 	*/
+	@Override
 	public void setIsCalcul_Initial (boolean IsCalcul_Initial)
 	{
 		set_Value (COLUMNNAME_IsCalcul_Initial, Boolean.valueOf(IsCalcul_Initial));
@@ -303,13 +341,15 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	/** Get Est Inclus lors du Calcul Initial.
 		@return Est Inclus lors du Calcul Initial
 	  */
+	@Override
 	public boolean isCalcul_Initial()
 	{
 		Object oo = get_Value(COLUMNNAME_IsCalcul_Initial);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -318,6 +358,7 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -326,6 +367,7 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -334,6 +376,7 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	/** Set Pourcentage.
 		@param Pourcentage Pourcentage
 	*/
+	@Override
 	public void setPourcentage (BigDecimal Pourcentage)
 	{
 		set_Value (COLUMNNAME_Pourcentage, Pourcentage);
@@ -342,17 +385,20 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	/** Get Pourcentage.
 		@return Pourcentage
 	  */
+	@Override
 	public BigDecimal getPourcentage()
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Pourcentage);
-		if (bd == null)
-			 return Env.ZERO;
+		if (bd == null) {
+			return Env.ZERO;
+		}
 		return bd;
 	}
 
 	/** Set Search Key.
 		@param Value Search key for the record in the format required - must be unique
 	*/
+	@Override
 	public void setValue (String Value)
 	{
 		set_Value (COLUMNNAME_Value, Value);
@@ -361,6 +407,7 @@ public class X_HR_Element_Base_Paie extends PO implements I_HR_Element_Base_Paie
 	/** Get Search Key.
 		@return Search key for the record in the format required - must be unique
 	  */
+	@Override
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);

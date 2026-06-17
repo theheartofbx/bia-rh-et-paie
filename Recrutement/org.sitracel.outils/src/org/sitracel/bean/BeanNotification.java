@@ -3,7 +3,7 @@ package org.sitracel.bean;
 import java.sql.Timestamp;
 
 public class BeanNotification {
-	
+
 	private String nomEmetteur;
 	private Integer posteEmetteur;
 	private String nomValidateur;
@@ -19,9 +19,9 @@ public class BeanNotification {
 	private String mailEmetteur;
 	private String mailValidateur;
 	private String mailEmploye;
-	
+
 	public BeanNotification() {
-		
+
 	}
 
 	public String getNomEmetteur() {

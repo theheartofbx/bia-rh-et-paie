@@ -4,15 +4,15 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 public class BeanIndemniteConge {
-	
+
 	private BigDecimal indemnite;
 	private Timestamp dateDebutConge;
 	private Timestamp dateFinConge;
-	
+
 	public BeanIndemniteConge () {
-		
+
 	}
-	
+
 	public BigDecimal getIndemnite() {
 		return indemnite;
 	}

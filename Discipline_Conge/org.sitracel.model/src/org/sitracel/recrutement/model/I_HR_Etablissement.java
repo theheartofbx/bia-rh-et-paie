@@ -18,15 +18,16 @@ package org.sitracel.recrutement.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
+import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_Etablissement
- *  @author iDempiere (generated) 
+ *  @author iDempiere (generated)
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_Etablissement 
+public interface I_HR_Etablissement
 {
 
     /** TableName=HR_Etablissement */
@@ -37,7 +38,7 @@ public interface I_HR_Etablissement
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org 
+    /** AccessLevel = 3 - Client - Org
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
@@ -68,12 +69,12 @@ public interface I_HR_Etablissement
     public static final String COLUMNNAME_C_Country_ID = "C_Country_ID";
 
 	/** Set Country.
-	  * Country 
+	  * Country
 	  */
 	public void setC_Country_ID (int C_Country_ID);
 
 	/** Get Country.
-	  * Country 
+	  * Country
 	  */
 	public int getC_Country_ID();
 

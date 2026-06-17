@@ -10,7 +10,7 @@ import org.sitracel.model.MHROrganigramme;
 public class CalloutSqlControllerDiscipline {
 
 	public static Integer getAutorisationSanctionID (Integer typeSanction_ID, Integer poste_ID, Integer posteResponsable_ID, String trxName)
-	{	
+	{
 		Integer resultat = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -26,7 +26,7 @@ public class CalloutSqlControllerDiscipline {
 						+ "HR_Organigramme org WHERE org.Poste_ID=? AND "
 						+ "org.Poste_Responsable_ID=?"
 						+ ")";
-				
+
 				pstmt = DB.prepareStatement(sql.toString(), trxName);
 				pstmt.setInt(1, typeSanction_ID);
 				pstmt.setInt(2, poste_ID);
@@ -36,11 +36,11 @@ public class CalloutSqlControllerDiscipline {
 					resultat = rs.getInt("id");
 				}
 			}
-			
+
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();				
+			e.printStackTrace();
 		}
 		finally {
 			DB.close(rs, pstmt);
@@ -48,9 +48,9 @@ public class CalloutSqlControllerDiscipline {
 		}
 		return resultat;
 	}
-	
+
 	public static MHROrganigramme getOrganigramme (Integer poste_ID, Integer posteResponsable_ID, String trxName)
-	{	
+	{
 		MHROrganigramme resultat = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -62,7 +62,7 @@ public class CalloutSqlControllerDiscipline {
 						+ "FROM HR_Organigramme org WHERE "
 						+ "org.Poste_ID=? AND "
 						+ "org.Poste_Responsable_ID=?");
-				
+
 				pstmt = DB.prepareStatement(sql.toString(), trxName);
 				pstmt.setInt(1, poste_ID);
 				pstmt.setInt(2, posteResponsable_ID);
@@ -71,16 +71,16 @@ public class CalloutSqlControllerDiscipline {
 					resultat = new MHROrganigramme(Env.getCtx(), rs.getInt("id"), trxName) ;
 				}
 			}
-			
+
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();				
+			e.printStackTrace();
 		}
 		finally {
 			DB.close(rs, pstmt);
 			rs = null; pstmt = null;
 		}
 		return resultat;
-	}	
+	}
 }

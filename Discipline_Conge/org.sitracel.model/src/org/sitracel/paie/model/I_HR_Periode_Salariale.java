@@ -18,15 +18,16 @@ package org.sitracel.paie.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
+import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_Periode_Salariale
- *  @author iDempiere (generated) 
+ *  @author iDempiere (generated)
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_Periode_Salariale 
+public interface I_HR_Periode_Salariale
 {
 
     /** TableName=HR_Periode_Salariale */
@@ -37,7 +38,7 @@ public interface I_HR_Periode_Salariale
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org 
+    /** AccessLevel = 3 - Client - Org
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
@@ -122,6 +123,28 @@ au (par défaut) :
 	  * Optional short description of the record
 	  */
 	public String getDescription();
+
+    /** Column name HR_Annee_ID */
+    public static final String COLUMNNAME_HR_Annee_ID = "HR_Annee_ID";
+
+	/** Set Année	  */
+	public void setHR_Annee_ID (int HR_Annee_ID);
+
+	/** Get Année	  */
+	public int getHR_Annee_ID();
+
+	public I_HR_Annee getHR_Annee() throws RuntimeException;
+
+    /** Column name HR_Mois_ID */
+    public static final String COLUMNNAME_HR_Mois_ID = "HR_Mois_ID";
+
+	/** Set Mois	  */
+	public void setHR_Mois_ID (int HR_Mois_ID);
+
+	/** Get Mois	  */
+	public int getHR_Mois_ID();
+
+	public I_HR_Mois getHR_Mois() throws RuntimeException;
 
     /** Column name HR_Periode_Salariale_ID */
     public static final String COLUMNNAME_HR_Periode_Salariale_ID = "HR_Periode_Salariale_ID";

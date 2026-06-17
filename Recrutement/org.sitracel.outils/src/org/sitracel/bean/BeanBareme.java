@@ -20,5 +20,5 @@ public class BeanBareme {
 	public void setFormuleBareme(String formuleBareme) {
 		this.formuleBareme = formuleBareme;
 	}
-	
+
 }

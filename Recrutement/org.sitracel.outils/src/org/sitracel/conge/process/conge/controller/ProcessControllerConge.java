@@ -9,16 +9,16 @@ import java.util.Locale;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
-import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.sitracel.bean.BeanIdentifiant;
 import org.sitracel.bean.BeanNotificationConge;
 import org.sitracel.beanfactory.BeanFactory;
 import org.sitracel.conge.callout.absence.controller.CalloutSqlControllerAbsence;
+import org.sitracel.conge.model.I_HR_Type_Absence;
 import org.sitracel.conge.model.MHRAbsence;
 import org.sitracel.conge.model.MHRAutorisationConge;
 import org.sitracel.conge.model.MHRHoliday;
-import org.sitracel.conge.model.MHRTypeAbsence;
+import org.sitracel.conge.model.MHRPublicHoliday;
 import org.sitracel.conge.model.MHRTypeConge;
 import org.sitracel.controller.GeneralController;
 import org.sitracel.controller.GeneralSqlController;
@@ -30,7 +30,7 @@ public class ProcessControllerConge {
 
 	public static void validerConge(Integer idConge, Integer adUserID) {
 		if(idConge!=null && adUserID!=null) {
-			BeanIdentifiant beanIdentifiant = GeneralSqlController.getBeanIdentifiant(adUserID, null);
+			BeanIdentifiant beanIdentifiant = MCBPartner.getIdentifiant(adUserID, null);
 			MHRHoliday conge = new MHRHoliday(Env.getCtx(), idConge, null);
 			if(conge!=null && beanIdentifiant!=null) {
 				if(beanIdentifiant.getNomEmploye()!=null) {
@@ -60,13 +60,13 @@ public class ProcessControllerConge {
 					conge.save(null);
 					ProcessControllerConge.gererAbsenceApresValidationConge(conge, beanIdentifiant);
 				}
-			}	
-		}	
+			}
+		}
 	}
-	
+
 	public static void rejeterConge(Integer idConge, Integer adUserID) {
 		if(idConge!=null && adUserID!=null) {
-			BeanIdentifiant beanIdentifiant = GeneralSqlController.getBeanIdentifiant(adUserID, null);
+			BeanIdentifiant beanIdentifiant = MCBPartner.getIdentifiant(adUserID, null);
 			MHRHoliday conge = new MHRHoliday(Env.getCtx(), idConge, null);
 			if(conge!=null && beanIdentifiant!=null) {
 				if(beanIdentifiant.getNomEmploye()!=null) {
@@ -92,13 +92,13 @@ public class ProcessControllerConge {
 					conge.save(null);
 					ProcessControllerConge.gererAbsenceApresRejetSanction(conge, beanIdentifiant);
 				}
-			}	
-		}	
+			}
+		}
 	}
 
 	public static void approuverConge(Integer idConge, Integer adUserID) {
 		if(idConge!=null && adUserID!=null) {
-			BeanIdentifiant bi = GeneralSqlController.getBeanIdentifiant(adUserID, null);
+			BeanIdentifiant bi = MCBPartner.getIdentifiant(adUserID, null);
 			MHRHoliday conge = new MHRHoliday(Env.getCtx(), idConge, null);
 			if(conge!=null && bi!=null) {
 				if(bi.getNomEmploye()!=null) {
@@ -124,10 +124,10 @@ public class ProcessControllerConge {
 			}
 		}
 	}
-	
+
 	public static void desapprouverConge(Integer idConge, Integer adUserID) {
 		if(idConge!=null && adUserID!=null) {
-			BeanIdentifiant bi = GeneralSqlController.getBeanIdentifiant(adUserID, null);
+			BeanIdentifiant bi = MCBPartner.getIdentifiant(adUserID, null);
 			MHRHoliday conge = new MHRHoliday(Env.getCtx(), idConge, null);
 			if(conge!=null && bi!=null) {
 				if(bi.getNomEmploye()!=null) {
@@ -156,18 +156,18 @@ public class ProcessControllerConge {
 
 	public static BeanNotificationConge getBeanNotificationConge(Integer idConge) {
 		BeanNotificationConge resultat = BeanFactory.getBeanNotificationConge();
-		
-		if(idConge!=null) {			
+
+		if(idConge!=null) {
 			MHRHoliday conge = new MHRHoliday(Env.getCtx(), idConge, null);
 			if(conge!=null) {
 				MHRTypeConge typeConge = new MHRTypeConge(Env.getCtx(), conge.getEmission_Conge_ID(), null);
 				if(conge!=null) {
 					MCBPartner employe = new MCBPartner(Env.getCtx(), conge.getC_BPartner_ID(), null);
-					
+
 					resultat.setPosteValidateur(conge.getValide_Rejete_Par_Poste().getName());
 					resultat.setPosteEmetteur(conge.getEmis_Par_Poste().getName());
 					resultat.setPosteEmploye(conge.getPoste_Employe().getName());
-					
+
 					resultat.setDateEmission(conge.getDate_Emission());
 					resultat.setDateValidation(conge.getDate_Validation());
 					resultat.setDateRejet(conge.getDate_Rejet());
@@ -189,8 +189,8 @@ public class ProcessControllerConge {
 						if(employe.getName2()!=null) {
 							resultat.setNomEmploye(resultat.getNomEmploye()+" "+employe.getName2());
 						}
-						MCBPartner emetteur = new MCBPartner(Env.getCtx(), conge.getEmis_Par_Nom_ID(), null); 
-						MCBPartner validateur = new MCBPartner(Env.getCtx(), conge.getValide_Rejete_Par_Nom_ID(), null); 
+						MCBPartner emetteur = new MCBPartner(Env.getCtx(), conge.getEmis_Par_Nom_ID(), null);
+						MCBPartner validateur = new MCBPartner(Env.getCtx(), conge.getValide_Rejete_Par_Nom_ID(), null);
 						if(emetteur!=null) {
 							if(emetteur.getName()!=null) {
 								resultat.setNomEmetteur(emetteur.getName());
@@ -214,16 +214,16 @@ public class ProcessControllerConge {
 								resultat.setNomValidateur(resultat.getNomValidateur()+" "+validateur.getName2());
 							}
 							resultat.setMailValidateur(validateur.getEMail());
-						}					
+						}
 					}
 				}
 			}
 		}
-		
-		return resultat;	
-		
+
+		return resultat;
+
 	}
-	
+
 
 	public static void updateAbsenceConge(Integer idConge) {
 		if(idConge!=null) {
@@ -231,14 +231,14 @@ public class ProcessControllerConge {
 			if(conge!=null) {
 				if(!conge.isValidee() && !conge.isRejetee() && conge.getDate_Debut_Effective().after(new Timestamp(System.currentTimeMillis()))) {
 					conge.setJours_Conge_A_Compenser(GeneralSqlController.getNombreJourAbsencesCongeNonTraite(conge.getDate_Debut_Souhaitee(),null));
-					conge.save();					
+					conge.save();
 				}
 			}
 		}
 	}
-	
 
-	private static void gererAbsenceApresValidationConge(MHRHoliday holiday, BeanIdentifiant beanIdentifiant) {	
+
+	private static void gererAbsenceApresValidationConge(MHRHoliday holiday, BeanIdentifiant beanIdentifiant) {
 		if(holiday!=null && beanIdentifiant!=null) {
 			MHRAutorisationConge autorisation = new MHRAutorisationConge(Env.getCtx(), holiday.getEmission_Conge_ID(), null);
 			if(autorisation!=null) {
@@ -246,13 +246,13 @@ public class ProcessControllerConge {
 				if(typeConge!=null) {
 					Timestamp dateDebutConge = holiday.getDate_Debut_Effective();
 					Timestamp dateFinConge = holiday.getDate_Fin_Effective();
-					Integer typeAbsenceID = GeneralSqlController.getIDFromTableNameAndName(MHRTypeAbsence.COLUMNNAME_HR_Type_Absence_ID, 
-							MHRTypeAbsence.Table_Name, MHRTypeAbsence.COLUMNNAME_Nom_Absence, "En Congé", null);
+					Integer typeAbsenceID = GeneralSqlController.getIDFromTableNameAndName(I_HR_Type_Absence.COLUMNNAME_HR_Type_Absence_ID,
+							I_HR_Type_Absence.Table_Name, I_HR_Type_Absence.COLUMNNAME_Nom_Absence, "En Congé", null);
 					if(typeAbsenceID!=null) {
 						while(dateDebutConge.before(dateFinConge)) {
-							Calendar cal = Calendar.getInstance();		
+							Calendar cal = Calendar.getInstance();
 							cal.setTime(dateDebutConge);
-							if(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY || !GeneralSqlController.isJourFerie(dateDebutConge,null)) {
+							if(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY || !MHRPublicHoliday.isJourFerie(dateDebutConge,null)) {
 								MHRAbsence absence = new MHRAbsence(Env.getCtx(), null, null);
 								absence.setEmis_Par_Nom_ID(beanIdentifiant.getNumEmploye());
 								absence.setEmis_Par_Poste_ID(beanIdentifiant.getNumeroPoste());
@@ -273,8 +273,8 @@ public class ProcessControllerConge {
 			}
 		}
 	}
-	
-	private static void gererAbsenceApresRejetSanction(MHRHoliday holiday, BeanIdentifiant beanIdentifiant) {	
+
+	private static void gererAbsenceApresRejetSanction(MHRHoliday holiday, BeanIdentifiant beanIdentifiant) {
 		if(holiday!=null && beanIdentifiant!=null) {
 			MHRAutorisationConge autorisation = new MHRAutorisationConge(Env.getCtx(), holiday.getEmission_Conge_ID(), null);
 			if(autorisation!=null) {
@@ -291,7 +291,7 @@ public class ProcessControllerConge {
 			}
 		}
 	}
-	
+
 	private static String getMessageNotificationConge(Integer idConge) {
 		String resultat = "";
 		if(idConge!=null) {
@@ -315,12 +315,12 @@ public class ProcessControllerConge {
 				String dateDebutSouhaitee="";
 				if(conge.getDate_Debut_Souhaitee()!=null) {
 					dateDebutSouhaitee = new SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.FRENCH).format(conge.getDate_Debut_Souhaitee());
-				}		
+				}
 				String dateFinSouhaitee="";
 				if(conge.getDate_Debut_Souhaitee()!=null) {
 					dateFinSouhaitee = new SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.FRENCH).format(conge.getDate_Fin_Souhaitee());
-				}	
-				if(!conge.isApprouve() && !conge.isDesapprouve() && !conge.isValidee() && !conge.isRejetee()){					
+				}
+				if(!conge.isApprouve() && !conge.isDesapprouve() && !conge.isValidee() && !conge.isRejetee()){
 					resultat = "Mr/Mme "+nameEmploye+","
 							+"\n\nSouhaiterais obtenir un congé de type "+typeConge.getNom_Conge()
 							+"\nqui débutereait le "+dateDebutSouhaitee+" et se terminerait le "+dateFinSouhaitee+"."
@@ -369,13 +369,13 @@ public class ProcessControllerConge {
 			}
 		}
 		return resultat;
-	}	
+	}
 
 	public static void notifierTraitementConge(Integer idConge) {
-		
+
 		String obj="Traitement d'une Demande de Congé";
 		BeanNotificationConge bn = getBeanNotificationConge(idConge);
-		ArrayList<InternetAddress> recieverMail = new ArrayList<InternetAddress>();
+		ArrayList<InternetAddress> recieverMail = new ArrayList<>();
 		try {
 			if(bn.getMailEmploye()!=null) {
 				recieverMail.add(new InternetAddress(bn.getMailEmploye()));

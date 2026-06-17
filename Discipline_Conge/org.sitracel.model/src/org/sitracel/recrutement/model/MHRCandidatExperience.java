@@ -10,7 +10,7 @@ public class MHRCandidatExperience extends X_HR_Candidat_Expérience{
 		super(ctx, HR_Candidat_Expérience_ID, trxName);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	public MHRCandidatExperience(Properties ctx, ResultSet rs, String trxName) {
 		super(ctx, rs, trxName);
 		// TODO Auto-generated constructor stub

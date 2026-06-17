@@ -10,7 +10,7 @@ public class MHRCategorieResponsabilite extends X_HR_Categorie_Responsabilite{
 		super(ctx, HR_Categorie_Responsabilite_ID, trxName);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	public MHRCategorieResponsabilite(Properties ctx, ResultSet rs, String trxName) {
 		super(ctx, rs, trxName);
 		// TODO Auto-generated constructor stub

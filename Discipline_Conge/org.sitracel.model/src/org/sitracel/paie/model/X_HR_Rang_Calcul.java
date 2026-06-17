@@ -19,7 +19,10 @@ package org.sitracel.paie.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Rang_Calcul
@@ -87,19 +90,22 @@ public class X_HR_Rang_Calcul extends PO implements I_HR_Rang_Calcul, I_Persiste
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Rang_Calcul[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -109,6 +115,7 @@ public class X_HR_Rang_Calcul extends PO implements I_HR_Rang_Calcul, I_Persiste
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -117,6 +124,7 @@ public class X_HR_Rang_Calcul extends PO implements I_HR_Rang_Calcul, I_Persiste
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -125,27 +133,32 @@ public class X_HR_Rang_Calcul extends PO implements I_HR_Rang_Calcul, I_Persiste
 	/** Set Rang de Calcul.
 		@param HR_Rang_Calcul_ID Rang de Calcul
 	*/
+	@Override
 	public void setHR_Rang_Calcul_ID (int HR_Rang_Calcul_ID)
 	{
-		if (HR_Rang_Calcul_ID < 1)
+		if (HR_Rang_Calcul_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Rang_Calcul_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Rang_Calcul_ID, Integer.valueOf(HR_Rang_Calcul_ID));
+		}
 	}
 
 	/** Get Rang de Calcul.
 		@return Rang de Calcul	  */
+	@Override
 	public int getHR_Rang_Calcul_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Rang_Calcul_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Rang_Calcul_UU.
 		@param HR_Rang_Calcul_UU HR_Rang_Calcul_UU
 	*/
+	@Override
 	public void setHR_Rang_Calcul_UU (String HR_Rang_Calcul_UU)
 	{
 		set_Value (COLUMNNAME_HR_Rang_Calcul_UU, HR_Rang_Calcul_UU);
@@ -153,6 +166,7 @@ public class X_HR_Rang_Calcul extends PO implements I_HR_Rang_Calcul, I_Persiste
 
 	/** Get HR_Rang_Calcul_UU.
 		@return HR_Rang_Calcul_UU	  */
+	@Override
 	public String getHR_Rang_Calcul_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Rang_Calcul_UU);
@@ -161,6 +175,7 @@ public class X_HR_Rang_Calcul extends PO implements I_HR_Rang_Calcul, I_Persiste
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -169,6 +184,7 @@ public class X_HR_Rang_Calcul extends PO implements I_HR_Rang_Calcul, I_Persiste
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -185,6 +201,7 @@ public class X_HR_Rang_Calcul extends PO implements I_HR_Rang_Calcul, I_Persiste
 	/** Set Rang.
 		@param Rang Rang
 	*/
+	@Override
 	public void setRang (int Rang)
 	{
 		set_ValueNoCheck (COLUMNNAME_Rang, Integer.valueOf(Rang));
@@ -192,11 +209,13 @@ public class X_HR_Rang_Calcul extends PO implements I_HR_Rang_Calcul, I_Persiste
 
 	/** Get Rang.
 		@return Rang	  */
+	@Override
 	public int getRang()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Rang);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 }

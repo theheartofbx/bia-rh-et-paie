@@ -100,19 +100,22 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Sanction_Autorisation[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -122,6 +125,7 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -130,11 +134,13 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
+	@Override
 	public I_HR_Categorie_Responsabilite getHR_Categorie_Responsabilite() throws RuntimeException
 	{
 		return (I_HR_Categorie_Responsabilite)MTable.get(getCtx(), I_HR_Categorie_Responsabilite.Table_ID)
@@ -144,48 +150,57 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Set Catégorie de Responsabilité.
 		@param HR_Categorie_Responsabilite_ID Catégorie de Responsabilité
 	*/
+	@Override
 	public void setHR_Categorie_Responsabilite_ID (int HR_Categorie_Responsabilite_ID)
 	{
-		if (HR_Categorie_Responsabilite_ID < 1)
+		if (HR_Categorie_Responsabilite_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Categorie_Responsabilite_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Categorie_Responsabilite_ID, Integer.valueOf(HR_Categorie_Responsabilite_ID));
+		}
 	}
 
 	/** Get Catégorie de Responsabilité.
 		@return Catégorie de Responsabilité	  */
+	@Override
 	public int getHR_Categorie_Responsabilite_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Categorie_Responsabilite_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Autorisation Sanction.
 		@param HR_Sanction_Autorisation_ID Autorisation Sanction
 	*/
+	@Override
 	public void setHR_Sanction_Autorisation_ID (int HR_Sanction_Autorisation_ID)
 	{
-		if (HR_Sanction_Autorisation_ID < 1)
+		if (HR_Sanction_Autorisation_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Sanction_Autorisation_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Sanction_Autorisation_ID, Integer.valueOf(HR_Sanction_Autorisation_ID));
+		}
 	}
 
 	/** Get Autorisation Sanction.
 		@return Autorisation Sanction	  */
+	@Override
 	public int getHR_Sanction_Autorisation_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Sanction_Autorisation_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Sanction_Autorisation_UU.
 		@param HR_Sanction_Autorisation_UU HR_Sanction_Autorisation_UU
 	*/
+	@Override
 	public void setHR_Sanction_Autorisation_UU (String HR_Sanction_Autorisation_UU)
 	{
 		set_Value (COLUMNNAME_HR_Sanction_Autorisation_UU, HR_Sanction_Autorisation_UU);
@@ -193,11 +208,13 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 
 	/** Get HR_Sanction_Autorisation_UU.
 		@return HR_Sanction_Autorisation_UU	  */
+	@Override
 	public String getHR_Sanction_Autorisation_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Sanction_Autorisation_UU);
 	}
 
+	@Override
 	public I_HR_TypeSanction getHR_TypeSanction() throws RuntimeException
 	{
 		return (I_HR_TypeSanction)MTable.get(getCtx(), I_HR_TypeSanction.Table_ID)
@@ -207,27 +224,32 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Set Punishment Type.
 		@param HR_TypeSanction_ID Punishment Type
 	*/
+	@Override
 	public void setHR_TypeSanction_ID (int HR_TypeSanction_ID)
 	{
-		if (HR_TypeSanction_ID < 1)
+		if (HR_TypeSanction_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_TypeSanction_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_TypeSanction_ID, Integer.valueOf(HR_TypeSanction_ID));
+		}
 	}
 
 	/** Get Punishment Type.
 		@return Punishment Type	  */
+	@Override
 	public int getHR_TypeSanction_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_TypeSanction_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Peut Approuver.
 		@param IsApprobation Peut Approuver
 	*/
+	@Override
 	public void setIsApprobation (boolean IsApprobation)
 	{
 		set_Value (COLUMNNAME_IsApprobation, Boolean.valueOf(IsApprobation));
@@ -236,13 +258,15 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Get Peut Approuver.
 		@return Peut Approuver
 	  */
+	@Override
 	public boolean isApprobation()
 	{
 		Object oo = get_Value(COLUMNNAME_IsApprobation);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -251,6 +275,7 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Set Peut Emettre.
 		@param IsEmission Peut Emettre
 	*/
+	@Override
 	public void setIsEmission (boolean IsEmission)
 	{
 		set_Value (COLUMNNAME_IsEmission, Boolean.valueOf(IsEmission));
@@ -259,13 +284,15 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Get Peut Emettre.
 		@return Peut Emettre
 	  */
+	@Override
 	public boolean isEmission()
 	{
 		Object oo = get_Value(COLUMNNAME_IsEmission);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -274,6 +301,7 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Set Message d&#039;Alerte Affiché.
 		@param IsMessageAlerteDisplayed Message d&#039;Alerte Affiché
 	*/
+	@Override
 	public void setIsMessageAlerteDisplayed (boolean IsMessageAlerteDisplayed)
 	{
 		set_Value (COLUMNNAME_IsMessageAlerteDisplayed, Boolean.valueOf(IsMessageAlerteDisplayed));
@@ -282,13 +310,15 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Get Message d&#039;Alerte Affiché.
 		@return Message d&#039;Alerte Affiché
 	  */
+	@Override
 	public boolean isMessageAlerteDisplayed()
 	{
 		Object oo = get_Value(COLUMNNAME_IsMessageAlerteDisplayed);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -297,6 +327,7 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Set Peut Valider.
 		@param IsValidation Peut Valider
 	*/
+	@Override
 	public void setIsValidation (boolean IsValidation)
 	{
 		set_Value (COLUMNNAME_IsValidation, Boolean.valueOf(IsValidation));
@@ -305,13 +336,15 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Get Peut Valider.
 		@return Peut Valider
 	  */
+	@Override
 	public boolean isValidation()
 	{
 		Object oo = get_Value(COLUMNNAME_IsValidation);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -320,6 +353,7 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Set Message d&#039;Alerte.
 		@param Message_Alerte Message d&#039;Alerte
 	*/
+	@Override
 	public void setMessage_Alerte (String Message_Alerte)
 	{
 		set_Value (COLUMNNAME_Message_Alerte, Message_Alerte);
@@ -328,6 +362,7 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Get Message d&#039;Alerte.
 		@return Message d&#039;Alerte
 	  */
+	@Override
 	public String getMessage_Alerte()
 	{
 		return (String)get_Value(COLUMNNAME_Message_Alerte);
@@ -336,6 +371,7 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -344,6 +380,7 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -360,6 +397,7 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Set Search Key.
 		@param Value Search key for the record in the format required - must be unique
 	*/
+	@Override
 	public void setValue (String Value)
 	{
 		set_Value (COLUMNNAME_Value, Value);
@@ -368,6 +406,7 @@ public class X_HR_Sanction_Autorisation extends PO implements I_HR_Sanction_Auto
 	/** Get Search Key.
 		@return Search key for the record in the format required - must be unique
 	  */
+	@Override
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);

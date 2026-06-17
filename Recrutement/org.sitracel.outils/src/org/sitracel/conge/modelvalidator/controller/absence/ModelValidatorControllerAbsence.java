@@ -22,6 +22,7 @@ import org.sitracel.controller.GeneralSqlController;
 import org.sitracel.discipline.model.MHRDelaiReponse;
 import org.sitracel.discipline.model.MHRDemandeExplication;
 import org.sitracel.discipline.model.MHRPunishment;
+import org.sitracel.model.I_C_BPartner;
 import org.sitracel.model.MCBPartner;
 
 public class ModelValidatorControllerAbsence {
@@ -31,11 +32,11 @@ public class ModelValidatorControllerAbsence {
 	public static int getRHSystemID() {
 		return GeneralSqlController.getParametreFromParametreNumerique("RH_Système_ID");
 	}
-	
+
 	public static int getDelaiReponse() {
 		return GeneralSqlController.getParametreFromParametreNumerique("Délai Réponse Demande Explication");
 	}
-	
+
 	public static void traiterDemandeExplicationSuiteAbsence(MHRAbsence absence) {
 		if(absence!=null) {
 			Integer typeAbsenceId = absence.getHR_Type_Absence_ID();
@@ -45,14 +46,14 @@ public class ModelValidatorControllerAbsence {
 				int absMax = GeneralController.getNombreJourMaxAbsenceAvantDemandeExplication();
 				int rhSystemID = ModelValidatorControllerAbsence.getRHSystemID();
 				int delaiReponse = ModelValidatorControllerAbsence.getDelaiReponse();
-				BeanIdentifiant beanRHSystem = GeneralSqlController.getBeanIdentifiant(rhSystemID, null);
-				BeanIdentifiant beanPartner = GeneralSqlController.getBeanIdentifiant(absence.getC_BPartner_ID(), null);
-				
-				if(typeAbsence!=null) {					
+				BeanIdentifiant beanRHSystem = MCBPartner.getIdentifiant(rhSystemID, null);
+				BeanIdentifiant beanPartner = MCBPartner.getIdentifiant(absence.getC_BPartner_ID(), null);
+
+				if(typeAbsence!=null) {
 					BeanInfoAbsence infoAbsence = ModelValidatorSqlControllerAbsence.getAbsenceNonAutoriseNonTraite(absence.getC_BPartner_ID(), null);
 					if(typeAbsence.isDemandeExplication()) {
 						if(infoAbsence!=null) {
-							if((infoAbsence.getNombreJour()+1)>=absMax) {							
+							if((infoAbsence.getNombreJour()+1)>=absMax) {
 								try {
 									demandeExplication.setMotif_Demande_Explication("Vous avez été absent(e) le(s) "+infoAbsence.getDate()+" sans justification, nous vous prions d'éclaircir la situation et de nous donner des explications sur cet état de fait.");
 									demandeExplication.setC_BPartner_ID(absence.getC_BPartner_ID());
@@ -60,7 +61,7 @@ public class ModelValidatorControllerAbsence {
 									demandeExplication.setPoste_Employe_ID(absence.getPoste_Employe_ID());
 									demandeExplication.setEmis_Par_Nom_ID(beanRHSystem.getNumEmploye());
 									demandeExplication.setEmis_Par_Matricule(beanRHSystem.getMatriculeEmploye());
-									demandeExplication.setHR_Delai_Reponse_ID(delaiReponse);									
+									demandeExplication.setHR_Delai_Reponse_ID(delaiReponse);
 									demandeExplication.setEmis_Par_Poste_ID(beanRHSystem.getNumeroPoste());
 									demandeExplication.setName("Absence"+beanPartner.getNomEmploye());
 									demandeExplication.save();
@@ -84,25 +85,25 @@ public class ModelValidatorControllerAbsence {
 								} catch (IllegalStateException | SQLException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
-								}	
+								}
 								finally {
-									
+
 								}
 							}
 						}
-					}					
+					}
 				}
 			}
 		}
 	}
-	
+
 
 	public static void annulerDemandeExplicationSuiteAbsence(MHRAbsence absence) {
 		if(absence!=null) {
 			Integer typeAbsenceId = absence.getHR_Type_Absence_ID();
 			MHRDemandeExplication demandeExplication = new MHRDemandeExplication(Env.getCtx(), absence.getHR_Demande_Explication_ID(), null);
 			int absMax = GeneralController.getNombreJourMaxAbsenceAvantDemandeExplication();
-			if(typeAbsenceId!=null && demandeExplication!=null) {	
+			if(typeAbsenceId!=null && demandeExplication!=null) {
 				try {
 					BeanInfoAbsence infoAbsence = ModelValidatorSqlControllerAbsence.getAbsenceNonAutoriseFromDemandeExplication(demandeExplication.getHR_Demande_Explication_ID(), null);
 					if(infoAbsence.getNombreJour()==absMax) {
@@ -113,7 +114,7 @@ public class ModelValidatorControllerAbsence {
 									modif.setHR_Demande_Explication_ID(0);
 									modif.setIsDemandeExplicationTraite(false);
 									modif.save();
-									DB.commit(true, modif.get_TrxName());								
+									DB.commit(true, modif.get_TrxName());
 								}
 							}
 						}
@@ -137,55 +138,55 @@ public class ModelValidatorControllerAbsence {
 				} catch (IllegalStateException | SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}			
+				}
 			}
 		}
 	}
-	
+
 	public static BeanNotification getBeanNotificationDE(Integer idDemandeExplication) {
 		BeanNotification resultat = BeanFactory.getBeanNotification();
-		
-		if(idDemandeExplication!=null) {			
+
+		if(idDemandeExplication!=null) {
 			MHRDemandeExplication bhrp = new MHRDemandeExplication(Env.getCtx(), idDemandeExplication, null);
 			if(bhrp!=null) {
 				MBPartner cb = new MBPartner(Env.getCtx(), bhrp.getC_BPartner_ID(), null);
-				
+
 				if(bhrp.getEmis_Par_Poste()!=null) {
 					resultat.setPosteEmetteur(bhrp.getEmis_Par_Poste().getHR_Job_ID());
 				}
 				if(bhrp.getPoste_Employe()!=null) {
 					resultat.setPosteEmploye(bhrp.getPoste_Employe().getHR_Job_ID());
 				}
-				
+
 				resultat.setDateEmission(bhrp.getDate_Emission());
 				resultat.setDatereponse(bhrp.getDate_Reponse());
 				MHRDelaiReponse delai = new MHRDelaiReponse(Env.getCtx(), bhrp.getHR_Delai_Reponse_ID(), null);
 				if(delai!=null) {
 					resultat.setDelaiReponse(delai.getName());
 				}
-				
+
 				resultat.setMotif(bhrp.getMotif_Demande_Explication());
 				if(cb!=null) {
-					resultat.setMailEmploye(cb.get_ValueAsString(MCBPartner.COLUMNNAME_EMail));
+					resultat.setMailEmploye(cb.get_ValueAsString(I_C_BPartner.COLUMNNAME_EMail));
 					resultat.setNomEmploye(cb.getName()+" "+cb.getName2());
-					MBPartner cbsup = new MBPartner(Env.getCtx(), bhrp.getEmis_Par_Nom_ID(), null);  
+					MBPartner cbsup = new MBPartner(Env.getCtx(), bhrp.getEmis_Par_Nom_ID(), null);
 					if(cbsup!=null) {
 						resultat.setNomEmetteur(cbsup.getName()+" "+cbsup.getName2());
-						resultat.setMailEmetteur(cbsup.get_ValueAsString(MCBPartner.COLUMNNAME_EMail));
-					}		
+						resultat.setMailEmetteur(cbsup.get_ValueAsString(I_C_BPartner.COLUMNNAME_EMail));
+					}
 				}
 			}
 		}
-		
-		return resultat;	
-		
-	}	
-	
+
+		return resultat;
+
+	}
+
 	public static void notifierDemandeExplication(Integer idDemandeExplication) {
-		
+
 		String obj="Emission d'une Demande d'Explication";
 		BeanNotification bn = getBeanNotificationDE(idDemandeExplication);
-		ArrayList<InternetAddress> recieverMail = new ArrayList<InternetAddress>();
+		ArrayList<InternetAddress> recieverMail = new ArrayList<>();
 		try {
 			if(bn.getMailEmploye()!=null) {
 				if(bn.getMailEmploye().matches(".+@.+\\.[a-z]+")) {
@@ -201,7 +202,7 @@ public class ModelValidatorControllerAbsence {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		InternetAddress[] dest =null;
 		if(recieverMail!=null) {
 			dest = recieverMail.toArray(new InternetAddress[0]);
@@ -210,9 +211,9 @@ public class ModelValidatorControllerAbsence {
 			dest = new InternetAddress[0];
 		}
 		GeneralController.sendEmail(expediteur, mdp, dest, obj, getNotifierDemandeExplicationMessage(idDemandeExplication));
-		
+
 	}
-	
+
 	private static String getNotifierDemandeExplicationMessage(Integer idDemandeExplication) {
 		String resultat = "";
 		if(idDemandeExplication!=null) {
@@ -270,6 +271,6 @@ public class ModelValidatorControllerAbsence {
 			}
 		}
 		return resultat;
-	}	
+	}
 
 }

@@ -19,7 +19,7 @@ import org.sitracel.bean.BeanPeriodeConge;
 import org.sitracel.bean.BeanResumeAbsence;
 import org.sitracel.bean.BeanSN;
 
-public class BeanFactory {	
+public class BeanFactory {
 	public static BeanPeriode getBeanPeriode() {
 		return new BeanPeriode();
 	}
@@ -27,35 +27,35 @@ public class BeanFactory {
 	public static BeanPeriodeConge getBeanPeriodeConge() {
 		return new BeanPeriodeConge();
 	}
-	
+
 	public static BeanConge getBeanConge() {
 		return new BeanConge();
 	}
-	
+
 	public static BeanResumeAbsence getBeanResumeAbsence() {
 		return new BeanResumeAbsence();
 	}
-	
+
 	public static BeanIndemniteConge getBeanIndemniteConge() {
 		return new BeanIndemniteConge();
-	}	
+	}
 
 	public static BeanInfoCongeDepartement getBeanInfoCongeDepartement() {
 		return new BeanInfoCongeDepartement();
 	}
-	
+
 	public static BeanAbsence getBeanAbsence() {
 		return new BeanAbsence();
 	}
-	
+
 	public static BeanInfoAbsence getBeanInfoAbsence() {
 		return new BeanInfoAbsence();
 	}
-	
+
 	public static BeanIdentifiant getBeanIdentifiant() {
 		return new BeanIdentifiant();
 	}
-	
+
 	public static BeanNotification getBeanNotification() {
 		return new BeanNotification();
 	}
@@ -63,11 +63,11 @@ public class BeanFactory {
 	public static BeanMiseaPieds getBeanMiseaPieds() {
 		return new BeanMiseaPieds();
 	}
-	
+
 	public static BeanNotificationConge getBeanNotificationConge() {
 		return new BeanNotificationConge();
 	}
-	
+
 	public static BeanEvaluationCompetence getBeanEvaluationCompetence() {
 		return new BeanEvaluationCompetence();
 	}
@@ -75,7 +75,7 @@ public class BeanFactory {
 	public static BeanCandidatEvaluation getBeanCandidatEvaluation() {
 		return new BeanCandidatEvaluation();
 	}
-	
+
 	public static BeanJourNonTravaille getBeanJourNonTravaille() {
 		return new BeanJourNonTravaille();
 	}

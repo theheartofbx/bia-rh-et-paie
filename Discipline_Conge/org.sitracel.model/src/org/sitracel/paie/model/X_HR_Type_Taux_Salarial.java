@@ -19,7 +19,10 @@ package org.sitracel.paie.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Type_Taux_Salarial
@@ -87,19 +90,22 @@ public class X_HR_Type_Taux_Salarial extends PO implements I_HR_Type_Taux_Salari
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Type_Taux_Salarial[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -109,6 +115,7 @@ public class X_HR_Type_Taux_Salarial extends PO implements I_HR_Type_Taux_Salari
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -117,6 +124,7 @@ public class X_HR_Type_Taux_Salarial extends PO implements I_HR_Type_Taux_Salari
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -125,27 +133,32 @@ public class X_HR_Type_Taux_Salarial extends PO implements I_HR_Type_Taux_Salari
 	/** Set Type Taux Salarial.
 		@param HR_Type_Taux_Salarial_ID Type Taux Salarial
 	*/
+	@Override
 	public void setHR_Type_Taux_Salarial_ID (int HR_Type_Taux_Salarial_ID)
 	{
-		if (HR_Type_Taux_Salarial_ID < 1)
+		if (HR_Type_Taux_Salarial_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Type_Taux_Salarial_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Type_Taux_Salarial_ID, Integer.valueOf(HR_Type_Taux_Salarial_ID));
+		}
 	}
 
 	/** Get Type Taux Salarial.
 		@return Type Taux Salarial	  */
+	@Override
 	public int getHR_Type_Taux_Salarial_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Type_Taux_Salarial_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Type_Taux_Salarial_UU.
 		@param HR_Type_Taux_Salarial_UU HR_Type_Taux_Salarial_UU
 	*/
+	@Override
 	public void setHR_Type_Taux_Salarial_UU (String HR_Type_Taux_Salarial_UU)
 	{
 		set_Value (COLUMNNAME_HR_Type_Taux_Salarial_UU, HR_Type_Taux_Salarial_UU);
@@ -153,6 +166,7 @@ public class X_HR_Type_Taux_Salarial extends PO implements I_HR_Type_Taux_Salari
 
 	/** Get HR_Type_Taux_Salarial_UU.
 		@return HR_Type_Taux_Salarial_UU	  */
+	@Override
 	public String getHR_Type_Taux_Salarial_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Type_Taux_Salarial_UU);
@@ -161,6 +175,7 @@ public class X_HR_Type_Taux_Salarial extends PO implements I_HR_Type_Taux_Salari
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -169,6 +184,7 @@ public class X_HR_Type_Taux_Salarial extends PO implements I_HR_Type_Taux_Salari
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);

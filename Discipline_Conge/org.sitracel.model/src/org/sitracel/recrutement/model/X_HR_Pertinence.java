@@ -19,7 +19,10 @@ package org.sitracel.recrutement.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Pertinence
@@ -87,19 +90,22 @@ public class X_HR_Pertinence extends PO implements I_HR_Pertinence, I_Persistent
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Pertinence[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -109,6 +115,7 @@ public class X_HR_Pertinence extends PO implements I_HR_Pertinence, I_Persistent
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -117,6 +124,7 @@ public class X_HR_Pertinence extends PO implements I_HR_Pertinence, I_Persistent
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -125,27 +133,32 @@ public class X_HR_Pertinence extends PO implements I_HR_Pertinence, I_Persistent
 	/** Set Pertinence de l&#039;Information.
 		@param HR_Pertinence_ID Pertinence de l&#039;Information
 	*/
+	@Override
 	public void setHR_Pertinence_ID (int HR_Pertinence_ID)
 	{
-		if (HR_Pertinence_ID < 1)
+		if (HR_Pertinence_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Pertinence_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Pertinence_ID, Integer.valueOf(HR_Pertinence_ID));
+		}
 	}
 
 	/** Get Pertinence de l&#039;Information.
 		@return Pertinence de l&#039;Information	  */
+	@Override
 	public int getHR_Pertinence_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Pertinence_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Pertinence_UU.
 		@param HR_Pertinence_UU HR_Pertinence_UU
 	*/
+	@Override
 	public void setHR_Pertinence_UU (String HR_Pertinence_UU)
 	{
 		set_Value (COLUMNNAME_HR_Pertinence_UU, HR_Pertinence_UU);
@@ -153,6 +166,7 @@ public class X_HR_Pertinence extends PO implements I_HR_Pertinence, I_Persistent
 
 	/** Get HR_Pertinence_UU.
 		@return HR_Pertinence_UU	  */
+	@Override
 	public String getHR_Pertinence_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Pertinence_UU);
@@ -161,6 +175,7 @@ public class X_HR_Pertinence extends PO implements I_HR_Pertinence, I_Persistent
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -169,6 +184,7 @@ public class X_HR_Pertinence extends PO implements I_HR_Pertinence, I_Persistent
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);

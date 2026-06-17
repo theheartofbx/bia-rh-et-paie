@@ -19,7 +19,10 @@ package org.sitracel.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for NiveauEtude
@@ -87,19 +90,22 @@ public class X_NiveauEtude extends PO implements I_NiveauEtude, I_Persistent
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_NiveauEtude[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -109,6 +115,7 @@ public class X_NiveauEtude extends PO implements I_NiveauEtude, I_Persistent
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -117,6 +124,7 @@ public class X_NiveauEtude extends PO implements I_NiveauEtude, I_Persistent
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -125,6 +133,7 @@ public class X_NiveauEtude extends PO implements I_NiveauEtude, I_Persistent
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -133,6 +142,7 @@ public class X_NiveauEtude extends PO implements I_NiveauEtude, I_Persistent
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -149,27 +159,32 @@ public class X_NiveauEtude extends PO implements I_NiveauEtude, I_Persistent
 	/** Set Niveau D&#039;Etude.
 		@param NiveauEtude_ID Niveau D&#039;Etude
 	*/
+	@Override
 	public void setNiveauEtude_ID (int NiveauEtude_ID)
 	{
-		if (NiveauEtude_ID < 1)
+		if (NiveauEtude_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_NiveauEtude_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_NiveauEtude_ID, Integer.valueOf(NiveauEtude_ID));
+		}
 	}
 
 	/** Get Niveau D&#039;Etude.
 		@return Niveau D&#039;Etude	  */
+	@Override
 	public int getNiveauEtude_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_NiveauEtude_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set NiveauEtude_UU.
 		@param NiveauEtude_UU NiveauEtude_UU
 	*/
+	@Override
 	public void setNiveauEtude_UU (String NiveauEtude_UU)
 	{
 		set_Value (COLUMNNAME_NiveauEtude_UU, NiveauEtude_UU);
@@ -177,6 +192,7 @@ public class X_NiveauEtude extends PO implements I_NiveauEtude, I_Persistent
 
 	/** Get NiveauEtude_UU.
 		@return NiveauEtude_UU	  */
+	@Override
 	public String getNiveauEtude_UU()
 	{
 		return (String)get_Value(COLUMNNAME_NiveauEtude_UU);

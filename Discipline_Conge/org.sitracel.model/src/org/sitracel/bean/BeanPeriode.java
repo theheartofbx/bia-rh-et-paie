@@ -7,9 +7,9 @@ public class BeanPeriode {
 	private Timestamp dateDebutConge;
 	private Timestamp dateFinConge;
 	private Long employeRestant;
-	
+
 	public BeanPeriode() {
-		
+
 	}
 
 	public Timestamp getDateDebutConge() {

@@ -99,19 +99,22 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Autorisation_Absence[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -121,6 +124,7 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -129,6 +133,7 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -137,27 +142,32 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 	/** Set Autorisation Absence.
 		@param HR_Autorisation_Absence_ID Autorisation Absence
 	*/
+	@Override
 	public void setHR_Autorisation_Absence_ID (int HR_Autorisation_Absence_ID)
 	{
-		if (HR_Autorisation_Absence_ID < 1)
+		if (HR_Autorisation_Absence_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Autorisation_Absence_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Autorisation_Absence_ID, Integer.valueOf(HR_Autorisation_Absence_ID));
+		}
 	}
 
 	/** Get Autorisation Absence.
 		@return Autorisation Absence	  */
+	@Override
 	public int getHR_Autorisation_Absence_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Autorisation_Absence_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Autorisation_Absence_UU.
 		@param HR_Autorisation_Absence_UU HR_Autorisation_Absence_UU
 	*/
+	@Override
 	public void setHR_Autorisation_Absence_UU (String HR_Autorisation_Absence_UU)
 	{
 		set_Value (COLUMNNAME_HR_Autorisation_Absence_UU, HR_Autorisation_Absence_UU);
@@ -165,11 +175,13 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 
 	/** Get HR_Autorisation_Absence_UU.
 		@return HR_Autorisation_Absence_UU	  */
+	@Override
 	public String getHR_Autorisation_Absence_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Autorisation_Absence_UU);
 	}
 
+	@Override
 	public I_HR_Categorie_Responsabilite getHR_Categorie_Responsabilite() throws RuntimeException
 	{
 		return (I_HR_Categorie_Responsabilite)MTable.get(getCtx(), I_HR_Categorie_Responsabilite.Table_ID)
@@ -179,24 +191,29 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 	/** Set Catégorie de Responsabilité.
 		@param HR_Categorie_Responsabilite_ID Catégorie de Responsabilité
 	*/
+	@Override
 	public void setHR_Categorie_Responsabilite_ID (int HR_Categorie_Responsabilite_ID)
 	{
-		if (HR_Categorie_Responsabilite_ID < 1)
+		if (HR_Categorie_Responsabilite_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Categorie_Responsabilite_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Categorie_Responsabilite_ID, Integer.valueOf(HR_Categorie_Responsabilite_ID));
+		}
 	}
 
 	/** Get Catégorie de Responsabilité.
 		@return Catégorie de Responsabilité	  */
+	@Override
 	public int getHR_Categorie_Responsabilite_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Categorie_Responsabilite_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public I_HR_Type_Absence getHR_Type_Absence() throws RuntimeException
 	{
 		return (I_HR_Type_Absence)MTable.get(getCtx(), I_HR_Type_Absence.Table_ID)
@@ -206,27 +223,32 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 	/** Set Type d&#039;Absence.
 		@param HR_Type_Absence_ID Type d&#039;Absence
 	*/
+	@Override
 	public void setHR_Type_Absence_ID (int HR_Type_Absence_ID)
 	{
-		if (HR_Type_Absence_ID < 1)
+		if (HR_Type_Absence_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Type_Absence_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Type_Absence_ID, Integer.valueOf(HR_Type_Absence_ID));
+		}
 	}
 
 	/** Get Type d&#039;Absence.
 		@return Type d&#039;Absence	  */
+	@Override
 	public int getHR_Type_Absence_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Type_Absence_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Peut Emettre.
 		@param IsEmission Peut Emettre
 	*/
+	@Override
 	public void setIsEmission (boolean IsEmission)
 	{
 		set_Value (COLUMNNAME_IsEmission, Boolean.valueOf(IsEmission));
@@ -235,13 +257,15 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 	/** Get Peut Emettre.
 		@return Peut Emettre
 	  */
+	@Override
 	public boolean isEmission()
 	{
 		Object oo = get_Value(COLUMNNAME_IsEmission);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -250,6 +274,7 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 	/** Set Message d&#039;Alerte Affiché.
 		@param IsMessageAlerteDisplayed Message d&#039;Alerte Affiché
 	*/
+	@Override
 	public void setIsMessageAlerteDisplayed (boolean IsMessageAlerteDisplayed)
 	{
 		set_Value (COLUMNNAME_IsMessageAlerteDisplayed, Boolean.valueOf(IsMessageAlerteDisplayed));
@@ -258,13 +283,15 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 	/** Get Message d&#039;Alerte Affiché.
 		@return Message d&#039;Alerte Affiché
 	  */
+	@Override
 	public boolean isMessageAlerteDisplayed()
 	{
 		Object oo = get_Value(COLUMNNAME_IsMessageAlerteDisplayed);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -273,6 +300,7 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 	/** Set Message d&#039;Alerte.
 		@param Message_Alerte Message d&#039;Alerte
 	*/
+	@Override
 	public void setMessage_Alerte (String Message_Alerte)
 	{
 		set_Value (COLUMNNAME_Message_Alerte, Message_Alerte);
@@ -281,6 +309,7 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 	/** Get Message d&#039;Alerte.
 		@return Message d&#039;Alerte
 	  */
+	@Override
 	public String getMessage_Alerte()
 	{
 		return (String)get_Value(COLUMNNAME_Message_Alerte);
@@ -289,6 +318,7 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -297,6 +327,7 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -305,6 +336,7 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 	/** Set Search Key.
 		@param Value Search key for the record in the format required - must be unique
 	*/
+	@Override
 	public void setValue (String Value)
 	{
 		set_Value (COLUMNNAME_Value, Value);
@@ -313,6 +345,7 @@ public class X_HR_Autorisation_Absence extends PO implements I_HR_Autorisation_A
 	/** Get Search Key.
 		@return Search key for the record in the format required - must be unique
 	  */
+	@Override
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);

@@ -20,7 +20,10 @@ package org.sitracel.conge.model;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 
 /** Generated Model for HR_Public_Holiday
  *  @author iDempiere (generated)
@@ -87,19 +90,22 @@ public class X_HR_Public_Holiday extends PO implements I_HR_Public_Holiday, I_Pe
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Public_Holiday[")
         .append(get_ID()).append("]");
@@ -109,6 +115,7 @@ public class X_HR_Public_Holiday extends PO implements I_HR_Public_Holiday, I_Pe
 	/** Set Date du Jour Férié.
 		@param Date_Jour_Ferie Date du Jour Férié
 	*/
+	@Override
 	public void setDate_Jour_Ferie (Timestamp Date_Jour_Ferie)
 	{
 		set_Value (COLUMNNAME_Date_Jour_Ferie, Date_Jour_Ferie);
@@ -117,6 +124,7 @@ public class X_HR_Public_Holiday extends PO implements I_HR_Public_Holiday, I_Pe
 	/** Get Date du Jour Férié.
 		@return Date du Jour Férié
 	  */
+	@Override
 	public Timestamp getDate_Jour_Ferie()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Jour_Ferie);
@@ -125,6 +133,7 @@ public class X_HR_Public_Holiday extends PO implements I_HR_Public_Holiday, I_Pe
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -133,6 +142,7 @@ public class X_HR_Public_Holiday extends PO implements I_HR_Public_Holiday, I_Pe
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -141,27 +151,32 @@ public class X_HR_Public_Holiday extends PO implements I_HR_Public_Holiday, I_Pe
 	/** Set Jours Fériés.
 		@param HR_Public_Holiday_ID Jours Fériés
 	*/
+	@Override
 	public void setHR_Public_Holiday_ID (int HR_Public_Holiday_ID)
 	{
-		if (HR_Public_Holiday_ID < 1)
+		if (HR_Public_Holiday_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Public_Holiday_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Public_Holiday_ID, Integer.valueOf(HR_Public_Holiday_ID));
+		}
 	}
 
 	/** Get Jours Fériés.
 		@return Jours Fériés	  */
+	@Override
 	public int getHR_Public_Holiday_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Public_Holiday_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Public_Holiday_UU.
 		@param HR_Public_Holiday_UU HR_Public_Holiday_UU
 	*/
+	@Override
 	public void setHR_Public_Holiday_UU (String HR_Public_Holiday_UU)
 	{
 		set_Value (COLUMNNAME_HR_Public_Holiday_UU, HR_Public_Holiday_UU);
@@ -169,6 +184,7 @@ public class X_HR_Public_Holiday extends PO implements I_HR_Public_Holiday, I_Pe
 
 	/** Get HR_Public_Holiday_UU.
 		@return HR_Public_Holiday_UU	  */
+	@Override
 	public String getHR_Public_Holiday_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Public_Holiday_UU);
@@ -177,6 +193,7 @@ public class X_HR_Public_Holiday extends PO implements I_HR_Public_Holiday, I_Pe
 	/** Set Nom du Jour Férié.
 		@param Nom_Jour_Ferie Nom du Jour Férié
 	*/
+	@Override
 	public void setNom_Jour_Ferie (String Nom_Jour_Ferie)
 	{
 		set_Value (COLUMNNAME_Nom_Jour_Ferie, Nom_Jour_Ferie);
@@ -185,6 +202,7 @@ public class X_HR_Public_Holiday extends PO implements I_HR_Public_Holiday, I_Pe
 	/** Get Nom du Jour Férié.
 		@return Nom du Jour Férié
 	  */
+	@Override
 	public String getNom_Jour_Ferie()
 	{
 		return (String)get_Value(COLUMNNAME_Nom_Jour_Ferie);
@@ -193,6 +211,7 @@ public class X_HR_Public_Holiday extends PO implements I_HR_Public_Holiday, I_Pe
 	/** Set Search Key.
 		@param Value Search key for the record in the format required - must be unique
 	*/
+	@Override
 	public void setValue (String Value)
 	{
 		set_Value (COLUMNNAME_Value, Value);
@@ -201,6 +220,7 @@ public class X_HR_Public_Holiday extends PO implements I_HR_Public_Holiday, I_Pe
 	/** Get Search Key.
 		@return Search key for the record in the format required - must be unique
 	  */
+	@Override
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);

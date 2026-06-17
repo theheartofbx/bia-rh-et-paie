@@ -24,11 +24,11 @@ import org.compiere.util.KeyNamePair;
 import org.sitracel.discipline.model.I_HR_Demande_Explication;
 
 /** Generated Interface for HR_Absence
- *  @author iDempiere (generated) 
+ *  @author iDempiere (generated)
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_Absence 
+public interface I_HR_Absence
 {
 
     /** TableName=HR_Absence */
@@ -39,7 +39,7 @@ public interface I_HR_Absence
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org 
+    /** AccessLevel = 3 - Client - Org
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 

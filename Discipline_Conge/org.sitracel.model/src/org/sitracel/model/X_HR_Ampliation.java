@@ -19,7 +19,10 @@ package org.sitracel.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Ampliation
@@ -91,19 +94,22 @@ public class X_HR_Ampliation extends PO implements I_HR_Ampliation, I_Persistent
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Ampliation[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -113,6 +119,7 @@ public class X_HR_Ampliation extends PO implements I_HR_Ampliation, I_Persistent
 	/** Set Abreviation.
 		@param Abreviation Abreviation
 	*/
+	@Override
 	public void setAbreviation (String Abreviation)
 	{
 		set_Value (COLUMNNAME_Abreviation, Abreviation);
@@ -121,6 +128,7 @@ public class X_HR_Ampliation extends PO implements I_HR_Ampliation, I_Persistent
 	/** Get Abreviation.
 		@return Abreviation
 	  */
+	@Override
 	public String getAbreviation()
 	{
 		return (String)get_Value(COLUMNNAME_Abreviation);
@@ -129,6 +137,7 @@ public class X_HR_Ampliation extends PO implements I_HR_Ampliation, I_Persistent
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -137,6 +146,7 @@ public class X_HR_Ampliation extends PO implements I_HR_Ampliation, I_Persistent
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -145,27 +155,32 @@ public class X_HR_Ampliation extends PO implements I_HR_Ampliation, I_Persistent
 	/** Set Ampliation.
 		@param HR_Ampliation_ID Ampliation
 	*/
+	@Override
 	public void setHR_Ampliation_ID (int HR_Ampliation_ID)
 	{
-		if (HR_Ampliation_ID < 1)
+		if (HR_Ampliation_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Ampliation_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Ampliation_ID, Integer.valueOf(HR_Ampliation_ID));
+		}
 	}
 
 	/** Get Ampliation.
 		@return Ampliation	  */
+	@Override
 	public int getHR_Ampliation_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Ampliation_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Ampliation_UU.
 		@param HR_Ampliation_UU HR_Ampliation_UU
 	*/
+	@Override
 	public void setHR_Ampliation_UU (String HR_Ampliation_UU)
 	{
 		set_Value (COLUMNNAME_HR_Ampliation_UU, HR_Ampliation_UU);
@@ -173,6 +188,7 @@ public class X_HR_Ampliation extends PO implements I_HR_Ampliation, I_Persistent
 
 	/** Get HR_Ampliation_UU.
 		@return HR_Ampliation_UU	  */
+	@Override
 	public String getHR_Ampliation_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Ampliation_UU);
@@ -181,6 +197,7 @@ public class X_HR_Ampliation extends PO implements I_HR_Ampliation, I_Persistent
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -189,6 +206,7 @@ public class X_HR_Ampliation extends PO implements I_HR_Ampliation, I_Persistent
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -205,6 +223,7 @@ public class X_HR_Ampliation extends PO implements I_HR_Ampliation, I_Persistent
 	/** Set Search Key.
 		@param Value Search key for the record in the format required - must be unique
 	*/
+	@Override
 	public void setValue (String Value)
 	{
 		set_Value (COLUMNNAME_Value, Value);
@@ -213,6 +232,7 @@ public class X_HR_Ampliation extends PO implements I_HR_Ampliation, I_Persistent
 	/** Get Search Key.
 		@return Search key for the record in the format required - must be unique
 	  */
+	@Override
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);

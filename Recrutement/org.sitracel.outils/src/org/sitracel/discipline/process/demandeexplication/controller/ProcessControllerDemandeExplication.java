@@ -20,10 +20,10 @@ public class ProcessControllerDemandeExplication {
 	private static String mdp = "vzccxxisbuazhhys";
 
 	public static void notifierDemandeExplication(Integer idDemandeExplication) {
-		
+
 		String obj="Emission d'une Demande d'Explication";
 		BeanNotification bn = ProcessControllerDiscipline.getBeanNotificationDE(idDemandeExplication);
-		ArrayList<InternetAddress> recieverMail = new ArrayList<InternetAddress>();
+		ArrayList<InternetAddress> recieverMail = new ArrayList<>();
 		try {
 			if(bn.getMailEmploye()!=null) {
 				if(bn.getMailEmploye().matches(".+@.+\\.[a-z]+")) {
@@ -39,7 +39,7 @@ public class ProcessControllerDemandeExplication {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		InternetAddress[] dest =null;
 		if(recieverMail!=null) {
 			dest = recieverMail.toArray(new InternetAddress[0]);
@@ -48,9 +48,9 @@ public class ProcessControllerDemandeExplication {
 			dest = new InternetAddress[0];
 		}
 		GeneralController.sendEmail(expediteur, mdp, dest, obj, getNotifierDemandeExplicationMessage(idDemandeExplication));
-		
+
 	}
-	
+
 	private static String getNotifierDemandeExplicationMessage(Integer idDemandeExplication) {
 		String resultat = "";
 		if(idDemandeExplication!=null) {

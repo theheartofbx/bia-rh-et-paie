@@ -19,7 +19,11 @@ package org.sitracel.recrutement.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
 import org.sitracel.model.I_HR_Formation;
 import org.sitracel.model.I_NiveauEtude;
@@ -101,25 +105,29 @@ public class X_HR_Candidat_Formation extends PO implements I_HR_Candidat_Formati
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Candidat_Formation[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
       return sb.toString();
     }
 
+	@Override
 	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -129,49 +137,58 @@ public class X_HR_Candidat_Formation extends PO implements I_HR_Candidat_Formati
 	/** Set Business Partner .
 		@param C_BPartner_ID Identifies a Business Partner
 	*/
+	@Override
 	public void setC_BPartner_ID (int C_BPartner_ID)
 	{
-		if (C_BPartner_ID < 1)
+		if (C_BPartner_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, Integer.valueOf(C_BPartner_ID));
+		}
 	}
 
 	/** Get Business Partner .
 		@return Identifies a Business Partner
 	  */
+	@Override
 	public int getC_BPartner_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_BPartner_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Formation des Candidats.
 		@param HR_Candidat_Formation_ID Formation des Candidats
 	*/
+	@Override
 	public void setHR_Candidat_Formation_ID (int HR_Candidat_Formation_ID)
 	{
-		if (HR_Candidat_Formation_ID < 1)
+		if (HR_Candidat_Formation_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Candidat_Formation_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Candidat_Formation_ID, Integer.valueOf(HR_Candidat_Formation_ID));
+		}
 	}
 
 	/** Get Formation des Candidats.
 		@return Formation des Candidats	  */
+	@Override
 	public int getHR_Candidat_Formation_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Candidat_Formation_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Candidat_Formation_UU.
 		@param HR_Candidat_Formation_UU HR_Candidat_Formation_UU
 	*/
+	@Override
 	public void setHR_Candidat_Formation_UU (String HR_Candidat_Formation_UU)
 	{
 		set_Value (COLUMNNAME_HR_Candidat_Formation_UU, HR_Candidat_Formation_UU);
@@ -179,11 +196,13 @@ public class X_HR_Candidat_Formation extends PO implements I_HR_Candidat_Formati
 
 	/** Get HR_Candidat_Formation_UU.
 		@return HR_Candidat_Formation_UU	  */
+	@Override
 	public String getHR_Candidat_Formation_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Candidat_Formation_UU);
 	}
 
+	@Override
 	public I_HR_Etablissement getHR_Etablissement() throws RuntimeException
 	{
 		return (I_HR_Etablissement)MTable.get(getCtx(), I_HR_Etablissement.Table_ID)
@@ -193,24 +212,29 @@ public class X_HR_Candidat_Formation extends PO implements I_HR_Candidat_Formati
 	/** Set Établissement.
 		@param HR_Etablissement_ID Établissement
 	*/
+	@Override
 	public void setHR_Etablissement_ID (int HR_Etablissement_ID)
 	{
-		if (HR_Etablissement_ID < 1)
+		if (HR_Etablissement_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Etablissement_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Etablissement_ID, Integer.valueOf(HR_Etablissement_ID));
+		}
 	}
 
 	/** Get Établissement.
 		@return Établissement	  */
+	@Override
 	public int getHR_Etablissement_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Etablissement_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public I_HR_Formation getHR_Formation() throws RuntimeException
 	{
 		return (I_HR_Formation)MTable.get(getCtx(), I_HR_Formation.Table_ID)
@@ -220,24 +244,29 @@ public class X_HR_Candidat_Formation extends PO implements I_HR_Candidat_Formati
 	/** Set Formation.
 		@param HR_Formation_ID Formation
 	*/
+	@Override
 	public void setHR_Formation_ID (int HR_Formation_ID)
 	{
-		if (HR_Formation_ID < 1)
+		if (HR_Formation_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Formation_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Formation_ID, Integer.valueOf(HR_Formation_ID));
+		}
 	}
 
 	/** Get Formation.
 		@return Formation	  */
+	@Override
 	public int getHR_Formation_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Formation_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public I_HR_Pertinence getHR_Pertinence() throws RuntimeException
 	{
 		return (I_HR_Pertinence)MTable.get(getCtx(), I_HR_Pertinence.Table_ID)
@@ -247,27 +276,32 @@ public class X_HR_Candidat_Formation extends PO implements I_HR_Candidat_Formati
 	/** Set Pertinence de l&#039;Information.
 		@param HR_Pertinence_ID Pertinence de l&#039;Information
 	*/
+	@Override
 	public void setHR_Pertinence_ID (int HR_Pertinence_ID)
 	{
-		if (HR_Pertinence_ID < 1)
+		if (HR_Pertinence_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Pertinence_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Pertinence_ID, Integer.valueOf(HR_Pertinence_ID));
+		}
 	}
 
 	/** Get Pertinence de l&#039;Information.
 		@return Pertinence de l&#039;Information	  */
+	@Override
 	public int getHR_Pertinence_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Pertinence_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -276,6 +310,7 @@ public class X_HR_Candidat_Formation extends PO implements I_HR_Candidat_Formati
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -289,6 +324,7 @@ public class X_HR_Candidat_Formation extends PO implements I_HR_Candidat_Formati
         return new KeyNamePair(get_ID(), getName());
     }
 
+	@Override
 	public I_NiveauEtude getNiveauEtude() throws RuntimeException
 	{
 		return (I_NiveauEtude)MTable.get(getCtx(), I_NiveauEtude.Table_ID)
@@ -298,21 +334,25 @@ public class X_HR_Candidat_Formation extends PO implements I_HR_Candidat_Formati
 	/** Set Niveau D&#039;Etude.
 		@param NiveauEtude_ID Niveau D&#039;Etude
 	*/
+	@Override
 	public void setNiveauEtude_ID (int NiveauEtude_ID)
 	{
-		if (NiveauEtude_ID < 1)
+		if (NiveauEtude_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_NiveauEtude_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_NiveauEtude_ID, Integer.valueOf(NiveauEtude_ID));
+		}
 	}
 
 	/** Get Niveau D&#039;Etude.
 		@return Niveau D&#039;Etude	  */
+	@Override
 	public int getNiveauEtude_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_NiveauEtude_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 }

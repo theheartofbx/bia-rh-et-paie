@@ -7,9 +7,9 @@ public class BeanInfoCongeDepartement {
 	private int nombreEmployeDepartementConge;
 	private Timestamp jourCritique;
 	private double pourcentageEmployeConge;
-	
+
 	public BeanInfoCongeDepartement() {
-		
+
 	}
 
 	public int getNombreEmployeDepartement() {

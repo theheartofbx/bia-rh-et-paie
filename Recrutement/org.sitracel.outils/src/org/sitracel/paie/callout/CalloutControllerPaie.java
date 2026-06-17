@@ -13,6 +13,8 @@ import org.sitracel.bean.BeanPeriode;
 import org.sitracel.controller.GeneralController;
 import org.sitracel.controller.GeneralSqlController;
 import org.sitracel.model.MCBPartner;
+import org.sitracel.model.X_C_BPartner;
+import org.sitracel.paie.model.I_HR_Gestion_Presence;
 import org.sitracel.paie.model.MHRElementBasePaieEmploye;
 import org.sitracel.paie.model.MHRGestionPaieEmploye;
 import org.sitracel.paie.model.MHRGestionPresence;
@@ -56,7 +58,9 @@ public class CalloutControllerPaie {
 	    for (int i = 0; i < listeElemmentBasePaie.size(); i++) {
 	        MHRElementBasePaieEmploye elementBasePaieEmploye = listeElemmentBasePaie.get(i);
 
-	        if (elementBasePaieEmploye == null) continue;
+	        if (elementBasePaieEmploye == null) {
+				continue;
+			}
 
 	        MHRTauxSalarial tauxSalarial = new MHRTauxSalarial(Env.getCtx(), elementBasePaieEmploye.getHR_Taux_Salarial_ID(), trxName);
 	        MHRTypeTauxSalarial typeTauxSalarial = tauxSalarial.getHR_Type_Taux_Salarial_ID() > 0
@@ -121,7 +125,7 @@ public class CalloutControllerPaie {
 	    		gestionPresence.setHR_Periode_Salariale_ID(periodeSalariale.getHR_Periode_Salariale_ID());
 	    		gestionPresence.setDate_Debut(periodeSalariale.getDate_Debut_Defaut());
 	    		gestionPresence.setDate_Fin(periodeSalariale.getDate_Fin_Defaut());
-	    		gestionPresence.setHR_Gestion_Presence_ID(DB.getNextID(Env.getCtx(), MHRGestionPresence.Table_Name, null));
+	    		gestionPresence.setHR_Gestion_Presence_ID(DB.getNextID(Env.getCtx(), I_HR_Gestion_Presence.Table_Name, null));
 	            gestionPresence.save();
 	            DB.commit(true, null);
 	        }
@@ -131,12 +135,12 @@ public class CalloutControllerPaie {
 
 	    return elementPaieFinal;
 	}
-	
+
 	public static MHRGestionPresence buildPresenceJournalier(MCBPartner bpartner, MHRPeriodeSalariale periodeSalariale, MHRTauxSalarial tauxSalarial, Timestamp dateDebutInit, Timestamp dateFinInit) {
 		MHRGestionPresence gestionPresenceInter = null;
 		if(bpartner!=null && periodeSalariale!=null) {
 			gestionPresenceInter = initGestionPresence(bpartner, periodeSalariale, dateDebutInit, dateFinInit);
-			
+
 			if(tauxSalarial!=null && tauxSalarial.getValeur_Integer()>0) {
 				gestionPresenceInter.setNombre_Jour_Max(tauxSalarial.getValeur_Integer());
 			}
@@ -149,13 +153,13 @@ public class CalloutControllerPaie {
 				nbJourEffectif = nbJourEffectif - gestionPresenceInter.getNombre_Jour_Conge_Annuel();
 			}
 			if(bpartner.getSex()!=null) {
-				if(bpartner.getSex().equalsIgnoreCase(MCBPartner.SEX_Femme)) {
+				if(bpartner.getSex().equalsIgnoreCase(X_C_BPartner.SEX_Femme)) {
 					gestionPresenceInter.setNombre_Jour_Conge_Maternite(CalloutControllerPaie.getNombreJourCongeValideByname(bpartner.getC_BPartner_ID(), "Maternité", gestionPresenceInter.getDate_Debut(), gestionPresenceInter.getDate_Fin()));
 					if(periodeSalariale.isCongeMatPatlDeduit()) {
 						nbJourEffectif = nbJourEffectif - gestionPresenceInter.getNombre_Jour_Conge_Maternite();
 					}
 				}
-				else if(bpartner.getSex().equalsIgnoreCase(MCBPartner.SEX_Homme)) {
+				else if(bpartner.getSex().equalsIgnoreCase(X_C_BPartner.SEX_Homme)) {
 					gestionPresenceInter.setNombre_Jour_Conge_Paternite(CalloutControllerPaie.getNombreJourCongeValideByname(bpartner.getC_BPartner_ID(), "Paternité", gestionPresenceInter.getDate_Debut(), gestionPresenceInter.getDate_Fin()));
 					if(periodeSalariale.isCongeMatPatlDeduit()) {
 						nbJourEffectif = nbJourEffectif - gestionPresenceInter.getNombre_Jour_Conge_Paternite();
@@ -188,23 +192,23 @@ public class CalloutControllerPaie {
 		}
 		return gestionPresenceInter;
 	}
-	
+
 
 	public static MHRGestionPresence buildPresenceHoraire(MCBPartner bpartner, MHRPeriodeSalariale periodeSalariale, MHRTauxSalarial tauxSalarial, Timestamp dateDebutInit, Timestamp dateFinInit) {
 		MHRGestionPresence gestionPresenceInter = null;
 		if(bpartner!=null && periodeSalariale!=null) {
 			gestionPresenceInter = initGestionPresence(bpartner, periodeSalariale, dateDebutInit, dateFinInit);
-			
+
 			if(tauxSalarial!=null && tauxSalarial.getValeur_Integer()>0) {
 				gestionPresenceInter.setNombre_Heure_Travaille_Max(tauxSalarial.getValeur_Integer());
 			}
 			int nbHeureEffectif = gestionPresenceInter.getNombre_Heure_Travaille_Max();
-			
+
 			gestionPresenceInter.setNombre_Heure_Travaille(nbHeureEffectif);
 		}
 		return gestionPresenceInter;
 	}
-	
+
 	public static int getNombreJourCongeValideByname(Integer bpartnerID, String nomConge, Timestamp dateDebut, Timestamp dateFin) {
 		int resultat = 0;
 		if(bpartnerID!=null && nomConge!=null && dateDebut!=null && dateFin!=null) {
@@ -219,7 +223,7 @@ public class CalloutControllerPaie {
 						else if(conge.getDateDebutConge().before(dateDebut) && conge.getDateFinConge().after(dateFin)) {
 							resultat = resultat + GeneralController.getNombreJourTravaille(dateDebut, dateFin);
 						}
-						else if(conge.getDateDebutConge().before(dateDebut) && conge.getDateFinConge().after(dateDebut) 
+						else if(conge.getDateDebutConge().before(dateDebut) && conge.getDateFinConge().after(dateDebut)
 								&& conge.getDateFinConge().before(dateFin)) {
 							resultat = resultat + GeneralController.getNombreJourTravaille(dateDebut, conge.getDateFinConge());
 						}
@@ -233,7 +237,7 @@ public class CalloutControllerPaie {
 		}
 		return resultat;
 	}
-	
+
 	public static int getNombreJourSuspensionValideByname(Integer bpartnerID, Timestamp dateDebut, Timestamp dateFin) {
 		int resultat = 0;
 		if(bpartnerID!=null && dateDebut!=null && dateFin!=null) {
@@ -248,7 +252,7 @@ public class CalloutControllerPaie {
 						else if(suspension.getDateDebutConge().before(dateDebut) && suspension.getDateFinConge().after(dateFin)) {
 							resultat = resultat + GeneralController.getNombreJourTravaille(dateDebut, dateFin);
 						}
-						else if(suspension.getDateDebutConge().before(dateDebut) && suspension.getDateFinConge().after(dateDebut) 
+						else if(suspension.getDateDebutConge().before(dateDebut) && suspension.getDateFinConge().after(dateDebut)
 								&& suspension.getDateFinConge().before(dateFin)) {
 							resultat = resultat + GeneralController.getNombreJourTravaille(dateDebut, suspension.getDateFinConge());
 						}
@@ -262,19 +266,19 @@ public class CalloutControllerPaie {
 		}
 		return resultat;
 	}
-	
+
 	 public static BigDecimal regleDeTrois(BigDecimal a, Integer b, Integer c, int scale) {
 	    // Vérifie les valeurs nulles ou zéro
 	    if (a == null || a.compareTo(BigDecimal.ZERO) == 0 || b == null || b == 0 || c == null || c == 0) {
 	        return BigDecimal.ZERO;
 	    }
-	    
+
 	    BigDecimal bDecimal = BigDecimal.valueOf(b);
 	    BigDecimal cDecimal = BigDecimal.valueOf(c);
 	    BigDecimal resultat = a.multiply(cDecimal).divide(bDecimal, scale, RoundingMode.HALF_UP);
 	    return resultat;
      }
-	 
+
 
 
 	 public static MHRGestionPresence updateGestionPresence(MHRGestionPresence gestionPresence, MHRGestionPresence gestionPresenceInter) {
@@ -287,10 +291,10 @@ public class CalloutControllerPaie {
 			gestionPresence.setNombre_Jour_Suspension(gestionPresenceInter.getNombre_Jour_Suspension()+gestionPresence.getNombre_Jour_Suspension());
 			gestionPresence.setNombre_Jour_Effectif(gestionPresenceInter.getNombre_Jour_Effectif()+gestionPresence.getNombre_Jour_Effectif());
 		 }
-		 
+
 		 return gestionPresence;
 	 }
-	 
+
 	 private static MHRGestionPresence initGestionPresence(
 		        MCBPartner bpartner, MHRPeriodeSalariale periodeSalariale,
 		        Timestamp dateDebutInit, Timestamp dateFinInit) {
@@ -305,7 +309,7 @@ public class CalloutControllerPaie {
 		        gestionPresence = new MHRGestionPresence(Env.getCtx(), 0, null);
 		        gestionPresence.setC_BPartner_ID(bpartner.getC_BPartner_ID());
 		        gestionPresence.setHR_Periode_Salariale_ID(periodeSalariale.getHR_Periode_Salariale_ID());
-		        gestionPresence.setHR_Gestion_Presence_ID(DB.getNextID(Env.getCtx(), MHRGestionPresence.Table_Name, null));
+		        gestionPresence.setHR_Gestion_Presence_ID(DB.getNextID(Env.getCtx(), I_HR_Gestion_Presence.Table_Name, null));
 		    }
 
 		    Timestamp dateDebut = (dateDebutInit == null)

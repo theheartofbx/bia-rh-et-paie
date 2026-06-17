@@ -20,7 +20,11 @@ package org.sitracel.paie.model;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.Env;
 
 /** Generated Model for BIA_Bareme
@@ -84,19 +88,22 @@ public class X_BIA_Bareme extends PO implements I_BIA_Bareme, I_Persistent
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_BIA_Bareme[")
         .append(get_ID()).append("]");
@@ -106,6 +113,7 @@ public class X_BIA_Bareme extends PO implements I_BIA_Bareme, I_Persistent
 	/** Set AmountFrom.
 		@param AmountFrom Amount in a defined currency
 	*/
+	@Override
 	public void setAmountFrom (BigDecimal AmountFrom)
 	{
 		set_Value (COLUMNNAME_AmountFrom, AmountFrom);
@@ -114,17 +122,20 @@ public class X_BIA_Bareme extends PO implements I_BIA_Bareme, I_Persistent
 	/** Get AmountFrom.
 		@return Amount in a defined currency
 	  */
+	@Override
 	public BigDecimal getAmountFrom()
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_AmountFrom);
-		if (bd == null)
-			 return Env.ZERO;
+		if (bd == null) {
+			return Env.ZERO;
+		}
 		return bd;
 	}
 
 	/** Set AmountTo.
 		@param AmountTo Amount in a defined currency
 	*/
+	@Override
 	public void setAmountTo (BigDecimal AmountTo)
 	{
 		set_Value (COLUMNNAME_AmountTo, AmountTo);
@@ -133,17 +144,20 @@ public class X_BIA_Bareme extends PO implements I_BIA_Bareme, I_Persistent
 	/** Get AmountTo.
 		@return Amount in a defined currency
 	  */
+	@Override
 	public BigDecimal getAmountTo()
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_AmountTo);
-		if (bd == null)
-			 return Env.ZERO;
+		if (bd == null) {
+			return Env.ZERO;
+		}
 		return bd;
 	}
 
 	/** Set Amount.
 		@param Amt Amount
 	*/
+	@Override
 	public void setAmt (BigDecimal Amt)
 	{
 		set_Value (COLUMNNAME_Amt, Amt);
@@ -152,38 +166,45 @@ public class X_BIA_Bareme extends PO implements I_BIA_Bareme, I_Persistent
 	/** Get Amount.
 		@return Amount
 	  */
+	@Override
 	public BigDecimal getAmt()
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Amt);
-		if (bd == null)
-			 return Env.ZERO;
+		if (bd == null) {
+			return Env.ZERO;
+		}
 		return bd;
 	}
 
 	/** Set Bareme.
 		@param BIA_Bareme_ID Bareme
 	*/
+	@Override
 	public void setBIA_Bareme_ID (int BIA_Bareme_ID)
 	{
-		if (BIA_Bareme_ID < 1)
+		if (BIA_Bareme_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_BIA_Bareme_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_BIA_Bareme_ID, Integer.valueOf(BIA_Bareme_ID));
+		}
 	}
 
 	/** Get Bareme.
 		@return Bareme	  */
+	@Override
 	public int getBIA_Bareme_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_BIA_Bareme_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set BIA_Bareme_UU.
 		@param BIA_Bareme_UU BIA_Bareme_UU
 	*/
+	@Override
 	public void setBIA_Bareme_UU (String BIA_Bareme_UU)
 	{
 		set_Value (COLUMNNAME_BIA_Bareme_UU, BIA_Bareme_UU);
@@ -191,6 +212,7 @@ public class X_BIA_Bareme extends PO implements I_BIA_Bareme, I_Persistent
 
 	/** Get BIA_Bareme_UU.
 		@return BIA_Bareme_UU	  */
+	@Override
 	public String getBIA_Bareme_UU()
 	{
 		return (String)get_Value(COLUMNNAME_BIA_Bareme_UU);
@@ -199,6 +221,7 @@ public class X_BIA_Bareme extends PO implements I_BIA_Bareme, I_Persistent
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -207,11 +230,13 @@ public class X_BIA_Bareme extends PO implements I_BIA_Bareme, I_Persistent
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
+	@Override
 	public org.eevolution.model.I_HR_Concept getHR_Concept() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Concept)MTable.get(getCtx(), org.eevolution.model.I_HR_Concept.Table_ID)
@@ -221,27 +246,32 @@ public class X_BIA_Bareme extends PO implements I_BIA_Bareme, I_Persistent
 	/** Set Payroll Concept.
 		@param HR_Concept_ID Payroll Concept
 	*/
+	@Override
 	public void setHR_Concept_ID (int HR_Concept_ID)
 	{
-		if (HR_Concept_ID < 1)
+		if (HR_Concept_ID < 1) {
 			set_Value (COLUMNNAME_HR_Concept_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_HR_Concept_ID, Integer.valueOf(HR_Concept_ID));
+		}
 	}
 
 	/** Get Payroll Concept.
 		@return Payroll Concept	  */
+	@Override
 	public int getHR_Concept_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Concept_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set formule.
 		@param formule formule
 	*/
+	@Override
 	public void setformule (String formule)
 	{
 		set_Value (COLUMNNAME_formule, formule);
@@ -249,6 +279,7 @@ public class X_BIA_Bareme extends PO implements I_BIA_Bareme, I_Persistent
 
 	/** Get formule.
 		@return formule	  */
+	@Override
 	public String getformule()
 	{
 		return (String)get_Value(COLUMNNAME_formule);

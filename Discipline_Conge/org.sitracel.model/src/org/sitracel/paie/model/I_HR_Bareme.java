@@ -18,15 +18,16 @@ package org.sitracel.paie.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
+import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_Bareme
- *  @author iDempiere (generated) 
+ *  @author iDempiere (generated)
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_Bareme 
+public interface I_HR_Bareme
 {
 
     /** TableName=HR_Bareme */
@@ -37,7 +38,7 @@ public interface I_HR_Bareme
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org 
+    /** AccessLevel = 3 - Client - Org
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
@@ -161,12 +162,12 @@ public interface I_HR_Bareme
     public static final String COLUMNNAME_Montant_Debut = "Montant_Debut";
 
 	/** Set Montant à Partir de .
-	  * Montant à Partir de 
+	  * Montant à Partir de
 	  */
 	public void setMontant_Debut (BigDecimal Montant_Debut);
 
 	/** Get Montant à Partir de .
-	  * Montant à Partir de 
+	  * Montant à Partir de
 	  */
 	public BigDecimal getMontant_Debut();
 

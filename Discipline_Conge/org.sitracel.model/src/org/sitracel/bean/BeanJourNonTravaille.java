@@ -25,6 +25,6 @@ public class BeanJourNonTravaille {
 	public void setNombreJourConge(Integer nombreJourConge) {
 		this.nombreJourConge = nombreJourConge;
 	}
-	
+
 
 }

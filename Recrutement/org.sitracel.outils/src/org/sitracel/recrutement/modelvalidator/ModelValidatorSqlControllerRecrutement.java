@@ -9,23 +9,23 @@ import org.compiere.util.DB;
 import org.sitracel.bean.BeanCandidatEvaluation;
 import org.sitracel.bean.BeanEvaluationCompetence;
 import org.sitracel.beanfactory.BeanFactory;
-import org.sitracel.recrutement.model.MHRCandidatEvaluation;
-import org.sitracel.recrutement.model.MHRCandidature;
-import org.sitracel.recrutement.model.MHROffreCritereEvaluation;
+import org.sitracel.recrutement.model.I_HR_CandidatEvaluation;
+import org.sitracel.recrutement.model.I_HR_Candidature;
+import org.sitracel.recrutement.model.I_HR_OffreCritereEvaluation;
 
 public class ModelValidatorSqlControllerRecrutement {
 	public static ArrayList<BeanEvaluationCompetence> getCompetenceFromTestEvaluation (Integer hr_offreTestEvaluation_ID, String trxName)
 	{
-		ArrayList<BeanEvaluationCompetence> resultat = new ArrayList<BeanEvaluationCompetence>();
+		ArrayList<BeanEvaluationCompetence> resultat = new ArrayList<>();
 		if(hr_offreTestEvaluation_ID!=null) {
 			String sql = "SELECT "
-					+ MHROffreCritereEvaluation.COLUMNNAME_HR_Competences_ID 
-					+ ", "+MHROffreCritereEvaluation.COLUMNNAME_ScoreMax 
-					+ " , "+MHROffreCritereEvaluation.COLUMNNAME_Ponderation 
-					+ " FROM "+MHROffreCritereEvaluation.Table_Name
+					+ I_HR_OffreCritereEvaluation.COLUMNNAME_HR_Competences_ID
+					+ ", "+I_HR_OffreCritereEvaluation.COLUMNNAME_ScoreMax
+					+ " , "+I_HR_OffreCritereEvaluation.COLUMNNAME_Ponderation
+					+ " FROM "+I_HR_OffreCritereEvaluation.Table_Name
 					+ " WHERE "
-					+ MHROffreCritereEvaluation.COLUMNNAME_HR_OffreTestEvaluation_ID+"=?";
-			
+					+ I_HR_OffreCritereEvaluation.COLUMNNAME_HR_OffreTestEvaluation_ID+"=?";
+
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
 			try
@@ -35,9 +35,9 @@ public class ModelValidatorSqlControllerRecrutement {
 				rs = pstmt.executeQuery();
 				while (rs.next()) {
 					BeanEvaluationCompetence beanEvaluationCompetence = BeanFactory.getBeanEvaluationCompetence();
-					beanEvaluationCompetence.setCompetenceID(rs.getInt(MHROffreCritereEvaluation.COLUMNNAME_HR_Competences_ID));
-					beanEvaluationCompetence.setScoreMax(rs.getBigDecimal(MHROffreCritereEvaluation.COLUMNNAME_ScoreMax));
-					beanEvaluationCompetence.setPonderation(rs.getInt(MHROffreCritereEvaluation.COLUMNNAME_Ponderation));
+					beanEvaluationCompetence.setCompetenceID(rs.getInt(I_HR_OffreCritereEvaluation.COLUMNNAME_HR_Competences_ID));
+					beanEvaluationCompetence.setScoreMax(rs.getBigDecimal(I_HR_OffreCritereEvaluation.COLUMNNAME_ScoreMax));
+					beanEvaluationCompetence.setPonderation(rs.getInt(I_HR_OffreCritereEvaluation.COLUMNNAME_Ponderation));
 					if(beanEvaluationCompetence!=null) {
 						resultat.add(beanEvaluationCompetence);
 					}
@@ -55,21 +55,21 @@ public class ModelValidatorSqlControllerRecrutement {
 		}
 		return resultat;
 	}
-	
+
 	public static ArrayList<BeanEvaluationCompetence> getScoresCandidature (Integer hr_candidatureID, String trxName)
 	{
-		ArrayList<BeanEvaluationCompetence> resultat = new ArrayList<BeanEvaluationCompetence>();
+		ArrayList<BeanEvaluationCompetence> resultat = new ArrayList<>();
 		if(hr_candidatureID!=null) {
 			String sql = "SELECT "
-					+ MHRCandidatEvaluation.COLUMNNAME_HR_CandidatEvaluation_ID
-					+ " , "+MHRCandidatEvaluation.COLUMNNAME_HR_Competences_ID 
-					+ " , "+MHRCandidatEvaluation.COLUMNNAME_ScoreMax 
-					+ " , "+MHRCandidatEvaluation.COLUMNNAME_Ponderation 
-					+ " , "+MHRCandidatEvaluation.COLUMNNAME_Score
-					+ " FROM "+MHRCandidatEvaluation.Table_Name
+					+ I_HR_CandidatEvaluation.COLUMNNAME_HR_CandidatEvaluation_ID
+					+ " , "+I_HR_CandidatEvaluation.COLUMNNAME_HR_Competences_ID
+					+ " , "+I_HR_CandidatEvaluation.COLUMNNAME_ScoreMax
+					+ " , "+I_HR_CandidatEvaluation.COLUMNNAME_Ponderation
+					+ " , "+I_HR_CandidatEvaluation.COLUMNNAME_Score
+					+ " FROM "+I_HR_CandidatEvaluation.Table_Name
 					+ " WHERE "
-					+ MHRCandidatEvaluation.COLUMNNAME_HR_Candidature_ID+"=?";
-			
+					+ I_HR_CandidatEvaluation.COLUMNNAME_HR_Candidature_ID+"=?";
+
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
 			try
@@ -79,11 +79,11 @@ public class ModelValidatorSqlControllerRecrutement {
 				rs = pstmt.executeQuery();
 				while (rs.next()) {
 					BeanEvaluationCompetence beanEvaluationCompetence = BeanFactory.getBeanEvaluationCompetence();
-					beanEvaluationCompetence.setCandidatEvaluationID(rs.getInt(MHRCandidatEvaluation.COLUMNNAME_HR_CandidatEvaluation_ID));
-					beanEvaluationCompetence.setCompetenceID(rs.getInt(MHRCandidatEvaluation.COLUMNNAME_HR_Competences_ID));
-					beanEvaluationCompetence.setScore(rs.getBigDecimal(MHRCandidatEvaluation.COLUMNNAME_Score));
-					beanEvaluationCompetence.setScoreMax(rs.getBigDecimal(MHRCandidatEvaluation.COLUMNNAME_ScoreMax));
-					beanEvaluationCompetence.setPonderation(rs.getInt(MHRCandidatEvaluation.COLUMNNAME_Ponderation));
+					beanEvaluationCompetence.setCandidatEvaluationID(rs.getInt(I_HR_CandidatEvaluation.COLUMNNAME_HR_CandidatEvaluation_ID));
+					beanEvaluationCompetence.setCompetenceID(rs.getInt(I_HR_CandidatEvaluation.COLUMNNAME_HR_Competences_ID));
+					beanEvaluationCompetence.setScore(rs.getBigDecimal(I_HR_CandidatEvaluation.COLUMNNAME_Score));
+					beanEvaluationCompetence.setScoreMax(rs.getBigDecimal(I_HR_CandidatEvaluation.COLUMNNAME_ScoreMax));
+					beanEvaluationCompetence.setPonderation(rs.getInt(I_HR_CandidatEvaluation.COLUMNNAME_Ponderation));
 					if(beanEvaluationCompetence!=null) {
 						resultat.add(beanEvaluationCompetence);
 					}
@@ -101,17 +101,17 @@ public class ModelValidatorSqlControllerRecrutement {
 		}
 		return resultat;
 	}
-	
+
 	public static ArrayList<BeanCandidatEvaluation> getListeCandidatureFromSessionRecrutement (Integer hr_sessionRecrutementID, String trxName)
 	{
-		ArrayList<BeanCandidatEvaluation> resultat = new ArrayList<BeanCandidatEvaluation>();
+		ArrayList<BeanCandidatEvaluation> resultat = new ArrayList<>();
 		if(hr_sessionRecrutementID!=null) {
-			String sql = "SELECT "+MHRCandidature.COLUMNNAME_HR_Candidature_ID 
-					+ " , "+ MHRCandidature.COLUMNNAME_Name
-					+ " FROM "+MHRCandidature.Table_Name
+			String sql = "SELECT "+I_HR_Candidature.COLUMNNAME_HR_Candidature_ID
+					+ " , "+ I_HR_Candidature.COLUMNNAME_Name
+					+ " FROM "+I_HR_Candidature.Table_Name
 					+ " WHERE "
-					+ MHRCandidature.COLUMNNAME_HR_SessionRecrutement_ID+"=?";
-			
+					+ I_HR_Candidature.COLUMNNAME_HR_SessionRecrutement_ID+"=?";
+
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
 			try
@@ -121,8 +121,8 @@ public class ModelValidatorSqlControllerRecrutement {
 				rs = pstmt.executeQuery();
 				while (rs.next()) {
 					BeanCandidatEvaluation beanCandidatEvaluation = BeanFactory.getBeanCandidatEvaluation();
-					beanCandidatEvaluation.setCandidatureID(rs.getInt(MHRCandidature.COLUMNNAME_HR_Candidature_ID));
-					beanCandidatEvaluation.setNameCandidature(MHRCandidature.COLUMNNAME_Name);
+					beanCandidatEvaluation.setCandidatureID(rs.getInt(I_HR_Candidature.COLUMNNAME_HR_Candidature_ID));
+					beanCandidatEvaluation.setNameCandidature(I_HR_Candidature.COLUMNNAME_Name);
 					if(beanCandidatEvaluation!=null) {
 						resultat.add(beanCandidatEvaluation);
 					}
@@ -140,16 +140,16 @@ public class ModelValidatorSqlControllerRecrutement {
 		}
 		return resultat;
 	}
-	
+
 	public static ArrayList<Integer> getListeCompetenceFromCandidatureID (Integer hr_candidatureID, String trxName)
 	{
-		ArrayList<Integer> resultat = new ArrayList<Integer>();
+		ArrayList<Integer> resultat = new ArrayList<>();
 		if(hr_candidatureID!=null) {
-			String sql = "SELECT "+MHRCandidatEvaluation.COLUMNNAME_HR_CandidatEvaluation_ID 
-					+ " FROM "+MHRCandidatEvaluation.Table_Name
+			String sql = "SELECT "+I_HR_CandidatEvaluation.COLUMNNAME_HR_CandidatEvaluation_ID
+					+ " FROM "+I_HR_CandidatEvaluation.Table_Name
 					+ " WHERE "
-					+ MHRCandidatEvaluation.COLUMNNAME_HR_Candidature_ID+"=?";
-			
+					+ I_HR_CandidatEvaluation.COLUMNNAME_HR_Candidature_ID+"=?";
+
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
 			try
@@ -158,7 +158,7 @@ public class ModelValidatorSqlControllerRecrutement {
 				pstmt.setInt(1, hr_candidatureID);
 				rs = pstmt.executeQuery();
 				while (rs.next()) {
-					resultat.add(rs.getInt(MHRCandidatEvaluation.COLUMNNAME_HR_CandidatEvaluation_ID));
+					resultat.add(rs.getInt(I_HR_CandidatEvaluation.COLUMNNAME_HR_CandidatEvaluation_ID));
 				}
 			}
 			catch (SQLException e)

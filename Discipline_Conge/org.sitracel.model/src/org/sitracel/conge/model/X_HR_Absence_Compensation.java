@@ -20,7 +20,11 @@ package org.sitracel.conge.model;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 
 /** Generated Model for HR_Absence_Compensation
  *  @author iDempiere (generated)
@@ -99,25 +103,29 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Absence_Compensation[")
         .append(get_ID()).append("]");
       return sb.toString();
     }
 
+	@Override
 	public I_HR_Absence getAbsence() throws RuntimeException
 	{
 		return (I_HR_Absence)MTable.get(getCtx(), I_HR_Absence.Table_ID)
@@ -127,25 +135,30 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/** Set Absence.
 		@param Absence_ID Absence
 	*/
+	@Override
 	public void setAbsence_ID (int Absence_ID)
 	{
-		if (Absence_ID < 1)
+		if (Absence_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_Absence_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_Absence_ID, Integer.valueOf(Absence_ID));
+		}
 	}
 
 	/** Get Absence.
 		@return Absence
 	  */
+	@Override
 	public int getAbsence_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Absence_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -155,25 +168,30 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/** Set Business Partner .
 		@param C_BPartner_ID Identifies a Business Partner
 	*/
+	@Override
 	public void setC_BPartner_ID (int C_BPartner_ID)
 	{
-		if (C_BPartner_ID < 1)
+		if (C_BPartner_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, Integer.valueOf(C_BPartner_ID));
+		}
 	}
 
 	/** Get Business Partner .
 		@return Identifies a Business Partner
 	  */
+	@Override
 	public int getC_BPartner_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_BPartner_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public I_HR_Holiday getConge() throws RuntimeException
 	{
 		return (I_HR_Holiday)MTable.get(getCtx(), I_HR_Holiday.Table_ID)
@@ -183,28 +201,33 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/** Set Congé.
 		@param Conge_ID Congé
 	*/
+	@Override
 	public void setConge_ID (int Conge_ID)
 	{
-		if (Conge_ID < 1)
+		if (Conge_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_Conge_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_Conge_ID, Integer.valueOf(Conge_ID));
+		}
 	}
 
 	/** Get Congé.
 		@return Congé
 	  */
+	@Override
 	public int getConge_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Conge_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Date d&#039;Emission.
 		@param Date_Emission Date d&#039;Emission
 	*/
+	@Override
 	public void setDate_Emission (Timestamp Date_Emission)
 	{
 		set_ValueNoCheck (COLUMNNAME_Date_Emission, Date_Emission);
@@ -213,6 +236,7 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/** Get Date d&#039;Emission.
 		@return Date d&#039;Emission
 	  */
+	@Override
 	public Timestamp getDate_Emission()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Emission);
@@ -221,6 +245,7 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -229,6 +254,7 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -237,6 +263,7 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/** Set Matricule Emetteur.
 		@param Emis_Par_Matricule Matricule Emetteur
 	*/
+	@Override
 	public void setEmis_Par_Matricule (String Emis_Par_Matricule)
 	{
 		set_Value (COLUMNNAME_Emis_Par_Matricule, Emis_Par_Matricule);
@@ -245,11 +272,13 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/** Get Matricule Emetteur.
 		@return Matricule Emetteur
 	  */
+	@Override
 	public String getEmis_Par_Matricule()
 	{
 		return (String)get_Value(COLUMNNAME_Emis_Par_Matricule);
 	}
 
+	@Override
 	public org.compiere.model.I_C_BPartner getEmis_Par_Nom() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -259,25 +288,30 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/** Set Nom Emetteur.
 		@param Emis_Par_Nom_ID Nom Emetteur
 	*/
+	@Override
 	public void setEmis_Par_Nom_ID (int Emis_Par_Nom_ID)
 	{
-		if (Emis_Par_Nom_ID < 1)
+		if (Emis_Par_Nom_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_Emis_Par_Nom_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_Emis_Par_Nom_ID, Integer.valueOf(Emis_Par_Nom_ID));
+		}
 	}
 
 	/** Get Nom Emetteur.
 		@return Nom Emetteur
 	  */
+	@Override
 	public int getEmis_Par_Nom_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Emis_Par_Nom_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public org.eevolution.model.I_HR_Job getEmis_Par_Poste() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -287,49 +321,58 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/** Set Poste Emetteur.
 		@param Emis_Par_Poste_ID Poste Emetteur
 	*/
+	@Override
 	public void setEmis_Par_Poste_ID (int Emis_Par_Poste_ID)
 	{
-		if (Emis_Par_Poste_ID < 1)
+		if (Emis_Par_Poste_ID < 1) {
 			set_Value (COLUMNNAME_Emis_Par_Poste_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Emis_Par_Poste_ID, Integer.valueOf(Emis_Par_Poste_ID));
+		}
 	}
 
 	/** Get Poste Emetteur.
 		@return Poste Emetteur
 	  */
+	@Override
 	public int getEmis_Par_Poste_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Emis_Par_Poste_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Compensation des Absences.
 		@param HR_Absence_Compensation_ID Compensation des Absences
 	*/
+	@Override
 	public void setHR_Absence_Compensation_ID (int HR_Absence_Compensation_ID)
 	{
-		if (HR_Absence_Compensation_ID < 1)
+		if (HR_Absence_Compensation_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Absence_Compensation_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Absence_Compensation_ID, Integer.valueOf(HR_Absence_Compensation_ID));
+		}
 	}
 
 	/** Get Compensation des Absences.
 		@return Compensation des Absences	  */
+	@Override
 	public int getHR_Absence_Compensation_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Absence_Compensation_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Absence_Compensation_UU.
 		@param HR_Absence_Compensation_UU HR_Absence_Compensation_UU
 	*/
+	@Override
 	public void setHR_Absence_Compensation_UU (String HR_Absence_Compensation_UU)
 	{
 		set_Value (COLUMNNAME_HR_Absence_Compensation_UU, HR_Absence_Compensation_UU);
@@ -337,6 +380,7 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 
 	/** Get HR_Absence_Compensation_UU.
 		@return HR_Absence_Compensation_UU	  */
+	@Override
 	public String getHR_Absence_Compensation_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Absence_Compensation_UU);
@@ -345,6 +389,7 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/** Set Matricule de l&#039;Employé.
 		@param Matricule_Employe Matricule de l&#039;Employé
 	*/
+	@Override
 	public void setMatricule_Employe (String Matricule_Employe)
 	{
 		set_Value (COLUMNNAME_Matricule_Employe, Matricule_Employe);
@@ -353,6 +398,7 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/** Get Matricule de l&#039;Employé.
 		@return Matricule de l&#039;Employé
 	  */
+	@Override
 	public String getMatricule_Employe()
 	{
 		return (String)get_Value(COLUMNNAME_Matricule_Employe);
@@ -365,6 +411,7 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/** Set Mode de Compensation.
 		@param Mode_Compensation Mode de Compensation
 	*/
+	@Override
 	public void setMode_Compensation (String Mode_Compensation)
 	{
 
@@ -374,11 +421,13 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/** Get Mode de Compensation.
 		@return Mode de Compensation
 	  */
+	@Override
 	public String getMode_Compensation()
 	{
 		return (String)get_Value(COLUMNNAME_Mode_Compensation);
 	}
 
+	@Override
 	public org.eevolution.model.I_HR_Job getPoste_Employe() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -388,22 +437,26 @@ public class X_HR_Absence_Compensation extends PO implements I_HR_Absence_Compen
 	/** Set Poste de l&#039;Employé.
 		@param Poste_Employe_ID Poste de l&#039;Employé
 	*/
+	@Override
 	public void setPoste_Employe_ID (int Poste_Employe_ID)
 	{
-		if (Poste_Employe_ID < 1)
+		if (Poste_Employe_ID < 1) {
 			set_Value (COLUMNNAME_Poste_Employe_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Poste_Employe_ID, Integer.valueOf(Poste_Employe_ID));
+		}
 	}
 
 	/** Get Poste de l&#039;Employé.
 		@return Poste de l&#039;Employé
 	  */
+	@Override
 	public int getPoste_Employe_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Poste_Employe_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 }

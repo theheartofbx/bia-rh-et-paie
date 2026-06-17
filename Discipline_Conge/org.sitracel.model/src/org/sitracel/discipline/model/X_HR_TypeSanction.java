@@ -19,7 +19,10 @@ package org.sitracel.discipline.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_TypeSanction
@@ -91,19 +94,22 @@ public class X_HR_TypeSanction extends PO implements I_HR_TypeSanction, I_Persis
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_TypeSanction[")
         .append(get_ID()).append("]");
@@ -113,6 +119,7 @@ public class X_HR_TypeSanction extends PO implements I_HR_TypeSanction, I_Persis
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -121,6 +128,7 @@ public class X_HR_TypeSanction extends PO implements I_HR_TypeSanction, I_Persis
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -129,27 +137,32 @@ public class X_HR_TypeSanction extends PO implements I_HR_TypeSanction, I_Persis
 	/** Set Punishment Type.
 		@param HR_TypeSanction_ID Punishment Type
 	*/
+	@Override
 	public void setHR_TypeSanction_ID (int HR_TypeSanction_ID)
 	{
-		if (HR_TypeSanction_ID < 1)
+		if (HR_TypeSanction_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_TypeSanction_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_TypeSanction_ID, Integer.valueOf(HR_TypeSanction_ID));
+		}
 	}
 
 	/** Get Punishment Type.
 		@return Punishment Type	  */
+	@Override
 	public int getHR_TypeSanction_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_TypeSanction_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_TypeSanction_UU.
 		@param HR_TypeSanction_UU HR_TypeSanction_UU
 	*/
+	@Override
 	public void setHR_TypeSanction_UU (String HR_TypeSanction_UU)
 	{
 		set_Value (COLUMNNAME_HR_TypeSanction_UU, HR_TypeSanction_UU);
@@ -157,6 +170,7 @@ public class X_HR_TypeSanction extends PO implements I_HR_TypeSanction, I_Persis
 
 	/** Get HR_TypeSanction_UU.
 		@return HR_TypeSanction_UU	  */
+	@Override
 	public String getHR_TypeSanction_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_TypeSanction_UU);
@@ -171,6 +185,7 @@ public class X_HR_TypeSanction extends PO implements I_HR_TypeSanction, I_Persis
 	/** Set Incidence de la Sanction.
 		@param Incidence_Sanction_ID Incidence de la Sanction
 	*/
+	@Override
 	public void setIncidence_Sanction_ID (String Incidence_Sanction_ID)
 	{
 
@@ -180,6 +195,7 @@ public class X_HR_TypeSanction extends PO implements I_HR_TypeSanction, I_Persis
 	/** Get Incidence de la Sanction.
 		@return Incidence de la Sanction
 	  */
+	@Override
 	public String getIncidence_Sanction_ID()
 	{
 		return (String)get_Value(COLUMNNAME_Incidence_Sanction_ID);
@@ -188,6 +204,7 @@ public class X_HR_TypeSanction extends PO implements I_HR_TypeSanction, I_Persis
 	/** Set Sanction.
 		@param Nom_Sanction Sanction
 	*/
+	@Override
 	public void setNom_Sanction (String Nom_Sanction)
 	{
 		set_Value (COLUMNNAME_Nom_Sanction, Nom_Sanction);
@@ -196,6 +213,7 @@ public class X_HR_TypeSanction extends PO implements I_HR_TypeSanction, I_Persis
 	/** Get Sanction.
 		@return Sanction
 	  */
+	@Override
 	public String getNom_Sanction()
 	{
 		return (String)get_Value(COLUMNNAME_Nom_Sanction);
@@ -212,6 +230,7 @@ public class X_HR_TypeSanction extends PO implements I_HR_TypeSanction, I_Persis
 	/** Set Search Key.
 		@param Value Search key for the record in the format required - must be unique
 	*/
+	@Override
 	public void setValue (String Value)
 	{
 		set_Value (COLUMNNAME_Value, Value);
@@ -220,6 +239,7 @@ public class X_HR_TypeSanction extends PO implements I_HR_TypeSanction, I_Persis
 	/** Get Search Key.
 		@return Search key for the record in the format required - must be unique
 	  */
+	@Override
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);

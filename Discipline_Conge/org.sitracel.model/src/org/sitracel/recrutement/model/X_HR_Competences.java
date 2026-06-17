@@ -19,7 +19,11 @@ package org.sitracel.recrutement.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Competences
@@ -87,19 +91,22 @@ public class X_HR_Competences extends PO implements I_HR_Competences, I_Persiste
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Competences[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -109,6 +116,7 @@ public class X_HR_Competences extends PO implements I_HR_Competences, I_Persiste
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -117,6 +125,7 @@ public class X_HR_Competences extends PO implements I_HR_Competences, I_Persiste
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -125,27 +134,32 @@ public class X_HR_Competences extends PO implements I_HR_Competences, I_Persiste
 	/** Set Competences.
 		@param HR_Competences_ID Competences
 	*/
+	@Override
 	public void setHR_Competences_ID (int HR_Competences_ID)
 	{
-		if (HR_Competences_ID < 1)
+		if (HR_Competences_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Competences_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Competences_ID, Integer.valueOf(HR_Competences_ID));
+		}
 	}
 
 	/** Get Competences.
 		@return Competences	  */
+	@Override
 	public int getHR_Competences_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Competences_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Competences_UU.
 		@param HR_Competences_UU HR_Competences_UU
 	*/
+	@Override
 	public void setHR_Competences_UU (String HR_Competences_UU)
 	{
 		set_Value (COLUMNNAME_HR_Competences_UU, HR_Competences_UU);
@@ -153,11 +167,13 @@ public class X_HR_Competences extends PO implements I_HR_Competences, I_Persiste
 
 	/** Get HR_Competences_UU.
 		@return HR_Competences_UU	  */
+	@Override
 	public String getHR_Competences_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Competences_UU);
 	}
 
+	@Override
 	public org.eevolution.model.I_HR_Job getHR_Job() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -167,27 +183,32 @@ public class X_HR_Competences extends PO implements I_HR_Competences, I_Persiste
 	/** Set Payroll Job.
 		@param HR_Job_ID Payroll Job
 	*/
+	@Override
 	public void setHR_Job_ID (int HR_Job_ID)
 	{
-		if (HR_Job_ID < 1)
+		if (HR_Job_ID < 1) {
 			set_Value (COLUMNNAME_HR_Job_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_HR_Job_ID, Integer.valueOf(HR_Job_ID));
+		}
 	}
 
 	/** Get Payroll Job.
 		@return Payroll Job	  */
+	@Override
 	public int getHR_Job_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Job_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -196,6 +217,7 @@ public class X_HR_Competences extends PO implements I_HR_Competences, I_Persiste
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);

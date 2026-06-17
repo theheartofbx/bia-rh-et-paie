@@ -18,15 +18,16 @@ package org.sitracel.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
+import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_Organigramme
- *  @author iDempiere (generated) 
+ *  @author iDempiere (generated)
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_Organigramme 
+public interface I_HR_Organigramme
 {
 
     /** TableName=HR_Organigramme */
@@ -37,7 +38,7 @@ public interface I_HR_Organigramme
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org 
+    /** AccessLevel = 3 - Client - Org
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
@@ -175,12 +176,12 @@ Alerte
     public static final String COLUMNNAME_Poste_Responsable_ID = "Poste_Responsable_ID";
 
 	/** Set Poste du Responsable .
-	  * Poste du Responsable 
+	  * Poste du Responsable
 	  */
 	public void setPoste_Responsable_ID (int Poste_Responsable_ID);
 
 	/** Get Poste du Responsable .
-	  * Poste du Responsable 
+	  * Poste du Responsable
 	  */
 	public int getPoste_Responsable_ID();
 

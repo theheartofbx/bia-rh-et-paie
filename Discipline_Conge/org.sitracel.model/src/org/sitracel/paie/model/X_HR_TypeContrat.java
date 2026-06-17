@@ -19,7 +19,10 @@ package org.sitracel.paie.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_TypeContrat
@@ -87,19 +90,22 @@ public class X_HR_TypeContrat extends PO implements I_HR_TypeContrat, I_Persiste
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_TypeContrat[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -109,6 +115,7 @@ public class X_HR_TypeContrat extends PO implements I_HR_TypeContrat, I_Persiste
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -117,6 +124,7 @@ public class X_HR_TypeContrat extends PO implements I_HR_TypeContrat, I_Persiste
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -125,27 +133,32 @@ public class X_HR_TypeContrat extends PO implements I_HR_TypeContrat, I_Persiste
 	/** Set Type de Contrat.
 		@param HR_TypeContrat_ID Type de Contrat
 	*/
+	@Override
 	public void setHR_TypeContrat_ID (int HR_TypeContrat_ID)
 	{
-		if (HR_TypeContrat_ID < 1)
+		if (HR_TypeContrat_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_TypeContrat_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_TypeContrat_ID, Integer.valueOf(HR_TypeContrat_ID));
+		}
 	}
 
 	/** Get Type de Contrat.
 		@return Type de Contrat	  */
+	@Override
 	public int getHR_TypeContrat_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_TypeContrat_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_TypeContrat_UU.
 		@param HR_TypeContrat_UU HR_TypeContrat_UU
 	*/
+	@Override
 	public void setHR_TypeContrat_UU (String HR_TypeContrat_UU)
 	{
 		set_Value (COLUMNNAME_HR_TypeContrat_UU, HR_TypeContrat_UU);
@@ -153,6 +166,7 @@ public class X_HR_TypeContrat extends PO implements I_HR_TypeContrat, I_Persiste
 
 	/** Get HR_TypeContrat_UU.
 		@return HR_TypeContrat_UU	  */
+	@Override
 	public String getHR_TypeContrat_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_TypeContrat_UU);
@@ -161,6 +175,7 @@ public class X_HR_TypeContrat extends PO implements I_HR_TypeContrat, I_Persiste
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -169,6 +184,7 @@ public class X_HR_TypeContrat extends PO implements I_HR_TypeContrat, I_Persiste
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);

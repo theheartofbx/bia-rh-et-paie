@@ -3,15 +3,15 @@ package org.sitracel.bean;
 import java.sql.Timestamp;
 
 public class BeanMiseaPieds {
-	
+
 	private String isValide;
 	private String isReject;
 	private String typeSanction;
 	private int  delaiSanction;
 	private Timestamp dateDebutApplication;
-	
+
 	public BeanMiseaPieds() {
-		
+
 	}
 
 	public String getIsValide() {
@@ -54,6 +54,6 @@ public class BeanMiseaPieds {
 	public void setDateDebutApplication(Timestamp dateDebutApplication) {
 		this.dateDebutApplication = dateDebutApplication;
 	}
-	
-	
+
+
 }

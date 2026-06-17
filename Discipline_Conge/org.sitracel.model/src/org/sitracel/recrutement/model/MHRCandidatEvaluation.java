@@ -10,7 +10,7 @@ public class MHRCandidatEvaluation extends X_HR_CandidatEvaluation{
 		super(ctx, HR_Candidat_Evaluation_ID, trxName);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	public MHRCandidatEvaluation(Properties ctx, ResultSet rs, String trxName) {
 		super(ctx, rs, trxName);
 		// TODO Auto-generated constructor stub

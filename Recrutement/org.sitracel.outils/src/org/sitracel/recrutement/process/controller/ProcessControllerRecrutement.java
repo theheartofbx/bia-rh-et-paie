@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 import org.compiere.util.Env;
 import org.sitracel.bean.BeanIdentifiant;
-import org.sitracel.controller.GeneralSqlController;
+import org.sitracel.model.MCBPartner;
 import org.sitracel.recrutement.model.MHROffreEmploi;
 import org.sitracel.recrutement.model.MHROffreTestEvaluation;
 import org.sitracel.recrutement.model.MHRSessionRecrutement;
@@ -13,7 +13,7 @@ public class ProcessControllerRecrutement {
 
 	public static void validerOffreEmploi(Integer offreEmploiID, Integer adUserID) {
 		if(offreEmploiID!=null && adUserID!=null) {
-			BeanIdentifiant bi = GeneralSqlController.getBeanIdentifiant(adUserID, null);
+			BeanIdentifiant bi = MCBPartner.getIdentifiant(adUserID, null);
 			MHROffreEmploi offreEmploi = new MHROffreEmploi(Env.getCtx(), offreEmploiID, null);
 			if(bi!=null && offreEmploi!=null) {
 				offreEmploi.setValide_Rejete_Par_Nom_ID(bi.getNumEmploye());
@@ -27,10 +27,10 @@ public class ProcessControllerRecrutement {
 			}
 		}
 	}
-	
+
 	public static void rejeterOffreEmploi(Integer offreEmploiID, Integer adUserID) {
 		if(offreEmploiID!=null && adUserID!=null) {
-			BeanIdentifiant bi = GeneralSqlController.getBeanIdentifiant(adUserID, null);
+			BeanIdentifiant bi = MCBPartner.getIdentifiant(adUserID, null);
 			MHROffreEmploi offreEmploi = new MHROffreEmploi(Env.getCtx(), offreEmploiID, null);
 			if(bi!=null && offreEmploi!=null) {
 				offreEmploi.setValide_Rejete_Par_Nom_ID(bi.getNumEmploye());
@@ -44,10 +44,10 @@ public class ProcessControllerRecrutement {
 			}
 		}
 	}
-	
+
 	public static void validerSessionRecrutement(Integer sessionRecrutementID , Integer adUserID) {
 		if(sessionRecrutementID!=null && adUserID!=null) {
-			BeanIdentifiant bi = GeneralSqlController.getBeanIdentifiant(adUserID, null);
+			BeanIdentifiant bi = MCBPartner.getIdentifiant(adUserID, null);
 			MHRSessionRecrutement sessionRecrutement = new MHRSessionRecrutement(Env.getCtx(), sessionRecrutementID, null);
 			if(bi!=null && sessionRecrutement!=null) {
 				sessionRecrutement.setValide_Rejete_Par_Nom_ID(bi.getNumEmploye());
@@ -61,10 +61,10 @@ public class ProcessControllerRecrutement {
 			}
 		}
 	}
-	
+
 	public static void rejeterSessionRecrutement(Integer sessionRecrutementID , Integer adUserID) {
 		if(sessionRecrutementID!=null && adUserID!=null) {
-			BeanIdentifiant bi = GeneralSqlController.getBeanIdentifiant(adUserID, null);
+			BeanIdentifiant bi = MCBPartner.getIdentifiant(adUserID, null);
 			MHRSessionRecrutement sessionRecrutement = new MHRSessionRecrutement(Env.getCtx(), sessionRecrutementID, null);
 			if(bi!=null && sessionRecrutement!=null) {
 				sessionRecrutement.setValide_Rejete_Par_Nom_ID(bi.getNumEmploye());
@@ -78,10 +78,10 @@ public class ProcessControllerRecrutement {
 			}
 		}
 	}
-	
+
 	public static void validerTestEvaluation(Integer testEvaluationID , Integer adUserID) {
 		if(testEvaluationID!=null && adUserID!=null) {
-			BeanIdentifiant bi = GeneralSqlController.getBeanIdentifiant(adUserID, null);
+			BeanIdentifiant bi = MCBPartner.getIdentifiant(adUserID, null);
 			MHROffreTestEvaluation testEvaluation = new MHROffreTestEvaluation(Env.getCtx(), testEvaluationID, null);
 			if(bi!=null && testEvaluation!=null) {
 				testEvaluation.setValide_Rejete_Par_Nom_ID(bi.getNumEmploye());
@@ -92,5 +92,5 @@ public class ProcessControllerRecrutement {
 				testEvaluation.save();
 			}
 		}
-	}	
+	}
 }

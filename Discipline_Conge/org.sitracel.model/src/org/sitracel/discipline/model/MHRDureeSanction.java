@@ -10,7 +10,7 @@ public class MHRDureeSanction extends X_HR_Duree_Sanction{
 		super(ctx, HR_Duree_Sanction_ID, trxName);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	public MHRDureeSanction(Properties ctx, ResultSet rs, String trxName) {
 		super(ctx, rs, trxName);
 		// TODO Auto-generated constructor stub

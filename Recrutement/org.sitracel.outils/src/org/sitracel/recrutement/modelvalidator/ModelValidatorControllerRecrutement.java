@@ -12,8 +12,6 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.sitracel.bean.BeanCandidatEvaluation;
 import org.sitracel.bean.BeanEvaluationCompetence;
-import org.sitracel.controller.GeneralController;
-import org.sitracel.controller.GeneralSqlController;
 import org.sitracel.recrutement.model.MHRCandidatEvaluation;
 import org.sitracel.recrutement.model.MHRCandidature;
 import org.sitracel.recrutement.model.MHROffreEmploi;
@@ -27,19 +25,19 @@ public class ModelValidatorControllerRecrutement {
 			offreEmploi.setDate_Creation(new Timestamp(System.currentTimeMillis()));
 		}
 	}
-	
+
 	public static void CreationSessionRecrutement(MHRSessionRecrutement sessionRecrutement) {
 		if(sessionRecrutement!=null) {
 			sessionRecrutement.setDate_Creation(new Timestamp(System.currentTimeMillis()));
 		}
 	}
-	
+
 	public static void CreationTestEvaluation(MHROffreTestEvaluation testEvaluation) {
 		if(testEvaluation!=null) {
 			testEvaluation.setDate_Creation(new Timestamp(System.currentTimeMillis()));
 		}
 	}
-	
+
 	public static void creationCandidature(MHRCandidature candidature) {
 		if(candidature!=null) {
 			candidature.setDate_Creation(new Timestamp(System.currentTimeMillis()));
@@ -73,10 +71,10 @@ public class ModelValidatorControllerRecrutement {
 			} catch (IllegalStateException | SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}			
+			}
 		}
 	}
-	
+
 	public static void suppressionCandidature(MHRCandidature candidature) {
 		if(candidature!=null) {
 			ArrayList<Integer> listeCompetenceID = ModelValidatorSqlControllerRecrutement.getListeCompetenceFromCandidatureID(candidature.getHR_Candidature_ID(), null);
@@ -90,7 +88,7 @@ public class ModelValidatorControllerRecrutement {
 			}
 		}
 	}
-	
+
 	public static void actualiserCandidature(Integer hr_sessionRecrutementID, MHRCandidatEvaluation candidatEvaluation) {
 		if(hr_sessionRecrutementID!=null) {
 			ArrayList<BeanCandidatEvaluation> listeCandidatures = ModelValidatorControllerRecrutement.calculerRangCandidatures(hr_sessionRecrutementID, candidatEvaluation);
@@ -102,7 +100,7 @@ public class ModelValidatorControllerRecrutement {
 						candidature0.setScoreTotal(candidature.getScoreTotal());
 						candidature0.save();
 						DB.commit(true, candidature0.get_TrxName());
-						
+
 					}
 				} catch (IllegalStateException | SQLException e) {
 					// TODO Auto-generated catch block
@@ -111,13 +109,13 @@ public class ModelValidatorControllerRecrutement {
 			}
 		}
 	}
-	
+
 	public static ArrayList<BeanCandidatEvaluation> calculerRangCandidatures(Integer hr_sessionRecrutementID, MHRCandidatEvaluation candidatEvaluation) {
 		ArrayList<BeanCandidatEvaluation> listeCandidatures = null;
 		if(hr_sessionRecrutementID!=null) {
 			listeCandidatures = ModelValidatorSqlControllerRecrutement.getListeCandidatureFromSessionRecrutement(hr_sessionRecrutementID, null);
 			for(BeanCandidatEvaluation candidature:listeCandidatures) {
-				ModelValidatorControllerRecrutement.caluculerScoreCandidature(candidature, candidatEvaluation);				
+				ModelValidatorControllerRecrutement.caluculerScoreCandidature(candidature, candidatEvaluation);
 			}
 			Collections.sort(listeCandidatures);
 			int rang = 1;
@@ -132,7 +130,7 @@ public class ModelValidatorControllerRecrutement {
 		}
 		return listeCandidatures;
 	}
-	
+
 	public static BeanCandidatEvaluation caluculerScoreCandidature(BeanCandidatEvaluation beanCandidatEvaluation, MHRCandidatEvaluation candidatEvaluation) {
 		if(beanCandidatEvaluation!=null && candidatEvaluation!=null) {
 			if(beanCandidatEvaluation.getCandidatureID()>0) {
@@ -149,7 +147,7 @@ public class ModelValidatorControllerRecrutement {
 							if(competence.getScore()!=null) {
 								beanCandidatEvaluation.setScoreTotal(beanCandidatEvaluation.getScoreTotal().add((competence.getScore().multiply(BigDecimal.valueOf(competence.getPonderation())))));
 							}
-						}	
+						}
 					}
 				}
 			}

@@ -18,15 +18,16 @@ package org.sitracel.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
+import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_Parametre_Numerique
- *  @author iDempiere (generated) 
+ *  @author iDempiere (generated)
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_Parametre_Numerique 
+public interface I_HR_Parametre_Numerique
 {
 
     /** TableName=HR_Parametre_Numerique */
@@ -37,7 +38,7 @@ public interface I_HR_Parametre_Numerique
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 4 - System 
+    /** AccessLevel = 4 - System
      */
     BigDecimal accessLevel = BigDecimal.valueOf(4);
 

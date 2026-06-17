@@ -18,15 +18,15 @@ package org.sitracel.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for C_BPartner
- *  @author iDempiere (generated) 
+ *  @author iDempiere (generated)
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_C_BPartner 
+public interface I_C_BPartner
 {
 
     /** TableName=C_BPartner */
@@ -37,7 +37,7 @@ public interface I_C_BPartner
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org 
+    /** AccessLevel = 3 - Client - Org
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
@@ -232,12 +232,12 @@ public interface I_C_BPartner
     public static final String COLUMNNAME_C_Country_ID = "C_Country_ID";
 
 	/** Set Country.
-	  * Country 
+	  * Country
 	  */
 	public void setC_Country_ID (int C_Country_ID);
 
 	/** Get Country.
-	  * Country 
+	  * Country
 	  */
 	public int getC_Country_ID();
 
@@ -530,12 +530,12 @@ public interface I_C_BPartner
     public static final String COLUMNNAME_FlatDiscount = "FlatDiscount";
 
 	/** Set Flat Discount %.
-	  * Flat discount percentage 
+	  * Flat discount percentage
 	  */
 	public void setFlatDiscount (BigDecimal FlatDiscount);
 
 	/** Get Flat Discount %.
-	  * Flat discount percentage 
+	  * Flat discount percentage
 	  */
 	public BigDecimal getFlatDiscount();
 
@@ -643,12 +643,12 @@ public interface I_C_BPartner
     public static final String COLUMNNAME_InvoiceRule = "InvoiceRule";
 
 	/** Set Invoice Rule.
-	  * Frequency and method of invoicing 
+	  * Frequency and method of invoicing
 	  */
 	public void setInvoiceRule (String InvoiceRule);
 
 	/** Get Invoice Rule.
-	  * Frequency and method of invoicing 
+	  * Frequency and method of invoicing
 	  */
 	public String getInvoiceRule();
 

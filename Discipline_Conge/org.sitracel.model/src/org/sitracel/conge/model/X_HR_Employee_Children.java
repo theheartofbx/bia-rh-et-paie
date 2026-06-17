@@ -20,7 +20,11 @@ package org.sitracel.conge.model;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 
 /** Generated Model for HR_Employee_Children
  *  @author iDempiere (generated)
@@ -95,25 +99,29 @@ public class X_HR_Employee_Children extends PO implements I_HR_Employee_Children
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Employee_Children[")
         .append(get_ID()).append("]");
       return sb.toString();
     }
 
+	@Override
 	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -123,28 +131,33 @@ public class X_HR_Employee_Children extends PO implements I_HR_Employee_Children
 	/** Set Business Partner .
 		@param C_BPartner_ID Identifies a Business Partner
 	*/
+	@Override
 	public void setC_BPartner_ID (int C_BPartner_ID)
 	{
-		if (C_BPartner_ID < 1)
+		if (C_BPartner_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, Integer.valueOf(C_BPartner_ID));
+		}
 	}
 
 	/** Get Business Partner .
 		@return Identifies a Business Partner
 	  */
+	@Override
 	public int getC_BPartner_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_BPartner_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Date de Naissance.
 		@param Date_Naissance Date de Naissance
 	*/
+	@Override
 	public void setDate_Naissance (Timestamp Date_Naissance)
 	{
 		set_Value (COLUMNNAME_Date_Naissance, Date_Naissance);
@@ -153,6 +166,7 @@ public class X_HR_Employee_Children extends PO implements I_HR_Employee_Children
 	/** Get Date de Naissance.
 		@return Date de Naissance
 	  */
+	@Override
 	public Timestamp getDate_Naissance()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Naissance);
@@ -161,6 +175,7 @@ public class X_HR_Employee_Children extends PO implements I_HR_Employee_Children
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -169,6 +184,7 @@ public class X_HR_Employee_Children extends PO implements I_HR_Employee_Children
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -177,27 +193,32 @@ public class X_HR_Employee_Children extends PO implements I_HR_Employee_Children
 	/** Set Enfant(s).
 		@param HR_Employee_Children_ID Enfant(s)
 	*/
+	@Override
 	public void setHR_Employee_Children_ID (int HR_Employee_Children_ID)
 	{
-		if (HR_Employee_Children_ID < 1)
+		if (HR_Employee_Children_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Employee_Children_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Employee_Children_ID, Integer.valueOf(HR_Employee_Children_ID));
+		}
 	}
 
 	/** Get Enfant(s).
 		@return Enfant(s)	  */
+	@Override
 	public int getHR_Employee_Children_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Employee_Children_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Employee_Children_UU.
 		@param HR_Employee_Children_UU HR_Employee_Children_UU
 	*/
+	@Override
 	public void setHR_Employee_Children_UU (String HR_Employee_Children_UU)
 	{
 		set_Value (COLUMNNAME_HR_Employee_Children_UU, HR_Employee_Children_UU);
@@ -205,6 +226,7 @@ public class X_HR_Employee_Children extends PO implements I_HR_Employee_Children
 
 	/** Get HR_Employee_Children_UU.
 		@return HR_Employee_Children_UU	  */
+	@Override
 	public String getHR_Employee_Children_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Employee_Children_UU);
@@ -213,6 +235,7 @@ public class X_HR_Employee_Children extends PO implements I_HR_Employee_Children
 	/** Set Nom(s) de l&#039;Enfant.
 		@param Nom_Enfant Nom(s) de l&#039;Enfant
 	*/
+	@Override
 	public void setNom_Enfant (String Nom_Enfant)
 	{
 		set_Value (COLUMNNAME_Nom_Enfant, Nom_Enfant);
@@ -221,6 +244,7 @@ public class X_HR_Employee_Children extends PO implements I_HR_Employee_Children
 	/** Get Nom(s) de l&#039;Enfant.
 		@return Nom(s) de l&#039;Enfant
 	  */
+	@Override
 	public String getNom_Enfant()
 	{
 		return (String)get_Value(COLUMNNAME_Nom_Enfant);
@@ -229,6 +253,7 @@ public class X_HR_Employee_Children extends PO implements I_HR_Employee_Children
 	/** Set Prénom(s) de l&#039;Enfant.
 		@param Prenom_Enfant Prénom(s) de l&#039;Enfant
 	*/
+	@Override
 	public void setPrenom_Enfant (String Prenom_Enfant)
 	{
 		set_Value (COLUMNNAME_Prenom_Enfant, Prenom_Enfant);
@@ -237,6 +262,7 @@ public class X_HR_Employee_Children extends PO implements I_HR_Employee_Children
 	/** Get Prénom(s) de l&#039;Enfant.
 		@return Prénom(s) de l&#039;Enfant
 	  */
+	@Override
 	public String getPrenom_Enfant()
 	{
 		return (String)get_Value(COLUMNNAME_Prenom_Enfant);
@@ -249,6 +275,7 @@ public class X_HR_Employee_Children extends PO implements I_HR_Employee_Children
 	/** Set Sex.
 		@param Sex Sex
 	*/
+	@Override
 	public void setSex (String Sex)
 	{
 
@@ -257,6 +284,7 @@ public class X_HR_Employee_Children extends PO implements I_HR_Employee_Children
 
 	/** Get Sex.
 		@return Sex	  */
+	@Override
 	public String getSex()
 	{
 		return (String)get_Value(COLUMNNAME_Sex);
@@ -265,6 +293,7 @@ public class X_HR_Employee_Children extends PO implements I_HR_Employee_Children
 	/** Set Search Key.
 		@param Value Search key for the record in the format required - must be unique
 	*/
+	@Override
 	public void setValue (String Value)
 	{
 		set_Value (COLUMNNAME_Value, Value);
@@ -273,6 +302,7 @@ public class X_HR_Employee_Children extends PO implements I_HR_Employee_Children
 	/** Get Search Key.
 		@return Search key for the record in the format required - must be unique
 	  */
+	@Override
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);

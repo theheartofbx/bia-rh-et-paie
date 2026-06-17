@@ -12,7 +12,7 @@ public class BeanCandidatEvaluation implements Comparable<BeanCandidatEvaluation
 	public BeanCandidatEvaluation() {
 		super();
 	}
-	
+
 	public String getNameCandidature() {
 		return nameCandidature;
 	}

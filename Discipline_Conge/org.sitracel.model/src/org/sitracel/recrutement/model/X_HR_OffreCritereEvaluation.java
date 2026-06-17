@@ -20,7 +20,11 @@ package org.sitracel.recrutement.model;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.Env;
 import org.compiere.util.KeyNamePair;
 
@@ -101,19 +105,22 @@ public class X_HR_OffreCritereEvaluation extends PO implements I_HR_OffreCritere
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_OffreCritereEvaluation[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -123,6 +130,7 @@ public class X_HR_OffreCritereEvaluation extends PO implements I_HR_OffreCritere
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -131,11 +139,13 @@ public class X_HR_OffreCritereEvaluation extends PO implements I_HR_OffreCritere
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
+	@Override
 	public I_HR_Competences getHR_Competences() throws RuntimeException
 	{
 		return (I_HR_Competences)MTable.get(getCtx(), I_HR_Competences.Table_ID)
@@ -145,48 +155,57 @@ public class X_HR_OffreCritereEvaluation extends PO implements I_HR_OffreCritere
 	/** Set Competences.
 		@param HR_Competences_ID Competences
 	*/
+	@Override
 	public void setHR_Competences_ID (int HR_Competences_ID)
 	{
-		if (HR_Competences_ID < 1)
+		if (HR_Competences_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Competences_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Competences_ID, Integer.valueOf(HR_Competences_ID));
+		}
 	}
 
 	/** Get Competences.
 		@return Competences	  */
+	@Override
 	public int getHR_Competences_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Competences_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Critères d&#039;Évaluation.
 		@param HR_OffreCritereEvaluation_ID Critères d&#039;Évaluation
 	*/
+	@Override
 	public void setHR_OffreCritereEvaluation_ID (int HR_OffreCritereEvaluation_ID)
 	{
-		if (HR_OffreCritereEvaluation_ID < 1)
+		if (HR_OffreCritereEvaluation_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_OffreCritereEvaluation_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_OffreCritereEvaluation_ID, Integer.valueOf(HR_OffreCritereEvaluation_ID));
+		}
 	}
 
 	/** Get Critères d&#039;Évaluation.
 		@return Critères d&#039;Évaluation	  */
+	@Override
 	public int getHR_OffreCritereEvaluation_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_OffreCritereEvaluation_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_OffreCritereEvaluation_UU.
 		@param HR_OffreCritereEvaluation_UU HR_OffreCritereEvaluation_UU
 	*/
+	@Override
 	public void setHR_OffreCritereEvaluation_UU (String HR_OffreCritereEvaluation_UU)
 	{
 		set_Value (COLUMNNAME_HR_OffreCritereEvaluation_UU, HR_OffreCritereEvaluation_UU);
@@ -194,11 +213,13 @@ public class X_HR_OffreCritereEvaluation extends PO implements I_HR_OffreCritere
 
 	/** Get HR_OffreCritereEvaluation_UU.
 		@return HR_OffreCritereEvaluation_UU	  */
+	@Override
 	public String getHR_OffreCritereEvaluation_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_OffreCritereEvaluation_UU);
 	}
 
+	@Override
 	public I_HR_OffreTestEvaluation getHR_OffreTestEvaluation() throws RuntimeException
 	{
 		return (I_HR_OffreTestEvaluation)MTable.get(getCtx(), I_HR_OffreTestEvaluation.Table_ID)
@@ -208,27 +229,32 @@ public class X_HR_OffreCritereEvaluation extends PO implements I_HR_OffreCritere
 	/** Set Test d&#039;Évaluation.
 		@param HR_OffreTestEvaluation_ID Test d&#039;Évaluation
 	*/
+	@Override
 	public void setHR_OffreTestEvaluation_ID (int HR_OffreTestEvaluation_ID)
 	{
-		if (HR_OffreTestEvaluation_ID < 1)
+		if (HR_OffreTestEvaluation_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_OffreTestEvaluation_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_OffreTestEvaluation_ID, Integer.valueOf(HR_OffreTestEvaluation_ID));
+		}
 	}
 
 	/** Get Test d&#039;Évaluation.
 		@return Test d&#039;Évaluation	  */
+	@Override
 	public int getHR_OffreTestEvaluation_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_OffreTestEvaluation_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -237,6 +263,7 @@ public class X_HR_OffreCritereEvaluation extends PO implements I_HR_OffreCritere
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -253,6 +280,7 @@ public class X_HR_OffreCritereEvaluation extends PO implements I_HR_OffreCritere
 	/** Set Ponderation.
 		@param Ponderation Ponderation
 	*/
+	@Override
 	public void setPonderation (int Ponderation)
 	{
 		set_Value (COLUMNNAME_Ponderation, Integer.valueOf(Ponderation));
@@ -260,17 +288,20 @@ public class X_HR_OffreCritereEvaluation extends PO implements I_HR_OffreCritere
 
 	/** Get Ponderation.
 		@return Ponderation	  */
+	@Override
 	public int getPonderation()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Ponderation);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Score Maximum.
 		@param ScoreMax Score Maximum
 	*/
+	@Override
 	public void setScoreMax (BigDecimal ScoreMax)
 	{
 		set_Value (COLUMNNAME_ScoreMax, ScoreMax);
@@ -278,11 +309,13 @@ public class X_HR_OffreCritereEvaluation extends PO implements I_HR_OffreCritere
 
 	/** Get Score Maximum.
 		@return Score Maximum	  */
+	@Override
 	public BigDecimal getScoreMax()
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_ScoreMax);
-		if (bd == null)
-			 return Env.ZERO;
+		if (bd == null) {
+			return Env.ZERO;
+		}
 		return bd;
 	}
 }

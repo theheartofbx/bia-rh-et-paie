@@ -3,14 +3,14 @@ package org.sitracel.bean;
 import java.util.ArrayList;
 
 public class BeanResumeAbsence {
-	
+
 	private String date;
 	private Integer CBPartnerID;
 	private ArrayList<Integer> listAbsenceID;
 	private int nombreJour;
-	
+
 	public BeanResumeAbsence() {
-		
+
 	}
 
 	public String getDate() {

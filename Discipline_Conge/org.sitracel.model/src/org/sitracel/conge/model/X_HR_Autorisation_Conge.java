@@ -100,19 +100,22 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Autorisation_Conge[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -122,6 +125,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -130,6 +134,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -144,6 +149,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Set Genre de l&#039;Employé(e) Concerné(e).
 		@param Genre_Employe Genre de l&#039;Employé(e) Concerné(e)
 	*/
+	@Override
 	public void setGenre_Employe (String Genre_Employe)
 	{
 
@@ -153,6 +159,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Get Genre de l&#039;Employé(e) Concerné(e).
 		@return Genre de l&#039;Employé(e) Concerné(e)
 	  */
+	@Override
 	public String getGenre_Employe()
 	{
 		return (String)get_Value(COLUMNNAME_Genre_Employe);
@@ -161,27 +168,32 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Set Autorisation Congé.
 		@param HR_Autorisation_Conge_ID Autorisation Congé
 	*/
+	@Override
 	public void setHR_Autorisation_Conge_ID (int HR_Autorisation_Conge_ID)
 	{
-		if (HR_Autorisation_Conge_ID < 1)
+		if (HR_Autorisation_Conge_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Autorisation_Conge_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Autorisation_Conge_ID, Integer.valueOf(HR_Autorisation_Conge_ID));
+		}
 	}
 
 	/** Get Autorisation Congé.
 		@return Autorisation Congé	  */
+	@Override
 	public int getHR_Autorisation_Conge_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Autorisation_Conge_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Autorisation_Conge_UU.
 		@param HR_Autorisation_Conge_UU HR_Autorisation_Conge_UU
 	*/
+	@Override
 	public void setHR_Autorisation_Conge_UU (String HR_Autorisation_Conge_UU)
 	{
 		set_Value (COLUMNNAME_HR_Autorisation_Conge_UU, HR_Autorisation_Conge_UU);
@@ -189,11 +201,13 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 
 	/** Get HR_Autorisation_Conge_UU.
 		@return HR_Autorisation_Conge_UU	  */
+	@Override
 	public String getHR_Autorisation_Conge_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Autorisation_Conge_UU);
 	}
 
+	@Override
 	public I_HR_Categorie_Responsabilite getHR_Categorie_Responsabilite() throws RuntimeException
 	{
 		return (I_HR_Categorie_Responsabilite)MTable.get(getCtx(), I_HR_Categorie_Responsabilite.Table_ID)
@@ -203,24 +217,29 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Set Catégorie de Responsabilité.
 		@param HR_Categorie_Responsabilite_ID Catégorie de Responsabilité
 	*/
+	@Override
 	public void setHR_Categorie_Responsabilite_ID (int HR_Categorie_Responsabilite_ID)
 	{
-		if (HR_Categorie_Responsabilite_ID < 1)
+		if (HR_Categorie_Responsabilite_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Categorie_Responsabilite_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Categorie_Responsabilite_ID, Integer.valueOf(HR_Categorie_Responsabilite_ID));
+		}
 	}
 
 	/** Get Catégorie de Responsabilité.
 		@return Catégorie de Responsabilité	  */
+	@Override
 	public int getHR_Categorie_Responsabilite_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Categorie_Responsabilite_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public I_HR_Type_Conge getHR_Type_Conge() throws RuntimeException
 	{
 		return (I_HR_Type_Conge)MTable.get(getCtx(), I_HR_Type_Conge.Table_ID)
@@ -230,27 +249,32 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Set Type de Congé.
 		@param HR_Type_Conge_ID Type de Congé
 	*/
+	@Override
 	public void setHR_Type_Conge_ID (int HR_Type_Conge_ID)
 	{
-		if (HR_Type_Conge_ID < 1)
+		if (HR_Type_Conge_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Type_Conge_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Type_Conge_ID, Integer.valueOf(HR_Type_Conge_ID));
+		}
 	}
 
 	/** Get Type de Congé.
 		@return Type de Congé	  */
+	@Override
 	public int getHR_Type_Conge_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Type_Conge_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Peut Approuver.
 		@param IsApprobation Peut Approuver
 	*/
+	@Override
 	public void setIsApprobation (boolean IsApprobation)
 	{
 		set_Value (COLUMNNAME_IsApprobation, Boolean.valueOf(IsApprobation));
@@ -259,13 +283,15 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Get Peut Approuver.
 		@return Peut Approuver
 	  */
+	@Override
 	public boolean isApprobation()
 	{
 		Object oo = get_Value(COLUMNNAME_IsApprobation);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -274,6 +300,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Set Peut Compenser une Absence sur le Congé.
 		@param IsCompensation Peut Compenser une Absence sur le Congé
 	*/
+	@Override
 	public void setIsCompensation (boolean IsCompensation)
 	{
 		set_Value (COLUMNNAME_IsCompensation, Boolean.valueOf(IsCompensation));
@@ -282,13 +309,15 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Get Peut Compenser une Absence sur le Congé.
 		@return Peut Compenser une Absence sur le Congé
 	  */
+	@Override
 	public boolean isCompensation()
 	{
 		Object oo = get_Value(COLUMNNAME_IsCompensation);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -297,6 +326,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Set Est déduit des jours de congé annuel.
 		@param IsCongeAnnuel Est déduit des jours de congé annuel
 	*/
+	@Override
 	public void setIsCongeAnnuel (boolean IsCongeAnnuel)
 	{
 		set_Value (COLUMNNAME_IsCongeAnnuel, Boolean.valueOf(IsCongeAnnuel));
@@ -305,13 +335,15 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Get Est déduit des jours de congé annuel.
 		@return Est déduit des jours de congé annuel
 	  */
+	@Override
 	public boolean isCongeAnnuel()
 	{
 		Object oo = get_Value(COLUMNNAME_IsCongeAnnuel);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -320,6 +352,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Set Peut Emettre.
 		@param IsEmission Peut Emettre
 	*/
+	@Override
 	public void setIsEmission (boolean IsEmission)
 	{
 		set_Value (COLUMNNAME_IsEmission, Boolean.valueOf(IsEmission));
@@ -328,13 +361,15 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Get Peut Emettre.
 		@return Peut Emettre
 	  */
+	@Override
 	public boolean isEmission()
 	{
 		Object oo = get_Value(COLUMNNAME_IsEmission);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -343,6 +378,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Set Message d&#039;Alerte Affiché.
 		@param IsMessageAlerteDisplayed Message d&#039;Alerte Affiché
 	*/
+	@Override
 	public void setIsMessageAlerteDisplayed (boolean IsMessageAlerteDisplayed)
 	{
 		set_Value (COLUMNNAME_IsMessageAlerteDisplayed, Boolean.valueOf(IsMessageAlerteDisplayed));
@@ -351,13 +387,15 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Get Message d&#039;Alerte Affiché.
 		@return Message d&#039;Alerte Affiché
 	  */
+	@Override
 	public boolean isMessageAlerteDisplayed()
 	{
 		Object oo = get_Value(COLUMNNAME_IsMessageAlerteDisplayed);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -366,6 +404,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Set Peut Valider.
 		@param IsValidation Peut Valider
 	*/
+	@Override
 	public void setIsValidation (boolean IsValidation)
 	{
 		set_Value (COLUMNNAME_IsValidation, Boolean.valueOf(IsValidation));
@@ -374,13 +413,15 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Get Peut Valider.
 		@return Peut Valider
 	  */
+	@Override
 	public boolean isValidation()
 	{
 		Object oo = get_Value(COLUMNNAME_IsValidation);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -389,6 +430,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Set Message d&#039;Alerte.
 		@param Message_Alerte Message d&#039;Alerte
 	*/
+	@Override
 	public void setMessage_Alerte (String Message_Alerte)
 	{
 		set_Value (COLUMNNAME_Message_Alerte, Message_Alerte);
@@ -397,6 +439,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Get Message d&#039;Alerte.
 		@return Message d&#039;Alerte
 	  */
+	@Override
 	public String getMessage_Alerte()
 	{
 		return (String)get_Value(COLUMNNAME_Message_Alerte);
@@ -405,6 +448,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -413,6 +457,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -429,6 +474,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Set Search Key.
 		@param Value Search key for the record in the format required - must be unique
 	*/
+	@Override
 	public void setValue (String Value)
 	{
 		set_Value (COLUMNNAME_Value, Value);
@@ -437,6 +483,7 @@ public class X_HR_Autorisation_Conge extends PO implements I_HR_Autorisation_Con
 	/** Get Search Key.
 		@return Search key for the record in the format required - must be unique
 	  */
+	@Override
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);

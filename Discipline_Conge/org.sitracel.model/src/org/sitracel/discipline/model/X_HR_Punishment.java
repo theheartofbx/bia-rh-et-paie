@@ -137,19 +137,22 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Punishment[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -159,6 +162,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Approuve/Desapprouvé par (Matricule) :.
 		@param Approuve_Desapprouve_Matricule Approuve/Desapprouvé par (Matricule) :
 	*/
+	@Override
 	public void setApprouve_Desapprouve_Matricule (String Approuve_Desapprouve_Matricule)
 	{
 		set_Value (COLUMNNAME_Approuve_Desapprouve_Matricule, Approuve_Desapprouve_Matricule);
@@ -167,11 +171,13 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Approuve/Desapprouvé par (Matricule) :.
 		@return Approuve/Desapprouvé par (Matricule) :
 	  */
+	@Override
 	public String getApprouve_Desapprouve_Matricule()
 	{
 		return (String)get_Value(COLUMNNAME_Approuve_Desapprouve_Matricule);
 	}
 
+	@Override
 	public org.compiere.model.I_C_BPartner getApprouve_Desapprouve_Nom() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -181,25 +187,30 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Approuve/Desapprouvé par (Nom) :.
 		@param Approuve_Desapprouve_Nom_ID Approuve/Desapprouvé par (Nom) :
 	*/
+	@Override
 	public void setApprouve_Desapprouve_Nom_ID (int Approuve_Desapprouve_Nom_ID)
 	{
-		if (Approuve_Desapprouve_Nom_ID < 1)
+		if (Approuve_Desapprouve_Nom_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_Approuve_Desapprouve_Nom_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_Approuve_Desapprouve_Nom_ID, Integer.valueOf(Approuve_Desapprouve_Nom_ID));
+		}
 	}
 
 	/** Get Approuve/Desapprouvé par (Nom) :.
 		@return Approuve/Desapprouvé par (Nom) :
 	  */
+	@Override
 	public int getApprouve_Desapprouve_Nom_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Approuve_Desapprouve_Nom_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public org.eevolution.model.I_HR_Job getApprouve_Desapprouve_Poste() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -209,28 +220,33 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Approuve/Desapprouvé par (Poste) :.
 		@param Approuve_Desapprouve_Poste_ID Approuve/Desapprouvé par (Poste) :
 	*/
+	@Override
 	public void setApprouve_Desapprouve_Poste_ID (int Approuve_Desapprouve_Poste_ID)
 	{
-		if (Approuve_Desapprouve_Poste_ID < 1)
+		if (Approuve_Desapprouve_Poste_ID < 1) {
 			set_Value (COLUMNNAME_Approuve_Desapprouve_Poste_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Approuve_Desapprouve_Poste_ID, Integer.valueOf(Approuve_Desapprouve_Poste_ID));
+		}
 	}
 
 	/** Get Approuve/Desapprouvé par (Poste) :.
 		@return Approuve/Desapprouvé par (Poste) :
 	  */
+	@Override
 	public int getApprouve_Desapprouve_Poste_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Approuve_Desapprouve_Poste_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Approuver.
 		@param Approuver Approuver
 	*/
+	@Override
 	public void setApprouver (String Approuver)
 	{
 		set_Value (COLUMNNAME_Approuver, Approuver);
@@ -239,6 +255,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Approuver.
 		@return Approuver
 	  */
+	@Override
 	public String getApprouver()
 	{
 		return (String)get_Value(COLUMNNAME_Approuver);
@@ -247,6 +264,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Approuver.
 		@param Approuver_Createur Approuver
 	*/
+	@Override
 	public void setApprouver_Createur (String Approuver_Createur)
 	{
 		set_Value (COLUMNNAME_Approuver_Createur, Approuver_Createur);
@@ -255,11 +273,13 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Approuver.
 		@return Approuver
 	  */
+	@Override
 	public String getApprouver_Createur()
 	{
 		return (String)get_Value(COLUMNNAME_Approuver_Createur);
 	}
 
+	@Override
 	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -269,28 +289,33 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Business Partner .
 		@param C_BPartner_ID Identifies a Business Partner
 	*/
+	@Override
 	public void setC_BPartner_ID (int C_BPartner_ID)
 	{
-		if (C_BPartner_ID < 1)
+		if (C_BPartner_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, Integer.valueOf(C_BPartner_ID));
+		}
 	}
 
 	/** Get Business Partner .
 		@return Identifies a Business Partner
 	  */
+	@Override
 	public int getC_BPartner_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_BPartner_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Transaction Date.
 		@param DateTrx Transaction Date
 	*/
+	@Override
 	public void setDateTrx (Timestamp DateTrx)
 	{
 		set_ValueNoCheck (COLUMNNAME_DateTrx, DateTrx);
@@ -299,6 +324,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Transaction Date.
 		@return Transaction Date
 	  */
+	@Override
 	public Timestamp getDateTrx()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_DateTrx);
@@ -307,6 +333,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Date Approbation.
 		@param Date_Approbation Date Approbation
 	*/
+	@Override
 	public void setDate_Approbation (Timestamp Date_Approbation)
 	{
 		set_Value (COLUMNNAME_Date_Approbation, Date_Approbation);
@@ -315,6 +342,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Date Approbation.
 		@return Date Approbation
 	  */
+	@Override
 	public Timestamp getDate_Approbation()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Approbation);
@@ -323,6 +351,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Date d&#039;Emission de la Demande d&#039;Explication.
 		@param Date_DE Date d&#039;Emission de la Demande d&#039;Explication
 	*/
+	@Override
 	public void setDate_DE (Timestamp Date_DE)
 	{
 		set_ValueNoCheck (COLUMNNAME_Date_DE, Date_DE);
@@ -331,6 +360,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Date d&#039;Emission de la Demande d&#039;Explication.
 		@return Date d&#039;Emission de la Demande d&#039;Explication
 	  */
+	@Override
 	public Timestamp getDate_DE()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_DE);
@@ -339,6 +369,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Date de Début d&#039;Application.
 		@param Date_Debut_Application Date de Début d&#039;Application
 	*/
+	@Override
 	public void setDate_Debut_Application (Timestamp Date_Debut_Application)
 	{
 		set_ValueNoCheck (COLUMNNAME_Date_Debut_Application, Date_Debut_Application);
@@ -347,6 +378,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Date de Début d&#039;Application.
 		@return Date de Début d&#039;Application
 	  */
+	@Override
 	public Timestamp getDate_Debut_Application()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Debut_Application);
@@ -355,6 +387,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Date Désapprobation.
 		@param Date_Desapprobation Date Désapprobation
 	*/
+	@Override
 	public void setDate_Desapprobation (Timestamp Date_Desapprobation)
 	{
 		set_Value (COLUMNNAME_Date_Desapprobation, Date_Desapprobation);
@@ -363,6 +396,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Date Désapprobation.
 		@return Date Désapprobation
 	  */
+	@Override
 	public Timestamp getDate_Desapprobation()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Desapprobation);
@@ -371,6 +405,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Date d&#039;Emission.
 		@param Date_Emission Date d&#039;Emission
 	*/
+	@Override
 	public void setDate_Emission (Timestamp Date_Emission)
 	{
 		set_ValueNoCheck (COLUMNNAME_Date_Emission, Date_Emission);
@@ -379,6 +414,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Date d&#039;Emission.
 		@return Date d&#039;Emission
 	  */
+	@Override
 	public Timestamp getDate_Emission()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Emission);
@@ -387,6 +423,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Date de Fin d&#039;Application.
 		@param Date_Fin_Application Date de Fin d&#039;Application
 	*/
+	@Override
 	public void setDate_Fin_Application (Timestamp Date_Fin_Application)
 	{
 		set_ValueNoCheck (COLUMNNAME_Date_Fin_Application, Date_Fin_Application);
@@ -395,6 +432,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Date de Fin d&#039;Application.
 		@return Date de Fin d&#039;Application
 	  */
+	@Override
 	public Timestamp getDate_Fin_Application()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Fin_Application);
@@ -403,6 +441,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Date de Rejet.
 		@param Date_Rejet Date de Rejet
 	*/
+	@Override
 	public void setDate_Rejet (Timestamp Date_Rejet)
 	{
 		set_Value (COLUMNNAME_Date_Rejet, Date_Rejet);
@@ -411,6 +450,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Date de Rejet.
 		@return Date de Rejet
 	  */
+	@Override
 	public Timestamp getDate_Rejet()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Rejet);
@@ -419,6 +459,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Date Réponse Demande d&#039;Explication.
 		@param Date_Reponse_DE Date Réponse Demande d&#039;Explication
 	*/
+	@Override
 	public void setDate_Reponse_DE (Timestamp Date_Reponse_DE)
 	{
 		set_ValueNoCheck (COLUMNNAME_Date_Reponse_DE, Date_Reponse_DE);
@@ -427,6 +468,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Date Réponse Demande d&#039;Explication.
 		@return Date Réponse Demande d&#039;Explication
 	  */
+	@Override
 	public Timestamp getDate_Reponse_DE()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Reponse_DE);
@@ -435,6 +477,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Date de Validation.
 		@param Date_Validation Date de Validation
 	*/
+	@Override
 	public void setDate_Validation (Timestamp Date_Validation)
 	{
 		set_Value (COLUMNNAME_Date_Validation, Date_Validation);
@@ -443,11 +486,13 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Date de Validation.
 		@return Date de Validation
 	  */
+	@Override
 	public Timestamp getDate_Validation()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Validation);
 	}
 
+	@Override
 	public I_HR_Delai_Reponse getDelai_Reponse_DE() throws RuntimeException
 	{
 		return (I_HR_Delai_Reponse)MTable.get(getCtx(), I_HR_Delai_Reponse.Table_ID)
@@ -457,25 +502,30 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Délai de Réponse de la Demande d&#039;Explication.
 		@param Delai_Reponse_DE_ID Délai de Réponse de la Demande d&#039;Explication
 	*/
+	@Override
 	public void setDelai_Reponse_DE_ID (int Delai_Reponse_DE_ID)
 	{
-		if (Delai_Reponse_DE_ID < 1)
+		if (Delai_Reponse_DE_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_Delai_Reponse_DE_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_Delai_Reponse_DE_ID, Integer.valueOf(Delai_Reponse_DE_ID));
+		}
 	}
 
 	/** Get Délai de Réponse de la Demande d&#039;Explication.
 		@return Délai de Réponse de la Demande d&#039;Explication
 	  */
+	@Override
 	public int getDelai_Reponse_DE_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Delai_Reponse_DE_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public I_HR_Demande_Explication getDemande_Explication() throws RuntimeException
 	{
 		return (I_HR_Demande_Explication)MTable.get(getCtx(), I_HR_Demande_Explication.Table_ID)
@@ -485,28 +535,33 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Demande d&#039;Explication.
 		@param Demande_Explication_ID Demande d&#039;Explication
 	*/
+	@Override
 	public void setDemande_Explication_ID (int Demande_Explication_ID)
 	{
-		if (Demande_Explication_ID < 1)
+		if (Demande_Explication_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_Demande_Explication_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_Demande_Explication_ID, Integer.valueOf(Demande_Explication_ID));
+		}
 	}
 
 	/** Get Demande d&#039;Explication.
 		@return Demande d&#039;Explication
 	  */
+	@Override
 	public int getDemande_Explication_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Demande_Explication_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Désapprouver.
 		@param Desapprouver Désapprouver
 	*/
+	@Override
 	public void setDesapprouver (String Desapprouver)
 	{
 		set_Value (COLUMNNAME_Desapprouver, Desapprouver);
@@ -515,6 +570,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Désapprouver.
 		@return Désapprouver
 	  */
+	@Override
 	public String getDesapprouver()
 	{
 		return (String)get_Value(COLUMNNAME_Desapprouver);
@@ -523,6 +579,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Désapprouver.
 		@param Desapprouver_Createur Désapprouver
 	*/
+	@Override
 	public void setDesapprouver_Createur (String Desapprouver_Createur)
 	{
 		set_Value (COLUMNNAME_Desapprouver_Createur, Desapprouver_Createur);
@@ -531,6 +588,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Désapprouver.
 		@return Désapprouver
 	  */
+	@Override
 	public String getDesapprouver_Createur()
 	{
 		return (String)get_Value(COLUMNNAME_Desapprouver_Createur);
@@ -539,6 +597,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -547,6 +606,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -555,6 +615,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Matricule Emetteur.
 		@param Emis_Par_Matricule Matricule Emetteur
 	*/
+	@Override
 	public void setEmis_Par_Matricule (String Emis_Par_Matricule)
 	{
 		set_Value (COLUMNNAME_Emis_Par_Matricule, Emis_Par_Matricule);
@@ -563,11 +624,13 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Matricule Emetteur.
 		@return Matricule Emetteur
 	  */
+	@Override
 	public String getEmis_Par_Matricule()
 	{
 		return (String)get_Value(COLUMNNAME_Emis_Par_Matricule);
 	}
 
+	@Override
 	public org.compiere.model.I_C_BPartner getEmis_Par_Nom() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -577,25 +640,30 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Nom Emetteur.
 		@param Emis_Par_Nom_ID Nom Emetteur
 	*/
+	@Override
 	public void setEmis_Par_Nom_ID (int Emis_Par_Nom_ID)
 	{
-		if (Emis_Par_Nom_ID < 1)
+		if (Emis_Par_Nom_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_Emis_Par_Nom_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_Emis_Par_Nom_ID, Integer.valueOf(Emis_Par_Nom_ID));
+		}
 	}
 
 	/** Get Nom Emetteur.
 		@return Nom Emetteur
 	  */
+	@Override
 	public int getEmis_Par_Nom_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Emis_Par_Nom_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public org.eevolution.model.I_HR_Job getEmis_Par_Poste() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -605,25 +673,30 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Poste Emetteur.
 		@param Emis_Par_Poste_ID Poste Emetteur
 	*/
+	@Override
 	public void setEmis_Par_Poste_ID (int Emis_Par_Poste_ID)
 	{
-		if (Emis_Par_Poste_ID < 1)
+		if (Emis_Par_Poste_ID < 1) {
 			set_Value (COLUMNNAME_Emis_Par_Poste_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Emis_Par_Poste_ID, Integer.valueOf(Emis_Par_Poste_ID));
+		}
 	}
 
 	/** Get Poste Emetteur.
 		@return Poste Emetteur
 	  */
+	@Override
 	public int getEmis_Par_Poste_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Emis_Par_Poste_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public I_HR_Sanction_Autorisation getEmission_Sanction() throws RuntimeException
 	{
 		return (I_HR_Sanction_Autorisation)MTable.get(getCtx(), I_HR_Sanction_Autorisation.Table_ID)
@@ -633,25 +706,30 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Type de Sanction.
 		@param Emission_Sanction_ID Type de Sanction
 	*/
+	@Override
 	public void setEmission_Sanction_ID (int Emission_Sanction_ID)
 	{
-		if (Emission_Sanction_ID < 1)
+		if (Emission_Sanction_ID < 1) {
 			set_Value (COLUMNNAME_Emission_Sanction_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Emission_Sanction_ID, Integer.valueOf(Emission_Sanction_ID));
+		}
 	}
 
 	/** Get Type de Sanction.
 		@return Type de Sanction
 	  */
+	@Override
 	public int getEmission_Sanction_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Emission_Sanction_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public I_HR_Ampliation getHR_Ampliation() throws RuntimeException
 	{
 		return (I_HR_Ampliation)MTable.get(getCtx(), I_HR_Ampliation.Table_ID)
@@ -661,24 +739,29 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Ampliation.
 		@param HR_Ampliation_ID Ampliation
 	*/
+	@Override
 	public void setHR_Ampliation_ID (int HR_Ampliation_ID)
 	{
-		if (HR_Ampliation_ID < 1)
+		if (HR_Ampliation_ID < 1) {
 			set_Value (COLUMNNAME_HR_Ampliation_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_HR_Ampliation_ID, Integer.valueOf(HR_Ampliation_ID));
+		}
 	}
 
 	/** Get Ampliation.
 		@return Ampliation	  */
+	@Override
 	public int getHR_Ampliation_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Ampliation_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public I_HR_Duree_Sanction getHR_Duree_Sanction() throws RuntimeException
 	{
 		return (I_HR_Duree_Sanction)MTable.get(getCtx(), I_HR_Duree_Sanction.Table_ID)
@@ -688,48 +771,57 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Durée Sanction.
 		@param HR_Duree_Sanction_ID Durée Sanction
 	*/
+	@Override
 	public void setHR_Duree_Sanction_ID (int HR_Duree_Sanction_ID)
 	{
-		if (HR_Duree_Sanction_ID < 1)
+		if (HR_Duree_Sanction_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Duree_Sanction_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Duree_Sanction_ID, Integer.valueOf(HR_Duree_Sanction_ID));
+		}
 	}
 
 	/** Get Durée Sanction.
 		@return Durée Sanction	  */
+	@Override
 	public int getHR_Duree_Sanction_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Duree_Sanction_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Punishment.
 		@param HR_Punishment_ID Punishment
 	*/
+	@Override
 	public void setHR_Punishment_ID (int HR_Punishment_ID)
 	{
-		if (HR_Punishment_ID < 1)
+		if (HR_Punishment_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Punishment_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Punishment_ID, Integer.valueOf(HR_Punishment_ID));
+		}
 	}
 
 	/** Get Punishment.
 		@return Punishment	  */
+	@Override
 	public int getHR_Punishment_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Punishment_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Punishment_UU.
 		@param HR_Punishment_UU HR_Punishment_UU
 	*/
+	@Override
 	public void setHR_Punishment_UU (String HR_Punishment_UU)
 	{
 		set_Value (COLUMNNAME_HR_Punishment_UU, HR_Punishment_UU);
@@ -737,6 +829,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 
 	/** Get HR_Punishment_UU.
 		@return HR_Punishment_UU	  */
+	@Override
 	public String getHR_Punishment_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Punishment_UU);
@@ -745,6 +838,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Initial.
 		@param Initial Initial
 	*/
+	@Override
 	public void setInitial (String Initial)
 	{
 		set_Value (COLUMNNAME_Initial, Initial);
@@ -753,6 +847,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Initial.
 		@return Initial
 	  */
+	@Override
 	public String getInitial()
 	{
 		return (String)get_Value(COLUMNNAME_Initial);
@@ -761,6 +856,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Peut Approuver.
 		@param IsApprobation Peut Approuver
 	*/
+	@Override
 	public void setIsApprobation (boolean IsApprobation)
 	{
 		throw new IllegalArgumentException ("IsApprobation is virtual column");	}
@@ -768,13 +864,15 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Peut Approuver.
 		@return Peut Approuver
 	  */
+	@Override
 	public boolean isApprobation()
 	{
 		Object oo = get_Value(COLUMNNAME_IsApprobation);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -783,6 +881,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Peut Approuver.
 		@param IsApprobation_Createur Peut Approuver
 	*/
+	@Override
 	public void setIsApprobation_Createur (boolean IsApprobation_Createur)
 	{
 		set_ValueNoCheck (COLUMNNAME_IsApprobation_Createur, Boolean.valueOf(IsApprobation_Createur));
@@ -791,13 +890,15 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Peut Approuver.
 		@return Peut Approuver
 	  */
+	@Override
 	public boolean isApprobation_Createur()
 	{
 		Object oo = get_Value(COLUMNNAME_IsApprobation_Createur);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -806,6 +907,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Approuvé(e).
 		@param IsApprouve Approuvé(e)
 	*/
+	@Override
 	public void setIsApprouve (boolean IsApprouve)
 	{
 		set_Value (COLUMNNAME_IsApprouve, Boolean.valueOf(IsApprouve));
@@ -814,13 +916,15 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Approuvé(e).
 		@return Approuvé(e)
 	  */
+	@Override
 	public boolean isApprouve()
 	{
 		Object oo = get_Value(COLUMNNAME_IsApprouve);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -829,6 +933,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Désapprouvé(e).
 		@param IsDesapprouve Désapprouvé(e)
 	*/
+	@Override
 	public void setIsDesapprouve (boolean IsDesapprouve)
 	{
 		set_Value (COLUMNNAME_IsDesapprouve, Boolean.valueOf(IsDesapprouve));
@@ -837,13 +942,15 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Désapprouvé(e).
 		@return Désapprouvé(e)
 	  */
+	@Override
 	public boolean isDesapprouve()
 	{
 		Object oo = get_Value(COLUMNNAME_IsDesapprouve);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -852,6 +959,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Entraîne le Licenciement.
 		@param IsLicenciement Entraîne le Licenciement
 	*/
+	@Override
 	public void setIsLicenciement (boolean IsLicenciement)
 	{
 		set_Value (COLUMNNAME_IsLicenciement, Boolean.valueOf(IsLicenciement));
@@ -860,13 +968,15 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Entraîne le Licenciement.
 		@return Entraîne le Licenciement
 	  */
+	@Override
 	public boolean isLicenciement()
 	{
 		Object oo = get_Value(COLUMNNAME_IsLicenciement);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -875,6 +985,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Message d&#039;Alerte Affiché.
 		@param IsMessageAlerteDisplayed Message d&#039;Alerte Affiché
 	*/
+	@Override
 	public void setIsMessageAlerteDisplayed (boolean IsMessageAlerteDisplayed)
 	{
 		set_Value (COLUMNNAME_IsMessageAlerteDisplayed, Boolean.valueOf(IsMessageAlerteDisplayed));
@@ -883,13 +994,15 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Message d&#039;Alerte Affiché.
 		@return Message d&#039;Alerte Affiché
 	  */
+	@Override
 	public boolean isMessageAlerteDisplayed()
 	{
 		Object oo = get_Value(COLUMNNAME_IsMessageAlerteDisplayed);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -898,6 +1011,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Entraîne une Période de Suspension.
 		@param IsPeriodSuspension Entraîne une Période de Suspension
 	*/
+	@Override
 	public void setIsPeriodSuspension (boolean IsPeriodSuspension)
 	{
 		set_Value (COLUMNNAME_IsPeriodSuspension, Boolean.valueOf(IsPeriodSuspension));
@@ -906,13 +1020,15 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Entraîne une Période de Suspension.
 		@return Entraîne une Période de Suspension
 	  */
+	@Override
 	public boolean isPeriodSuspension()
 	{
 		Object oo = get_Value(COLUMNNAME_IsPeriodSuspension);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -921,6 +1037,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Rejeté(e).
 		@param IsRejetee Rejeté(e)
 	*/
+	@Override
 	public void setIsRejetee (boolean IsRejetee)
 	{
 		set_Value (COLUMNNAME_IsRejetee, Boolean.valueOf(IsRejetee));
@@ -929,13 +1046,15 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Rejeté(e).
 		@return Rejeté(e)
 	  */
+	@Override
 	public boolean isRejetee()
 	{
 		Object oo = get_Value(COLUMNNAME_IsRejetee);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -944,6 +1063,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Traité(e).
 		@param IsTraitee Traité(e)
 	*/
+	@Override
 	public void setIsTraitee (boolean IsTraitee)
 	{
 		set_Value (COLUMNNAME_IsTraitee, Boolean.valueOf(IsTraitee));
@@ -952,13 +1072,15 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Traité(e).
 		@return Traité(e)
 	  */
+	@Override
 	public boolean isTraitee()
 	{
 		Object oo = get_Value(COLUMNNAME_IsTraitee);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -967,6 +1089,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Peut Valider.
 		@param IsValidation Peut Valider
 	*/
+	@Override
 	public void setIsValidation (boolean IsValidation)
 	{
 		throw new IllegalArgumentException ("IsValidation is virtual column");	}
@@ -974,13 +1097,15 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Peut Valider.
 		@return Peut Valider
 	  */
+	@Override
 	public boolean isValidation()
 	{
 		Object oo = get_Value(COLUMNNAME_IsValidation);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -989,6 +1114,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Peut Valider.
 		@param IsValidation_Createur Peut Valider
 	*/
+	@Override
 	public void setIsValidation_Createur (boolean IsValidation_Createur)
 	{
 		set_ValueNoCheck (COLUMNNAME_IsValidation_Createur, Boolean.valueOf(IsValidation_Createur));
@@ -997,13 +1123,15 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Peut Valider.
 		@return Peut Valider
 	  */
+	@Override
 	public boolean isValidation_Createur()
 	{
 		Object oo = get_Value(COLUMNNAME_IsValidation_Createur);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -1012,6 +1140,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Validé(e).
 		@param IsValidee Validé(e)
 	*/
+	@Override
 	public void setIsValidee (boolean IsValidee)
 	{
 		set_Value (COLUMNNAME_IsValidee, Boolean.valueOf(IsValidee));
@@ -1020,13 +1149,15 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Validé(e).
 		@return Validé(e)
 	  */
+	@Override
 	public boolean isValidee()
 	{
 		Object oo = get_Value(COLUMNNAME_IsValidee);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -1035,6 +1166,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Matricule de l&#039;Employé.
 		@param Matricule_Employe Matricule de l&#039;Employé
 	*/
+	@Override
 	public void setMatricule_Employe (String Matricule_Employe)
 	{
 		set_Value (COLUMNNAME_Matricule_Employe, Matricule_Employe);
@@ -1043,6 +1175,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Matricule de l&#039;Employé.
 		@return Matricule de l&#039;Employé
 	  */
+	@Override
 	public String getMatricule_Employe()
 	{
 		return (String)get_Value(COLUMNNAME_Matricule_Employe);
@@ -1051,6 +1184,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Message d&#039;Alerte.
 		@param Message_Alerte Message d&#039;Alerte
 	*/
+	@Override
 	public void setMessage_Alerte (String Message_Alerte)
 	{
 		set_Value (COLUMNNAME_Message_Alerte, Message_Alerte);
@@ -1059,6 +1193,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Message d&#039;Alerte.
 		@return Message d&#039;Alerte
 	  */
+	@Override
 	public String getMessage_Alerte()
 	{
 		return (String)get_Value(COLUMNNAME_Message_Alerte);
@@ -1067,6 +1202,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Motif de la demande d&#039;Expliaction.
 		@param Motif_Demande_Explication Motif de la demande d&#039;Expliaction
 	*/
+	@Override
 	public void setMotif_Demande_Explication (String Motif_Demande_Explication)
 	{
 		set_Value (COLUMNNAME_Motif_Demande_Explication, Motif_Demande_Explication);
@@ -1075,6 +1211,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Motif de la demande d&#039;Expliaction.
 		@return Motif de la demande d&#039;Expliaction
 	  */
+	@Override
 	public String getMotif_Demande_Explication()
 	{
 		return (String)get_Value(COLUMNNAME_Motif_Demande_Explication);
@@ -1083,6 +1220,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -1091,6 +1229,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -1107,6 +1246,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Notifier.
 		@param Notifier Notifier
 	*/
+	@Override
 	public void setNotifier (String Notifier)
 	{
 		set_Value (COLUMNNAME_Notifier, Notifier);
@@ -1115,11 +1255,13 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Notifier.
 		@return Notifier
 	  */
+	@Override
 	public String getNotifier()
 	{
 		return (String)get_Value(COLUMNNAME_Notifier);
 	}
 
+	@Override
 	public org.eevolution.model.I_HR_Job getPoste_Employe() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -1129,28 +1271,33 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Poste de l&#039;Employé.
 		@param Poste_Employe_ID Poste de l&#039;Employé
 	*/
+	@Override
 	public void setPoste_Employe_ID (int Poste_Employe_ID)
 	{
-		if (Poste_Employe_ID < 1)
+		if (Poste_Employe_ID < 1) {
 			set_Value (COLUMNNAME_Poste_Employe_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Poste_Employe_ID, Integer.valueOf(Poste_Employe_ID));
+		}
 	}
 
 	/** Get Poste de l&#039;Employé.
 		@return Poste de l&#039;Employé
 	  */
+	@Override
 	public int getPoste_Employe_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Poste_Employe_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Rapport.
 		@param Rapport Rapport
 	*/
+	@Override
 	public void setRapport (String Rapport)
 	{
 		set_Value (COLUMNNAME_Rapport, Rapport);
@@ -1159,6 +1306,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Rapport.
 		@return Rapport
 	  */
+	@Override
 	public String getRapport()
 	{
 		return (String)get_Value(COLUMNNAME_Rapport);
@@ -1167,6 +1315,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Rejeter.
 		@param Rejeter Rejeter
 	*/
+	@Override
 	public void setRejeter (String Rejeter)
 	{
 		set_Value (COLUMNNAME_Rejeter, Rejeter);
@@ -1175,6 +1324,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Rejeter.
 		@return Rejeter
 	  */
+	@Override
 	public String getRejeter()
 	{
 		return (String)get_Value(COLUMNNAME_Rejeter);
@@ -1183,6 +1333,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Rejeter.
 		@param Rejeter_Createur Rejeter
 	*/
+	@Override
 	public void setRejeter_Createur (String Rejeter_Createur)
 	{
 		set_Value (COLUMNNAME_Rejeter_Createur, Rejeter_Createur);
@@ -1191,6 +1342,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Rejeter.
 		@return Rejeter
 	  */
+	@Override
 	public String getRejeter_Createur()
 	{
 		return (String)get_Value(COLUMNNAME_Rejeter_Createur);
@@ -1199,6 +1351,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Réponse à la Demande d&#039;Explication.
 		@param Reponse_Demande_Explication Réponse à la Demande d&#039;Explication
 	*/
+	@Override
 	public void setReponse_Demande_Explication (String Reponse_Demande_Explication)
 	{
 		set_ValueNoCheck (COLUMNNAME_Reponse_Demande_Explication, Reponse_Demande_Explication);
@@ -1207,6 +1360,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Réponse à la Demande d&#039;Explication.
 		@return Réponse à la Demande d&#039;Explication
 	  */
+	@Override
 	public String getReponse_Demande_Explication()
 	{
 		return (String)get_Value(COLUMNNAME_Reponse_Demande_Explication);
@@ -1215,6 +1369,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Validé/rejeté par (Matricule) :.
 		@param Valide_Rejete_Par_Matricule Validé/rejeté par (Matricule) :
 	*/
+	@Override
 	public void setValide_Rejete_Par_Matricule (String Valide_Rejete_Par_Matricule)
 	{
 		set_Value (COLUMNNAME_Valide_Rejete_Par_Matricule, Valide_Rejete_Par_Matricule);
@@ -1223,11 +1378,13 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Validé/rejeté par (Matricule) :.
 		@return Validé/rejeté par (Matricule) :
 	  */
+	@Override
 	public String getValide_Rejete_Par_Matricule()
 	{
 		return (String)get_Value(COLUMNNAME_Valide_Rejete_Par_Matricule);
 	}
 
+	@Override
 	public org.compiere.model.I_C_BPartner getValide_Rejete_Par_Nom() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -1237,25 +1394,30 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Validé/rejeté par (Nom) :.
 		@param Valide_Rejete_Par_Nom_ID Validé/rejeté par (Nom) :
 	*/
+	@Override
 	public void setValide_Rejete_Par_Nom_ID (int Valide_Rejete_Par_Nom_ID)
 	{
-		if (Valide_Rejete_Par_Nom_ID < 1)
+		if (Valide_Rejete_Par_Nom_ID < 1) {
 			set_Value (COLUMNNAME_Valide_Rejete_Par_Nom_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Valide_Rejete_Par_Nom_ID, Integer.valueOf(Valide_Rejete_Par_Nom_ID));
+		}
 	}
 
 	/** Get Validé/rejeté par (Nom) :.
 		@return Validé/rejeté par (Nom) :
 	  */
+	@Override
 	public int getValide_Rejete_Par_Nom_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Valide_Rejete_Par_Nom_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public org.eevolution.model.I_HR_Job getValide_Rejete_Par_Poste() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -1265,52 +1427,60 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Validé/rejeté par (Poste) :.
 		@param Valide_Rejete_Par_Poste_ID Validé/rejeté par (Poste) :
 	*/
+	@Override
 	public void setValide_Rejete_Par_Poste_ID (int Valide_Rejete_Par_Poste_ID)
 	{
-		if (Valide_Rejete_Par_Poste_ID < 1)
+		if (Valide_Rejete_Par_Poste_ID < 1) {
 			set_Value (COLUMNNAME_Valide_Rejete_Par_Poste_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Valide_Rejete_Par_Poste_ID, Integer.valueOf(Valide_Rejete_Par_Poste_ID));
+		}
 	}
 
 	/** Get Validé/rejeté par (Poste) :.
 		@return Validé/rejeté par (Poste) :
 	  */
+	@Override
 	public int getValide_Rejete_Par_Poste_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Valide_Rejete_Par_Poste_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Valider .
-		@param Valider Valider 
+		@param Valider Valider
 	*/
+	@Override
 	public void setValider (String Valider)
 	{
 		set_Value (COLUMNNAME_Valider, Valider);
 	}
 
 	/** Get Valider .
-		@return Valider 
+		@return Valider
 	  */
+	@Override
 	public String getValider()
 	{
 		return (String)get_Value(COLUMNNAME_Valider);
 	}
 
 	/** Set Valider .
-		@param Valider_Createur Valider 
+		@param Valider_Createur Valider
 	*/
+	@Override
 	public void setValider_Createur (String Valider_Createur)
 	{
 		set_Value (COLUMNNAME_Valider_Createur, Valider_Createur);
 	}
 
 	/** Get Valider .
-		@return Valider 
+		@return Valider
 	  */
+	@Override
 	public String getValider_Createur()
 	{
 		return (String)get_Value(COLUMNNAME_Valider_Createur);
@@ -1319,6 +1489,7 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Set Personnaliser le Rapport.
 		@param isRapport_Personnalise Personnaliser le Rapport
 	*/
+	@Override
 	public void setisRapport_Personnalise (boolean isRapport_Personnalise)
 	{
 		set_Value (COLUMNNAME_isRapport_Personnalise, Boolean.valueOf(isRapport_Personnalise));
@@ -1327,13 +1498,15 @@ public class X_HR_Punishment extends PO implements I_HR_Punishment, I_Persistent
 	/** Get Personnaliser le Rapport.
 		@return Personnaliser le Rapport
 	  */
+	@Override
 	public boolean isRapport_Personnalise()
 	{
 		Object oo = get_Value(COLUMNNAME_isRapport_Personnalise);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;

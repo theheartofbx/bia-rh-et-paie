@@ -9,7 +9,7 @@ import org.sitracel.conge.model.MHRAbsence;
 import org.sitracel.conge.model.MHRAbsenceCompensation;
 import org.sitracel.conge.modelvalidator.controller.absence.ModelValidatorControllerAbsence;
 import org.sitracel.conge.modelvalidator.controller.conge.ModelValidatorControllerConge;
-import org.sitracel.model.MHREmployeeJob;
+import org.sitracel.paie.model.MHRElementBasePaieEmploye;
 
 public class SitracelCongeGeneralModelValidator {
 
@@ -55,9 +55,9 @@ public class SitracelCongeGeneralModelValidator {
 		}
 	}
 	
-	public static void employeeJob(MHREmployeeJob employeeJob, int type) {
+	public static void employeeJobD(MHRElementBasePaieEmploye lastElement, int type) {
 		if(ModelValidator.TYPE_AFTER_CHANGE == type || ModelValidator.TYPE_AFTER_NEW == type) {
-			ModelValidatorControllerConge.updateDepartment(employeeJob.getHR_EmployeeJob_ID(), employeeJob.getC_BPartner_ID());				
+			ModelValidatorControllerConge.updateDepartment( lastElement.getC_BPartner_ID());				
 		}
 	}
 }

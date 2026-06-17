@@ -8,9 +8,9 @@ public class BeanEvaluationCompetence {
 	private BigDecimal score;
 	private BigDecimal scoreMax;
 	private int ponderation;
-	
+
 	public BeanEvaluationCompetence() {
-		
+
 	}
 
 	public int getCandidatEvaluationID() {

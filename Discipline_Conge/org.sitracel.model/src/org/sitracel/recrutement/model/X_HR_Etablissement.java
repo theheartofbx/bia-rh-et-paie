@@ -19,7 +19,11 @@ package org.sitracel.recrutement.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Etablissement
@@ -91,25 +95,29 @@ public class X_HR_Etablissement extends PO implements I_HR_Etablissement, I_Pers
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Etablissement[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
       return sb.toString();
     }
 
+	@Override
 	public org.compiere.model.I_C_Country getC_Country() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_Country)MTable.get(getCtx(), org.compiere.model.I_C_Country.Table_ID)
@@ -117,30 +125,35 @@ public class X_HR_Etablissement extends PO implements I_HR_Etablissement, I_Pers
 	}
 
 	/** Set Country.
-		@param C_Country_ID Country 
+		@param C_Country_ID Country
 	*/
+	@Override
 	public void setC_Country_ID (int C_Country_ID)
 	{
-		if (C_Country_ID < 1)
+		if (C_Country_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_C_Country_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_C_Country_ID, Integer.valueOf(C_Country_ID));
+		}
 	}
 
 	/** Get Country.
-		@return Country 
+		@return Country
 	  */
+	@Override
 	public int getC_Country_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_Country_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -149,6 +162,7 @@ public class X_HR_Etablissement extends PO implements I_HR_Etablissement, I_Pers
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -157,6 +171,7 @@ public class X_HR_Etablissement extends PO implements I_HR_Etablissement, I_Pers
 	/** Set EMail Address.
 		@param EMail Electronic Mail Address
 	*/
+	@Override
 	public void setEMail (String EMail)
 	{
 		set_Value (COLUMNNAME_EMail, EMail);
@@ -165,6 +180,7 @@ public class X_HR_Etablissement extends PO implements I_HR_Etablissement, I_Pers
 	/** Get EMail Address.
 		@return Electronic Mail Address
 	  */
+	@Override
 	public String getEMail()
 	{
 		return (String)get_Value(COLUMNNAME_EMail);
@@ -173,27 +189,32 @@ public class X_HR_Etablissement extends PO implements I_HR_Etablissement, I_Pers
 	/** Set Établissement.
 		@param HR_Etablissement_ID Établissement
 	*/
+	@Override
 	public void setHR_Etablissement_ID (int HR_Etablissement_ID)
 	{
-		if (HR_Etablissement_ID < 1)
+		if (HR_Etablissement_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Etablissement_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Etablissement_ID, Integer.valueOf(HR_Etablissement_ID));
+		}
 	}
 
 	/** Get Établissement.
 		@return Établissement	  */
+	@Override
 	public int getHR_Etablissement_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Etablissement_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Etablissement_UU.
 		@param HR_Etablissement_UU HR_Etablissement_UU
 	*/
+	@Override
 	public void setHR_Etablissement_UU (String HR_Etablissement_UU)
 	{
 		set_Value (COLUMNNAME_HR_Etablissement_UU, HR_Etablissement_UU);
@@ -201,11 +222,13 @@ public class X_HR_Etablissement extends PO implements I_HR_Etablissement, I_Pers
 
 	/** Get HR_Etablissement_UU.
 		@return HR_Etablissement_UU	  */
+	@Override
 	public String getHR_Etablissement_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Etablissement_UU);
 	}
 
+	@Override
 	public I_HR_TypeEtablissement getHR_TypeEtablissement() throws RuntimeException
 	{
 		return (I_HR_TypeEtablissement)MTable.get(getCtx(), I_HR_TypeEtablissement.Table_ID)
@@ -215,27 +238,32 @@ public class X_HR_Etablissement extends PO implements I_HR_Etablissement, I_Pers
 	/** Set Type Etablissement.
 		@param HR_TypeEtablissement_ID Type Etablissement
 	*/
+	@Override
 	public void setHR_TypeEtablissement_ID (int HR_TypeEtablissement_ID)
 	{
-		if (HR_TypeEtablissement_ID < 1)
+		if (HR_TypeEtablissement_ID < 1) {
 			set_Value (COLUMNNAME_HR_TypeEtablissement_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_HR_TypeEtablissement_ID, Integer.valueOf(HR_TypeEtablissement_ID));
+		}
 	}
 
 	/** Get Type Etablissement.
 		@return Type Etablissement	  */
+	@Override
 	public int getHR_TypeEtablissement_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_TypeEtablissement_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -244,6 +272,7 @@ public class X_HR_Etablissement extends PO implements I_HR_Etablissement, I_Pers
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -260,6 +289,7 @@ public class X_HR_Etablissement extends PO implements I_HR_Etablissement, I_Pers
 	/** Set Telephone.
 		@param Telephone Telephone
 	*/
+	@Override
 	public void setTelephone (String Telephone)
 	{
 		set_Value (COLUMNNAME_Telephone, Telephone);
@@ -267,6 +297,7 @@ public class X_HR_Etablissement extends PO implements I_HR_Etablissement, I_Pers
 
 	/** Get Telephone.
 		@return Telephone	  */
+	@Override
 	public String getTelephone()
 	{
 		return (String)get_Value(COLUMNNAME_Telephone);
@@ -275,6 +306,7 @@ public class X_HR_Etablissement extends PO implements I_HR_Etablissement, I_Pers
 	/** Set town.
 		@param town town
 	*/
+	@Override
 	public void settown (String town)
 	{
 		set_Value (COLUMNNAME_town, town);
@@ -282,6 +314,7 @@ public class X_HR_Etablissement extends PO implements I_HR_Etablissement, I_Pers
 
 	/** Get town.
 		@return town	  */
+	@Override
 	public String gettown()
 	{
 		return (String)get_Value(COLUMNNAME_town);

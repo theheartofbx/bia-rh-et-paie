@@ -15,6 +15,7 @@ import org.sitracel.bean.BeanPeriode;
 import org.sitracel.bean.BeanPeriodeConge;
 import org.sitracel.beanfactory.BeanFactory;
 import org.sitracel.conge.model.MHRHoliday;
+import org.sitracel.conge.model.MHRPublicHoliday;
 import org.sitracel.conge.model.MHRTypeConge;
 import org.sitracel.controller.GeneralController;
 import org.sitracel.controller.GeneralSqlController;
@@ -22,7 +23,7 @@ import org.sitracel.controller.GeneralSqlController;
 
 
 public class CalloutControllerConge {
-	
+
 	public static BeanPeriodeConge getPeriodeCongeMaternite(Timestamp dateEcheance, Integer idTypeConge) {
 		BeanPeriodeConge resultat = BeanFactory.getBeanPeriodeConge();
 		if(dateEcheance!=null && idTypeConge!=null) {
@@ -35,9 +36,9 @@ public class CalloutControllerConge {
 			dateFin = GeneralController.ajusterenRetirant(dateFin);
 			resultat.setDateDebutConge(dateDebut);
 			resultat.setDateFinConge(dateFin);
-		}		
-		return resultat;		
-	}	
+		}
+		return resultat;
+	}
 	public static Integer getNombreJourCongeTotalEmploye(Integer idCBPartner, Integer idTypeConge) {
 		Integer resultat =null;
 		if(idCBPartner!=null && idTypeConge!=null) {
@@ -48,9 +49,9 @@ public class CalloutControllerConge {
 				resultat = resultat + GeneralController.getNombreJourTravaille(beanPeriode.getDateDebutConge(), beanPeriode.getDateFinConge());
 			}
 		}
-		return resultat;		
-	}		
-	
+		return resultat;
+	}
+
 	public static Integer getDiffAnnee(Timestamp t1, Timestamp t2) {
 			Integer resultat = null;
 			if(t1!=null && t2!=null) {
@@ -58,7 +59,7 @@ public class CalloutControllerConge {
 		            cal1.setTime(t1);
 		            Calendar cal2 = Calendar.getInstance();
 		            cal2.setTime(t2);
-		            resultat = cal1.get(Calendar.YEAR)-cal2.get(Calendar.YEAR);   
+		            resultat = cal1.get(Calendar.YEAR)-cal2.get(Calendar.YEAR);
 		            if ((cal1.get(Calendar.MONTH) < cal2.get(Calendar.MONTH))
 		                            || ((cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH)) && (cal1.get(Calendar.DAY_OF_MONTH) < cal2
 		                                            .get(Calendar.DAY_OF_MONTH)))) {
@@ -69,7 +70,7 @@ public class CalloutControllerConge {
 		            }
 			}
 			return resultat;
-	}	
+	}
 
 	public static BeanInfoCongeDepartement getPeriodeCongeCritique(Integer cbpartnerid, Timestamp dateDebut, Timestamp dateFin) {
 		BeanInfoCongeDepartement beanInfoCongeDepartement = BeanFactory.getBeanInfoCongeDepartement();
@@ -81,7 +82,7 @@ public class CalloutControllerConge {
 				int nombreEmployeConge = 0;
 				int nombreEmployeCongeMax = 0;
 				while(jourConge.before(dateFin)) {
-					if(!GeneralSqlController.isJourFerie(jourConge, null)) {
+					if(!MHRPublicHoliday.isJourFerie(jourConge, null)) {
 						for(BeanPeriode congeDepartement : tableauCongeDepartement) {
 							if(jourConge.after(congeDepartement.getDateDebutConge()) && jourConge.before(congeDepartement.getDateFinConge())) {
 								nombreEmployeConge++;
@@ -101,13 +102,13 @@ public class CalloutControllerConge {
 			}
 		}
 		return beanInfoCongeDepartement;
-	}		
-	
+	}
+
 	public static String getAmpliation(String ampliation, String initial, String annee) {
 		if(ampliation!=null && initial!=null) {
 			ampliation = ampliation.replaceAll("\\s+", "");
 			if(ampliation.length()>2) {
-				ampliation = ampliation.replaceAll("/"+ampliation.substring(ampliation.length()-2), ""); 
+				ampliation = ampliation.replaceAll("/"+ampliation.substring(ampliation.length()-2), "");
 			}
 			if(!ampliation.isEmpty()) {
 				if(ampliation.contains("/"+initial)){
@@ -126,7 +127,7 @@ public class CalloutControllerConge {
 		}
 		return ampliation;
 	}
-		
+
 	public static BeanConge compenserAbsenceConge(Integer idConge, boolean aCompenserDebut) {
 		BeanConge resultat = BeanFactory.getBeanConge();
 		if(idConge!=null) {
@@ -147,8 +148,8 @@ public class CalloutControllerConge {
 			}
 		}
 		return resultat;
-	}		
-	
+	}
+
 	public static BeanIndemniteConge getIndemniteConge(Integer idConge) {
 		BeanIndemniteConge resultat = BeanFactory.getBeanIndemniteConge();
 		if(idConge!=null) {
@@ -157,17 +158,17 @@ public class CalloutControllerConge {
 				resultat.setDateDebutConge(conge.getDate_Dernier_Conge());
 				resultat.setDateFinConge(conge.getDate_Debut_Effective());
 				String sqlf="select adempiere.getamtconge(?,?,?)";
-				
-				List<Object> param =new ArrayList<Object>();
+
+				List<Object> param =new ArrayList<>();
 				param.add(conge.getC_BPartner_ID());
 				param.add(conge.getDate_Dernier_Conge());
 				param.add(conge.getDate_Debut_Effective());
-				
-				BigDecimal emlmt=DB.getSQLValueBD(null, sqlf,param);				
+
+				BigDecimal emlmt=DB.getSQLValueBD(null, sqlf,param);
 
 				resultat.setIndemnite(emlmt);
 			}
 		}
 		return resultat;
-	}	
+	}
 }

@@ -19,7 +19,12 @@ package org.sitracel.paie.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_C_ValidCombination;
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Concept_Category
@@ -87,19 +92,22 @@ public class X_HR_Concept_Category extends PO implements I_HR_Concept_Category, 
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Concept_Category[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -109,6 +117,7 @@ public class X_HR_Concept_Category extends PO implements I_HR_Concept_Category, 
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -117,11 +126,13 @@ public class X_HR_Concept_Category extends PO implements I_HR_Concept_Category, 
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
+	@Override
 	public I_C_ValidCombination getHR_Concept_A() throws RuntimeException
 	{
 		return (I_C_ValidCombination)MTable.get(getCtx(), I_C_ValidCombination.Table_ID)
@@ -131,6 +142,7 @@ public class X_HR_Concept_Category extends PO implements I_HR_Concept_Category, 
 	/** Set Payroll Concept Account.
 		@param HR_Concept_Acct Payroll Concept Account
 	*/
+	@Override
 	public void setHR_Concept_Acct (int HR_Concept_Acct)
 	{
 		set_Value (COLUMNNAME_HR_Concept_Acct, Integer.valueOf(HR_Concept_Acct));
@@ -138,38 +150,45 @@ public class X_HR_Concept_Category extends PO implements I_HR_Concept_Category, 
 
 	/** Get Payroll Concept Account.
 		@return Payroll Concept Account	  */
+	@Override
 	public int getHR_Concept_Acct()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Concept_Acct);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Payroll Concept Category.
 		@param HR_Concept_Category_ID Payroll Concept Category
 	*/
+	@Override
 	public void setHR_Concept_Category_ID (int HR_Concept_Category_ID)
 	{
-		if (HR_Concept_Category_ID < 1)
+		if (HR_Concept_Category_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Concept_Category_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Concept_Category_ID, Integer.valueOf(HR_Concept_Category_ID));
+		}
 	}
 
 	/** Get Payroll Concept Category.
 		@return Payroll Concept Category	  */
+	@Override
 	public int getHR_Concept_Category_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Concept_Category_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Concept_Category_UU.
 		@param HR_Concept_Category_UU HR_Concept_Category_UU
 	*/
+	@Override
 	public void setHR_Concept_Category_UU (String HR_Concept_Category_UU)
 	{
 		set_Value (COLUMNNAME_HR_Concept_Category_UU, HR_Concept_Category_UU);
@@ -177,6 +196,7 @@ public class X_HR_Concept_Category extends PO implements I_HR_Concept_Category, 
 
 	/** Get HR_Concept_Category_UU.
 		@return HR_Concept_Category_UU	  */
+	@Override
 	public String getHR_Concept_Category_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Concept_Category_UU);
@@ -185,6 +205,7 @@ public class X_HR_Concept_Category extends PO implements I_HR_Concept_Category, 
 	/** Set Is Decucable.
 		@param IEXT_IsDeducable Is Decucable
 	*/
+	@Override
 	public void setIEXT_IsDeducable (boolean IEXT_IsDeducable)
 	{
 		set_Value (COLUMNNAME_IEXT_IsDeducable, Boolean.valueOf(IEXT_IsDeducable));
@@ -193,13 +214,15 @@ public class X_HR_Concept_Category extends PO implements I_HR_Concept_Category, 
 	/** Get Is Decucable.
 		@return Is Decucable
 	  */
+	@Override
 	public boolean isIEXT_IsDeducable()
 	{
 		Object oo = get_Value(COLUMNNAME_IEXT_IsDeducable);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -208,6 +231,7 @@ public class X_HR_Concept_Category extends PO implements I_HR_Concept_Category, 
 	/** Set Is Non Decucable.
 		@param IEXT_NonIsDeducable Is Non Decucable
 	*/
+	@Override
 	public void setIEXT_NonIsDeducable (boolean IEXT_NonIsDeducable)
 	{
 		set_Value (COLUMNNAME_IEXT_NonIsDeducable, Boolean.valueOf(IEXT_NonIsDeducable));
@@ -216,13 +240,15 @@ public class X_HR_Concept_Category extends PO implements I_HR_Concept_Category, 
 	/** Get Is Non Decucable.
 		@return Is Non Decucable
 	  */
+	@Override
 	public boolean isIEXT_NonIsDeducable()
 	{
 		Object oo = get_Value(COLUMNNAME_IEXT_NonIsDeducable);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -231,6 +257,7 @@ public class X_HR_Concept_Category extends PO implements I_HR_Concept_Category, 
 	/** Set Default.
 		@param IsDefault Default value
 	*/
+	@Override
 	public void setIsDefault (boolean IsDefault)
 	{
 		set_Value (COLUMNNAME_IsDefault, Boolean.valueOf(IsDefault));
@@ -239,13 +266,15 @@ public class X_HR_Concept_Category extends PO implements I_HR_Concept_Category, 
 	/** Get Default.
 		@return Default value
 	  */
+	@Override
 	public boolean isDefault()
 	{
 		Object oo = get_Value(COLUMNNAME_IsDefault);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -254,6 +283,7 @@ public class X_HR_Concept_Category extends PO implements I_HR_Concept_Category, 
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -262,6 +292,7 @@ public class X_HR_Concept_Category extends PO implements I_HR_Concept_Category, 
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -278,6 +309,7 @@ public class X_HR_Concept_Category extends PO implements I_HR_Concept_Category, 
 	/** Set Search Key.
 		@param Value Search key for the record in the format required - must be unique
 	*/
+	@Override
 	public void setValue (String Value)
 	{
 		set_Value (COLUMNNAME_Value, Value);
@@ -286,6 +318,7 @@ public class X_HR_Concept_Category extends PO implements I_HR_Concept_Category, 
 	/** Get Search Key.
 		@return Search key for the record in the format required - must be unique
 	  */
+	@Override
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);

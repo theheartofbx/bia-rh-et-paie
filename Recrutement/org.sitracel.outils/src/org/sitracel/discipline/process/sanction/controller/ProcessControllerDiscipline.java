@@ -16,13 +16,12 @@ import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.sitracel.bean.BeanIdentifiant;
-import org.sitracel.bean.BeanMiseaPieds;
 import org.sitracel.bean.BeanNotification;
 import org.sitracel.beanfactory.BeanFactory;
-import org.sitracel.conge.callout.absence.controller.CalloutControllerAbsence;
 import org.sitracel.conge.callout.absence.controller.CalloutSqlControllerAbsence;
+import org.sitracel.conge.model.I_HR_Type_Absence;
 import org.sitracel.conge.model.MHRAbsence;
-import org.sitracel.conge.model.MHRTypeAbsence;
+import org.sitracel.conge.model.MHRPublicHoliday;
 import org.sitracel.controller.GeneralController;
 import org.sitracel.controller.GeneralSqlController;
 import org.sitracel.discipline.model.MHRDelaiReponse;
@@ -32,6 +31,8 @@ import org.sitracel.discipline.model.MHRDureeSanction;
 import org.sitracel.discipline.model.MHRPunishment;
 import org.sitracel.discipline.model.MHRSanctionAutorisation;
 import org.sitracel.discipline.model.MHRTypeSanction;
+import org.sitracel.discipline.model.X_HR_TypeSanction;
+import org.sitracel.model.I_C_BPartner;
 import org.sitracel.model.MCBPartner;
 
 public class ProcessControllerDiscipline {
@@ -44,8 +45,8 @@ public class ProcessControllerDiscipline {
 
 	public static BeanNotification getBeanNotificationSanction(Integer idSanction) {
 		BeanNotification resultat = BeanFactory.getBeanNotification();
-		
-		if(idSanction!=null) {			
+
+		if(idSanction!=null) {
 			MHRPunishment bhrp = new MHRPunishment(Env.getCtx(), idSanction, null);
 			if(bhrp!=null) {
 				MCBPartner cb = new MCBPartner(Env.getCtx(), bhrp.getC_BPartner_ID(), null);
@@ -58,7 +59,7 @@ public class ProcessControllerDiscipline {
 				if(bhrp.getPoste_Employe()!=null) {
 					resultat.setPosteEmploye(bhrp.getPoste_Employe().getHR_Job_ID());
 				}
-				
+
 				resultat.setDateEmission(bhrp.getDate_Emission());
 				resultat.setDatereponse(bhrp.getDate_Reponse_DE());
 				resultat.setDateValidation(bhrp.getDate_Validation());
@@ -66,7 +67,7 @@ public class ProcessControllerDiscipline {
 				if(delai!=null) {
 					resultat.setDelaiReponse(delai.getName());
 				}
-				
+
 				resultat.setMotif(bhrp.getMotif_Demande_Explication());
 				MHRSanctionAutorisation autorisation = new MHRSanctionAutorisation(Env.getCtx(), bhrp.getEmission_Sanction_ID(), null);
 				if(autorisation!=null) {
@@ -78,8 +79,8 @@ public class ProcessControllerDiscipline {
 				if(cb!=null) {
 					resultat.setMailEmploye(cb.getEMail());
 					resultat.setNomEmploye(cb.getName()+" "+cb.getName2());
-					MCBPartner cbsup = new MCBPartner(Env.getCtx(), bhrp.getEmis_Par_Nom_ID(), null); 
-					MCBPartner cbdirp = new MCBPartner(Env.getCtx(), bhrp.getValide_Rejete_Par_Nom_ID(), null); 
+					MCBPartner cbsup = new MCBPartner(Env.getCtx(), bhrp.getEmis_Par_Nom_ID(), null);
+					MCBPartner cbdirp = new MCBPartner(Env.getCtx(), bhrp.getValide_Rejete_Par_Nom_ID(), null);
 					if(cbsup!=null) {
 						resultat.setNomEmetteur(cbsup.getName()+" "+cbsup.getName2());
 						resultat.setMailEmetteur(cbsup.getEMail());
@@ -87,59 +88,59 @@ public class ProcessControllerDiscipline {
 					if(cbdirp!=null) {
 						resultat.setNomValidateur(cbdirp.getName()+" "+cbdirp.getName2());
 						resultat.setMailValidateur(cbdirp.getEMail());
-					}					
+					}
 				}
 			}
 		}
-		
-		return resultat;	
-		
-	}	
-	
+
+		return resultat;
+
+	}
+
 
 	public static BeanNotification getBeanNotificationDE(Integer idDemandeExplication) {
 		BeanNotification resultat = BeanFactory.getBeanNotification();
-		
-		if(idDemandeExplication!=null) {			
+
+		if(idDemandeExplication!=null) {
 			MHRDemandeExplication bhrp = new MHRDemandeExplication(Env.getCtx(), idDemandeExplication, null);
 			if(bhrp!=null) {
 				MBPartner cb = new MBPartner(Env.getCtx(), bhrp.getC_BPartner_ID(), null);
-				
+
 				if(bhrp.getEmis_Par_Poste()!=null) {
 					resultat.setPosteEmetteur(bhrp.getEmis_Par_Poste().getHR_Job_ID());
 				}
 				if(bhrp.getPoste_Employe()!=null) {
 					resultat.setPosteEmploye(bhrp.getPoste_Employe().getHR_Job_ID());
 				}
-				
+
 				resultat.setDateEmission(bhrp.getDate_Emission());
 				resultat.setDatereponse(bhrp.getDate_Reponse());
 				MHRDelaiReponse delai = new MHRDelaiReponse(Env.getCtx(), bhrp.getHR_Delai_Reponse_ID(), null);
 				if(delai!=null) {
 					resultat.setDelaiReponse(delai.getName());
 				}
-				
+
 				resultat.setMotif(bhrp.getMotif_Demande_Explication());
 				if(cb!=null) {
-					resultat.setMailEmploye(cb.get_ValueAsString(MCBPartner.COLUMNNAME_EMail));
+					resultat.setMailEmploye(cb.get_ValueAsString(I_C_BPartner.COLUMNNAME_EMail));
 					resultat.setNomEmploye(cb.getName()+" "+cb.getName2());
-					MBPartner cbsup = new MBPartner(Env.getCtx(), bhrp.getEmis_Par_Nom_ID(), null);  
+					MBPartner cbsup = new MBPartner(Env.getCtx(), bhrp.getEmis_Par_Nom_ID(), null);
 					if(cbsup!=null) {
 						resultat.setNomEmetteur(cbsup.getName()+" "+cbsup.getName2());
-						resultat.setMailEmetteur(cbsup.get_ValueAsString(MCBPartner.COLUMNNAME_EMail));
-					}		
+						resultat.setMailEmetteur(cbsup.get_ValueAsString(I_C_BPartner.COLUMNNAME_EMail));
+					}
 				}
 			}
 		}
-		
-		return resultat;	
-		
-	}	
-	
+
+		return resultat;
+
+	}
+
 	public static void validerSanction(Integer idSanction, Integer idADUser) {
 		if(idSanction!=null && idADUser!=null ){
 			MHRPunishment punishment = new MHRPunishment(Env.getCtx(), idSanction, null);
-			BeanIdentifiant beanIdentifiant = ProcessSqlControllerDiscipline.getBeanIdentifiant(idADUser, null);
+			BeanIdentifiant beanIdentifiant = MCBPartner.getIdentifiant(idADUser, null);
 			if(punishment!=null && beanIdentifiant!=null) {
 				if(beanIdentifiant.getNumEmploye()!=null) {
 					if(punishment.getDate_Debut_Application()!=null) {
@@ -162,14 +163,14 @@ public class ProcessControllerDiscipline {
 					ProcessControllerDiscipline.gererAbsenceApresValidationSanction(punishment, beanIdentifiant);
 					ProcessControllerDiscipline.gererDossierDisciplinaireApresValidationSanction(punishment);
 				}
-			}			
-		}	
+			}
+		}
 	}
-	
+
 	public static void rejeterSanction(Integer idSanction, Integer idADUser) {
 		if(idSanction!=null && idADUser!=null){
 			MHRPunishment punishment = new MHRPunishment(Env.getCtx(), idSanction, null);
-			BeanIdentifiant beanIdentifiant = ProcessSqlControllerDiscipline.getBeanIdentifiant(idADUser, null);
+			BeanIdentifiant beanIdentifiant = MCBPartner.getIdentifiant(idADUser, null);
 			if(punishment!=null && beanIdentifiant!=null) {
 				if(beanIdentifiant.getNumEmploye()!=null) {
 					ProcessControllerDiscipline.gererAbsenceApresRejetSanction(punishment, beanIdentifiant);
@@ -186,13 +187,13 @@ public class ProcessControllerDiscipline {
 					punishment.save(null);
 				}
 			}
-		}		
+		}
 	}
 
 	public static void approuverSanction(Integer idSanction, Integer idADUser) {
 		if(idSanction!=null && idADUser!=null) {
 			MHRPunishment pun = new MHRPunishment(Env.getCtx(), idSanction, null);
-			BeanIdentifiant bi = ProcessSqlControllerDiscipline.getBeanIdentifiant(idADUser, null);
+			BeanIdentifiant bi = MCBPartner.getIdentifiant(idADUser, null);
 			if(pun!=null && bi!=null) {
 				if(bi.getNumEmploye()!=null) {
 					pun.setApprouve_Desapprouve_Nom_ID(bi.getNumEmploye());
@@ -205,13 +206,13 @@ public class ProcessControllerDiscipline {
 					pun.save(null);
 				}
 			}
-		}		
-	}	
+		}
+	}
 
 	public static void desapprouveSanction(Integer idSanction, Integer idADUser) {
 		if(idSanction!=null && idADUser!=null) {
 			MHRPunishment pun = new MHRPunishment(Env.getCtx(), idSanction, null);
-			BeanIdentifiant bi = ProcessSqlControllerDiscipline.getBeanIdentifiant(idADUser, null);
+			BeanIdentifiant bi = MCBPartner.getIdentifiant(idADUser, null);
 			if(pun!=null && bi!=null) {
 				if(bi.getNumEmploye()!=null) {
 					pun.setApprouve_Desapprouve_Nom_ID(bi.getNumEmploye());
@@ -224,14 +225,14 @@ public class ProcessControllerDiscipline {
 					pun.save(null);
 				}
 			}
-		}		
-	}		
-	
+		}
+	}
+
 	public static void notifierSanction(Integer idSanction) {
-		
+
 		String obj="Emission d'une Mesure Disciplinaire";
 		BeanNotification bn = ProcessControllerDiscipline.getBeanNotificationSanction(idSanction);
-		ArrayList<InternetAddress> recieverMail = new ArrayList<InternetAddress>();
+		ArrayList<InternetAddress> recieverMail = new ArrayList<>();
 		try {
 			if(bn.getMailEmploye()!=null) {
 				if(bn.getMailEmploye().matches(".+@.+\\.[a-z]+")) {
@@ -260,16 +261,16 @@ public class ProcessControllerDiscipline {
 			dest = new InternetAddress[0];
 		}
 		GeneralController.sendEmail(expediteur, mdp, dest, obj, getNotifierSanctionMessage(idSanction));
-		
+
 	}
-	
-	private static void gererAbsenceApresValidationSanction(MHRPunishment punishment, BeanIdentifiant beanIdentifiant) {	
+
+	private static void gererAbsenceApresValidationSanction(MHRPunishment punishment, BeanIdentifiant beanIdentifiant) {
 		if(punishment!=null && beanIdentifiant!=null) {
 			MHRSanctionAutorisation autorisation = new MHRSanctionAutorisation(Env.getCtx(), punishment.getEmission_Sanction_ID(), null);
 			if(autorisation!=null) {
 				MHRTypeSanction typeSanction = new MHRTypeSanction(Env.getCtx(), autorisation.getHR_TypeSanction_ID(), null);
 				if(typeSanction!=null) {
-					if(typeSanction.getIncidence_Sanction_ID().equalsIgnoreCase(MHRTypeSanction.INCIDENCE_SANCTION_ID_PériodeDeSuspension)){
+					if(typeSanction.getIncidence_Sanction_ID().equalsIgnoreCase(X_HR_TypeSanction.INCIDENCE_SANCTION_ID_PériodeDeSuspension)){
 						MHRDureeSanction dureeSanction = new MHRDureeSanction(Env.getCtx(), punishment.getHR_Duree_Sanction_ID(), null);
 						int delaiApplication = 0;
 						if(dureeSanction!=null) {
@@ -277,8 +278,8 @@ public class ProcessControllerDiscipline {
 						}
 						Timestamp debutApplicationAbs = punishment.getDate_Debut_Application();
 						Timestamp finApplicationAbs = GeneralController.ajouterNombreJour(punishment.getDate_Debut_Application(), delaiApplication);
-						Integer typeAbsenceID = GeneralSqlController.getIDFromTableNameAndName(MHRTypeAbsence.COLUMNNAME_HR_Type_Absence_ID, 
-								MHRTypeAbsence.Table_Name, MHRTypeAbsence.COLUMNNAME_Nom_Absence, "Suspendu", null);
+						Integer typeAbsenceID = GeneralSqlController.getIDFromTableNameAndName(I_HR_Type_Absence.COLUMNNAME_HR_Type_Absence_ID,
+								I_HR_Type_Absence.Table_Name, I_HR_Type_Absence.COLUMNNAME_Nom_Absence, "Suspendu", null);
 						if(typeAbsenceID!=null) {
 							if(delaiApplication>0) {
 								punishment.setDate_Fin_Application(finApplicationAbs);
@@ -288,9 +289,9 @@ public class ProcessControllerDiscipline {
 							}
 							int i = 1;
 							while(debutApplicationAbs.before(finApplicationAbs)) {
-								Calendar cal = Calendar.getInstance();		
+								Calendar cal = Calendar.getInstance();
 								cal.setTime(debutApplicationAbs);
-								if(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY || !GeneralSqlController.isJourFerie(debutApplicationAbs,null)) {
+								if(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY || !MHRPublicHoliday.isJourFerie(debutApplicationAbs,null)) {
 									if(!ProcessSqlControllerDiscipline.isAbsenceExist(punishment.getC_BPartner_ID(), debutApplicationAbs, null)) {
 										MHRAbsence absence = new MHRAbsence(Env.getCtx(), null, null);
 										absence.setC_BPartner_ID(punishment.getC_BPartner_ID());
@@ -315,23 +316,23 @@ public class ProcessControllerDiscipline {
 								debutApplicationAbs=GeneralController.ajouterNombreJour(debutApplicationAbs, 1);
 							}
 						}
-						
+
 					}
-					else if (typeSanction.getIncidence_Sanction_ID().equalsIgnoreCase(MHRTypeSanction.INCIDENCE_SANCTION_ID_Licenciement)) {
-						
+					else if (typeSanction.getIncidence_Sanction_ID().equalsIgnoreCase(X_HR_TypeSanction.INCIDENCE_SANCTION_ID_Licenciement)) {
+
 					}
 				}
 			}
 		}
 	}
-	
-	private static void gererAbsenceApresRejetSanction(MHRPunishment punishment, BeanIdentifiant beanIdentifiant) {	
+
+	private static void gererAbsenceApresRejetSanction(MHRPunishment punishment, BeanIdentifiant beanIdentifiant) {
 		if(punishment!=null && beanIdentifiant!=null) {
 			MHRSanctionAutorisation autorisation = new MHRSanctionAutorisation(Env.getCtx(), punishment.getEmission_Sanction_ID(), null);
 			if(autorisation!=null) {
 				MHRTypeSanction typeSanction = new MHRTypeSanction(Env.getCtx(), autorisation.getHR_TypeSanction_ID(), null);
 				if(typeSanction!=null) {
-					if(typeSanction.getIncidence_Sanction_ID().equalsIgnoreCase(MHRTypeSanction.INCIDENCE_SANCTION_ID_PériodeDeSuspension)) {
+					if(typeSanction.getIncidence_Sanction_ID().equalsIgnoreCase(X_HR_TypeSanction.INCIDENCE_SANCTION_ID_PériodeDeSuspension)) {
 						ArrayList<Integer> listeAbsenceID = CalloutSqlControllerAbsence.getListeAbsenceIDByName(punishment.getC_BPartner_ID(), "Suspendu", punishment.getDate_Debut_Application(), punishment.getDate_Fin_Application(), null);
 						for(Integer absenceID:listeAbsenceID) {
 							MHRAbsence absence = new MHRAbsence(Env.getCtx(), absenceID,null);
@@ -344,11 +345,11 @@ public class ProcessControllerDiscipline {
 			}
 		}
 	}
-	
+
 	private static void gererDossierDisciplinaireApresValidationSanction(MHRPunishment punishment) {
 		if(punishment!=null) {
 			MHRDossierDisciplinaire dossier =ProcessSqlControllerDiscipline.getDossierDisciplinaire(punishment.getHR_Punishment_ID(), null);
-			if(dossier==null) {				
+			if(dossier==null) {
 				try {
 					dossier = new MHRDossierDisciplinaire(Env.getCtx(), null, null);
 					dossier.setC_BPartner_ID(punishment.getC_BPartner_ID());
@@ -373,8 +374,8 @@ public class ProcessControllerDiscipline {
 				} catch (IllegalStateException | SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}	
-			}				
+				}
+			}
 		}
 	}
 
@@ -383,16 +384,16 @@ public class ProcessControllerDiscipline {
 		if(dossier!=null) {
 			try {
 				if(dossier!=null) {
-					dossier.delete(false);			
+					dossier.delete(false);
 				}
 				DB.commit(true, dossier.get_TrxName());
 			} catch (IllegalStateException | SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}	
+			}
 		}
 	}
-	
+
 	private static String getNotifierSanctionMessage(Integer idSanction) {
 		String resultat = "";
 		if(idSanction!=null) {
@@ -420,15 +421,15 @@ public class ProcessControllerDiscipline {
 				String dateEmission="";
 				if(sanction.getDate_Emission()!=null) {
 					dateEmission = new SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.FRENCH).format(sanction.getDate_Emission());
-				}				
+				}
 				if(!sanction.isValidee() && !sanction.isRejetee()) {
 					resultat = "\tMr/Mme "+nameEmploye+", "
-							
+
 							+" \n\nUne mesure disciplinaire de type "+nameTypeSanction
 							+" a été émise à votre encontre le : "+dateEmission
-							+"\nPar M/Mme "+ nameEmetteur+"."	
+							+"\nPar M/Mme "+ nameEmetteur+"."
 							+ "\nVous trouverez de plus amples informations en vous connectant à la plateforme\nTrès Cordialement.";
-					
+
 				}
 				else if(sanction.isValidee()) {
 					String dateValidation="";
@@ -440,10 +441,10 @@ public class ProcessControllerDiscipline {
 						nameValidateur = nameValidateur+" "+validateur.getName2();
 					}
 					resultat = "\tMr/Mme "+nameEmploye+", "
-						
+
 						+" \n\nla mesure disciplinaire de type "+nameTypeSanction
 						+" émise à votre encontre le : "+dateEmission
-						+" par M/Mme "+ nameEmetteur+", "	
+						+" par M/Mme "+ nameEmetteur+", "
 						+"\na été validée le "+dateValidation
 						+" par "+nameValidateur+"."
 						+ "\n\nVous trouverez de plus amples informations en vous connectant à la plateforme\nTrès Cordialement.";
@@ -458,10 +459,10 @@ public class ProcessControllerDiscipline {
 						nameValidateur = nameValidateur+" "+validateur.getName2();
 					}
 					resultat = "\tMr/Mme "+nameEmploye+", "
-						
+
 						+" \n\nla mesure disciplinaire de type "+nameTypeSanction
 						+" émise à votre encontre le : "+dateEmission
-						+" par M/Mme "+ nameEmetteur+", "	
+						+" par M/Mme "+ nameEmetteur+", "
 						+"\na été rejetée le "+dateRejet
 						+" par "+nameValidateur+"."
 						+ "\n\nVous trouverez de plus amples informations en vous connectant à la plateforme\nTrès Cordialement.";
@@ -469,5 +470,5 @@ public class ProcessControllerDiscipline {
 			}
 		}
 		return resultat;
-	}	
+	}
 }

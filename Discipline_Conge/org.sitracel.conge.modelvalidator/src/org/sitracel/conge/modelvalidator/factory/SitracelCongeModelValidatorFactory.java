@@ -13,12 +13,12 @@ public class SitracelCongeModelValidatorFactory implements IModelValidatorFactor
 		// TODO Auto-generated method stub
 		if(className.equals("org.sitracel.modelvalidator.v2.absence.SitracelModelValidatorAbsence")) {
 			return new SitracelModelValidatorAbsence();
-		}
-		
+		}		
 		
 		if(className.equals("org.sitracel.modelvalidator.v2.conge.SitracelModelValidatorConge")) {
 			return new SitracelModelValidatorConge();
 		}
+		
 		if(className.equals("org.sitracel.modelvalidator.v2.conge.ModelValidatorCompenseConge")) {
 			return new SitracelModelValidatorCompenseConge();
 		}		

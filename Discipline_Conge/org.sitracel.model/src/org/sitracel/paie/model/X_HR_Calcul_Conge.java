@@ -97,25 +97,29 @@ public class X_HR_Calcul_Conge extends PO implements I_HR_Calcul_Conge, I_Persis
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Calcul_Conge[")
         .append(get_ID()).append("]");
       return sb.toString();
     }
 
+	@Override
 	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -125,28 +129,33 @@ public class X_HR_Calcul_Conge extends PO implements I_HR_Calcul_Conge, I_Persis
 	/** Set Business Partner .
 		@param C_BPartner_ID Identifies a Business Partner
 	*/
+	@Override
 	public void setC_BPartner_ID (int C_BPartner_ID)
 	{
-		if (C_BPartner_ID < 1)
+		if (C_BPartner_ID < 1) {
 			set_Value (COLUMNNAME_C_BPartner_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_C_BPartner_ID, Integer.valueOf(C_BPartner_ID));
+		}
 	}
 
 	/** Get Business Partner .
 		@return Identifies a Business Partner
 	  */
+	@Override
 	public int getC_BPartner_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_BPartner_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -155,6 +164,7 @@ public class X_HR_Calcul_Conge extends PO implements I_HR_Calcul_Conge, I_Persis
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -163,27 +173,32 @@ public class X_HR_Calcul_Conge extends PO implements I_HR_Calcul_Conge, I_Persis
 	/** Set Calcul Congé.
 		@param HR_Calcul_Conge_ID Calcul Congé
 	*/
+	@Override
 	public void setHR_Calcul_Conge_ID (int HR_Calcul_Conge_ID)
 	{
-		if (HR_Calcul_Conge_ID < 1)
+		if (HR_Calcul_Conge_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Calcul_Conge_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Calcul_Conge_ID, Integer.valueOf(HR_Calcul_Conge_ID));
+		}
 	}
 
 	/** Get Calcul Congé.
 		@return Calcul Congé	  */
+	@Override
 	public int getHR_Calcul_Conge_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Calcul_Conge_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Calcul_Conge_UU.
 		@param HR_Calcul_Conge_UU HR_Calcul_Conge_UU
 	*/
+	@Override
 	public void setHR_Calcul_Conge_UU (String HR_Calcul_Conge_UU)
 	{
 		set_Value (COLUMNNAME_HR_Calcul_Conge_UU, HR_Calcul_Conge_UU);
@@ -191,11 +206,13 @@ public class X_HR_Calcul_Conge extends PO implements I_HR_Calcul_Conge, I_Persis
 
 	/** Get HR_Calcul_Conge_UU.
 		@return HR_Calcul_Conge_UU	  */
+	@Override
 	public String getHR_Calcul_Conge_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Calcul_Conge_UU);
 	}
 
+	@Override
 	public I_HR_Element_Conge getHR_Element_Conge() throws RuntimeException
 	{
 		return (I_HR_Element_Conge)MTable.get(getCtx(), I_HR_Element_Conge.Table_ID)
@@ -205,24 +222,29 @@ public class X_HR_Calcul_Conge extends PO implements I_HR_Calcul_Conge, I_Persis
 	/** Set Élément Base Indemnite Congé.
 		@param HR_Element_Conge_ID Élément Base Indemnite Congé
 	*/
+	@Override
 	public void setHR_Element_Conge_ID (int HR_Element_Conge_ID)
 	{
-		if (HR_Element_Conge_ID < 1)
+		if (HR_Element_Conge_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Element_Conge_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Element_Conge_ID, Integer.valueOf(HR_Element_Conge_ID));
+		}
 	}
 
 	/** Get Élément Base Indemnite Congé.
 		@return Élément Base Indemnite Congé	  */
+	@Override
 	public int getHR_Element_Conge_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Element_Conge_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public I_HR_Holiday getHR_Holiday() throws RuntimeException
 	{
 		return (I_HR_Holiday)MTable.get(getCtx(), I_HR_Holiday.Table_ID)
@@ -232,27 +254,32 @@ public class X_HR_Calcul_Conge extends PO implements I_HR_Calcul_Conge, I_Persis
 	/** Set Congé.
 		@param HR_Holiday_ID Congé
 	*/
+	@Override
 	public void setHR_Holiday_ID (int HR_Holiday_ID)
 	{
-		if (HR_Holiday_ID < 1)
+		if (HR_Holiday_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Holiday_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Holiday_ID, Integer.valueOf(HR_Holiday_ID));
+		}
 	}
 
 	/** Get Congé.
 		@return Congé	  */
+	@Override
 	public int getHR_Holiday_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Holiday_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Montant.
 		@param Montant Montant
 	*/
+	@Override
 	public void setMontant (BigDecimal Montant)
 	{
 		set_Value (COLUMNNAME_Montant, Montant);
@@ -261,11 +288,13 @@ public class X_HR_Calcul_Conge extends PO implements I_HR_Calcul_Conge, I_Persis
 	/** Get Montant.
 		@return Montant
 	  */
+	@Override
 	public BigDecimal getMontant()
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Montant);
-		if (bd == null)
-			 return Env.ZERO;
+		if (bd == null) {
+			return Env.ZERO;
+		}
 		return bd;
 	}
 }

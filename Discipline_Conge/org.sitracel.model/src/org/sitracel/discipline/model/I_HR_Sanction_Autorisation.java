@@ -24,11 +24,11 @@ import org.compiere.util.KeyNamePair;
 import org.sitracel.model.I_HR_Categorie_Responsabilite;
 
 /** Generated Interface for HR_Sanction_Autorisation
- *  @author iDempiere (generated) 
+ *  @author iDempiere (generated)
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_Sanction_Autorisation 
+public interface I_HR_Sanction_Autorisation
 {
 
     /** TableName=HR_Sanction_Autorisation */
@@ -39,7 +39,7 @@ public interface I_HR_Sanction_Autorisation
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org 
+    /** AccessLevel = 3 - Client - Org
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 

@@ -26,7 +26,12 @@ import org.sitracel.conge.model.MHRHoliday;
 import org.sitracel.controller.GeneralController;
 import org.sitracel.controller.GeneralSqlController;
 import org.sitracel.model.MCBPartner;
+import org.sitracel.model.X_C_BPartner;
 import org.sitracel.paie.callout.CalloutControllerPaie;
+import org.sitracel.paie.model.I_HR_Attribute;
+import org.sitracel.paie.model.I_HR_Calcul_Conge;
+import org.sitracel.paie.model.I_HR_Calcul_Indemnite_Conge;
+import org.sitracel.paie.model.I_HR_Calcul_Paie;
 import org.sitracel.paie.model.MHRAttribute;
 import org.sitracel.paie.model.MHRBareme;
 import org.sitracel.paie.model.MHRBaremeConge;
@@ -47,10 +52,10 @@ public class ProcessControllerPaie {
 	private static CLogger log = CLogger.getCLogger (PO.class);
 	public static void mAJJNonPaie(Integer RecordID) {
 		if(RecordID!=null) {
-			
+
 		}
 	}
-	
+
 	public static void calculPaie(Integer recordID) {
 		if(recordID!=null) {
 			MHRAttribute attribut = new MHRAttribute(Env.getCtx(), recordID, null);
@@ -95,7 +100,7 @@ public class ProcessControllerPaie {
 											attributNP = new MHRAttribute(Env.getCtx(), 0, null);
 											attributNP.setHR_Concept_ID(concept.getConceptID());
 											attributNP.setC_BPartner_ID(bpartner.getC_BPartner_ID());
-											attributNP.setHR_Attribute_ID(DB.getNextID(Env.getCtx(), MHRAttribute.Table_Name, null));
+											attributNP.setHR_Attribute_ID(DB.getNextID(Env.getCtx(), I_HR_Attribute.Table_Name, null));
 										}
 										attributNP.setQty(new BigDecimal(1));
 										attributNP.setValidFrom(salaireBase.getValidFrom());
@@ -120,7 +125,7 @@ public class ProcessControllerPaie {
 		String trxName =null;
 		if(bpartnerID!=null && periodeSalarialeID!=null) {
 			MCBPartner bpartner = new MCBPartner(Env.getCtx(), bpartnerID, null);
-			MHRPeriodeSalariale periodeSalariale = new MHRPeriodeSalariale(Env.getCtx(), periodeSalarialeID, null);			
+			MHRPeriodeSalariale periodeSalariale = new MHRPeriodeSalariale(Env.getCtx(), periodeSalarialeID, null);
 			if(bpartner!=null && periodeSalariale!=null) {
 				GeneralSqlController.resetCalculPaie(bpartnerID, trxName);
 				MHRElementBasePaieEmploye elementBasePaieEmploye = CalloutControllerPaie.getElementBaseCalculPaie(bpartner, periodeSalariale, trxName);
@@ -129,7 +134,7 @@ public class ProcessControllerPaie {
 					bpartner.setDate_Debut_Contrat_Relative(dernierContrat.getDate_Debut());
 					bpartner.save();
 				}
-				if(elementBasePaieEmploye==null) {		
+				if(elementBasePaieEmploye==null) {
 					elementBasePaieEmploye = new MHRElementBasePaieEmploye(Env.getCtx(), 0, null);
 				}
 				ArrayList<MHRGestionPaieEmploye> listeGestionPaieEmployes = GeneralSqlController.getAllGestionPaieEmploye(trxName);
@@ -140,7 +145,7 @@ public class ProcessControllerPaie {
 					}
 				}
 				variables.put("IC", BigDecimal.ZERO);
-				
+
 			    ArrayList<MHRElementBasePaie> listeElementBasePaies = ProcessSqlControllerPaie.getElementBasePaieInitialValues(null);
 			    if(listeElementBasePaies!=null) {
 				    for(MHRElementBasePaie elementBasePaie : listeElementBasePaies) {
@@ -160,7 +165,7 @@ public class ProcessControllerPaie {
 							MHRCalculPaie salaireNet = ProcessSqlControllerPaie.getCalculPaiebyValue(bpartner.getC_BPartner_ID(), "NP", null);
 							if(salaireNet==null) {
 								salaireNet = new MHRCalculPaie(Env.getCtx(), 0, null);
-								salaireNet.setHR_Calcul_Paie_ID(DB.getNextID(Env.getCtx(), MHRCalculPaie.Table_Name, null));
+								salaireNet.setHR_Calcul_Paie_ID(DB.getNextID(Env.getCtx(), I_HR_Calcul_Paie.Table_Name, null));
 							}
 							salaireNet.setHR_Element_Base_Paie_ID(concept.getHR_Element_Base_Paie_ID());
 							salaireNet.setC_BPartner_ID(bpartner.getC_BPartner_ID());
@@ -180,7 +185,7 @@ public class ProcessControllerPaie {
 			}
 		}
 	}
-	
+
 	public static BigDecimal calculerIndemniteConge(Integer bpartnerID, Integer holidayID) {
 		BigDecimal salaireCotisableTotalBrut=null;
 		if(bpartnerID!=null && holidayID!=null) {
@@ -230,23 +235,23 @@ public class ProcessControllerPaie {
 					if(salaireBaseConcept!=null && listePeriodeSalariale!=null && !listePeriodeSalariale.isEmpty()) {
 						int nbJourCongeBase = 0;
 						int annee = 0;
-						Set<Integer> anneesTraitees = new HashSet<>();  
-						
+						Set<Integer> anneesTraitees = new HashSet<>();
+
 						for(MHRPeriodeSalariale periodeSalariale : listePeriodeSalariale) {
 						    annee = periodeSalariale.getDate_Debut_Defaut().toInstant()
 						            .atZone(ZoneId.systemDefault())
 						            .toLocalDate().getYear();
-						   
+
 						    if (!anneesTraitees.contains(annee)) {
-						        nbJourCongeBase = nbJourCongeBase + GeneralController.getNombreJourCongeAnnuelBase();						       
+						        nbJourCongeBase = nbJourCongeBase + GeneralController.getNombreJourCongeAnnuelBase();
 						        anneesTraitees.add(annee);
 						    }
-							MHRHistoriquePaie historiquePaie = GeneralSqlController.getHistoriquePaie(bpartnerID, salaireBaseConcept.getHR_Element_Base_Paie_ID(), 
+							MHRHistoriquePaie historiquePaie = GeneralSqlController.getHistoriquePaie(bpartnerID, salaireBaseConcept.getHR_Element_Base_Paie_ID(),
 									periodeSalariale.getHR_Periode_Salariale_ID(), null);
 							if(historiquePaie==null) {
 								ProcessControllerPaie.calculerPaie(bpartnerID, periodeSalariale.getHR_Periode_Salariale_ID());
-								historiquePaie = GeneralSqlController.getHistoriquePaie(bpartnerID, salaireBaseConcept.getHR_Element_Base_Paie_ID(), 
-										periodeSalariale.getHR_Periode_Salariale_ID(), null);								
+								historiquePaie = GeneralSqlController.getHistoriquePaie(bpartnerID, salaireBaseConcept.getHR_Element_Base_Paie_ID(),
+										periodeSalariale.getHR_Periode_Salariale_ID(), null);
 							}
 							if(historiquePaie==null) {
 								return null;
@@ -266,7 +271,7 @@ public class ProcessControllerPaie {
 							calculIndemniteConge.setC_BPartner_ID(bpartnerID);
 							calculIndemniteConge.setSalaire_Cotisable(salaireCotisableBrut);
 							calculIndemniteConge.setDate_Debut(periodeSalariale.getDate_Debut_Defaut());
-							calculIndemniteConge.setHR_Calcul_Indemnite_Conge_ID(DB.getNextID(Env.getCtx(), MHRCalculIndemniteConge.Table_Name, null));
+							calculIndemniteConge.setHR_Calcul_Indemnite_Conge_ID(DB.getNextID(Env.getCtx(), I_HR_Calcul_Indemnite_Conge.Table_Name, null));
 							calculIndemniteConge.save();
 							salaireCotisableTotalBrut = salaireCotisableTotalBrut.add(salaireCotisableBrut);
 						}
@@ -280,9 +285,9 @@ public class ProcessControllerPaie {
 							}
 							ProcessControllerPaie.setCalculCongeElmtBase(bpartner, holiday, salaireCotisableTotalBrut, "SCPR", variables);
 							ProcessControllerPaie.setCalculCongeElmtBase(bpartner, holiday, BigDecimal.valueOf(nbJourCongeBase), "NJCI", variables);
-							if(dernierConge!=null && dernierConge.getNombreEnfantPetit()!=null && dernierConge.getGenre()!=null 
-									&& dernierConge.getGenre().equalsIgnoreCase(MCBPartner.SEX_Femme)) {
-								ProcessControllerPaie.setCalculCongeElmtBase(bpartner, holiday, BigDecimal.valueOf((int)(dernierConge.getNombreEnfantPetit()*2)), "CEMS", variables);
+							if(dernierConge!=null && dernierConge.getNombreEnfantPetit()!=null && dernierConge.getGenre()!=null
+									&& dernierConge.getGenre().equalsIgnoreCase(X_C_BPartner.SEX_Femme)) {
+								ProcessControllerPaie.setCalculCongeElmtBase(bpartner, holiday, BigDecimal.valueOf(dernierConge.getNombreEnfantPetit()*2), "CEMS", variables);
 							}
 							else {
 								ProcessControllerPaie.setCalculCongeElmtBase(bpartner, holiday, BigDecimal.ZERO, "CEMS", variables);
@@ -308,7 +313,7 @@ public class ProcessControllerPaie {
 										MHRCalculConge netAPayer = ProcessSqlControllerPaie.getCalculCongebyValue(bpartner.getC_BPartner_ID(), "NP", null);
 										if(netAPayer==null) {
 											netAPayer = new MHRCalculConge(Env.getCtx(), 0, null);
-											netAPayer.setHR_Calcul_Conge_ID(DB.getNextID(Env.getCtx(), MHRCalculConge.Table_Name, null));
+											netAPayer.setHR_Calcul_Conge_ID(DB.getNextID(Env.getCtx(), I_HR_Calcul_Conge.Table_Name, null));
 										}
 										netAPayer.setHR_Element_Conge_ID(concept.getHR_Element_Conge_ID());
 										netAPayer.setC_BPartner_ID(bpartner.getC_BPartner_ID());
@@ -323,16 +328,16 @@ public class ProcessControllerPaie {
 										}
 										netAPayer.save();
 									}
-							    }						    
+							    }
 						    }
-						}						
+						}
 					}
-				}				
+				}
 			}
 		}
 		return salaireCotisableTotalBrut;
-	}	
-	
+	}
+
 	private static void genererElementPaie(Integer cbpartnerID, String value, Map<String, BigDecimal> variables, Timestamp validFrom) {
 		if(cbpartnerID!=null && value!=null && validFrom!=null) {
 			Integer attributID = ProcessSqlControllerPaie.getAttributIDbyValue(cbpartnerID, value, null);
@@ -348,7 +353,7 @@ public class ProcessControllerPaie {
 					attribut = new MHRAttribute(Env.getCtx(), 0, null);
 					attribut.setHR_Concept_ID(concept.getConceptID());
 					attribut.setC_BPartner_ID(cbpartnerID);
-					attribut.setHR_Attribute_ID(DB.getNextID(Env.getCtx(), MHRAttribute.Table_Name, null));
+					attribut.setHR_Attribute_ID(DB.getNextID(Env.getCtx(), I_HR_Attribute.Table_Name, null));
 				}
 				attribut.setQty(new BigDecimal(1));
 				attribut.setValidFrom(validFrom);
@@ -361,8 +366,8 @@ public class ProcessControllerPaie {
 				attribut.save();
 			}
 		}
-	}	
-	
+	}
+
 	private static BigDecimal getAmountFromConcept(BeanElmtPaie conceptInfo, Map<String, BigDecimal> variables) {
 		BigDecimal resultat =null;
 		if(conceptInfo!=null && variables!=null) {
@@ -388,7 +393,7 @@ public class ProcessControllerPaie {
 						else{
 							BeanBareme beanBareme = ProcessSqlControllerPaie.getBIABareme(conceptInfo.getConceptID(), conceptBaseAmount, null);
 							if(beanBareme!=null) {
-								if(beanBareme.getFormuleBareme()!=null) {								
+								if(beanBareme.getFormuleBareme()!=null) {
 									try {
 										resultat = evaluerFormule(beanBareme.getFormuleBareme(), variables);
 										variables.put(conceptInfo.getValue(), resultat);
@@ -431,7 +436,7 @@ public class ProcessControllerPaie {
 						montant = calculBasePaie.getMontant();
 					}
 					if(typeDeCalcul.getName().equalsIgnoreCase("Pourcentage")) {
-						resultat = ((BigDecimal) montant).multiply(elementBasePaie.getPourcentage());
+						resultat = montant.multiply(elementBasePaie.getPourcentage());
 						variables.put(elementBasePaie.getValue(), resultat);
 					}
 					else {
@@ -482,7 +487,7 @@ public class ProcessControllerPaie {
 						montant = calculBaseConge.getMontant();
 					}
 					if(typeDeCalcul.getName().equalsIgnoreCase("Pourcentage")) {
-						resultat = ((BigDecimal) montant).multiply(elementConge.getPourcentage());
+						resultat = montant.multiply(elementConge.getPourcentage());
 						variables.put(elementConge.getValue(), resultat);
 					}
 					else {
@@ -510,7 +515,7 @@ public class ProcessControllerPaie {
 		}
 		return resultat;
 	}
-	
+
 	public static BigDecimal evaluerFormule(String formule, Map<String, BigDecimal> variables) throws ScriptException {
 	        // Créer un moteur de script JavaScript
 		Context context = Context.enter();
@@ -523,17 +528,17 @@ public class ProcessControllerPaie {
         Object result = context.evaluateString(scope, formule, "<cmd>", 1, null);
 	    return new BigDecimal(Context.toString(result));
 	}
-	
+
 	public static void setCalculPaieElmtBase(MCBPartner bpartner, MHRPeriodeSalariale periodeSalariale, BigDecimal montant, MHRGestionPaieEmploye gestionPaieEmploye, Map<String, BigDecimal> variables) {
 		if(bpartner!=null && periodeSalariale!=null && gestionPaieEmploye!=null && variables!=null) {
 			MHRElementBasePaie elementBasePaie = ProcessSqlControllerPaie.getElementBasePaieFromValue(gestionPaieEmploye.getValue(), null);
 			if(elementBasePaie!=null) {
-				MHRCalculPaie calculPaie = ProcessSqlControllerPaie.getCalculPaiebyValue(bpartner.getC_BPartner_ID(), gestionPaieEmploye.getValue(), null);			
+				MHRCalculPaie calculPaie = ProcessSqlControllerPaie.getCalculPaiebyValue(bpartner.getC_BPartner_ID(), gestionPaieEmploye.getValue(), null);
 				if(calculPaie==null) {
 				   calculPaie = new MHRCalculPaie(Env.getCtx(), 0, null);
 				   calculPaie.setHR_Element_Base_Paie_ID(elementBasePaie.getHR_Element_Base_Paie_ID());
 				   calculPaie.setC_BPartner_ID(bpartner.getC_BPartner_ID());
-				   calculPaie.setHR_Calcul_Paie_ID(DB.getNextID(Env.getCtx(), MHRCalculPaie.Table_Name, null));
+				   calculPaie.setHR_Calcul_Paie_ID(DB.getNextID(Env.getCtx(), I_HR_Calcul_Paie.Table_Name, null));
 				}
 				calculPaie.setHR_Periode_Salariale_ID(periodeSalariale.getHR_Periode_Salariale_ID());
 				if(montant==null) {
@@ -555,17 +560,17 @@ public class ProcessControllerPaie {
 			}
 		}
 	}
-	
+
 
 	public static void setCalculPaie(MCBPartner bpartner, MHRPeriodeSalariale periodeSalariale, MHRElementBasePaie elementBasePaie, BigDecimal montant, Map<String, BigDecimal> variables) {
 		if(bpartner!=null && periodeSalariale!=null && elementBasePaie!=null && variables!=null) {
 			if(elementBasePaie!=null) {
-				MHRCalculPaie calculPaie = ProcessSqlControllerPaie.getCalculPaiebyValue(bpartner.getC_BPartner_ID(), elementBasePaie.getValue(), null);			
+				MHRCalculPaie calculPaie = ProcessSqlControllerPaie.getCalculPaiebyValue(bpartner.getC_BPartner_ID(), elementBasePaie.getValue(), null);
 				if(calculPaie==null) {
 				   calculPaie = new MHRCalculPaie(Env.getCtx(), 0, null);
 				   calculPaie.setHR_Element_Base_Paie_ID(elementBasePaie.getHR_Element_Base_Paie_ID());
 				   calculPaie.setC_BPartner_ID(bpartner.getC_BPartner_ID());
-				   calculPaie.setHR_Calcul_Paie_ID(DB.getNextID(Env.getCtx(), MHRCalculPaie.Table_Name, null));
+				   calculPaie.setHR_Calcul_Paie_ID(DB.getNextID(Env.getCtx(), I_HR_Calcul_Paie.Table_Name, null));
 				}
 				calculPaie.setHR_Periode_Salariale_ID(periodeSalariale.getHR_Periode_Salariale_ID());
 				if(montant==null) {
@@ -582,12 +587,12 @@ public class ProcessControllerPaie {
 		if(retenueSalariale!=null && periodeSalariale!=null) {
 			MHRElementBasePaie elementBasePaie = new MHRElementBasePaie(Env.getCtx(), retenueSalariale.getHR_Element_Base_Paie_ID(), trxName);
 			if(elementBasePaie!=null) {
-				MHRCalculPaie calculPaie = ProcessSqlControllerPaie.getCalculPaiebyValue(retenueSalariale.getC_BPartner_ID(), elementBasePaie.getValue(), null);			
+				MHRCalculPaie calculPaie = ProcessSqlControllerPaie.getCalculPaiebyValue(retenueSalariale.getC_BPartner_ID(), elementBasePaie.getValue(), null);
 				if(calculPaie==null) {
 				   calculPaie = new MHRCalculPaie(Env.getCtx(), 0, null);
 				   calculPaie.setHR_Element_Base_Paie_ID(elementBasePaie.getHR_Element_Base_Paie_ID());
 				   calculPaie.setC_BPartner_ID(retenueSalariale.getC_BPartner_ID());
-				   calculPaie.setHR_Calcul_Paie_ID(DB.getNextID(Env.getCtx(), MHRCalculPaie.Table_Name, null));
+				   calculPaie.setHR_Calcul_Paie_ID(DB.getNextID(Env.getCtx(), I_HR_Calcul_Paie.Table_Name, null));
 				}
 				calculPaie.setHR_Periode_Salariale_ID(periodeSalariale.getHR_Periode_Salariale_ID());
 				if(retenueSalariale.getFin_Prelevement_ID()==periodeSalariale.getHR_Periode_Salariale_ID()) {
@@ -605,12 +610,12 @@ public class ProcessControllerPaie {
 		if(bpartner!=null && holiday!=null && value!=null && variables!=null) {
 			MHRElementConge elementConge = ProcessSqlControllerPaie.getElementBaseCongeFromValue(value, null);
 			if(elementConge!=null) {
-				MHRCalculConge calculConge = ProcessSqlControllerPaie.getCalculCongebyValue(bpartner.getC_BPartner_ID(), value, null);			
+				MHRCalculConge calculConge = ProcessSqlControllerPaie.getCalculCongebyValue(bpartner.getC_BPartner_ID(), value, null);
 				if(calculConge==null) {
 				   calculConge = new MHRCalculConge(Env.getCtx(), 0, null);
 				   calculConge.setHR_Element_Conge_ID(elementConge.getHR_Element_Conge_ID());
 				   calculConge.setC_BPartner_ID(bpartner.getC_BPartner_ID());
-				   calculConge.setHR_Calcul_Conge_ID(DB.getNextID(Env.getCtx(), MHRCalculConge.Table_Name, null));
+				   calculConge.setHR_Calcul_Conge_ID(DB.getNextID(Env.getCtx(), I_HR_Calcul_Conge.Table_Name, null));
 				}
 				calculConge.setHR_Holiday_ID(holiday.getHR_Holiday_ID());
 				if(montant==null) {
@@ -625,12 +630,12 @@ public class ProcessControllerPaie {
 
 	public static void setCalculConge(MCBPartner bpartner, MHRHoliday holiday, MHRElementConge elementConge, BigDecimal montant, Map<String, BigDecimal> variables) {
 		if(bpartner!=null && holiday!=null && elementConge!=null && variables!=null) {
-			MHRCalculConge calculConge = ProcessSqlControllerPaie.getCalculCongebyValue(bpartner.getC_BPartner_ID(), elementConge.getValue(), null);			
+			MHRCalculConge calculConge = ProcessSqlControllerPaie.getCalculCongebyValue(bpartner.getC_BPartner_ID(), elementConge.getValue(), null);
 			if(calculConge==null) {
 			   calculConge = new MHRCalculConge(Env.getCtx(), 0, null);
 			   calculConge.setHR_Element_Conge_ID(elementConge.getHR_Element_Conge_ID());
 			   calculConge.setC_BPartner_ID(bpartner.getC_BPartner_ID());
-			   calculConge.setHR_Calcul_Conge_ID(DB.getNextID(Env.getCtx(), MHRCalculConge.Table_Name, null));
+			   calculConge.setHR_Calcul_Conge_ID(DB.getNextID(Env.getCtx(), I_HR_Calcul_Conge.Table_Name, null));
 			}
 			calculConge.setHR_Holiday_ID(holiday.getHR_Holiday_ID());
 			if(montant==null) {
@@ -640,6 +645,6 @@ public class ProcessControllerPaie {
 			calculConge.save();
 			variables.put(elementConge.getValue(), montant!=null?montant:BigDecimal.ZERO);
 		}
-	}	
-	
+	}
+
 }

@@ -18,15 +18,16 @@ package org.sitracel.recrutement.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
+import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_SessionRecrutement
- *  @author iDempiere (generated) 
+ *  @author iDempiere (generated)
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_SessionRecrutement 
+public interface I_HR_SessionRecrutement
 {
 
     /** TableName=HR_SessionRecrutement */
@@ -37,7 +38,7 @@ public interface I_HR_SessionRecrutement
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org 
+    /** AccessLevel = 3 - Client - Org
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
@@ -382,12 +383,12 @@ Emploi	  */
     public static final String COLUMNNAME_Valider = "Valider";
 
 	/** Set Valider .
-	  * Valider 
+	  * Valider
 	  */
 	public void setValider (String Valider);
 
 	/** Get Valider .
-	  * Valider 
+	  * Valider
 	  */
 	public String getValider();
 }

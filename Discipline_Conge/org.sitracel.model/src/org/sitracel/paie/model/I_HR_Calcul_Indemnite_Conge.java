@@ -18,15 +18,16 @@ package org.sitracel.paie.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
+import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_Calcul_Indemnite_Conge
- *  @author iDempiere (generated) 
+ *  @author iDempiere (generated)
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_Calcul_Indemnite_Conge 
+public interface I_HR_Calcul_Indemnite_Conge
 {
 
     /** TableName=HR_Calcul_Indemnite_Conge */
@@ -37,7 +38,7 @@ public interface I_HR_Calcul_Indemnite_Conge
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org 
+    /** AccessLevel = 3 - Client - Org
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
@@ -167,12 +168,12 @@ public interface I_HR_Calcul_Indemnite_Conge
     public static final String COLUMNNAME_Salaire_Cotisable = "Salaire_Cotisable";
 
 	/** Set Salaire Cotisable .
-	  * Salaire Cotisable 
+	  * Salaire Cotisable
 	  */
 	public void setSalaire_Cotisable (BigDecimal Salaire_Cotisable);
 
 	/** Get Salaire Cotisable .
-	  * Salaire Cotisable 
+	  * Salaire Cotisable
 	  */
 	public BigDecimal getSalaire_Cotisable();
 

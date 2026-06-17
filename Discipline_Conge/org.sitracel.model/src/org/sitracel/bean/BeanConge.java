@@ -6,7 +6,7 @@ import java.util.List;
 public class BeanConge {
 	private String genre;
 	private String dateAbsence;
-	private String idAbsence; 
+	private String idAbsence;
 	private Integer nombreJourCongeTotal;
 	private Integer nombreJourCongeUtilise;
 	private Integer nombreJourCongeRestant;
@@ -21,9 +21,9 @@ public class BeanConge {
 	private Timestamp dateDebutDernierConge;
 	private Timestamp dateFinDernierConge;
 	private Timestamp dateEmbauche;
-	
+
 	public BeanConge() {
-		
+
 	}
 
 	public String getGenre() {

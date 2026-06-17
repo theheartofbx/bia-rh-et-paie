@@ -19,7 +19,10 @@ package org.sitracel.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Model for HR_Formulaire
@@ -87,19 +90,22 @@ public class X_HR_Formulaire extends PO implements I_HR_Formulaire, I_Persistent
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Formulaire[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -109,6 +115,7 @@ public class X_HR_Formulaire extends PO implements I_HR_Formulaire, I_Persistent
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
+	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -117,6 +124,7 @@ public class X_HR_Formulaire extends PO implements I_HR_Formulaire, I_Persistent
 	/** Get Description.
 		@return Optional short description of the record
 	  */
+	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -125,27 +133,32 @@ public class X_HR_Formulaire extends PO implements I_HR_Formulaire, I_Persistent
 	/** Set Formulaire.
 		@param HR_Formulaire_ID Formulaire
 	*/
+	@Override
 	public void setHR_Formulaire_ID (int HR_Formulaire_ID)
 	{
-		if (HR_Formulaire_ID < 1)
+		if (HR_Formulaire_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Formulaire_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Formulaire_ID, Integer.valueOf(HR_Formulaire_ID));
+		}
 	}
 
 	/** Get Formulaire.
 		@return Formulaire	  */
+	@Override
 	public int getHR_Formulaire_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Formulaire_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Formulaire_UU.
 		@param HR_Formulaire_UU HR_Formulaire_UU
 	*/
+	@Override
 	public void setHR_Formulaire_UU (String HR_Formulaire_UU)
 	{
 		set_Value (COLUMNNAME_HR_Formulaire_UU, HR_Formulaire_UU);
@@ -153,6 +166,7 @@ public class X_HR_Formulaire extends PO implements I_HR_Formulaire, I_Persistent
 
 	/** Get HR_Formulaire_UU.
 		@return HR_Formulaire_UU	  */
+	@Override
 	public String getHR_Formulaire_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Formulaire_UU);
@@ -161,6 +175,7 @@ public class X_HR_Formulaire extends PO implements I_HR_Formulaire, I_Persistent
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -169,6 +184,7 @@ public class X_HR_Formulaire extends PO implements I_HR_Formulaire, I_Persistent
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -185,6 +201,7 @@ public class X_HR_Formulaire extends PO implements I_HR_Formulaire, I_Persistent
 	/** Set Sequence.
 		@param SeqNo Method of ordering records; lowest number comes first
 	*/
+	@Override
 	public void setSeqNo (int SeqNo)
 	{
 		set_Value (COLUMNNAME_SeqNo, Integer.valueOf(SeqNo));
@@ -193,11 +210,13 @@ public class X_HR_Formulaire extends PO implements I_HR_Formulaire, I_Persistent
 	/** Get Sequence.
 		@return Method of ordering records; lowest number comes first
 	  */
+	@Override
 	public int getSeqNo()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_SeqNo);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
@@ -208,6 +227,7 @@ public class X_HR_Formulaire extends PO implements I_HR_Formulaire, I_Persistent
 	/** Set Status.
 		@param Status Status of the currently running check
 	*/
+	@Override
 	public void setStatus (String Status)
 	{
 
@@ -217,6 +237,7 @@ public class X_HR_Formulaire extends PO implements I_HR_Formulaire, I_Persistent
 	/** Get Status.
 		@return Status of the currently running check
 	  */
+	@Override
 	public String getStatus()
 	{
 		return (String)get_Value(COLUMNNAME_Status);

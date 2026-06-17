@@ -9,6 +9,9 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -26,8 +29,9 @@ import org.sitracel.bean.BeanPeriode;
 import org.sitracel.beanfactory.BeanFactory;
 import org.sitracel.conge.callout.conge.controller.CalloutSqlControllerConge;
 import org.sitracel.conge.model.MHREmployeeChildren;
+import org.sitracel.conge.model.MHRPublicHoliday;
 import org.sitracel.conge.model.MHRTypeConge;
-import org.sitracel.model.MCBPartner;
+import org.sitracel.model.X_C_BPartner;
 import org.sitracel.paie.model.MHRElementBasePaieEmploye;
 
 public class GeneralController {
@@ -44,7 +48,7 @@ public class GeneralController {
 					if(dernierContrat!=null) {
 						dateDebutContrat = dernierContrat.getDate_Debut();
 					}
-					BeanPeriode[] conges = GeneralSqlController.getCongesValidebyNameConge(idCBPartner, "Annuel", 
+					BeanPeriode[] conges = GeneralSqlController.getCongesValidebyNameConge(idCBPartner, "Annuel",
 							GeneralController.getFirstDayOfaYear(dateActuelle), GeneralController.getLastDayOfaYear(dateActuelle), null);
 					if(conges!=null) {
 						for (BeanPeriode beanPeriode : conges) {
@@ -57,9 +61,9 @@ public class GeneralController {
 					int nbBase = 0;
 					if(beanConge.getAnneeAnciennete()!=null) {
 						nbBase = nombreJourCongeBase;
-						nbBase = nbBase + (2*((int)beanConge.getAnneeAnciennete()/3));
+						nbBase = nbBase + (2*(beanConge.getAnneeAnciennete()/3));
 					}
-					if(beanConge.getGenre().equals(MCBPartner.SEX_Femme)) {
+					if(beanConge.getGenre().equals(X_C_BPartner.SEX_Femme)) {
 						nbBase = nbBase+(2*beanConge.getNombreEnfantPetit());
 					}
 					beanConge.setNombreJourCongeTotal(nbBase);
@@ -69,8 +73,8 @@ public class GeneralController {
 				}
 			}
 		}
-		return beanConge;		
-	}	
+		return beanConge;
+	}
 
 	public static BeanConge getNombreJourCongeMax(Integer idCBPartner, Timestamp dateActuelle,String trxName) {
 		BeanConge beanConge = BeanFactory.getBeanConge();
@@ -86,16 +90,16 @@ public class GeneralController {
 			int nbBase = 0;
 			if(beanConge.getAnneeAnciennete()!=null) {
 				nbBase = nombreJourCongeBase;
-				nbBase = nbBase + (2*((int)beanConge.getAnneeAnciennete()/3));
+				nbBase = nbBase + (2*(beanConge.getAnneeAnciennete()/3));
 			}
-			if(beanConge.getGenre().equals(MCBPartner.SEX_Femme)) {
+			if(beanConge.getGenre().equals(X_C_BPartner.SEX_Femme)) {
 				nbBase = nbBase+(2*beanConge.getNombreEnfantPetit());
 			}
 			beanConge.setNombreJourCongeTotal(nbBase);
 		}
-		return beanConge;		
+		return beanConge;
 	}
-	
+
 	public static BeanConge setAnciennete(BeanConge beanConge, Timestamp dateDebut, Timestamp dateFin) {
 		if(beanConge!=null && dateDebut!=null && dateFin!=null) {
 			LocalDate date1 = dateDebut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -103,11 +107,11 @@ public class GeneralController {
 	        Period periode = Period.between(date1, date2);
 			beanConge.setAnneeAnciennete(periode.getYears());
 			beanConge.setMoisAnciennete((int)ChronoUnit.MONTHS.between(date1, date2));
-			beanConge.setJourAnciennete((int)ChronoUnit.DAYS.between(date1, date2));	
+			beanConge.setJourAnciennete((int)ChronoUnit.DAYS.between(date1, date2));
 		}
 		return beanConge;
 	}
-	
+
 	public static MHRElementBasePaieEmploye getDateDernierContrat(Integer bpartnerID, Timestamp dateMax) {
 		MHRElementBasePaieEmploye resultat = null;
 		if(bpartnerID!=null && dateMax!=null) {
@@ -128,10 +132,10 @@ public class GeneralController {
 			        }
 			    }
 			}
-		}		
+		}
 		return resultat;
 	}
-	
+
 	public static Timestamp ajouterNombreJour(Timestamp date, int nombreJour) {
 		if(date!=null) {
 			LocalDate jour = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -140,8 +144,8 @@ public class GeneralController {
 				date = GeneralController.ajusterenAjoutant(Timestamp.valueOf(LocalDateTime.of(jour, date.toLocalDateTime().toLocalTime())));
 			}
 		}
-		return date;		
-	}	
+		return date;
+	}
 
 	public static Timestamp retirerNombreJour(Timestamp date, int nombreJour) {
 		if(date!=null) {
@@ -151,9 +155,9 @@ public class GeneralController {
 				date = GeneralController.ajusterenRetirant(Timestamp.valueOf(LocalDateTime.of(jour, date.toLocalDateTime().toLocalTime())));
 			}
 		}
-		return date;		
+		return date;
 	}
-	
+
 	public static Timestamp getFirstDayOfThisYear() {
 		Calendar cal = Calendar.getInstance();
 		Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -164,7 +168,7 @@ public class GeneralController {
 		cal.set(Calendar.DAY_OF_MONTH, 31);
 		return new Timestamp(cal.getTime().getTime());
 	}
-	
+
 	public static Timestamp getLastDayOfThisYear() {
 		Calendar cal = Calendar.getInstance();
 		Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -174,7 +178,7 @@ public class GeneralController {
 		cal.set(Calendar.DAY_OF_YEAR, 1);
 		return new Timestamp(cal.getTime().getTime());
 	}
-	
+
 	public static Timestamp getFirstDayOfaYear(Timestamp anyDayOfYear) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(anyDayOfYear);
@@ -184,7 +188,7 @@ public class GeneralController {
 		cal.set(Calendar.DAY_OF_MONTH, 31);
 		return new Timestamp(cal.getTime().getTime());
 	}
-	
+
 	public static Timestamp getLastDayOfaYear(Timestamp anyDayOfYear) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(anyDayOfYear);
@@ -192,30 +196,30 @@ public class GeneralController {
 		cal.set(Calendar.YEAR, year+1);
 		cal.set(Calendar.DAY_OF_YEAR, 1);
 		return new Timestamp(cal.getTime().getTime());
-	}	
-	
+	}
+
 	public static Timestamp ajusterenRetirant(Timestamp date) {
 		Timestamp resultat = date;
 		if(date!=null) {
 			LocalDate jour = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-			if(jour.getDayOfWeek()==DayOfWeek.SUNDAY || GeneralSqlController.isJourFerie(date, null)) {
+			if(jour.getDayOfWeek()==DayOfWeek.SUNDAY || MHRPublicHoliday.isJourFerie(date, null)) {
 				resultat = Timestamp.valueOf(jour.minusDays(1).atStartOfDay());
 			}
 		}
 		return resultat;
 	}
-	
+
 	public static Timestamp ajusterenAjoutant(Timestamp date) {
 		Timestamp resultat = date;
 		if(date!=null) {
 			LocalDate jour = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-			if(jour.getDayOfWeek()==DayOfWeek.SUNDAY || GeneralSqlController.isJourFerie(date, null)) {
+			if(jour.getDayOfWeek()==DayOfWeek.SUNDAY || MHRPublicHoliday.isJourFerie(date, null)) {
 				resultat = Timestamp.valueOf(jour.plusDays(1).atStartOfDay());
 			}
 		}
 		return resultat;
 	}
-	
+
 	public static Integer getNombreJourTravaille(Timestamp dateDebut, Timestamp dateFin) {
 		Integer resultat = null;
 		if(dateDebut!=null && dateFin!=null) {
@@ -228,7 +232,7 @@ public class GeneralController {
 					resultat++;
 				}
 			}
-		}		
+		}
 		return resultat;
 	}
 
@@ -238,7 +242,7 @@ public class GeneralController {
 			LocalDate debut = dateDebut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 			LocalDate fin = dateFin.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 			return (int) ChronoUnit.DAYS.between(debut,fin);
-		}		
+		}
 		return resultat;
 	}
 
@@ -248,10 +252,10 @@ public class GeneralController {
 			LocalDate debut = dateDebut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 			LocalDate fin = dateFin.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 			return (int) ChronoUnit.MONTHS.between(debut,fin);
-		}		
+		}
 		return resultat;
 	}
-	
+
 	public static boolean isPeriodeDisponible(Integer bpartnerID, Timestamp dateDebut, Timestamp dateFin) {
 		boolean resultat = false;
 		if(bpartnerID!=null && dateDebut!=null && dateFin!=null) {
@@ -270,13 +274,13 @@ public class GeneralController {
 			if(!GeneralSqlController.isJourAnyCongeNonRejete(bpartnerID, date, null)
 					&& !GeneralSqlController.isJourSuspensionNonRejete(bpartnerID, date, null)
 					&& !GeneralSqlController.isJourAbsence(bpartnerID, date, null)
-					&& !GeneralSqlController.isJourFerie(date, null)) {
+					&& !MHRPublicHoliday.isJourFerie(date, null)) {
 				resultat = true;
 			}
 		}
 		return resultat;
 	}
-	
+
 	public static int getNombreJourCongeAnnuelBase() {
 		return GeneralSqlController.getParametreFromParametreNumerique("Congé Annuel de Base");
 	}
@@ -284,25 +288,25 @@ public class GeneralController {
 	public static int getNombreJourMaxAbsenceAvantDemandeExplication() {
 		return GeneralSqlController.getParametreFromParametreNumerique("Absence Max Avant Demande Explication");
 	}
-	
+
 	public static void sendEmail(final String senderMail,final String password,InternetAddress[] recieverMail,String subject,String msg){
 	    Properties property = new Properties();
-	    
+
 	    property.put("mail.smtp.auth", "true");
 	    property.put("mail.smtp.starttls.enable", "true");
 	    property.put("mail.smtp.host", "smtp.gmail.com");
 	    property.put("mail.smtp.port", "587");
-	    
+
 	    Session session = Session.getInstance(property, new Authenticator() {
 	    	@Override
 	    	protected PasswordAuthentication getPasswordAuthentication() {
 	    		return new PasswordAuthentication(senderMail, password);
 	    	}
-	    	
+
 	    });
-	    
+
         Message message = prepareMessage(session, senderMail, recieverMail, subject, msg);
-       
+
 	    try {
          	Transport.send(message);
 		} catch (Exception e) {
@@ -311,7 +315,7 @@ public class GeneralController {
 			e.printStackTrace();
 		}
 	}
-	
+
 
 	private static Message prepareMessage(Session session, String senderMail, InternetAddress recieverMail[], String subject, String msg) {
 		Message message = new MimeMessage(session);
@@ -329,4 +333,97 @@ public class GeneralController {
 			return null;
 		}
 	}
+	
+	/**
+     * Retourne tous les supérieurs hiérarchiques (multi-postes, multi-employés)
+     */
+    public static List<Integer> getSuperieursHierarchiques(Integer cBPartnerId) {
+
+        Set<Integer> result = new LinkedHashSet<>();
+        Set<Integer> visitedJobs = new HashSet<>();
+        
+        if(cBPartnerId!=null) {
+
+            Integer posteInitial = GeneralSqlController.getCurrentJobId(cBPartnerId);
+            if (posteInitial == null) {
+                return new ArrayList<>();
+            }
+
+            exploreHierarchy(posteInitial, visitedJobs, result);
+        }
+
+        return new ArrayList<>(result);
+    }
+    
+    /**
+     * Retourne tous les supérieurs hiérarchiques (multi-postes, multi-employés)
+     */
+    public static List<Integer> getSuperieursHierarchiquesbyCategorie(Integer cBPartnerId, Integer categorieResponsabiliteId) {
+
+        Set<Integer> result = new LinkedHashSet<>();
+        Set<Integer> visitedJobs = new HashSet<>();
+        
+        if(cBPartnerId!=null && categorieResponsabiliteId!=null) {
+
+            Integer posteInitial = GeneralSqlController.getCurrentJobId(cBPartnerId);
+            if (posteInitial == null) {
+                return new ArrayList<>();
+            }
+
+            exploreHierarchybyCategorie(posteInitial, categorieResponsabiliteId, visitedJobs, result);
+        }
+
+        return new ArrayList<>(result);
+    }
+	
+	public static void exploreHierarchy(
+	        Integer posteCourant,
+	        Set<Integer> visitedJobs,
+	        Set<Integer> result) {
+
+	    if (posteCourant==null || visitedJobs.contains(posteCourant)) {
+	        return;
+	    }
+
+	    visitedJobs.add(posteCourant);
+
+	    List<Integer> postesResponsables =
+	            GeneralSqlController.getPostesResponsables(posteCourant);
+
+	    for (Integer posteResponsable : postesResponsables) {
+
+	        // Tous les employés occupant ce poste
+	        List<Integer> responsables =
+	        		GeneralSqlController.getEmployeesByJob(posteResponsable);
+
+	        result.addAll(responsables);
+	    }
+	}
+	
+
+	public static void exploreHierarchybyCategorie(
+	        Integer posteCourant,
+	        Integer categorieResponsabiliteId,
+	        Set<Integer> visitedJobs,
+	        Set<Integer> result) {
+
+	    if (posteCourant==null || categorieResponsabiliteId==null || visitedJobs.contains(posteCourant)) {
+	        return;
+	    }
+
+	    visitedJobs.add(posteCourant);
+
+	    List<Integer> postesResponsables =
+	            GeneralSqlController.getPostesResponsablesbyCategorie(posteCourant, categorieResponsabiliteId);
+
+	    for (Integer posteResponsable : postesResponsables) {
+
+	        // Tous les employés occupant ce poste
+	        List<Integer> responsables =
+	        		GeneralSqlController.getEmployeesByJob(posteResponsable);
+
+	        result.addAll(responsables);
+	    }
+	}
+
 }

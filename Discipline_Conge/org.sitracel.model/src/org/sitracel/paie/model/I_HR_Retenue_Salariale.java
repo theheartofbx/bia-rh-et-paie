@@ -18,15 +18,16 @@ package org.sitracel.paie.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
+import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_Retenue_Salariale
- *  @author iDempiere (generated) 
+ *  @author iDempiere (generated)
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_Retenue_Salariale 
+public interface I_HR_Retenue_Salariale
 {
 
     /** TableName=HR_Retenue_Salariale */
@@ -37,7 +38,7 @@ public interface I_HR_Retenue_Salariale
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org 
+    /** AccessLevel = 3 - Client - Org
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
@@ -142,12 +143,12 @@ au :
     public static final String COLUMNNAME_Debut_Prelevement_ID = "Debut_Prelevement_ID";
 
 	/** Set Prélèvement à Partir de .
-	  * Prélèvement à Partir de 
+	  * Prélèvement à Partir de
 	  */
 	public void setDebut_Prelevement_ID (int Debut_Prelevement_ID);
 
 	/** Get Prélèvement à Partir de .
-	  * Prélèvement à Partir de 
+	  * Prélèvement à Partir de
 	  */
 	public int getDebut_Prelevement_ID();
 
@@ -159,18 +160,29 @@ au :
 	/** Set Prélèvement Jusqu&#039;
 à  .
 	  * Prélèvement Jusqu&#039;
-à  
+à
 	  */
 	public void setFin_Prelevement_ID (int Fin_Prelevement_ID);
 
 	/** Get Prélèvement Jusqu&#039;
 à  .
 	  * Prélèvement Jusqu&#039;
-à  
+à
 	  */
 	public int getFin_Prelevement_ID();
 
 	public I_HR_Periode_Salariale getFin_Prelevement() throws RuntimeException;
+
+    /** Column name HR_Annee_ID */
+    public static final String COLUMNNAME_HR_Annee_ID = "HR_Annee_ID";
+
+	/** Set Année	  */
+	public void setHR_Annee_ID (int HR_Annee_ID);
+
+	/** Get Année	  */
+	public int getHR_Annee_ID();
+
+	public I_HR_Annee getHR_Annee() throws RuntimeException;
 
     /** Column name HR_Element_Base_Paie_ID */
     public static final String COLUMNNAME_HR_Element_Base_Paie_ID = "HR_Element_Base_Paie_ID";
@@ -182,6 +194,17 @@ au :
 	public int getHR_Element_Base_Paie_ID();
 
 	public I_HR_Element_Base_Paie getHR_Element_Base_Paie() throws RuntimeException;
+
+    /** Column name HR_Mois_ID */
+    public static final String COLUMNNAME_HR_Mois_ID = "HR_Mois_ID";
+
+	/** Set Mois	  */
+	public void setHR_Mois_ID (int HR_Mois_ID);
+
+	/** Get Mois	  */
+	public int getHR_Mois_ID();
+
+	public I_HR_Mois getHR_Mois() throws RuntimeException;
 
     /** Column name HR_Retenue_Salariale_ID */
     public static final String COLUMNNAME_HR_Retenue_Salariale_ID = "HR_Retenue_Salariale_ID";
@@ -213,6 +236,24 @@ au :
 	  * The record is active in the system
 	  */
 	public boolean isActive();
+
+    /** Column name IsIndemniteLicenciement */
+    public static final String COLUMNNAME_IsIndemniteLicenciement = "IsIndemniteLicenciement";
+
+	/** Set Participe au Calcul des Indemnités de Licenciement	  */
+	public void setIsIndemniteLicenciement (boolean IsIndemniteLicenciement);
+
+	/** Get Participe au Calcul des Indemnités de Licenciement	  */
+	public boolean isIndemniteLicenciement();
+
+    /** Column name IsIndemniteRetraite */
+    public static final String COLUMNNAME_IsIndemniteRetraite = "IsIndemniteRetraite";
+
+	/** Set Participe au Calcul des Indemnités de Départ à la Retraite	  */
+	public void setIsIndemniteRetraite (boolean IsIndemniteRetraite);
+
+	/** Get Participe au Calcul des Indemnités de Départ à la Retraite	  */
+	public boolean isIndemniteRetraite();
 
     /** Column name Montant_Derniere_Mensualite */
     public static final String COLUMNNAME_Montant_Derniere_Mensualite = "Montant_Derniere_Mensualite";

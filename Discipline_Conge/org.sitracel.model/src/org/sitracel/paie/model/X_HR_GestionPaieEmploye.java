@@ -19,7 +19,11 @@ package org.sitracel.paie.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 
 /** Generated Model for HR_GestionPaieEmploye
  *  @author iDempiere (generated)
@@ -82,19 +86,22 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_GestionPaieEmploye[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -104,27 +111,32 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/** Set Gestion des Éléments de Base de la Paie Employé.
 		@param HR_GestionPaieEmploye_ID Gestion des Éléments de Base de la Paie Employé
 	*/
+	@Override
 	public void setHR_GestionPaieEmploye_ID (int HR_GestionPaieEmploye_ID)
 	{
-		if (HR_GestionPaieEmploye_ID < 1)
+		if (HR_GestionPaieEmploye_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_GestionPaieEmploye_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_GestionPaieEmploye_ID, Integer.valueOf(HR_GestionPaieEmploye_ID));
+		}
 	}
 
 	/** Get Gestion des Éléments de Base de la Paie Employé.
 		@return Gestion des Éléments de Base de la Paie Employé	  */
+	@Override
 	public int getHR_GestionPaieEmploye_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_GestionPaieEmploye_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_GestionPaieEmploye_UU.
 		@param HR_GestionPaieEmploye_UU HR_GestionPaieEmploye_UU
 	*/
+	@Override
 	public void setHR_GestionPaieEmploye_UU (String HR_GestionPaieEmploye_UU)
 	{
 		set_Value (COLUMNNAME_HR_GestionPaieEmploye_UU, HR_GestionPaieEmploye_UU);
@@ -132,11 +144,13 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 
 	/** Get HR_GestionPaieEmploye_UU.
 		@return HR_GestionPaieEmploye_UU	  */
+	@Override
 	public String getHR_GestionPaieEmploye_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_GestionPaieEmploye_UU);
 	}
 
+	@Override
 	public I_HR_Rang_Calcul getHR_Rang_Calcul() throws RuntimeException
 	{
 		return (I_HR_Rang_Calcul)MTable.get(getCtx(), I_HR_Rang_Calcul.Table_ID)
@@ -146,27 +160,32 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/** Set Rang de Calcul.
 		@param HR_Rang_Calcul_ID Rang de Calcul
 	*/
+	@Override
 	public void setHR_Rang_Calcul_ID (int HR_Rang_Calcul_ID)
 	{
-		if (HR_Rang_Calcul_ID < 1)
+		if (HR_Rang_Calcul_ID < 1) {
 			set_Value (COLUMNNAME_HR_Rang_Calcul_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_HR_Rang_Calcul_ID, Integer.valueOf(HR_Rang_Calcul_ID));
+		}
 	}
 
 	/** Get Rang de Calcul.
 		@return Rang de Calcul	  */
+	@Override
 	public int getHR_Rang_Calcul_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Rang_Calcul_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Est Cotisable.
 		@param IsCotisable Est Cotisable
 	*/
+	@Override
 	public void setIsCotisable (boolean IsCotisable)
 	{
 		set_Value (COLUMNNAME_IsCotisable, Boolean.valueOf(IsCotisable));
@@ -175,13 +194,15 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/** Get Est Cotisable.
 		@return Est Cotisable
 	  */
+	@Override
 	public boolean isCotisable()
 	{
 		Object oo = get_Value(COLUMNNAME_IsCotisable);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -190,6 +211,7 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/** Set Est Imposable.
 		@param IsImposable Est Imposable
 	*/
+	@Override
 	public void setIsImposable (boolean IsImposable)
 	{
 		set_Value (COLUMNNAME_IsImposable, Boolean.valueOf(IsImposable));
@@ -198,13 +220,15 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/** Get Est Imposable.
 		@return Est Imposable
 	  */
+	@Override
 	public boolean isImposable()
 	{
 		Object oo = get_Value(COLUMNNAME_IsImposable);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -213,6 +237,7 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/** Set Participe au Calcul des Indemnités de Congé.
 		@param IsIndemniteConge Participe au Calcul des Indemnités de Congé
 	*/
+	@Override
 	public void setIsIndemniteConge (boolean IsIndemniteConge)
 	{
 		set_Value (COLUMNNAME_IsIndemniteConge, Boolean.valueOf(IsIndemniteConge));
@@ -220,13 +245,15 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 
 	/** Get Participe au Calcul des Indemnités de Congé.
 		@return Participe au Calcul des Indemnités de Congé	  */
+	@Override
 	public boolean isIndemniteConge()
 	{
 		Object oo = get_Value(COLUMNNAME_IsIndemniteConge);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -235,6 +262,7 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/** Set Est Utilisé dans le calcul de l&#039;IRPP.
 		@param IsIrpp Est Utilisé dans le calcul de l&#039;IRPP
 	*/
+	@Override
 	public void setIsIrpp (boolean IsIrpp)
 	{
 		set_Value (COLUMNNAME_IsIrpp, Boolean.valueOf(IsIrpp));
@@ -243,13 +271,15 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/** Get Est Utilisé dans le calcul de l&#039;IRPP.
 		@return Est Utilisé dans le calcul de l&#039;IRPP
 	  */
+	@Override
 	public boolean isIrpp()
 	{
 		Object oo = get_Value(COLUMNNAME_IsIrpp);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -258,6 +288,7 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/** Set Printed.
 		@param IsPrinted Indicates if this document / line is printed
 	*/
+	@Override
 	public void setIsPrinted (boolean IsPrinted)
 	{
 		set_Value (COLUMNNAME_IsPrinted, Boolean.valueOf(IsPrinted));
@@ -266,13 +297,15 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/** Get Printed.
 		@return Indicates if this document / line is printed
 	  */
+	@Override
 	public boolean isPrinted()
 	{
 		Object oo = get_Value(COLUMNNAME_IsPrinted);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -281,6 +314,7 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/** Set Est Proportionnel au Temps de Travail.
 		@param IsProportionnelTravail Est Proportionnel au Temps de Travail
 	*/
+	@Override
 	public void setIsProportionnelTravail (boolean IsProportionnelTravail)
 	{
 		set_Value (COLUMNNAME_IsProportionnelTravail, Boolean.valueOf(IsProportionnelTravail));
@@ -288,13 +322,15 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 
 	/** Get Est Proportionnel au Temps de Travail.
 		@return Est Proportionnel au Temps de Travail	  */
+	@Override
 	public boolean isProportionnelTravail()
 	{
 		Object oo = get_Value(COLUMNNAME_IsProportionnelTravail);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -303,6 +339,7 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/** Set Libellé.
 		@param Libelle Libellé
 	*/
+	@Override
 	public void setLibelle (String Libelle)
 	{
 		set_Value (COLUMNNAME_Libelle, Libelle);
@@ -310,6 +347,7 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 
 	/** Get Libellé.
 		@return Libellé	  */
+	@Override
 	public String getLibelle()
 	{
 		return (String)get_Value(COLUMNNAME_Libelle);
@@ -318,6 +356,7 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
+	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -326,6 +365,7 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
+	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -334,6 +374,7 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/** Set Search Key.
 		@param Value Search key for the record in the format required - must be unique
 	*/
+	@Override
 	public void setValue (String Value)
 	{
 		set_Value (COLUMNNAME_Value, Value);
@@ -342,6 +383,7 @@ public class X_HR_GestionPaieEmploye extends PO implements I_HR_GestionPaieEmplo
 	/** Get Search Key.
 		@return Search key for the record in the format required - must be unique
 	  */
+	@Override
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);

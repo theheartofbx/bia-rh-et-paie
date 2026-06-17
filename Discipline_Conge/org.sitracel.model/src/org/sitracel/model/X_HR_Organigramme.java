@@ -19,7 +19,11 @@ package org.sitracel.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 
 /** Generated Model for HR_Organigramme
  *  @author iDempiere (generated)
@@ -94,25 +98,29 @@ public class X_HR_Organigramme extends PO implements I_HR_Organigramme, I_Persis
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    protected int get_AccessLevel()
+    @Override
+	protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    protected POInfo initPO (Properties ctx)
+    @Override
+	protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Organigramme[")
         .append(get_ID()).append("]");
       return sb.toString();
     }
 
+	@Override
 	public I_HR_Categorie_Responsabilite getHR_Categorie_Responsabilite() throws RuntimeException
 	{
 		return (I_HR_Categorie_Responsabilite)MTable.get(getCtx(), I_HR_Categorie_Responsabilite.Table_ID)
@@ -122,48 +130,57 @@ public class X_HR_Organigramme extends PO implements I_HR_Organigramme, I_Persis
 	/** Set Catégorie de Responsabilité.
 		@param HR_Categorie_Responsabilite_ID Catégorie de Responsabilité
 	*/
+	@Override
 	public void setHR_Categorie_Responsabilite_ID (int HR_Categorie_Responsabilite_ID)
 	{
-		if (HR_Categorie_Responsabilite_ID < 1)
+		if (HR_Categorie_Responsabilite_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Categorie_Responsabilite_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Categorie_Responsabilite_ID, Integer.valueOf(HR_Categorie_Responsabilite_ID));
+		}
 	}
 
 	/** Get Catégorie de Responsabilité.
 		@return Catégorie de Responsabilité	  */
+	@Override
 	public int getHR_Categorie_Responsabilite_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Categorie_Responsabilite_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set Organigramme.
 		@param HR_Organigramme_ID Organigramme
 	*/
+	@Override
 	public void setHR_Organigramme_ID (int HR_Organigramme_ID)
 	{
-		if (HR_Organigramme_ID < 1)
+		if (HR_Organigramme_ID < 1) {
 			set_ValueNoCheck (COLUMNNAME_HR_Organigramme_ID, null);
-		else
+		} else {
 			set_ValueNoCheck (COLUMNNAME_HR_Organigramme_ID, Integer.valueOf(HR_Organigramme_ID));
+		}
 	}
 
 	/** Get Organigramme.
 		@return Organigramme	  */
+	@Override
 	public int getHR_Organigramme_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Organigramme_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
 	/** Set HR_Organigramme_UU.
 		@param HR_Organigramme_UU HR_Organigramme_UU
 	*/
+	@Override
 	public void setHR_Organigramme_UU (String HR_Organigramme_UU)
 	{
 		set_Value (COLUMNNAME_HR_Organigramme_UU, HR_Organigramme_UU);
@@ -171,6 +188,7 @@ public class X_HR_Organigramme extends PO implements I_HR_Organigramme, I_Persis
 
 	/** Get HR_Organigramme_UU.
 		@return HR_Organigramme_UU	  */
+	@Override
 	public String getHR_Organigramme_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Organigramme_UU);
@@ -179,6 +197,7 @@ public class X_HR_Organigramme extends PO implements I_HR_Organigramme, I_Persis
 	/** Set Message d&#039;Alerte Affiché.
 		@param IsMessageAlerteDisplayed Message d&#039;Alerte Affiché
 	*/
+	@Override
 	public void setIsMessageAlerteDisplayed (boolean IsMessageAlerteDisplayed)
 	{
 		set_Value (COLUMNNAME_IsMessageAlerteDisplayed, Boolean.valueOf(IsMessageAlerteDisplayed));
@@ -187,13 +206,15 @@ public class X_HR_Organigramme extends PO implements I_HR_Organigramme, I_Persis
 	/** Get Message d&#039;Alerte Affiché.
 		@return Message d&#039;Alerte Affiché
 	  */
+	@Override
 	public boolean isMessageAlerteDisplayed()
 	{
 		Object oo = get_Value(COLUMNNAME_IsMessageAlerteDisplayed);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
+			 if (oo instanceof Boolean) {
+				return ((Boolean)oo).booleanValue();
+			}
 			return "Y".equals(oo);
 		}
 		return false;
@@ -202,6 +223,7 @@ public class X_HR_Organigramme extends PO implements I_HR_Organigramme, I_Persis
 	/** Set Message d&#039;Alerte.
 		@param Message_Alerte Message d&#039;Alerte
 	*/
+	@Override
 	public void setMessage_Alerte (String Message_Alerte)
 	{
 		set_Value (COLUMNNAME_Message_Alerte, Message_Alerte);
@@ -210,11 +232,13 @@ public class X_HR_Organigramme extends PO implements I_HR_Organigramme, I_Persis
 	/** Get Message d&#039;Alerte.
 		@return Message d&#039;Alerte
 	  */
+	@Override
 	public String getMessage_Alerte()
 	{
 		return (String)get_Value(COLUMNNAME_Message_Alerte);
 	}
 
+	@Override
 	public org.eevolution.model.I_HR_Job getPoste() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -224,25 +248,30 @@ public class X_HR_Organigramme extends PO implements I_HR_Organigramme, I_Persis
 	/** Set Nom du Poste :.
 		@param Poste_ID Nom du Poste :
 	*/
+	@Override
 	public void setPoste_ID (int Poste_ID)
 	{
-		if (Poste_ID < 1)
+		if (Poste_ID < 1) {
 			set_Value (COLUMNNAME_Poste_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Poste_ID, Integer.valueOf(Poste_ID));
+		}
 	}
 
 	/** Get Nom du Poste :.
 		@return Nom du Poste :
 	  */
+	@Override
 	public int getPoste_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Poste_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 
+	@Override
 	public org.eevolution.model.I_HR_Job getPoste_Responsable() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -250,24 +279,28 @@ public class X_HR_Organigramme extends PO implements I_HR_Organigramme, I_Persis
 	}
 
 	/** Set Poste du Responsable .
-		@param Poste_Responsable_ID Poste du Responsable 
+		@param Poste_Responsable_ID Poste du Responsable
 	*/
+	@Override
 	public void setPoste_Responsable_ID (int Poste_Responsable_ID)
 	{
-		if (Poste_Responsable_ID < 1)
+		if (Poste_Responsable_ID < 1) {
 			set_Value (COLUMNNAME_Poste_Responsable_ID, null);
-		else
+		} else {
 			set_Value (COLUMNNAME_Poste_Responsable_ID, Integer.valueOf(Poste_Responsable_ID));
+		}
 	}
 
 	/** Get Poste du Responsable .
-		@return Poste du Responsable 
+		@return Poste du Responsable
 	  */
+	@Override
 	public int getPoste_Responsable_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Poste_Responsable_ID);
-		if (ii == null)
-			 return 0;
+		if (ii == null) {
+			return 0;
+		}
 		return ii.intValue();
 	}
 }

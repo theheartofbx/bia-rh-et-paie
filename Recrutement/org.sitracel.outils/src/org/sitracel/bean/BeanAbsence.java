@@ -3,14 +3,14 @@ package org.sitracel.bean;
 import java.sql.Timestamp;
 
 public class BeanAbsence {
-	
+
 	private Timestamp dateAbsence;
 	private String typeAbsence;
 	private int idTypeAbsence;
 	private int idCBpartner;
-	
+
 	public BeanAbsence() {
-		
+
 	}
 
 	public Timestamp getDateAbsence() {
@@ -44,6 +44,6 @@ public class BeanAbsence {
 	public void setIdCBpartner(int idCBpartner) {
 		this.idCBpartner = idCBpartner;
 	}
-	
+
 
 }
