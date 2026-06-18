@@ -7,7 +7,6 @@ Export-Package: org.sitracel.conge.model,
  org.sitracel.discipline.model,
  org.sitracel.mission.model,
  org.sitracel.model,
- org.sitracel.notification.model,
  org.sitracel.paie.model,
  org.sitracel.recrutement.model
 Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
