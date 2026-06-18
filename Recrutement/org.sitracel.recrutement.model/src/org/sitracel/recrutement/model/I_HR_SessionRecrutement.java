@@ -18,15 +18,16 @@ package org.sitracel.recrutement.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
+import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_SessionRecrutement
- *  @author iDempiere (generated) 
+ *  @author iDempiere (generated)
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_SessionRecrutement 
+public interface I_HR_SessionRecrutement
 {
 
     /** TableName=HR_SessionRecrutement */
@@ -37,9 +38,9 @@ public interface I_HR_SessionRecrutement
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 4 - System 
+    /** AccessLevel = 3 - Client - Org
      */
-    BigDecimal accessLevel = BigDecimal.valueOf(4);
+    BigDecimal accessLevel = BigDecimal.valueOf(3);
 
     /** Load Meta Data */
 
@@ -79,6 +80,15 @@ public interface I_HR_SessionRecrutement
 	  * User who created this records
 	  */
 	public int getCreatedBy();
+
+    /** Column name Date_Creation */
+    public static final String COLUMNNAME_Date_Creation = "Date_Creation";
+
+	/** Set Date de Création	  */
+	public void setDate_Creation (Timestamp Date_Creation);
+
+	/** Get Date de Création	  */
+	public Timestamp getDate_Creation();
 
     /** Column name Date_Debut */
     public static final String COLUMNNAME_Date_Debut = "Date_Debut";
@@ -205,6 +215,19 @@ Emploi	  */
 
 	public I_HR_OffreEmploi getHR_OffreEmploi() throws RuntimeException;
 
+    /** Column name HR_OffreTestEvaluation_ID */
+    public static final String COLUMNNAME_HR_OffreTestEvaluation_ID = "HR_OffreTestEvaluation_ID";
+
+	/** Set Test d&#039;
+Évaluation	  */
+	public void setHR_OffreTestEvaluation_ID (int HR_OffreTestEvaluation_ID);
+
+	/** Get Test d&#039;
+Évaluation	  */
+	public int getHR_OffreTestEvaluation_ID();
+
+	public I_HR_OffreTestEvaluation getHR_OffreTestEvaluation() throws RuntimeException;
+
     /** Column name HR_SessionRecrutement_ID */
     public static final String COLUMNNAME_HR_SessionRecrutement_ID = "HR_SessionRecrutement_ID";
 
@@ -284,6 +307,19 @@ Emploi	  */
 	/** Get Nombre de Candidat Recherché	  */
 	public int getNombre_Candidat();
 
+    /** Column name Rejeter */
+    public static final String COLUMNNAME_Rejeter = "Rejeter";
+
+	/** Set Rejeter.
+	  * Rejeter
+	  */
+	public void setRejeter (String Rejeter);
+
+	/** Get Rejeter.
+	  * Rejeter
+	  */
+	public String getRejeter();
+
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
 
@@ -342,4 +378,17 @@ Emploi	  */
 	public int getValide_Rejete_Par_Poste_ID();
 
 	public org.eevolution.model.I_HR_Job getValide_Rejete_Par_Poste() throws RuntimeException;
+
+    /** Column name Valider */
+    public static final String COLUMNNAME_Valider = "Valider";
+
+	/** Set Valider .
+	  * Valider
+	  */
+	public void setValider (String Valider);
+
+	/** Get Valider .
+	  * Valider
+	  */
+	public String getValider();
 }
