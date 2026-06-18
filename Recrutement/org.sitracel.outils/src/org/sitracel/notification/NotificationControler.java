@@ -1,29 +1,19 @@
 package org.sitracel.notification;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.compiere.model.MCity;
-import org.compiere.model.MCountry;
-import org.compiere.model.MTable;
 import org.compiere.model.PO;
 import org.compiere.util.Env;
 import org.sitracel.bean.BeanDestinataire;
-import org.sitracel.bean.BeanIdentifiant;
+import org.sitracel.conge.model.MHRAutorisationConge;
 import org.sitracel.conge.model.MHRHoliday;
-import org.sitracel.conge.model.MHRTypeConge;
-import org.sitracel.controller.GeneralController;
-import org.sitracel.controller.GeneralSqlController;
 import org.sitracel.discipline.model.MHRDemandeExplication;
 import org.sitracel.discipline.model.MHRPunishment;
 import org.sitracel.discipline.model.MHRSanctionAutorisation;
-import org.sitracel.discipline.model.MHRTypeSanction;
 import org.sitracel.enumeration.NotificationCanal;
 import org.sitracel.enumeration.NotificationEvent;
 import org.sitracel.enumeration.NotificationStatut;
@@ -34,568 +24,412 @@ import org.sitracel.model.MCBPartner;
 import org.sitracel.notification.model.MHRNotification;
 import org.sitracel.notification.model.MHRNotificationDestinataire;
 import org.sitracel.notification.model.MHRNotificationQueue;
+import org.sitracel.organigramme.ActionOrganigramme;
+import org.sitracel.organigramme.ModuleAutorisation;
+import org.sitracel.organigramme.OrganigrammeService;
 
+/**
+ * Point d'entrée unique pour l'envoi de notifications.
+ *
+ * Utilise OrganigrammeService pour résoudre les destinataires
+ * en fonction des autorisations définies par module et type de document.
+ *
+ * Usage depuis n'importe quel module :
+ *   NotificationControler.notify(NotificationEvent.HOLIDAY_CREATED, monConge);
+ */
 public class NotificationControler {
 
-    /* ==========================
-     * CONSTANTES / HELPERS
-     * ========================== */
-
-
+    // Cache des IDs techniques pour éviter les requêtes répétées
     private static final Map<String, Integer> CACHE_NOTIFICATION_TYPE =
-            new ConcurrentHashMap<>();
-    
+        new ConcurrentHashMap<>();
     private static final Map<String, Integer> CACHE_NOTIFICATION_CHANNEL =
-            new ConcurrentHashMap<>();    
-
+        new ConcurrentHashMap<>();
     private static final Map<String, Integer> CACHE_DESTINATAIRE_TYPE =
-            new ConcurrentHashMap<>();
-    
+        new ConcurrentHashMap<>();
     private static final Map<String, Integer> CACHE_NOTIFICATION_STATUT =
-            new ConcurrentHashMap<>();
+        new ConcurrentHashMap<>();
 
-    private static final SimpleDateFormat DATE_FMT =
-            new SimpleDateFormat("dd/MM/yyyy");
+    private NotificationControler() {}
 
-    /* ==========================
-     * NOTIFICATION
-     * ========================== */
+    // =========================================================================
+    // API PRINCIPALE
+    // =========================================================================
 
+    /**
+     * Déclenche une notification pour un événement sur un document.
+     * Résout automatiquement les destinataires via OrganigrammeService.
+     *
+     * @param event L'événement métier (ex: HOLIDAY_CREATED)
+     * @param po    Le document concerné (ex: MHRHoliday)
+     */
     public static void notify(NotificationEvent event, PO po) {
 
-        if (event == null || po == null) {
-            return;
-        }
+        if (event == null || po == null) return;
 
-        Properties ctx = po.getCtx();
-        String trxName = po.get_TrxName();
+        Properties ctx  = po.getCtx();
+        String trxName  = po.get_TrxName();
 
+        // 1. Vérifier que le type de notification existe en base
         int typeId = getNotificationTypeId(event);
-        if (typeId <= 0) {
-            return;
-        }
+        if (typeId <= 0) return;
 
-        int canalId = getNotificationCanalId(NotificationCanal.EMAIL);
-        if (canalId <= 0) {
-            return;
-        }
+        // 2. Résoudre les destinataires
+        List<BeanDestinataire> destinataires = resoudreDestinataires(event, po);
+        if (destinataires.isEmpty()) return;
 
-        // 1️⃣ Création de la notification
-        MHRNotification notif =
-            new MHRNotification(ctx, 0, trxName);
-
+        // 3. Créer la notification mère
+        MHRNotification notif = new MHRNotification(ctx, 0, trxName);
         notif.setHR_NotificationType_ID(typeId);
         notif.setAD_Table_ID(po.get_Table_ID());
         notif.setNumero_Enregistrement(po.get_ID());
         notif.saveEx();
 
-        // 2️⃣ Résolution des destinataires
-        List<BeanDestinataire> recipients =
-            resolve(event, po);
+        // 4. Créer les destinataires (dédupliqués)
+        List<Integer> dejAjoutes = new ArrayList<>();
+        for (BeanDestinataire dest : destinataires) {
+            if (dest.getCBPartnerId() <= 0) continue;
+            if (dejAjoutes.contains(dest.getCBPartnerId())) continue;
+            dejAjoutes.add(dest.getCBPartnerId());
 
-        for (BeanDestinataire r : recipients) {
+            String email = NotificationGestionCanal.getEmailByBPartner(
+                dest.getCBPartnerId()
+            );
+            if (email == null || email.isBlank()) continue;
 
             MHRNotificationDestinataire nr =
                 new MHRNotificationDestinataire(ctx, 0, trxName);
-
-            nr.setHR_Notification_ID(
-                notif.getHR_Notification_ID()
-            );
-            nr.setC_BPartner_ID(r.getCBPartnerId());
-            nr.setEMail(r.getEmail());
+            nr.setHR_Notification_ID(notif.getHR_Notification_ID());
+            nr.setC_BPartner_ID(dest.getCBPartnerId());
+            nr.setEMail(email);
             nr.setHR_DestinataireType_ID(
-                getDestinataireTypeId(r.getType()) // TO / CC / BCC
+                getDestinataireTypeId(dest.getType())
             );
             nr.saveEx();
         }
 
-        // 3️⃣ UNE SEULE entrée de queue
-        MHRNotificationQueue q =
-            new MHRNotificationQueue(ctx, 0, trxName);
-
-        q.setHR_Notification_ID(
-            notif.getHR_Notification_ID()
+        // 5. Une seule entrée de queue
+        MHRNotificationQueue q = new MHRNotificationQueue(ctx, 0, trxName);
+        q.setHR_Notification_ID(notif.getHR_Notification_ID());
+        q.setHR_NotificationStatut_ID(
+            getNotificationStatutId(NotificationStatut.CREATED)
         );
-        q.setHR_NotificationStatut_ID(getNotificationStatutId(NotificationStatut.CREATED));
         q.setNombre_Tentative(0);
         q.saveEx();
     }
 
-    /* ==========================
-     * BUILD CONTEXT
-     * ========================== */
+    // =========================================================================
+    // RÉSOLUTION DES DESTINATAIRES
+    // =========================================================================
 
-    public static Map<String, Object> build(MHRNotification notif) {
+    /**
+     * Résout les destinataires selon le type de document et l'événement.
+     *
+     * Règle générale :
+     *   TO  → l'employé concerné
+     *   CC  → les acteurs habilités (approbateurs/validateurs selon l'événement)
+     *   BCC → les responsables RH
+     */
+    private static List<BeanDestinataire> resoudreDestinataires(
+            NotificationEvent event, PO po) {
 
-        Map<String, Object> ctx = new HashMap<>();
+        List<BeanDestinataire> destinataires = new ArrayList<>();
+        String trxName = po.get_TrxName();
 
-        if (notif == null) {
-            return ctx;
-        }
-
-        PO po = MTable.get(
-                Env.getCtx(),
-                notif.getAD_Table_ID()
-        ).getPO(
-                notif.getNumero_Enregistrement(),
-                notif.get_TrxName()
-        );
-
-        if (po == null) {
-            return ctx;
-        }
-
-        NotificationSqlControler.buildCompany(ctx);
-        buildActor(ctx, notif);
-        buildApplication(ctx);
-
-        if (po instanceof MHRMission) {
-        	MHRMission m = (MHRMission) po;
-            buildMission(ctx, m);
-        }
-        else if (po instanceof MHRMissionAffectation) {
-        	MHRMissionAffectation ma = (MHRMissionAffectation) po;
-            buildMissionAffectation(ctx, ma);
-        }
-        else if (po instanceof MHRDemandeExplication) {
-        	MHRDemandeExplication d = (MHRDemandeExplication) po;
-            buildDemandeExplication(ctx, d);
-        }
-        else if (po instanceof MHRPunishment) {
-        	MHRPunishment s = (MHRPunishment) po;
-            buildSanction(ctx, s);
-        }
-        else if (po instanceof MHRHoliday) {
-        	MHRHoliday h = (MHRHoliday) po;
-            buildHoliday(ctx, h);
-        }
-
-        return ctx;
-    }
-
-    /* ==========================
-     * DESTINATAIRES
-     * ========================== */
-
-    public static List<BeanDestinataire> resolve(
-            NotificationEvent event,
-            PO po
-    ) {
-
-        List<BeanDestinataire> recipients = new ArrayList<>();
-
-        if (event == null || po == null) {
-            return recipients;
-        }
-
-        List<String> rhRoles = List.of(
-                "Responsable Ressources Humaines",
-                "Ressource Humaine",
-                "Ressource Humaine - Responsable"
-        );
-
-        if (po instanceof MHRMission) {
-        	
-        	MHRMission m = (MHRMission) po;
-
-            addRecipient(
-                recipients,
-                m.getEmis_Par_Nom_ID(),
-                NotificationTypeDestinataireEmail.TO
-            );
-
-            safeList(
-                GeneralController.getSuperieursHierarchiques(
-                    m.getEmis_Par_Nom_ID()
-                )
-            ).forEach(id ->
-                addRecipient(
-                    recipients,
-                    id,
-                    NotificationTypeDestinataireEmail.CC
-                )
-            );
-
-        } else if (po instanceof MHRMissionAffectation) {
-
-        	MHRMissionAffectation ma = (MHRMissionAffectation) po;
-        	
-            addRecipient(
-                recipients,
-                ma.getEmployee_ID(),
-                NotificationTypeDestinataireEmail.TO
-            );
-
-        } else if (po instanceof MHRDemandeExplication) {
-
-        	MHRDemandeExplication d = (MHRDemandeExplication) po;
-        	
-            addRecipient(
-                recipients,
-                d.getC_BPartner_ID(),
-                NotificationTypeDestinataireEmail.TO
-            );
+        if (po instanceof MHRHoliday) {
+            resoudreConge(destinataires, event, (MHRHoliday) po, trxName);
 
         } else if (po instanceof MHRPunishment) {
+            resoudreSanction(destinataires, event, (MHRPunishment) po, trxName);
 
-        	MHRPunishment s = (MHRPunishment) po;
-        	
-            addRecipient(
-                recipients,
-                s.getC_BPartner_ID(),
-                NotificationTypeDestinataireEmail.TO
-            );
+        } else if (po instanceof MHRDemandeExplication) {
+            resoudreDemandeExplication(
+                destinataires, event, (MHRDemandeExplication) po, trxName);
 
-        } else if (po instanceof MHRHoliday) {
+        } else if (po instanceof MHRMission) {
+            resoudreMission(destinataires, event, (MHRMission) po, trxName);
 
-        	MHRHoliday h = (MHRHoliday) po;
-        	
-            addRecipient(
-                recipients,
-                h.getC_BPartner_ID(),
-                NotificationTypeDestinataireEmail.TO
-            );
+        } else if (po instanceof MHRMissionAffectation) {
+            resoudreMissionAffectation(
+                destinataires, (MHRMissionAffectation) po, trxName);
         }
 
-        safeList(
-            GeneralSqlController.getEmployeesByRoles(rhRoles)
-        ).forEach(id ->
-            addRecipient(
-                recipients,
-                id,
-                NotificationTypeDestinataireEmail.BCC
-            )
-        );
+        // BCC → responsables RH (tous les modules)
+        ajouterRH(destinataires, trxName);
 
-        return recipients.stream().distinct().toList();
+        return destinataires;
     }
 
-    /* ==========================
-     * BUILDERS METIER
-     * ========================== */
+    // ── CONGÉS ────────────────────────────────────────────────────────────────
 
-    public static int getNotificationTypeId(
-	        NotificationEvent event
-	) {
-	
-	    if (event == null) {
-	        return 0;
-	    }
-	
-	    return CACHE_NOTIFICATION_TYPE.computeIfAbsent(
-	        event.getNotificationTypeName(),
-	        NotificationSqlControler::loadFromDB
-	    );
-	}
-    
-    public static int getNotificationStatutId(
-            NotificationStatut statut
-    ) {
+    private static void resoudreConge(
+            List<BeanDestinataire> dest,
+            NotificationEvent event,
+            MHRHoliday h,
+            String trxName) {
 
-        if (statut == null) {
-            return 0;
+        int employeId  = h.getC_BPartner_ID();
+        int typeCongeId = getTypeCongeId(h);
+
+        // TO → l'employé
+        ajouterTO(dest, employeId);
+
+        // CC → selon l'événement, on notifie les bonnes personnes
+        switch (event) {
+            case HOLIDAY_CREATED:
+                // Notifier les approbateurs potentiels
+                ajouterCC(dest, OrganigrammeService.getActeurs(
+                    employeId, typeCongeId,
+                    ModuleAutorisation.CONGE,
+                    ActionOrganigramme.APPROBATION,
+                    trxName
+                ));
+                break;
+
+            case HOLIDAY_APPROVED:
+                // Notifier les validateurs potentiels
+                ajouterCC(dest, OrganigrammeService.getActeurs(
+                    employeId, typeCongeId,
+                    ModuleAutorisation.CONGE,
+                    ActionOrganigramme.VALIDATION,
+                    trxName
+                ));
+                break;
+
+            case HOLIDAY_DISAPPROVED:
+            case HOLIDAY_REJECTED:
+                // Notifier l'émetteur (qui a créé le congé)
+                ajouterCC(dest, h.getEmis_Par_Nom_ID());
+                break;
+
+            case HOLIDAY_VALIDATED:
+                // Notifier les responsables de compensation si applicable
+                ajouterCC(dest, OrganigrammeService.getActeurs(
+                    employeId, typeCongeId,
+                    ModuleAutorisation.CONGE,
+                    ActionOrganigramme.COMPENSATION,
+                    trxName
+                ));
+                break;
+
+            default:
+                // Pour tout autre événement, notifier tous les supérieurs
+                ajouterCC(dest, OrganigrammeService.getSuperieurs(
+                    employeId, trxName
+                ));
+                break;
         }
+    }
 
+    // ── SANCTIONS ─────────────────────────────────────────────────────────────
+
+    private static void resoudreSanction(
+            List<BeanDestinataire> dest,
+            NotificationEvent event,
+            MHRPunishment p,
+            String trxName) {
+
+        int employeId     = p.getC_BPartner_ID();
+        int typeSanctionId = getTypeSanctionId(p);
+
+        // TO → l'employé
+        ajouterTO(dest, employeId);
+
+        switch (event) {
+            case SANCTION_CREATED:
+                // Notifier les approbateurs
+                ajouterCC(dest, OrganigrammeService.getActeurs(
+                    employeId, typeSanctionId,
+                    ModuleAutorisation.SANCTION,
+                    ActionOrganigramme.APPROBATION,
+                    trxName
+                ));
+                break;
+
+            case SANCTION_APPROVED:
+                // Notifier les validateurs
+                ajouterCC(dest, OrganigrammeService.getActeurs(
+                    employeId, typeSanctionId,
+                    ModuleAutorisation.SANCTION,
+                    ActionOrganigramme.VALIDATION,
+                    trxName
+                ));
+                break;
+
+            case SANCTION_DISAPPROVED:
+            case SANCTION_REJECTED:
+                // Notifier l'émetteur
+                ajouterCC(dest, p.getEmis_Par_Nom_ID());
+                break;
+
+            case SANCTION_VALIDATED:
+                // Notifier tous les supérieurs (information)
+                ajouterCC(dest, OrganigrammeService.getSuperieurs(
+                    employeId, trxName
+                ));
+                break;
+
+            default:
+                ajouterCC(dest, OrganigrammeService.getSuperieurs(
+                    employeId, trxName
+                ));
+                break;
+        }
+    }
+
+    // ── DEMANDE D'EXPLICATION ─────────────────────────────────────────────────
+
+    private static void resoudreDemandeExplication(
+            List<BeanDestinataire> dest,
+            NotificationEvent event,
+            MHRDemandeExplication d,
+            String trxName) {
+
+        if (event == NotificationEvent.DEMANDE_EXPLICATION_CREATED) {
+            // TO → l'employé qui doit répondre
+            ajouterTO(dest, d.getC_BPartner_ID());
+            // CC → l'émetteur de la demande
+            ajouterCC(dest, d.getEmis_Par_Nom_ID());
+
+        } else if (event == NotificationEvent.DEMANDE_EXPLICATION_REPLIED) {
+            // TO → l'émetteur (qui attend la réponse)
+            ajouterTO(dest, d.getEmis_Par_Nom_ID());
+            // CC → l'employé qui a répondu
+            ajouterCC(dest, d.getC_BPartner_ID());
+        }
+    }
+
+    // ── MISSION ───────────────────────────────────────────────────────────────
+
+    private static void resoudreMission(
+            List<BeanDestinataire> dest,
+            NotificationEvent event,
+            MHRMission m,
+            String trxName) {
+
+        // TO → l'émetteur de la mission
+        ajouterTO(dest, m.getEmis_Par_Nom_ID());
+        // CC → tous les supérieurs (information)
+        ajouterCC(dest, OrganigrammeService.getSuperieurs(
+            m.getEmis_Par_Nom_ID(), trxName
+        ));
+    }
+
+    private static void resoudreMissionAffectation(
+            List<BeanDestinataire> dest,
+            MHRMissionAffectation ma,
+            String trxName) {
+
+        // TO → l'employé affecté
+        ajouterTO(dest, ma.getEmployee_ID());
+        // CC → supérieurs de l'employé affecté
+        ajouterCC(dest, OrganigrammeService.getSuperieurs(
+            ma.getEmployee_ID(), trxName
+        ));
+    }
+
+    // ── RESPONSABLES RH (BCC) ─────────────────────────────────────────────────
+
+    private static void ajouterRH(
+            List<BeanDestinataire> dest, String trxName) {
+
+        List<String> rolesRH = List.of(
+            "Responsable Ressources Humaines",
+            "Ressource Humaine",
+            "Ressource Humaine - Responsable"
+        );
+
+        NotificationSqlControler
+            .getEmployeesByRoles(rolesRH, trxName)
+            .forEach(id -> ajouterBCC(dest, id));
+    }
+
+    // =========================================================================
+    // UTILITAIRES DESTINATAIRES
+    // =========================================================================
+
+    private static void ajouterTO(List<BeanDestinataire> dest, int bpartnerId) {
+        if (bpartnerId <= 0) return;
+        BeanDestinataire d = new BeanDestinataire();
+        d.setCBPartnerId(bpartnerId);
+        d.setType(NotificationTypeDestinataireEmail.TO);
+        dest.add(d);
+    }
+
+    private static void ajouterCC(List<BeanDestinataire> dest, int bpartnerId) {
+        if (bpartnerId <= 0) return;
+        BeanDestinataire d = new BeanDestinataire();
+        d.setCBPartnerId(bpartnerId);
+        d.setType(NotificationTypeDestinataireEmail.CC);
+        dest.add(d);
+    }
+
+    private static void ajouterCC(
+            List<BeanDestinataire> dest, List<Integer> ids) {
+        if (ids == null) return;
+        ids.forEach(id -> ajouterCC(dest, id));
+    }
+
+    private static void ajouterBCC(List<BeanDestinataire> dest, int bpartnerId) {
+        if (bpartnerId <= 0) return;
+        BeanDestinataire d = new BeanDestinataire();
+        d.setCBPartnerId(bpartnerId);
+        d.setType(NotificationTypeDestinataireEmail.BCC);
+        dest.add(d);
+    }
+
+    // =========================================================================
+    // UTILITAIRES TYPE IDS
+    // =========================================================================
+
+    private static int getTypeCongeId(MHRHoliday h) {
+        if (h.getEmission_Conge_ID() <= 0) return 0;
+        MHRAutorisationConge autorisation = new MHRAutorisationConge(
+            Env.getCtx(), h.getEmission_Conge_ID(), null
+        );
+        return autorisation != null ? autorisation.getHR_Type_Conge_ID() : 0;
+    }
+
+    private static int getTypeSanctionId(MHRPunishment p) {
+        if (p.getEmission_Sanction_ID() <= 0) return 0;
+        MHRSanctionAutorisation autorisation = new MHRSanctionAutorisation(
+            Env.getCtx(), p.getEmission_Sanction_ID(), null
+        );
+        return autorisation != null ? autorisation.getHR_TypeSanction_ID() : 0;
+    }
+
+    // =========================================================================
+    // CACHE IDS TECHNIQUES
+    // =========================================================================
+
+    public static int getNotificationTypeId(NotificationEvent event) {
+        if (event == null) return 0;
+        return CACHE_NOTIFICATION_TYPE.computeIfAbsent(
+            event.getCode(),
+            NotificationSqlControler::loadNotificationTypeIdFromDB
+        );
+    }
+
+    public static int getNotificationStatutId(NotificationStatut statut) {
+        if (statut == null) return 0;
         return CACHE_NOTIFICATION_STATUT.computeIfAbsent(
             statut.getCode(),
             NotificationSqlControler::loadNotificationStatutIdFromDB
         );
     }
 
-    
-    public static int getDestinataireTypeId(
-            NotificationTypeDestinataireEmail type
-    ) {
-
-        if (type == null) {
-            return 0;
-        }
-
+    public static int getDestinataireTypeId(NotificationTypeDestinataireEmail type) {
+        if (type == null) return 0;
         return CACHE_DESTINATAIRE_TYPE.computeIfAbsent(
-            type.getValue(), // TO / CC / BCC
+            type.getValue(),
             NotificationSqlControler::loadDestinataireTypeFromDB
         );
     }
 
-	public static int getNotificationCanalId(NotificationCanal channel) {
-	
-	    if (channel == null) {
-	        return 0;
-	    }
-	
-	    return CACHE_NOTIFICATION_CHANNEL.computeIfAbsent(
-	        channel.getValue(),
-	        NotificationSqlControler::loadChannelIdFromDB
-	    );
-	}
-
-	public static String getEmailByBPartner(int cBPartnerId) {
-	
-	    if (cBPartnerId <= 0) {
-	        return null;
-	    }
-	
-	    MCBPartner bp = new MCBPartner(
-	            Env.getCtx(),
-	            cBPartnerId,
-	            null
-	    );
-	
-	    String email = bp.getEMail();
-	
-	    return (email != null && !email.isBlank())
-	            ? email.trim()
-	            : null;
-	}
-
-	private static void buildApplication(
-            Map<String, Object> ctx
-    ) {
-        ctx.put("ApplicationName", "SITRACEL RH");
-    }
-
-    private static void buildActor(
-            Map<String, Object> ctx,
-            MHRNotification notif
-    ) {
-
-        BeanIdentifiant actor =
-                safeIdentifiant(
-                        notif.getCreatedBy(),
-                        notif.get_TrxName()
-                );
-
-        ctx.put("ActorName", safe(actor.getNomEmploye()));
-        ctx.put("ActorMatricule", safe(actor.getMatriculeEmploye()));
-        ctx.put("ActorJobTitle", safe(actor.getNomPoste()));
-        ctx.put("ActionDate", fmt(notif.getCreated()));
-    }
-
-    private static void buildEmployee(
-            Map<String, Object> ctx,
-            int bpartnerId,
-            String trxName
-    ) {
-
-        BeanIdentifiant emp =
-                safeIdentifiant(bpartnerId, trxName);
-
-        ctx.put("EmployeeFullName", safe(emp.getNomEmploye()));
-        ctx.put("EmployeeMatricule", safe(emp.getMatriculeEmploye()));
-        ctx.put("EmployeeJob", safe(emp.getNomPoste()));
-    }
-
-    private static void buildMission(
-            Map<String, Object> ctx,
-            MHRMission m
-    ) {
-
-        ctx.put("MissionName", safe(m.getName()));
-        ctx.put("MissionDescription", safe(m.getDescription()));
-        ctx.put("MissionStartDate", fmt(m.getDate_Debut()));
-        ctx.put("MissionEndDate", fmt(m.getDate_Fin()));
-        ctx.put("MissionLocation", getMissionLocation(m));
-
-        buildEmployee(ctx, m.getEmis_Par_Nom_ID(), m.get_TrxName());
-    }
-
-    private static void buildMissionAffectation(
-            Map<String, Object> ctx,
-            MHRMissionAffectation ma
-    ) {
-
-        ctx.put(
-            "NewPeriod",
-            buildPeriod(
-                ma.getDate_Debut(),
-                ma.getDate_Fin()
-            )
-        );
-
-        buildEmployee(ctx, ma.getEmployee_ID(), ma.get_TrxName());
-    }
-
-    private static void buildDemandeExplication(
-            Map<String, Object> ctx,
-            MHRDemandeExplication d
-    ) {
-
-        ctx.put(
-            "ExplanationReason",
-            safe(d.getMotif_Demande_Explication())
-        );
-        ctx.put(
-            "ExplanationDate",
-            fmt(d.getDate_Emission())
-        );
-        ctx.put(
-            "ExplanationReply",
-            safe(d.getReponse_Demande_Explication())
-        );
-        ctx.put(
-            "ExplanationReplyDate",
-            fmt(d.getDate_Reponse())
-        );
-
-        buildEmployee(ctx, d.getC_BPartner_ID(), d.get_TrxName());
-    }
-
-    private static void buildSanction(
-            Map<String, Object> ctx,
-            MHRPunishment s
-    ) {
-
-        String type = "";
-
-        if (s.getEmission_Sanction_ID() > 0) {
-            MHRSanctionAutorisation a =
-                new MHRSanctionAutorisation(
-                    Env.getCtx(),
-                    s.getEmission_Sanction_ID(),
-                    s.get_TrxName()
-                );
-
-            if (a.getHR_TypeSanction_ID() > 0) {
-                MHRTypeSanction t =
-                    new MHRTypeSanction(
-                        Env.getCtx(),
-                        a.getHR_TypeSanction_ID(),
-                        s.get_TrxName()
-                    );
-                type = safe(t.getNom_Sanction());
-            }
-        }
-
-        ctx.put("SanctionType", type);
-        ctx.put(
-            "SanctionReason",
-            safe(s.getMotif_Demande_Explication())
-        );
-
-        buildEmployee(ctx, s.getC_BPartner_ID(), s.get_TrxName());
-    }
-
-    private static void buildHoliday(
-            Map<String, Object> ctx,
-            MHRHoliday h
-    ) {
-
-        String type = "";
-
-        if (h.getEmission_Conge_ID() > 0) {
-            MHRTypeConge tc =
-                new MHRTypeConge(
-                    Env.getCtx(),
-                    h.getEmission_Conge_ID(),
-                    h.get_TrxName()
-                );
-            type = safe(tc.getNom_Conge());
-        }
-
-        ctx.put("HolidayType", type);
-        ctx.put(
-            "HolidayStartDate",
-            fmt(h.getDate_Debut_Souhaitee())
-        );
-        ctx.put(
-            "HolidayEndDate",
-            fmt(h.getDate_Fin_Souhaitee())
-        );
-
-        buildEmployee(ctx, h.getC_BPartner_ID(), h.get_TrxName());
-    }
-
-    /* ==========================
-     * UTILITAIRES
-     * ========================== */
-
-    private static String fmt(Timestamp ts) {
-        return ts != null ? DATE_FMT.format(ts) : "";
-    }
-
-    private static String safe(String v) {
-        return v != null ? v : "";
-    }
-
-    private static <T> List<T> safeList(List<T> l) {
-        return l != null ? l : List.of();
-    }
-
-    private static BeanIdentifiant safeIdentifiant(
-            int bpartnerId,
-            String trxName
-    ) {
-        BeanIdentifiant id =
-            MCBPartner.getIdentifiantByBPartner(
-                bpartnerId,
-                trxName
-            );
-        return id != null ? id : new BeanIdentifiant();
-    }
-
-    private static String buildPeriod(
-            Timestamp start,
-            Timestamp end
-    ) {
-        if (start == null && end == null) {
-            return "";
-        }
-        return fmt(start) + " - " + fmt(end);
-    }
-
-    private static String getMissionLocation(
-            MHRMission m
-    ) {
-
-        StringBuilder sb = new StringBuilder();
-
-        if (m.getC_City_ID() > 0) {
-            MCity city =
-                new MCity(
-                    m.getCtx(),
-                    m.getC_City_ID(),
-                    m.get_TrxName()
-                );
-            sb.append(safe(city.getName()));
-        }
-
-        if (m.getC_Country_ID() > 0) {
-            MCountry c =
-                new MCountry(
-                    m.getCtx(),
-                    m.getC_Country_ID(),
-                    m.get_TrxName()
-                );
-            if (sb.length() > 0) sb.append(", ");
-            sb.append(safe(c.getName()));
-        }
-
-        return sb.toString();
-    }
-    
-    private static void addRecipient(
-            List<BeanDestinataire> list,
-            int cBPartnerId,
-            NotificationTypeDestinataireEmail type
-    ) {
-        if (cBPartnerId <= 0) {
-            return;
-        }
-
-        String email = getEmailByBPartner(cBPartnerId);
-
-        if (email == null) {
-            return; // pas d’email = pas de notification
-        }
-
-        list.add(
-            new BeanDestinataire(
-                cBPartnerId,
-                email,
-                type
-            )
+    public static int getNotificationCanalId(NotificationCanal canal) {
+        if (canal == null) return 0;
+        return CACHE_NOTIFICATION_CHANNEL.computeIfAbsent(
+            canal.getValue(),
+            NotificationSqlControler::loadChannelIdFromDB
         );
     }
-
-
 }

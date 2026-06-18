@@ -3,73 +3,152 @@ package org.sitracel.notification.process.notifier;
 import java.util.List;
 import java.util.Map;
 
-import org.adempiere.exceptions.AdempiereException;
 import org.compiere.process.SvrProcess;
-import org.compiere.util.EMail;
+import org.compiere.util.CLogger;
+import org.sitracel.enumeration.NotificationStatut;
 import org.sitracel.notification.model.MHRNotification;
+import org.sitracel.notification.model.MHRNotificationDestinataire;
 import org.sitracel.notification.model.MHRNotificationQueue;
 import org.sitracel.notification.model.MHRNotificationTemplate;
 import org.sitracel.notification.model.MHRNotificationType;
+import org.compiere.util.EMail;
 
-public class SitracelProcessNotifier extends SvrProcess{
+/**
+ * Processus planifiable d'envoi des notifications en queue.
+ *
+ * À planifier dans iDempiere (AD_Scheduler) toutes les X minutes.
+ * Peut aussi être lancé manuellement.
+ *
+ * Traite toutes les entrées au statut "Créée" dans HR_NotificationQueue.
+ * En cas d'échec : incrémente Nombre_Tentative, passe au statut "Erreur".
+ * Après MAX_TENTATIVES échecs : passe au statut "Échouée" (abandon).
+ */
+public class SitracelProcessNotifier extends SvrProcess {
 
-	@Override
-	protected void prepare() {
-		// TODO Auto-generated method stub
-		
-	}
+    private static final CLogger log =
+        CLogger.getCLogger(SitracelProcessNotifier.class);
 
-	@Override
-	protected String doIt() throws Exception {
-		// TODO Auto-generated method stub
-		List<MHRNotificationQueue> queue =
-	            MHRNotificationQueue.getNew(getCtx(), get_TrxName());
+    private static final int MAX_TENTATIVES = 3;
 
-	        for (MHRNotificationQueue q : queue) {
+    @Override
+    protected void prepare() {}
 
-	            try {
-	                sendOne(q);
-	                q.setStatus(MHRNotificationQueue.STATUS_Sent);
-	            } catch (Exception e) {
-	                q.setStatus(MHRNotificationQueue.STATUS_Error);
-	                q.setErrorMsg(e.getMessage());
-	            }
+    @Override
+    protected String doIt() throws Exception {
 
-	            q.saveEx();
-	        }
-		return null;
-	}
-	
-	private void sendOne(MHRNotificationQueue q) {
+        List<MHRNotificationQueue> queue =
+            MHRNotificationQueue.getNew(getCtx(), get_TrxName());
 
-	    MHRNotification notif = q.getHR_Notification();
-	    MHRNotificationType type = notif.getHR_NotificationType();
+        if (queue == null || queue.isEmpty()) {
+            return "Aucune notification en attente.";
+        }
 
-	    // 1️⃣ Déterminer la langue
-	    String adLanguage = HRLanguageUtil.getLanguage(q.getC_BPartner_ID());
+        int envoyes    = 0;
+        int erreurs    = 0;
+        int abandonnes = 0;
 
-	    // 2️⃣ Charger le template
-	    MHRNotificationTemplate template =
-	        MHRNotificationTemplate.get(type.get_ID(), adLanguage);
+        for (MHRNotificationQueue q : queue) {
+            try {
+                if (q.getNombre_Tentative() >= MAX_TENTATIVES) {
+                    q.setHR_NotificationStatut_ID(
+                        HRNotificationStatutUtil.getStatutId(
+                            NotificationStatut.FAILED, get_TrxName()
+                        )
+                    );
+                    q.saveEx();
+                    abandonnes++;
+                    continue;
+                }
 
-	    if (template == null) {
-	        throw new AdempiereException("Template introuvable");
-	    }
+                sendOne(q);
 
-	    // 3️⃣ Construire le contexte
-	    Map<String, Object> context =
-	        NotificationContextBuilder.build(notif);
+                q.setHR_NotificationStatut_ID(
+                    HRNotificationStatutUtil.getStatutId(
+                        NotificationStatut.SENT, get_TrxName()
+                    )
+                );
+                envoyes++;
 
-	    // 4️⃣ Rendu dynamique
-	    String subject =
-	        NotificationTemplateEngine.render(template.getMessage_Objet(), context);
+            } catch (Exception erreurCatch) {
+                log.warning("Erreur envoi notification #"
+                    + q.getHR_NotificationQueue_ID()
+                    + " : " + erreurCatch.getMessage());
 
-	    String body =
-	        NotificationTemplateEngine.render(template.getMessage_Contenu(), context);
+                q.setNombre_Tentative(q.getNombre_Tentative() + 1);
+                q.setHR_NotificationStatut_ID(
+                    HRNotificationStatutUtil.getStatutId(
+                        NotificationStatut.ERROR, get_TrxName()
+                    )
+                );
+                erreurs++;
+            }
 
-	    // 5️⃣ Envoi mail natif iDempiere
-	    EMail email = HRMailUtil.createMail(q.getC_BPartner_ID(), subject, body);
-	    email.send();
-	}
+            q.saveEx();
+        }
 
+        return String.format(
+            "Traitement terminé — Envoyés: %d | Erreurs: %d | Abandonnés: %d",
+            envoyes, erreurs, abandonnes
+        );
+    }
+
+    private void sendOne(MHRNotificationQueue q) throws Exception {
+
+        MHRNotification notif = q.getHR_Notification();
+        if (notif == null) throw new IllegalStateException(
+            "Notification introuvable pour queue #" + q.getHR_NotificationQueue_ID()
+        );
+
+        MHRNotificationType notifType = notif.getHR_NotificationType();
+        if (notifType == null) throw new IllegalStateException(
+            "Type de notification introuvable"
+        );
+
+        List<MHRNotificationDestinataire> destinataires =
+            MHRNotificationDestinataire.getByNotification(
+                notif.getHR_Notification_ID(), get_TrxName()
+            );
+
+        if (destinataires == null || destinataires.isEmpty()) {
+            throw new IllegalStateException(
+                "Aucun destinataire pour notification #"
+                + notif.getHR_Notification_ID()
+            );
+        }
+
+        MHRNotificationTemplate template =
+            HRNotificationTemplateUtil.getTemplate(
+                notifType.getHR_NotificationType_ID(),
+                "fr_FR",
+                get_TrxName()
+            );
+
+        if (template == null) throw new IllegalStateException(
+            "Template introuvable pour : " + notifType.getValue()
+        );
+
+        Map<String, String> variables =
+            HRNotificationVariableBuilder.build(notif, get_TrxName());
+
+        String sujet = HRNotificationTemplateEngine.render(
+            template.getMessage_Objet(), variables
+        );
+        String corps = HRNotificationTemplateEngine.render(
+            template.getMessage_Contenu(), variables
+        );
+
+        for (MHRNotificationDestinataire dest : destinataires) {
+            String email = dest.getEMail();
+            if (email == null || email.isBlank()) continue;
+            try {
+                EMail mail = HRMailUtil.createMail(
+                    getCtx(), email.trim(), sujet, corps
+                );
+                mail.send();
+            } catch (Exception erreurCatch) {
+                log.warning("Échec envoi à " + email
+                    + " : " + erreurCatch.getMessage());
+            }
+        }
+    }
 }
