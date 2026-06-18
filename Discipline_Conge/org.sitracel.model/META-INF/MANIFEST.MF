@@ -3,8 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Model
 Bundle-SymbolicName: org.sitracel.model
 Bundle-Version: 1.0.0.qualifier
-Export-Package: org.sitracel.discipline.model,
- org.sitracel.mission.model,
+Export-Package: org.sitracel.mission.model,
  org.sitracel.model,
  org.sitracel.paie.model,
  org.sitracel.recrutement.model
