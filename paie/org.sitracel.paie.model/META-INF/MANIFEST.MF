@@ -1,12 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Model
-Bundle-SymbolicName: org.sitracel.model
+Bundle-Name: Paie Model
+Bundle-SymbolicName: org.sitracel.paie.model
 Bundle-Version: 1.0.0.qualifier
-Export-Package: org.sitracel.model,
- org.sitracel.recrutement.model
+Export-Package: org.sitracel.paie.model
 Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
  org.adempiere.plugin.utils;bundle-version="4.1.0"
 Service-Component: OSGI-INF/*.xml
-Automatic-Module-Name: org.sitracel.model
+Automatic-Module-Name: org.sitracel.paie.model
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
