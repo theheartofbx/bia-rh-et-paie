@@ -14,7 +14,7 @@
  * ComPiere, Inc., 2620 Augustine Dr. #245, Santa Clara, CA 95054, USA        *
  * or via info@compiere.org or http://www.compiere.org/license.html           *
  *****************************************************************************/
-package org.sitracel.model;
+package org.sitracel.organigramme.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -22,25 +22,25 @@ import java.sql.Timestamp;
 import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Interface for HR_Categorie_Responsabilite
+/** Generated Interface for HR_Organigramme
  *  @author iDempiere (generated)
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_Categorie_Responsabilite
+public interface I_HR_Organigramme
 {
 
-    /** TableName=HR_Categorie_Responsabilite */
-    public static final String Table_Name = "HR_Categorie_Responsabilite";
+    /** TableName=HR_Organigramme */
+    public static final String Table_Name = "HR_Organigramme";
 
-    /** AD_Table_ID=1003536 */
+    /** AD_Table_ID=1003334 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 4 - System
+    /** AccessLevel = 3 - Client - Org
      */
-    BigDecimal accessLevel = BigDecimal.valueOf(4);
+    BigDecimal accessLevel = BigDecimal.valueOf(3);
 
     /** Load Meta Data */
 
@@ -81,19 +81,6 @@ public interface I_HR_Categorie_Responsabilite
 	  */
 	public int getCreatedBy();
 
-    /** Column name Description */
-    public static final String COLUMNNAME_Description = "Description";
-
-	/** Set Description.
-	  * Optional short description of the record
-	  */
-	public void setDescription (String Description);
-
-	/** Get Description.
-	  * Optional short description of the record
-	  */
-	public String getDescription();
-
     /** Column name HR_Categorie_Responsabilite_ID */
     public static final String COLUMNNAME_HR_Categorie_Responsabilite_ID = "HR_Categorie_Responsabilite_ID";
 
@@ -103,14 +90,25 @@ public interface I_HR_Categorie_Responsabilite
 	/** Get Catégorie de Responsabilité	  */
 	public int getHR_Categorie_Responsabilite_ID();
 
-    /** Column name HR_Categorie_Responsabilite_UU */
-    public static final String COLUMNNAME_HR_Categorie_Responsabilite_UU = "HR_Categorie_Responsabilite_UU";
+	public I_HR_Categorie_Responsabilite getHR_Categorie_Responsabilite() throws RuntimeException;
 
-	/** Set HR_Categorie_Responsabilite_UU	  */
-	public void setHR_Categorie_Responsabilite_UU (String HR_Categorie_Responsabilite_UU);
+    /** Column name HR_Organigramme_ID */
+    public static final String COLUMNNAME_HR_Organigramme_ID = "HR_Organigramme_ID";
 
-	/** Get HR_Categorie_Responsabilite_UU	  */
-	public String getHR_Categorie_Responsabilite_UU();
+	/** Set Organigramme	  */
+	public void setHR_Organigramme_ID (int HR_Organigramme_ID);
+
+	/** Get Organigramme	  */
+	public int getHR_Organigramme_ID();
+
+    /** Column name HR_Organigramme_UU */
+    public static final String COLUMNNAME_HR_Organigramme_UU = "HR_Organigramme_UU";
+
+	/** Set HR_Organigramme_UU	  */
+	public void setHR_Organigramme_UU (String HR_Organigramme_UU);
+
+	/** Get HR_Organigramme_UU	  */
+	public String getHR_Organigramme_UU();
 
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
@@ -125,18 +123,69 @@ public interface I_HR_Categorie_Responsabilite
 	  */
 	public boolean isActive();
 
-    /** Column name Name */
-    public static final String COLUMNNAME_Name = "Name";
+    /** Column name IsMessageAlerteDisplayed */
+    public static final String COLUMNNAME_IsMessageAlerteDisplayed = "IsMessageAlerteDisplayed";
 
-	/** Set Name.
-	  * Alphanumeric identifier of the entity
+	/** Set Message d&#039;
+Alerte Affiché.
+	  * Message d&#039;
+Alerte Affiché
 	  */
-	public void setName (String Name);
+	public void setIsMessageAlerteDisplayed (boolean IsMessageAlerteDisplayed);
 
-	/** Get Name.
-	  * Alphanumeric identifier of the entity
+	/** Get Message d&#039;
+Alerte Affiché.
+	  * Message d&#039;
+Alerte Affiché
 	  */
-	public String getName();
+	public boolean isMessageAlerteDisplayed();
+
+    /** Column name Message_Alerte */
+    public static final String COLUMNNAME_Message_Alerte = "Message_Alerte";
+
+	/** Set Message d&#039;
+Alerte.
+	  * Message d&#039;
+Alerte
+	  */
+	public void setMessage_Alerte (String Message_Alerte);
+
+	/** Get Message d&#039;
+Alerte.
+	  * Message d&#039;
+Alerte
+	  */
+	public String getMessage_Alerte();
+
+    /** Column name Poste_ID */
+    public static final String COLUMNNAME_Poste_ID = "Poste_ID";
+
+	/** Set Nom du Poste :.
+	  * Nom du Poste :
+	  */
+	public void setPoste_ID (int Poste_ID);
+
+	/** Get Nom du Poste :.
+	  * Nom du Poste :
+	  */
+	public int getPoste_ID();
+
+	public org.eevolution.model.I_HR_Job getPoste() throws RuntimeException;
+
+    /** Column name Poste_Responsable_ID */
+    public static final String COLUMNNAME_Poste_Responsable_ID = "Poste_Responsable_ID";
+
+	/** Set Poste du Responsable .
+	  * Poste du Responsable
+	  */
+	public void setPoste_Responsable_ID (int Poste_Responsable_ID);
+
+	/** Get Poste du Responsable .
+	  * Poste du Responsable
+	  */
+	public int getPoste_Responsable_ID();
+
+	public org.eevolution.model.I_HR_Job getPoste_Responsable() throws RuntimeException;
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
@@ -153,17 +202,4 @@ public interface I_HR_Categorie_Responsabilite
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
-
-    /** Column name Value */
-    public static final String COLUMNNAME_Value = "Value";
-
-	/** Set Search Key.
-	  * Search key for the record in the format required - must be unique
-	  */
-	public void setValue (String Value);
-
-	/** Get Search Key.
-	  * Search key for the record in the format required - must be unique
-	  */
-	public String getValue();
 }

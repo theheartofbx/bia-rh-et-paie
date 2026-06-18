@@ -1,4 +1,4 @@
-package org.sitracel.model;
+package org.sitracel.organigramme.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
