@@ -42,6 +42,7 @@ public final class NotificationGestionDestinataireControler {
         handlers.add(new NotificationGestionDestinataireDemandeExplication());
         handlers.add(new NotificationGestionDestinatairePunishment());
         handlers.add(new NotificationGestionDestinataireHoliday());
+        handlers.add(new NotificationGestionDestinataireRecrutement());
 
         return handlers;
     }
@@ -93,64 +94,21 @@ public final class NotificationGestionDestinataireControler {
             return;
         }
 
-        String canalValue =
-            NotificationGestionCanal.gererCanal(
-                bpartnerId,
-                canal
-            );
-
-        if (canalValue == null || canalValue.trim().isEmpty()) {
-            return;
-        }
-
-        String key = bpartnerId + "|" + canal.name();
+        String key = canal.name() + "_" + bpartnerId;
 
         BeanDestinataire existant = map.get(key);
 
         if (existant == null) {
-
-            BeanDestinataire nouveau =
-                new BeanDestinataire(
-                    bpartnerId,
-                    canalValue,
-                    canal,
-                    type
-                );
-
-            map.put(key, nouveau);
+            map.put(key, new BeanDestinataire(bpartnerId, canal, type));
             return;
         }
 
-        /* ==========================
-         * GESTION DE PRIORITE
-         * ========================== */
-        NotificationTypeDestinataireEmail typeExistant =
-            existant.getType();
-
-        if (typeExistant == null) {
-            map.put(
-                key,
-                new BeanDestinataire(
-                    bpartnerId,
-                    canalValue,
-                    canal,
-                    type
-                )
-            );
-            return;
-        }
-
-        if (type.getPriority() < typeExistant.getPriority()) {
-
-            BeanDestinataire remplace =
-                new BeanDestinataire(
-                    bpartnerId,
-                    canalValue,
-                    canal,
-                    type
-                );
-
-            map.put(key, remplace);
+        // Upgrade TO > CC > BCC
+        if (type == NotificationTypeDestinataireEmail.TO) {
+            existant.setType(NotificationTypeDestinataireEmail.TO);
+        } else if (type == NotificationTypeDestinataireEmail.CC
+                && existant.getType() == NotificationTypeDestinataireEmail.BCC) {
+            existant.setType(NotificationTypeDestinataireEmail.CC);
         }
     }
 }

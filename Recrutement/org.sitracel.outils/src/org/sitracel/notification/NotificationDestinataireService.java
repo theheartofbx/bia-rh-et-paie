@@ -12,6 +12,7 @@ import org.sitracel.notification.gestionmodele.NotificationGestionDestinataireHo
 import org.sitracel.notification.gestionmodele.NotificationGestionDestinataireMission;
 import org.sitracel.notification.gestionmodele.NotificationGestionDestinataireMissionAffectation;
 import org.sitracel.notification.gestionmodele.NotificationGestionDestinatairePunishment;
+import org.sitracel.notification.gestionmodele.NotificationGestionDestinataireRecrutement;
 
 /**
  * Point d'entrée unique pour la résolution des destinataires d'une notification.
@@ -28,8 +29,8 @@ public class NotificationDestinataireService {
             new NotificationGestionDestinataireMissionAffectation(),
             new NotificationGestionDestinataireHoliday(),
             new NotificationGestionDestinataireDemandeExplication(),
-            new NotificationGestionDestinatairePunishment()
-            // Ajouter ici les futurs handlers : Recrutement, Paie, etc.
+            new NotificationGestionDestinatairePunishment(),
+            new NotificationGestionDestinataireRecrutement()
     );
 
     public static List<BeanDestinataire> resolve(

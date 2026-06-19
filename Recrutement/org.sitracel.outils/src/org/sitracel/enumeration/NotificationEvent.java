@@ -31,15 +31,12 @@ public enum NotificationEvent {
     HOLIDAY_APPROVED("HOLIDAY_APPROVED", "Congé - Approbation"),
     HOLIDAY_DISAPPROVED("HOLIDAY_DISAPPROVED", "Congé - Désapprobation"),
     HOLIDAY_VALIDATED("HOLIDAY_VALIDATED", "Congé - Validation"),
-    HOLIDAY_REJECTED("HOLIDAY_REJECTED", "Congé - Rejet");
+    HOLIDAY_REJECTED("HOLIDAY_REJECTED", "Congé - Rejet"),
 
-    /*
-     * RECRUTEMENT — décommenter quand le module sera branché :
-     * OFFRE_EMPLOI_PUBLIEE("OFFRE_EMPLOI_PUBLIEE", "Offre d'emploi - Publication"),
-     * CANDIDATURE_RECUE("CANDIDATURE_RECUE", "Candidature - Réception"),
-     * CANDIDATURE_RETENUE("CANDIDATURE_RETENUE", "Candidature - Retenue"),
-     * CANDIDATURE_REJETEE("CANDIDATURE_REJETEE", "Candidature - Rejet"),
-     */
+    /* RECRUTEMENT */
+    OFFRE_EMPLOI_CREEE("OFFRE_EMPLOI_CREEE", "Recrutement - Offre créée"),
+    CANDIDATURE_RECUE("CANDIDATURE_RECUE", "Recrutement - Candidature reçue"),
+    CANDIDATURE_CLASSEE("CANDIDATURE_CLASSEE", "Recrutement - Candidature classée");
 
     private final String code;
     private final String notificationTypeName;
