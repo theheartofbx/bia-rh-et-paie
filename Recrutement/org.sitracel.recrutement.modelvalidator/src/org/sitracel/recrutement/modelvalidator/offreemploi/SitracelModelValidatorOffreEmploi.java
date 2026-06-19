@@ -5,7 +5,7 @@ import org.compiere.model.ModelValidationEngine;
 import org.compiere.model.ModelValidator;
 import org.compiere.model.PO;
 import org.sitracel.recrutement.model.MHROffreEmploi;
-import org.sitracel.recrutement.modelvalidator.ModelValidatorControllerRecrutement;
+import org.sitracel.recrutement.modelvalidator.service.RecrutementValidatorService;
 
 public class SitracelModelValidatorOffreEmploi implements ModelValidator {
 
@@ -15,27 +15,19 @@ public class SitracelModelValidatorOffreEmploi implements ModelValidator {
     }
 
     @Override
-    public int getAD_Client_ID() {
-        return 0;
-    }
+    public int getAD_Client_ID() { return 0; }
 
     @Override
-    public String login(int AD_Org_ID, int AD_Role_ID, int AD_User_ID) {
-        return null;
-    }
+    public String login(int AD_Org_ID, int AD_Role_ID, int AD_User_ID) { return null; }
 
     @Override
     public String modelChange(PO po, int type) throws Exception {
-        MHROffreEmploi offreEmploi = (MHROffreEmploi) po;
-        // TYPE_AFTER_NEW : le record est sauvé en base — notification possible
         if (type == ModelValidator.TYPE_AFTER_NEW) {
-            ModelValidatorControllerRecrutement.creationOffreEmploi(offreEmploi);
+            RecrutementValidatorService.creationOffreEmploi((MHROffreEmploi) po);
         }
         return null;
     }
 
     @Override
-    public String docValidate(PO po, int timing) {
-        return null;
-    }
+    public String docValidate(PO po, int timing) { return null; }
 }
