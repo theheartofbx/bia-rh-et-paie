@@ -11,6 +11,16 @@ import org.sitracel.mission.model.MHRMission;
 import org.sitracel.mission.model.MHRMissionValidation;
 import org.sitracel.notification.NotificationControler;
 
+/**
+ * ModelValidator sur MHRMissionValidation.
+ *
+ * Recalcule l'état de la mission parente après chaque vote de validation,
+ * et notifie si la mission vient d'être validée ou rejetée.
+ *
+ * CORRECTION BUG : les anciens états (isValidee, isRejetee) sont capturés
+ * AVANT le recalcul, car get_ValueOld() ne fonctionne pas sur un PO
+ * rechargé depuis la base.
+ */
 public class SitracelModelValidatorMissionValidation implements ModelValidator {
 
     @Override
@@ -26,63 +36,43 @@ public class SitracelModelValidatorMissionValidation implements ModelValidator {
 
     @Override
     public String modelChange(PO po, int type) throws Exception {
-
         if (po == null || !(po instanceof MHRMissionValidation)) return null;
 
         MHRMissionValidation mv = (MHRMissionValidation) po;
         int missionId = mv.getHR_Mission_ID();
 
-        // Recalcul de l'état de la mission après chaque changement
         if (type == TYPE_AFTER_NEW
          || type == TYPE_AFTER_CHANGE
          || type == TYPE_AFTER_DELETE) {
 
             if (missionId > 0) {
+
+                // ✅ CORRECTION : charger AVANT recalcul pour capturer l'ancien état
+                MHRMission missionAvant = new MHRMission(
+                    Env.getCtx(), missionId, mv.get_TrxName());
+
+                boolean etaitValidee = missionAvant != null && missionAvant.isValidee();
+                boolean etaitRejetee = missionAvant != null && missionAvant.isRejetee();
+
+                // Recalcul de l'état
                 ControlerMission.recalculerEtatMission(missionId, mv.get_TrxName());
 
-                // Charger la mission pour détecter son nouvel état
-                MHRMission mission = new MHRMission(Env.getCtx(), missionId, null);
-                if (mission != null) {
-                    detecterTransitionEtatMission(mission, po, type);
+                // ✅ Recharger APRÈS pour connaître le nouvel état
+                MHRMission missionApres = new MHRMission(Env.getCtx(), missionId, null);
+                if (missionApres == null) return null;
+
+                // Détecter la transition et notifier
+                if (missionApres.isValidee() && !etaitValidee) {
+                    NotificationControler.notify(
+                        NotificationEvent.MISSION_VALIDATED, missionApres);
+                } else if (missionApres.isRejetee() && !etaitRejetee) {
+                    NotificationControler.notify(
+                        NotificationEvent.MISSION_REJECTED, missionApres);
                 }
             }
         }
 
         return null;
-    }
-
-    /**
-     * Détecte si la mission vient d'être validée ou rejetée
-     * et déclenche la notification correspondante.
-     *
-     * La validation/rejet passe par MHRMissionValidation qui agrège
-     * les votes — ControlerMission.recalculerEtatMission() met à jour
-     * isValidee/isRejetee sur la mission parente.
-     */
-    private void detecterTransitionEtatMission(
-            MHRMission mission, PO po, int type) {
-
-        boolean nouvelleValidation = mission.isValidee();
-        boolean ancienneValidation = getBooleanOld(mission,
-            MHRMission.COLUMNNAME_IsValidee);
-        if (nouvelleValidation && !ancienneValidation) {
-            NotificationControler.notify(NotificationEvent.MISSION_VALIDATED, mission);
-            return;
-        }
-
-        boolean nouveauRejet = mission.isRejetee();
-        boolean ancienRejet  = getBooleanOld(mission,
-            MHRMission.COLUMNNAME_IsRejetee);
-        if (nouveauRejet && !ancienRejet) {
-            NotificationControler.notify(NotificationEvent.MISSION_REJECTED, mission);
-        }
-    }
-
-    private static boolean getBooleanOld(PO po, String columnName) {
-        Object oldValue = po.get_ValueOld(columnName);
-        if (oldValue instanceof Boolean) return (Boolean) oldValue;
-        if (oldValue instanceof String)  return "Y".equalsIgnoreCase((String) oldValue);
-        return false;
     }
 
     @Override

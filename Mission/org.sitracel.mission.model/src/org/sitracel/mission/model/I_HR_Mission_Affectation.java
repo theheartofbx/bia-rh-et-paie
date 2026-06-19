@@ -18,8 +18,7 @@ package org.sitracel.mission.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-
-import org.compiere.model.MTable;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_Mission_Affectation
@@ -209,6 +208,19 @@ au :
 	  * The record is active in the system
 	  */
 	public boolean isActive();
+
+    /** Column name IsAnnulee */
+    public static final String COLUMNNAME_IsAnnulee = "IsAnnulee";
+
+	/** Set Est Annulé(e).
+	  * Est Annulé(e)
+	  */
+	public void setIsAnnulee (boolean IsAnnulee);
+
+	/** Get Est Annulé(e).
+	  * Est Annulé(e)
+	  */
+	public boolean isAnnulee();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
