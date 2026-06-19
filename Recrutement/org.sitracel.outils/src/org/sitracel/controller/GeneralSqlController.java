@@ -426,4 +426,100 @@ public class GeneralSqlController {
         }
         return null;
     }
+
+    // =========================================================================
+    // UTILITAIRES GÉNÉRIQUES — conservés ici car utilisés par plusieurs modules
+    // =========================================================================
+
+    /**
+     * Retourne l'ID d'un enregistrement par son nom dans une table quelconque.
+     * Méthode générique utilisée par ProcessControllerConge et autres.
+     */
+    public static Integer getIDFromTableNameAndName(String searchColumnName,
+                                                     String tableName,
+                                                     String columnName,
+                                                     String value,
+                                                     String trxName) {
+        Integer resultat = null;
+        if (searchColumnName == null || tableName == null
+                || columnName == null || value == null) return null;
+
+        String sql = "SELECT " + searchColumnName
+            + " FROM " + tableName
+            + " WHERE " + tableName + "." + columnName + " = ?";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = DB.prepareStatement(sql, trxName);
+            pstmt.setString(1, value);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                resultat = rs.getInt(searchColumnName);
+            }
+        } catch (Exception e) {
+            log.warning(e.getMessage());
+        } finally {
+            DB.close(rs, pstmt);
+        }
+        return resultat;
+    }
+
+    /**
+     * Vérifie si un enregistrement existe dans une table par son ID.
+     */
+    public static boolean idExists(String searchColumnName,
+                                    String tableName,
+                                    int searchValue,
+                                    String trxName) {
+        if (searchColumnName == null || tableName == null) return false;
+
+        String sql = "SELECT 1 FROM " + tableName
+            + " WHERE " + tableName + "." + searchColumnName + " = ?";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = DB.prepareStatement(sql, trxName);
+            pstmt.setInt(1, searchValue);
+            rs = pstmt.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            log.warning(e.getMessage());
+        } finally {
+            DB.close(rs, pstmt);
+        }
+        return false;
+    }
+
+    /**
+     * Retourne le nombre d'absences de type congé non traitées sur l'année en cours.
+     * Utilisé par ProcessControllerConge pour calculer la dette de congé.
+     */
+    public static int getNombreJourAbsencesCongeNonTraite(Timestamp date, String trxName) {
+        Timestamp firstDayOfYear = HRCalendrierService.getFirstDayOfThisYear();
+        Timestamp lastDayOfYear  = HRCalendrierService.getLastDayOfThisYear();
+
+        String sql = "SELECT COUNT(*) AS count"
+            + " FROM " + org.sitracel.conge.model.I_HR_Absence.Table_Name
+            + " WHERE " + org.sitracel.conge.model.I_HR_Absence.COLUMNNAME_IsConge + " = 'Y'"
+            + " AND "   + org.sitracel.conge.model.I_HR_Absence.COLUMNNAME_IsCongeTraite + " = 'N'"
+            + " AND "   + org.sitracel.conge.model.I_HR_Absence.COLUMNNAME_Date_Absence
+            + " BETWEEN ? AND ?";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = DB.prepareStatement(sql, trxName);
+            pstmt.setTimestamp(1, firstDayOfYear);
+            pstmt.setTimestamp(2, lastDayOfYear);
+            rs = pstmt.executeQuery();
+            if (rs.next()) return rs.getInt("count");
+        } catch (java.sql.SQLException e) {
+            log.warning(e.getMessage());
+        } finally {
+            DB.close(rs, pstmt);
+        }
+        return 0;
+    }
 }
