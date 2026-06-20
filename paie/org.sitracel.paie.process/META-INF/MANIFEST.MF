@@ -7,6 +7,8 @@ Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
  org.adempiere.plugin.utils;bundle-version="4.1.0",
  org.sitracel.model;bundle-version="1.0.0",
  org.sitracel.outils;bundle-version="1.0.0"
+Bundle-ClassPath: .,
+ lib/exp4j-0.4.8.jar
 Service-Component: OSGI-INF/*.xml
 Automatic-Module-Name: org.sitracel.paie.process
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

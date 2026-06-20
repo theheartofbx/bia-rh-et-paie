@@ -32,7 +32,7 @@ public class X_HR_Mission_Affectation extends PO implements I_HR_Mission_Affecta
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20251214L;
+	private static final long serialVersionUID = 20260619L;
 
     /** Standard Constructor */
     public X_HR_Mission_Affectation (Properties ctx, int HR_Mission_Affectation_ID, String trxName)
@@ -40,7 +40,11 @@ public class X_HR_Mission_Affectation extends PO implements I_HR_Mission_Affecta
       super (ctx, HR_Mission_Affectation_ID, trxName);
       /** if (HR_Mission_Affectation_ID == 0)
         {
+			setEmployee_ID (0);
 			setHR_Mission_Affectation_ID (0);
+			setHR_Mission_ID (0);
+			setIsAnnulee (false);
+// N
         } */
     }
 
@@ -50,7 +54,11 @@ public class X_HR_Mission_Affectation extends PO implements I_HR_Mission_Affecta
       super (ctx, HR_Mission_Affectation_ID, trxName, virtualColumns);
       /** if (HR_Mission_Affectation_ID == 0)
         {
+			setEmployee_ID (0);
 			setHR_Mission_Affectation_ID (0);
+			setHR_Mission_ID (0);
+			setIsAnnulee (false);
+// N
         } */
     }
 
@@ -60,7 +68,11 @@ public class X_HR_Mission_Affectation extends PO implements I_HR_Mission_Affecta
       super (ctx, HR_Mission_Affectation_UU, trxName);
       /** if (HR_Mission_Affectation_UU == null)
         {
+			setEmployee_ID (0);
 			setHR_Mission_Affectation_ID (0);
+			setHR_Mission_ID (0);
+			setIsAnnulee (false);
+// N
         } */
     }
 
@@ -70,7 +82,11 @@ public class X_HR_Mission_Affectation extends PO implements I_HR_Mission_Affecta
       super (ctx, HR_Mission_Affectation_UU, trxName, virtualColumns);
       /** if (HR_Mission_Affectation_UU == null)
         {
+			setEmployee_ID (0);
 			setHR_Mission_Affectation_ID (0);
+			setHR_Mission_ID (0);
+			setIsAnnulee (false);
+// N
         } */
     }
 
@@ -215,9 +231,9 @@ public class X_HR_Mission_Affectation extends PO implements I_HR_Mission_Affecta
 	public void setEmployee_ID (int Employee_ID)
 	{
 		if (Employee_ID < 1)
-			set_Value (COLUMNNAME_Employee_ID, null);
+			set_ValueNoCheck (COLUMNNAME_Employee_ID, null);
 		else
-			set_Value (COLUMNNAME_Employee_ID, Integer.valueOf(Employee_ID));
+			set_ValueNoCheck (COLUMNNAME_Employee_ID, Integer.valueOf(Employee_ID));
 	}
 
 	/** Get Emloyé(e).
@@ -319,5 +335,28 @@ public class X_HR_Mission_Affectation extends PO implements I_HR_Mission_Affecta
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Est Annulé(e).
+		@param IsAnnulee Est Annulé(e)
+	*/
+	public void setIsAnnulee (boolean IsAnnulee)
+	{
+		set_Value (COLUMNNAME_IsAnnulee, Boolean.valueOf(IsAnnulee));
+	}
+
+	/** Get Est Annulé(e).
+		@return Est Annulé(e)
+	  */
+	public boolean isAnnulee()
+	{
+		Object oo = get_Value(COLUMNNAME_IsAnnulee);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
 	}
 }
