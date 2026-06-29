@@ -1,4 +1,4 @@
-package org.sitracel.mission.callout;
+package org.sitracel.mission.callout.controller;
 
 import java.sql.Timestamp;
 

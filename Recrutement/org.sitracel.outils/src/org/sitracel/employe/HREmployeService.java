@@ -90,8 +90,8 @@ public final class HREmployeService {
             return beanConge;
         }
 
-        var date1 = dateDebut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        var date2 = dateFin.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        java.time.LocalDate date1 = dateDebut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        java.time.LocalDate date2 = dateFin.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         Period periode = Period.between(date1, date2);
 
         beanConge.setAnneeAnciennete(periode.getYears());

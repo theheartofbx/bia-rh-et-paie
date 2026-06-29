@@ -1,4 +1,4 @@
-package org.sitracel.recrutement.modelvalidator;
+package org.sitracel.recrutement.modelvalidator.controller;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
