@@ -8,7 +8,7 @@ import java.util.Properties;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.util.DB;
 import org.sitracel.bean.BeanIdentifiant;
-import org.sitracel.paie.model.I_HR_ElementBasePaieEmploye;
+// COMMENTÉ — attend découplage paie: import org.sitracel.paie.model.I_HR_ElementBasePaieEmploye;
 
 public class MCBPartner extends X_C_BPartner{
 	private static final long serialVersionUID = 1610077844542696959L;
@@ -45,16 +45,16 @@ public class MCBPartner extends X_C_BPartner{
 	        "FROM AD_User ad " +
 	        "INNER JOIN " + I_C_BPartner.Table_Name + " cb " +
 	        "        ON cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID + " = ad.C_BPartner_ID " +
-	        "LEFT JOIN " + I_HR_ElementBasePaieEmploye.Table_Name + " el " +
-	        "       ON el." + I_HR_ElementBasePaieEmploye.COLUMNNAME_C_BPartner_ID + " = cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID +
+	        "LEFT JOIN " + "HR_ElementBasePaieEmploye" + " el " +
+	        "       ON el." + "C_BPartner_ID" + " = cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID +
 	        "      AND el.IsActive='Y' " +
-	        "      AND el." + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut + " = ( " +
-	        "          SELECT MAX(e2." + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut + ") " +
-	        "          FROM " + I_HR_ElementBasePaieEmploye.Table_Name + " e2 " +
-	        "          WHERE e2." + I_HR_ElementBasePaieEmploye.COLUMNNAME_C_BPartner_ID + " = cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID +
+	        "      AND el." + "Date_Debut" + " = ( " +
+	        "          SELECT MAX(e2." + "Date_Debut" + ") " +
+	        "          FROM " + "HR_ElementBasePaieEmploye" + " e2 " +
+	        "          WHERE e2." + "C_BPartner_ID" + " = cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID +
 	        "          AND e2.IsActive='Y' ) " +
 	        "LEFT JOIN " + I_HR_Job.Table_Name + " job " +
-	        "       ON job." + I_HR_Job.COLUMNNAME_HR_Job_ID + " = el." + I_HR_ElementBasePaieEmploye.COLUMNNAME_HR_Job_ID +
+	        "       ON job." + I_HR_Job.COLUMNNAME_HR_Job_ID + " = el." + "HR_Job_ID" +
 	        "      AND job.IsActive='Y' " +
 	        "WHERE ad.AD_User_ID = ?";
 
@@ -123,19 +123,19 @@ public class MCBPartner extends X_C_BPartner{
 	        " job." + I_HR_Job.COLUMNNAME_Name + " AS Poste, " +
 	        " job." + I_HR_Job.COLUMNNAME_HR_Job_ID + " AS NumPoste " +
 	        "FROM " + I_C_BPartner.Table_Name + " cb " +
-	        "LEFT JOIN " + I_HR_ElementBasePaieEmploye.Table_Name + " el " +
-	        "       ON el." + I_HR_ElementBasePaieEmploye.COLUMNNAME_C_BPartner_ID +
+	        "LEFT JOIN " + "HR_ElementBasePaieEmploye" + " el " +
+	        "       ON el." + "C_BPartner_ID" +
 	        "        = cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID +
 	        "      AND el.IsActive='Y' " +
-	        "      AND el." + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut + " = ( " +
-	        "          SELECT MAX(e2." + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut + ") " +
-	        "          FROM " + I_HR_ElementBasePaieEmploye.Table_Name + " e2 " +
-	        "          WHERE e2." + I_HR_ElementBasePaieEmploye.COLUMNNAME_C_BPartner_ID +
+	        "      AND el." + "Date_Debut" + " = ( " +
+	        "          SELECT MAX(e2." + "Date_Debut" + ") " +
+	        "          FROM " + "HR_ElementBasePaieEmploye" + " e2 " +
+	        "          WHERE e2." + "C_BPartner_ID" +
 	        "                = cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID +
 	        "          AND e2.IsActive='Y' ) " +
 	        "LEFT JOIN " + I_HR_Job.Table_Name + " job " +
 	        "       ON job." + I_HR_Job.COLUMNNAME_HR_Job_ID +
-	        "        = el." + I_HR_ElementBasePaieEmploye.COLUMNNAME_HR_Job_ID +
+	        "        = el." + "HR_Job_ID" +
 	        "      AND job.IsActive='Y' " +
 	        "WHERE cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID + " = ?";
 

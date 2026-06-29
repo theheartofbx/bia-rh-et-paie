@@ -17,6 +17,7 @@ import org.sitracel.bean.BeanConge;
 import org.sitracel.bean.BeanPeriode;
 import org.sitracel.conge.HRCongeRepository;
 import org.sitracel.employe.HREmployeRepository;
+import org.sitracel.time.HRCalendrierService;
 import org.sitracel.model.MHREmployeeJob;
 import org.sitracel.organigramme.model.MHROrganigramme;
 import org.sitracel.paie.model.I_HR_Calcul_Conge;

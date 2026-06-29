@@ -241,7 +241,7 @@ public class ProcessControllerConge {
             MHRHoliday holiday, BeanIdentifiant beanIdentifiant) {
 
         if (holiday == null || beanIdentifiant == null) return;
-        CalloutSqlControllerAbsence.annulerAbsenceConge(
+        HRCongeRepository.annulerAbsenceConge(
             holiday.getC_BPartner_ID(),
             holiday.getDate_Debut_Effective(),
             holiday.getDate_Fin_Effective(),

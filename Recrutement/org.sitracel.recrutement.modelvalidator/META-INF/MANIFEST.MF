@@ -3,7 +3,9 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Recrutement Modelvalidator
 Bundle-SymbolicName: org.sitracel.recrutement.modelvalidator
 Bundle-Version: 1.0.0.qualifier
-Export-Package: org.sitracel.recrutement.modelvalidator
+Export-Package: org.sitracel.recrutement.modelvalidator,
+ org.sitracel.recrutement.modelvalidator.controller,
+ org.sitracel.recrutement.modelvalidator.service
 Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
  org.adempiere.plugin.utils;bundle-version="4.1.0",
  org.sitracel.model;bundle-version="1.0.0",

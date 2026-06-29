@@ -16,7 +16,7 @@ import org.sitracel.recrutement.model.MHRCandidature;
 import org.sitracel.recrutement.model.MHROffreEmploi;
 import org.sitracel.recrutement.model.MHROffreTestEvaluation;
 import org.sitracel.recrutement.model.MHRSessionRecrutement;
-import org.sitracel.recrutement.modelvalidator.repository.ModelValidatorSqlControllerRecrutement;
+import org.sitracel.recrutement.modelvalidator.controller.ModelValidatorSqlControllerRecrutement;
 
 /**
  * Service — logique métier du modelvalidator recrutement.
