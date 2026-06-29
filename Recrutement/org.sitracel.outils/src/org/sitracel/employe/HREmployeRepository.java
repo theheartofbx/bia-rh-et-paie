@@ -207,4 +207,93 @@ public final class HREmployeRepository {
         }
         return resultat;
     }
+
+    // =========================================================================
+    // CATÉGORIES DE RESPONSABILITÉ
+    // =========================================================================
+
+    /**
+     * Retourne les C_BPartner_ID des employés occupant un poste
+     * lié à l'une des catégories de responsabilité données,
+     * actifs à la date de référence.
+     */
+    public static List<Integer> getEmployeesByCategoriesResponsabilite(
+            List<Integer> categorieIds, Timestamp dateReference) {
+
+        List<Integer> list = new ArrayList<>();
+        if (categorieIds == null || categorieIds.isEmpty() || dateReference == null)
+            return list;
+
+        StringBuilder placeholders = new StringBuilder();
+        for (int i = 0; i < categorieIds.size(); i++) {
+            placeholders.append(i == 0 ? "?" : ", ?");
+        }
+
+        String sql =
+            "SELECT DISTINCT ej." + MHREmployeeJob.COLUMNNAME_C_BPartner_ID
+            + " FROM " + MHROrganigramme.Table_Name + " org"
+            + " JOIN " + MHREmployeeJob.Table_Name + " ej"
+            + "   ON ej." + MHREmployeeJob.COLUMNNAME_HR_Job_ID
+            + "    = org." + MHROrganigramme.COLUMNNAME_Poste_Responsable_ID
+            + " WHERE org." + MHROrganigramme.COLUMNNAME_HR_Categorie_Responsabilite_ID
+            + "   IN (" + placeholders + ")"
+            + " AND org.IsActive = 'Y'";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = DB.prepareStatement(sql, null);
+            for (int i = 0; i < categorieIds.size(); i++) {
+                pstmt.setInt(i + 1, categorieIds.get(i));
+            }
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                list.add(rs.getInt(1));
+            }
+        } catch (SQLException e) {
+            log.warning("getEmployeesByCategoriesResponsabilite : " + e.getMessage());
+        } finally {
+            DB.close(rs, pstmt);
+        }
+        return list;
+    }
+
+
+    /**
+     * Retourne les C_BPartner_ID des employés ayant un rôle
+     * parmi une liste d'IDs de rôles (AD_Role_ID).
+     */
+    public static List<Integer> getEmployeesByRoleIds(List<Integer> roleIds, String trxName) {
+        List<Integer> list = new ArrayList<>();
+        if (roleIds == null || roleIds.isEmpty()) return list;
+
+        StringBuilder placeholders = new StringBuilder();
+        for (int i = 0; i < roleIds.size(); i++) {
+            placeholders.append(i == 0 ? "?" : ", ?");
+        }
+
+        String sql = "SELECT DISTINCT u.C_BPartner_ID"
+            + " FROM AD_User u"
+            + " JOIN AD_UserRoles ur ON ur.AD_User_ID = u.AD_User_ID"
+            + " WHERE ur.AD_Role_ID IN (" + placeholders + ")"
+            + " AND u.C_BPartner_ID IS NOT NULL"
+            + " AND u.IsActive = 'Y'";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = DB.prepareStatement(sql, trxName);
+            for (int i = 0; i < roleIds.size(); i++) {
+                pstmt.setInt(i + 1, roleIds.get(i));
+            }
+            rs = pstmt.executeQuery();
+            while (rs.next()) list.add(rs.getInt(1));
+        } catch (SQLException e) {
+            log.warning("getEmployeesByRoleIds : " + e.getMessage());
+        } finally {
+            DB.close(rs, pstmt);
+        }
+        return list;
+    }
+
 }

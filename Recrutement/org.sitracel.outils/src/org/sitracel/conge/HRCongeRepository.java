@@ -369,4 +369,44 @@ public final class HRCongeRepository {
             DB.close(null, pstmt);
         }
     }
+
+    // =========================================================================
+    // COMPTAGE ABSENCES NON TRAITÉES
+    // =========================================================================
+
+    /**
+     * Retourne le nombre d'absences non traitées d'un employé sur une période.
+     * Utilisé par CongeAbsenceValidatorService pour décider si une demande
+     * d'explication doit être créée.
+     */
+    public static int getNombreAbsencesNonTraitees(int bpartnerId,
+                                                    Timestamp dateDebut,
+                                                    Timestamp dateFin,
+                                                    String trxName) {
+        if (bpartnerId <= 0 || dateDebut == null || dateFin == null) return 0;
+
+        String sql = "SELECT COUNT(*) FROM " + I_HR_Absence.Table_Name
+            + " WHERE " + I_HR_Absence.COLUMNNAME_C_BPartner_ID + " = ?"
+            + " AND "   + I_HR_Absence.COLUMNNAME_Date_Absence + " BETWEEN ? AND ?"
+            + " AND "   + I_HR_Absence.COLUMNNAME_IsDemandeExplication + " = 'N'"
+            + " AND "   + I_HR_Absence.COLUMNNAME_IsDemandeExplicationTraite + " = 'N'"
+            + " AND "   + I_HR_Absence.COLUMNNAME_IsConge + " = 'N'";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = DB.prepareStatement(sql, trxName);
+            pstmt.setInt(1, bpartnerId);
+            pstmt.setTimestamp(2, dateDebut);
+            pstmt.setTimestamp(3, dateFin);
+            rs = pstmt.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException erreurCatch) {
+            log.warning("getNombreAbsencesNonTraitees : " + erreurCatch.getMessage());
+        } finally {
+            DB.close(rs, pstmt);
+        }
+        return 0;
+    }
+
 }

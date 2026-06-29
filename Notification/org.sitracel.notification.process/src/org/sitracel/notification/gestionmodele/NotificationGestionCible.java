@@ -8,6 +8,7 @@ import java.util.List;
 import org.sitracel.bean.BeanParametreNotificationCible;
 import org.sitracel.controller.GeneralController;
 import org.sitracel.controller.GeneralSqlController;
+import org.sitracel.employe.HREmployeRepository;
 import org.sitracel.enumeration.NotificationCible;
 
 public final class NotificationGestionCible {
@@ -107,7 +108,7 @@ public final class NotificationGestionCible {
         }
 
         return NotificationGestionDestinataireControler.safeList(
-            GeneralSqlController.getEmployeesByRoles(roleIds)
+            HREmployeRepository.getEmployeesByRoleIds(roleIds, null)
         );
     }
 

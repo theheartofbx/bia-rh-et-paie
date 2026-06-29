@@ -523,4 +523,13 @@ public class GeneralSqlController {
         }
         return 0;
     }
+
+    /** @deprecated Utiliser {@link HREmployeRepository#getEmployeesByCategoriesResponsabilite} */
+    @Deprecated
+    public static List<Integer> getEmployeesByCategoriesResponsabilite(
+            List<Integer> categorieIds, java.sql.Timestamp dateReference) {
+        return HREmployeRepository.getEmployeesByCategoriesResponsabilite(
+            categorieIds, dateReference);
+    }
+
 }
