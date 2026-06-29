@@ -5,7 +5,7 @@ import java.util.Calendar;
 
 import org.compiere.util.Env;
 import org.sitracel.bean.BeanIdentifiant;
-import org.sitracel.conge.callout.absence.service.AbsenceCalloutRepository;
+import org.sitracel.conge.HRCongeRepository;
 import org.sitracel.conge.model.I_HR_Type_Absence;
 import org.sitracel.conge.model.MHRAbsence;
 import org.sitracel.conge.model.MHRPublicHoliday;
@@ -31,7 +31,7 @@ import org.sitracel.time.HRCalendrierService;
  * Ne pas ajouter d'appels sendEmail() ici.
  *
  * Remplace ProcessControllerDiscipline.
- * Couplage croisé CalloutSqlControllerAbsence → AbsenceCalloutRepository.
+ * Couplage croisé CalloutSqlControllerAbsence → HRCongeRepository.
  */
 public final class DisciplineProcessService {
 
@@ -236,7 +236,7 @@ public final class DisciplineProcessService {
         if (punishment.getDate_Debut_Application() == null
                 || punishment.getDate_Fin_Application() == null) return;
 
-        AbsenceCalloutRepository.annulerAbsenceConge(
+        HRCongeRepository.annulerAbsenceConge(
             punishment.getC_BPartner_ID(),
             punishment.getDate_Debut_Application(),
             punishment.getDate_Fin_Application(),

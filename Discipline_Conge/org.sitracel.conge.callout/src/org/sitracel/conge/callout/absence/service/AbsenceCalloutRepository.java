@@ -19,7 +19,7 @@ import org.sitracel.conge.model.I_HR_Absence;
  */
 public final class AbsenceCalloutRepository {
 
-    private static final CLogger log = CLogger.getCLogger(AbsenceCalloutRepository.class);
+    private static final CLogger log = CLogger.getCLogger(HRCongeRepository.class);
 
     private AbsenceCalloutRepository() {}
 

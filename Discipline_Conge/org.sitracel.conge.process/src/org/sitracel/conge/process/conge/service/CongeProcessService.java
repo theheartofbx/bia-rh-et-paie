@@ -5,7 +5,7 @@ import java.util.Calendar;
 
 import org.compiere.util.Env;
 import org.sitracel.bean.BeanIdentifiant;
-import org.sitracel.conge.callout.absence.service.AbsenceCalloutRepository;
+import org.sitracel.conge.HRCongeRepository;
 import org.sitracel.conge.model.I_HR_Type_Absence;
 import org.sitracel.conge.model.MHRAbsence;
 import org.sitracel.conge.model.MHRAutorisationConge;
@@ -287,7 +287,7 @@ public final class CongeProcessService {
         if (conge.getDate_Debut_Effective() == null
                 || conge.getDate_Fin_Effective() == null) return;
 
-        AbsenceCalloutRepository.annulerAbsenceConge(
+        HRCongeRepository.annulerAbsenceConge(
             conge.getC_BPartner_ID(),
             conge.getDate_Debut_Effective(),
             conge.getDate_Fin_Effective(),

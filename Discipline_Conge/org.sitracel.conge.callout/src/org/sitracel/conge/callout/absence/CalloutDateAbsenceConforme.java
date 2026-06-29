@@ -9,7 +9,7 @@ import org.adempiere.base.IColumnCallout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.sitracel.conge.HRCongeRepository;
-import org.sitracel.conge.callout.absence.service.AbsenceCalloutRepository;
+import org.sitracel.conge.HRCongeRepository;
 import org.sitracel.conge.model.MHRAbsence;
 import org.sitracel.conge.model.MHRPublicHoliday;
 
@@ -40,7 +40,7 @@ public class CalloutDateAbsenceConforme implements IColumnCallout {
         String dateFormatee = new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH).format(date);
 
         // Absence déjà enregistrée ce jour
-        if (AbsenceCalloutRepository.isAbsenceExist(date, bpartnerId, null)) {
+        if (HRCongeRepository.isAbsenceExist(date, bpartnerId, null)) {
             mTab.setValue(MHRAbsence.COLUMNNAME_Date_Absence, null);
             mTab.setValue(MHRAbsence.COLUMNNAME_IsMessageAlerteDisplayed, true);
             mTab.setValue(MHRAbsence.COLUMNNAME_Message_Alerte,

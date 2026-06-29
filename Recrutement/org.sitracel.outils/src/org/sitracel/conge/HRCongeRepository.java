@@ -307,4 +307,66 @@ public final class HRCongeRepository {
         }
         return joursFeries;
     }
+
+    // =========================================================================
+    // GESTION DES ABSENCES — DÉPLACÉ DEPUIS AbsenceCalloutRepository
+    // =========================================================================
+
+    /**
+     * Vérifie si une absence existe déjà pour un employé à une date donnée.
+     */
+    public static boolean isAbsenceExist(java.sql.Timestamp dateAbsence,
+                                          Integer bpartnerId,
+                                          String trxName) {
+        if (dateAbsence == null || bpartnerId == null) return false;
+
+        String sql = "SELECT 1 FROM " + I_HR_Absence.Table_Name
+            + " WHERE " + I_HR_Absence.COLUMNNAME_Date_Absence + " = ?"
+            + " AND "   + I_HR_Absence.COLUMNNAME_C_BPartner_ID + " = ?";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = DB.prepareStatement(sql, trxName);
+            pstmt.setTimestamp(1, dateAbsence);
+            pstmt.setInt(2, bpartnerId);
+            rs = pstmt.executeQuery();
+            return rs.next();
+        } catch (java.sql.SQLException e) {
+            log.warning("isAbsenceExist : " + e.getMessage());
+        } finally {
+            DB.close(rs, pstmt);
+        }
+        return false;
+    }
+
+    /**
+     * Supprime toutes les absences de suspension d'un employé sur une période.
+     */
+    public static void annulerAbsenceConge(Integer bpartnerId,
+                                            java.sql.Timestamp dateDebut,
+                                            java.sql.Timestamp dateFin,
+                                            String trxName) {
+        if (bpartnerId == null || dateDebut == null || dateFin == null) return;
+
+        String sql = "DELETE FROM " + I_HR_Absence.Table_Name
+            + " WHERE " + I_HR_Absence.COLUMNNAME_C_BPartner_ID + " = ?"
+            + " AND "   + I_HR_Absence.COLUMNNAME_Date_Absence + " BETWEEN ? AND ?"
+            + " AND "   + I_HR_Absence.COLUMNNAME_IsConge + " = 'N'"
+            + " AND "   + I_HR_Absence.COLUMNNAME_IsCongeTraite + " = 'Y'"
+            + " AND "   + I_HR_Absence.COLUMNNAME_IsDemandeExplicationTraite + " = 'Y'";
+
+        PreparedStatement pstmt = null;
+        try {
+            pstmt = DB.prepareStatement(sql, trxName);
+            pstmt.setInt(1, bpartnerId);
+            pstmt.setTimestamp(2, dateDebut);
+            pstmt.setTimestamp(3, dateFin);
+            pstmt.executeUpdate();
+        } catch (java.sql.SQLException e) {
+            log.warning("annulerAbsenceConge : " + e.getMessage());
+        } finally {
+            DB.close(null, pstmt);
+        }
+    }
 }

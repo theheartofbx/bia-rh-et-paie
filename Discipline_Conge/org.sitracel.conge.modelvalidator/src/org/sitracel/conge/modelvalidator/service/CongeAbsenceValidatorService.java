@@ -3,7 +3,7 @@ package org.sitracel.conge.modelvalidator.service;
 import java.sql.Timestamp;
 
 import org.compiere.util.Env;
-import org.sitracel.conge.callout.absence.service.AbsenceCalloutRepository;
+import org.sitracel.conge.HRCongeRepository;
 import org.sitracel.conge.model.MHRAbsence;
 import org.sitracel.conge.model.MHRTypeAbsence;
 import org.sitracel.discipline.model.MHRDemandeExplication;
@@ -49,7 +49,7 @@ public final class CongeAbsenceValidatorService {
         Timestamp debutAnnee = HRCalendrierService.getFirstDayOfThisYear();
         Timestamp finAnnee   = HRCalendrierService.getLastDayOfThisYear();
 
-        int nbAbsences = AbsenceCalloutRepository.getNombreAbsencesNonTraitees(
+        int nbAbsences = HRCongeRepository.getNombreAbsencesNonTraitees(
             absence.getC_BPartner_ID(), debutAnnee, finAnnee, absence.get_TrxName());
 
         if (nbAbsences >= seuil) {
