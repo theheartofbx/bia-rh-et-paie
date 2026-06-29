@@ -28,7 +28,7 @@ import org.compiere.model.PO;
 import org.compiere.model.POInfo;
 import org.compiere.util.Env;
 import org.compiere.util.KeyNamePair;
-import org.sitracel.model.I_HR_Categorie_Responsabilite;
+import org.sitracel.organigramme.model.I_HR_Categorie_Responsabilite;
 
 /** Generated Model for HR_Mission
  *  @author iDempiere (generated)
