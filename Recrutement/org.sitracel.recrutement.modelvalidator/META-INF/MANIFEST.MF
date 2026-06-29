@@ -1,14 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Modelvalidator
+Bundle-Name: Recrutement Modelvalidator
 Bundle-SymbolicName: org.sitracel.recrutement.modelvalidator
 Bundle-Version: 1.0.0.qualifier
+Export-Package: org.sitracel.recrutement.modelvalidator
 Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
  org.adempiere.plugin.utils;bundle-version="4.1.0",
  org.sitracel.model;bundle-version="1.0.0",
  org.sitracel.outils;bundle-version="1.0.0",
+ org.sitracel.recrutement.model;bundle-version="1.0.0",
  org.sitracel.notification.process;bundle-version="1.0.0"
 Service-Component: OSGI-INF/*.xml
 Automatic-Module-Name: org.sitracel.recrutement.modelvalidator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: org.sitracel.recrutement.modelvalidator

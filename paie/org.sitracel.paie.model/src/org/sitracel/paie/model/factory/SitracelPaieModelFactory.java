@@ -42,7 +42,6 @@ import org.sitracel.paie.model.MHRBaremeConge;
 import org.sitracel.paie.model.MHRCalculConge;
 import org.sitracel.paie.model.MHRCalculIndemniteConge;
 import org.sitracel.paie.model.MHRCalculPaie;
-import org.sitracel.paie.model.MHRCategorieProfessionnelle;
 import org.sitracel.paie.model.MHRConcept;
 import org.sitracel.paie.model.MHRConceptCategory;
 import org.sitracel.paie.model.MHRDetailIndemniteBrutConge;
@@ -85,7 +84,8 @@ public class SitracelPaieModelFactory implements IModelFactory {
         if (tableName.equalsIgnoreCase(I_HR_Calcul_Paie.Table_Name))
             return MHRCalculPaie.class;
         if (tableName.equalsIgnoreCase(I_HR_CategorieProfessionnelle.Table_Name))
-            return MHRCategorieProfessionnelle.class;
+        // TODO: créer MHRCategorieProfessionnelle via Model Generator
+        // return MHRCategorieProfessionnelle.class;
         if (tableName.equalsIgnoreCase(I_HR_Concept.Table_Name))
             return MHRConcept.class;
         if (tableName.equalsIgnoreCase(I_HR_Concept_Category.Table_Name))
@@ -148,7 +148,8 @@ public class SitracelPaieModelFactory implements IModelFactory {
         if (tableName.equalsIgnoreCase(I_HR_Calcul_Paie.Table_Name))
             return new MHRCalculPaie(Env.getCtx(), Record_ID, trxName);
         if (tableName.equalsIgnoreCase(I_HR_CategorieProfessionnelle.Table_Name))
-            return new MHRCategorieProfessionnelle(Env.getCtx(), Record_ID, trxName);
+        // TODO: créer MHRCategorieProfessionnelle via Model Generator
+        // return new MHRCategorieProfessionnelle(Env.getCtx(), Record_ID, trxName);
         if (tableName.equalsIgnoreCase(I_HR_Concept.Table_Name))
             return new MHRConcept(Env.getCtx(), Record_ID, trxName);
         if (tableName.equalsIgnoreCase(I_HR_Concept_Category.Table_Name))
@@ -211,7 +212,8 @@ public class SitracelPaieModelFactory implements IModelFactory {
         if (tableName.equalsIgnoreCase(I_HR_Calcul_Paie.Table_Name))
             return new MHRCalculPaie(Env.getCtx(), rs, trxName);
         if (tableName.equalsIgnoreCase(I_HR_CategorieProfessionnelle.Table_Name))
-            return new MHRCategorieProfessionnelle(Env.getCtx(), rs, trxName);
+        // TODO: créer MHRCategorieProfessionnelle via Model Generator
+        // return new MHRCategorieProfessionnelle(Env.getCtx(), rs, trxName);
         if (tableName.equalsIgnoreCase(I_HR_Concept.Table_Name))
             return new MHRConcept(Env.getCtx(), rs, trxName);
         if (tableName.equalsIgnoreCase(I_HR_Concept_Category.Table_Name))
