@@ -8,10 +8,10 @@ import java.util.Properties;
 import org.adempiere.base.IColumnCallout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
+import org.sitracel.conge.HRCongeRepository;
 import org.sitracel.conge.callout.absence.service.AbsenceCalloutRepository;
 import org.sitracel.conge.model.MHRAbsence;
 import org.sitracel.conge.model.MHRPublicHoliday;
-import org.sitracel.conge.repository.HRCongeRepository;
 
 /**
  * Callout — validation de la date d'absence.
@@ -24,7 +24,7 @@ import org.sitracel.conge.repository.HRCongeRepository;
  */
 public class CalloutDateAbsenceConforme implements IColumnCallout {
 
-    @Override
+    @Override 
     public String start(Properties ctx, int WindowNo, GridTab mTab,
                         GridField mField, Object value, Object oldValue) {
 

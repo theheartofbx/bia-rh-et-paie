@@ -3,7 +3,9 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Model
 Bundle-SymbolicName: org.sitracel.model
 Bundle-Version: 1.0.0.qualifier
-Export-Package: org.sitracel.model
+Export-Package: org.sitracel.model,
+ org.sitracel.bean,
+ org.sitracel.beanfactory
 Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
  org.adempiere.plugin.utils;bundle-version="4.1.0",
  org.sitracel.organigramme.model

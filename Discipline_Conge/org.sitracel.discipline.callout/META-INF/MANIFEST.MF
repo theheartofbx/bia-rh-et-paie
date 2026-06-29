@@ -8,6 +8,7 @@ Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
  org.sitracel.model;bundle-version="1.0.0",
  org.sitracel.outils;bundle-version="1.0.0"
 Automatic-Module-Name: org.sitracel.discipline.callout
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8,
+ org.sitracel.discipline.model;bundle-version="1.0.0"
 Service-Component: OSGI-INF/*.xml
 Import-Package: javax.mail.internet
