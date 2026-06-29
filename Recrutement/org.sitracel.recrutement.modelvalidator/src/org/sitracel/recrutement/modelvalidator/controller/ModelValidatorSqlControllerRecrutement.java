@@ -6,10 +6,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import org.compiere.util.DB;
+import org.compiere.util.Env;
 import org.sitracel.bean.BeanCandidatEvaluation;
 import org.sitracel.bean.BeanEvaluationCompetence;
 import org.sitracel.beanfactory.BeanFactory;
 import org.sitracel.recrutement.model.I_HR_CandidatEvaluation;
+import org.sitracel.recrutement.model.MHRCandidatEvaluation;
 import org.sitracel.recrutement.model.I_HR_Candidature;
 import org.sitracel.recrutement.model.I_HR_OffreCritereEvaluation;
 
@@ -173,4 +175,40 @@ public class ModelValidatorSqlControllerRecrutement {
 		}
 		return resultat;
 	}
+
+    /**
+     * Alias de getListeCandidatureFromSessionRecrutement.
+     * Utilisé par RecrutementValidatorService.
+     */
+    public static ArrayList<BeanCandidatEvaluation> getCandidaturesFromSessionRecrutement(
+            Integer sessionRecrutementID, String trxName) {
+        return getListeCandidatureFromSessionRecrutement(sessionRecrutementID, trxName);
+    }
+
+    /**
+     * Retourne les MHRCandidatEvaluation d'une candidature.
+     * Utilisé par RecrutementValidatorService pour calculer le score total.
+     */
+    public static ArrayList<MHRCandidatEvaluation> getEvaluationsFromCandidature(
+            int candidatureID, String trxName) {
+        ArrayList<MHRCandidatEvaluation> resultat = new ArrayList<>();
+        String sql = "SELECT * FROM " + I_HR_CandidatEvaluation.Table_Name
+            + " WHERE " + I_HR_CandidatEvaluation.COLUMNNAME_HR_Candidature_ID + " = ?";
+        java.sql.PreparedStatement pstmt = null;
+        java.sql.ResultSet rs = null;
+        try {
+            pstmt = DB.prepareStatement(sql, trxName);
+            pstmt.setInt(1, candidatureID);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                resultat.add(new MHRCandidatEvaluation(Env.getCtx(), rs, trxName));
+            }
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DB.close(rs, pstmt);
+        }
+        return resultat;
+    }
+
 }
