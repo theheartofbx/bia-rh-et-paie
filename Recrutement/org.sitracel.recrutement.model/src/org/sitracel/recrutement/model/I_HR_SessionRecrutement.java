@@ -18,16 +18,15 @@ package org.sitracel.recrutement.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-
-import org.compiere.model.MTable;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_SessionRecrutement
- *  @author iDempiere (generated)
+ *  @author iDempiere (generated) 
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_SessionRecrutement
+public interface I_HR_SessionRecrutement 
 {
 
     /** TableName=HR_SessionRecrutement */
@@ -38,7 +37,7 @@ public interface I_HR_SessionRecrutement
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org
+    /** AccessLevel = 3 - Client - Org 
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
@@ -64,22 +63,6 @@ public interface I_HR_SessionRecrutement
 	  * Organizational entity within client
 	  */
 	public int getAD_Org_ID();
-
-    /** Column name Created */
-    public static final String COLUMNNAME_Created = "Created";
-
-	/** Get Created.
-	  * Date this record was created
-	  */
-	public Timestamp getCreated();
-
-    /** Column name CreatedBy */
-    public static final String COLUMNNAME_CreatedBy = "CreatedBy";
-
-	/** Get Created By.
-	  * User who created this records
-	  */
-	public int getCreatedBy();
 
     /** Column name Date_Creation */
     public static final String COLUMNNAME_Date_Creation = "Date_Creation";
@@ -320,22 +303,6 @@ Emploi	  */
 	  */
 	public String getRejeter();
 
-    /** Column name Updated */
-    public static final String COLUMNNAME_Updated = "Updated";
-
-	/** Get Updated.
-	  * Date this record was updated
-	  */
-	public Timestamp getUpdated();
-
-    /** Column name UpdatedBy */
-    public static final String COLUMNNAME_UpdatedBy = "UpdatedBy";
-
-	/** Get Updated By.
-	  * User who updated this records
-	  */
-	public int getUpdatedBy();
-
     /** Column name Valide_Rejete_Par_Matricule */
     public static final String COLUMNNAME_Valide_Rejete_Par_Matricule = "Valide_Rejete_Par_Matricule";
 
@@ -383,12 +350,12 @@ Emploi	  */
     public static final String COLUMNNAME_Valider = "Valider";
 
 	/** Set Valider .
-	  * Valider
+	  * Valider 
 	  */
 	public void setValider (String Valider);
 
 	/** Get Valider .
-	  * Valider
+	  * Valider 
 	  */
 	public String getValider();
 }

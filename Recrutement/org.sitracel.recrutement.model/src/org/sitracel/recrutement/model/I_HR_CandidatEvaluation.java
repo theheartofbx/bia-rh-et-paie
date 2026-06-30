@@ -18,16 +18,15 @@ package org.sitracel.recrutement.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-
-import org.compiere.model.MTable;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_CandidatEvaluation
- *  @author iDempiere (generated)
+ *  @author iDempiere (generated) 
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_CandidatEvaluation
+public interface I_HR_CandidatEvaluation 
 {
 
     /** TableName=HR_CandidatEvaluation */
@@ -38,7 +37,7 @@ public interface I_HR_CandidatEvaluation
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org
+    /** AccessLevel = 3 - Client - Org 
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 

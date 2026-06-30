@@ -32,7 +32,7 @@ public class X_HR_NotificationFile extends PO implements I_HR_NotificationFile, 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260211L;
+	private static final long serialVersionUID = 20260630L;
 
     /** Standard Constructor */
     public X_HR_NotificationFile (Properties ctx, int HR_NotificationFile_ID, String trxName)

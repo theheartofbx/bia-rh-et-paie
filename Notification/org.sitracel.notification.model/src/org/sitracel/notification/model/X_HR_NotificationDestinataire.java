@@ -31,7 +31,7 @@ public class X_HR_NotificationDestinataire extends PO implements I_HR_Notificati
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260211L;
+	private static final long serialVersionUID = 20260630L;
 
     /** Standard Constructor */
     public X_HR_NotificationDestinataire (Properties ctx, int HR_NotificationDestinataire_ID, String trxName)

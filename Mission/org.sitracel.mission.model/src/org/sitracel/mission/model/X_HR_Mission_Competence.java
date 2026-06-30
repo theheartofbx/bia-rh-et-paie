@@ -19,13 +19,8 @@ package org.sitracel.mission.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-
-import org.compiere.model.I_Persistent;
-import org.compiere.model.MTable;
-import org.compiere.model.PO;
-import org.compiere.model.POInfo;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
-import org.sitracel.recrutement.model.I_HR_Competences;
 
 /** Generated Model for HR_Mission_Competence
  *  @author iDempiere (generated)
@@ -37,7 +32,7 @@ public class X_HR_Mission_Competence extends PO implements I_HR_Mission_Competen
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20251214L;
+	private static final long serialVersionUID = 20260630L;
 
     /** Standard Constructor */
     public X_HR_Mission_Competence (Properties ctx, int HR_Mission_Competence_ID, String trxName)

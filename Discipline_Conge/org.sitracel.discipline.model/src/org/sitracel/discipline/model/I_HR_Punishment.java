@@ -18,17 +18,15 @@ package org.sitracel.discipline.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-
-import org.compiere.model.MTable;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
-import org.sitracel.model.I_HR_Ampliation;
 
 /** Generated Interface for HR_Punishment
- *  @author iDempiere (generated)
+ *  @author iDempiere (generated) 
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_Punishment
+public interface I_HR_Punishment 
 {
 
     /** TableName=HR_Punishment */
@@ -39,7 +37,7 @@ public interface I_HR_Punishment
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org
+    /** AccessLevel = 3 - Client - Org 
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
@@ -896,12 +894,12 @@ Explication
     public static final String COLUMNNAME_Valider = "Valider";
 
 	/** Set Valider .
-	  * Valider
+	  * Valider 
 	  */
 	public void setValider (String Valider);
 
 	/** Get Valider .
-	  * Valider
+	  * Valider 
 	  */
 	public String getValider();
 
@@ -909,12 +907,12 @@ Explication
     public static final String COLUMNNAME_Valider_Createur = "Valider_Createur";
 
 	/** Set Valider .
-	  * Valider
+	  * Valider 
 	  */
 	public void setValider_Createur (String Valider_Createur);
 
 	/** Get Valider .
-	  * Valider
+	  * Valider 
 	  */
 	public String getValider_Createur();
 

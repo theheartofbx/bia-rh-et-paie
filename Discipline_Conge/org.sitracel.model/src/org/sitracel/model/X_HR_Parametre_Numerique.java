@@ -20,10 +20,7 @@ package org.sitracel.model;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.Properties;
-
-import org.compiere.model.I_Persistent;
-import org.compiere.model.PO;
-import org.compiere.model.POInfo;
+import org.compiere.model.*;
 import org.compiere.util.Env;
 import org.compiere.util.KeyNamePair;
 
@@ -37,7 +34,7 @@ public class X_HR_Parametre_Numerique extends PO implements I_HR_Parametre_Numer
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250421L;
+	private static final long serialVersionUID = 20260630L;
 
     /** Standard Constructor */
     public X_HR_Parametre_Numerique (Properties ctx, int HR_Parametre_Numerique_ID, String trxName)
@@ -92,22 +89,19 @@ public class X_HR_Parametre_Numerique extends PO implements I_HR_Parametre_Numer
     /** AccessLevel
       * @return 4 - System
       */
-    @Override
-	protected int get_AccessLevel()
+    protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    @Override
-	protected POInfo initPO (Properties ctx)
+    protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    @Override
-	public String toString()
+    public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Parametre_Numerique[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -117,7 +111,6 @@ public class X_HR_Parametre_Numerique extends PO implements I_HR_Parametre_Numer
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
-	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -126,41 +119,35 @@ public class X_HR_Parametre_Numerique extends PO implements I_HR_Parametre_Numer
 	/** Get Description.
 		@return Optional short description of the record
 	  */
-	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
 	/** Set Paramètre Numérique .
-		@param HR_Parametre_Numerique_ID Paramètre Numérique
+		@param HR_Parametre_Numerique_ID Paramètre Numérique 
 	*/
-	@Override
 	public void setHR_Parametre_Numerique_ID (int HR_Parametre_Numerique_ID)
 	{
-		if (HR_Parametre_Numerique_ID < 1) {
+		if (HR_Parametre_Numerique_ID < 1)
 			set_ValueNoCheck (COLUMNNAME_HR_Parametre_Numerique_ID, null);
-		} else {
+		else
 			set_ValueNoCheck (COLUMNNAME_HR_Parametre_Numerique_ID, Integer.valueOf(HR_Parametre_Numerique_ID));
-		}
 	}
 
 	/** Get Paramètre Numérique .
 		@return Paramètre Numérique 	  */
-	@Override
 	public int getHR_Parametre_Numerique_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Parametre_Numerique_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set HR_Parametre_Numerique_UU.
 		@param HR_Parametre_Numerique_UU HR_Parametre_Numerique_UU
 	*/
-	@Override
 	public void setHR_Parametre_Numerique_UU (String HR_Parametre_Numerique_UU)
 	{
 		set_Value (COLUMNNAME_HR_Parametre_Numerique_UU, HR_Parametre_Numerique_UU);
@@ -168,7 +155,6 @@ public class X_HR_Parametre_Numerique extends PO implements I_HR_Parametre_Numer
 
 	/** Get HR_Parametre_Numerique_UU.
 		@return HR_Parametre_Numerique_UU	  */
-	@Override
 	public String getHR_Parametre_Numerique_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Parametre_Numerique_UU);
@@ -177,7 +163,6 @@ public class X_HR_Parametre_Numerique extends PO implements I_HR_Parametre_Numer
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
-	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -186,7 +171,6 @@ public class X_HR_Parametre_Numerique extends PO implements I_HR_Parametre_Numer
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
-	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -203,7 +187,6 @@ public class X_HR_Parametre_Numerique extends PO implements I_HR_Parametre_Numer
 	/** Set Valeur du Paramètre.
 		@param Valeur_Parametre Valeur du Paramètre
 	*/
-	@Override
 	public void setValeur_Parametre (BigDecimal Valeur_Parametre)
 	{
 		set_Value (COLUMNNAME_Valeur_Parametre, Valeur_Parametre);
@@ -212,20 +195,17 @@ public class X_HR_Parametre_Numerique extends PO implements I_HR_Parametre_Numer
 	/** Get Valeur du Paramètre.
 		@return Valeur du Paramètre
 	  */
-	@Override
 	public BigDecimal getValeur_Parametre()
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Valeur_Parametre);
-		if (bd == null) {
-			return Env.ZERO;
-		}
+		if (bd == null)
+			 return Env.ZERO;
 		return bd;
 	}
 
 	/** Set Search Key.
 		@param Value Search key for the record in the format required - must be unique
 	*/
-	@Override
 	public void setValue (String Value)
 	{
 		set_Value (COLUMNNAME_Value, Value);
@@ -234,7 +214,6 @@ public class X_HR_Parametre_Numerique extends PO implements I_HR_Parametre_Numer
 	/** Get Search Key.
 		@return Search key for the record in the format required - must be unique
 	  */
-	@Override
 	public String getValue()
 	{
 		return (String)get_Value(COLUMNNAME_Value);

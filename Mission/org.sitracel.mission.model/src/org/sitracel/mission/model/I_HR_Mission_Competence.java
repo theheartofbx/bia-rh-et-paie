@@ -18,10 +18,8 @@ package org.sitracel.mission.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-
-import org.compiere.model.MTable;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
-import org.sitracel.recrutement.model.I_HR_Competences;
 
 /** Generated Interface for HR_Mission_Competence
  *  @author iDempiere (generated) 

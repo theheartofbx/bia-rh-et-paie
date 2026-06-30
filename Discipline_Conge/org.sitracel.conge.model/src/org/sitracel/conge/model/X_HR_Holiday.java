@@ -21,14 +21,9 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
-
-import org.compiere.model.I_Persistent;
-import org.compiere.model.MTable;
-import org.compiere.model.PO;
-import org.compiere.model.POInfo;
+import org.compiere.model.*;
 import org.compiere.util.Env;
 import org.compiere.util.KeyNamePair;
-import org.sitracel.model.I_HR_Ampliation;
 
 /** Generated Model for HR_Holiday
  *  @author iDempiere (generated)
@@ -40,7 +35,7 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250421L;
+	private static final long serialVersionUID = 20260630L;
 
     /** Standard Constructor */
     public X_HR_Holiday (Properties ctx, int HR_Holiday_ID, String trxName)
@@ -123,22 +118,19 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    @Override
-	protected int get_AccessLevel()
+    protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    @Override
-	protected POInfo initPO (Properties ctx)
+    protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    @Override
-	public String toString()
+    public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Holiday[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
@@ -148,7 +140,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Actualiser Absences.
 		@param Actualiser_Absences Actualiser Absences
 	*/
-	@Override
 	public void setActualiser_Absences (String Actualiser_Absences)
 	{
 		set_Value (COLUMNNAME_Actualiser_Absences, Actualiser_Absences);
@@ -156,7 +147,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 
 	/** Get Actualiser Absences.
 		@return Actualiser Absences	  */
-	@Override
 	public String getActualiser_Absences()
 	{
 		return (String)get_Value(COLUMNNAME_Actualiser_Absences);
@@ -165,7 +155,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Nombre d&#039;Année d&#039;Ancienneté.
 		@param Annee_Anciennete Nombre d&#039;Année d&#039;Ancienneté
 	*/
-	@Override
 	public void setAnnee_Anciennete (int Annee_Anciennete)
 	{
 		set_Value (COLUMNNAME_Annee_Anciennete, Integer.valueOf(Annee_Anciennete));
@@ -174,20 +163,17 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Nombre d&#039;Année d&#039;Ancienneté.
 		@return Nombre d&#039;Année d&#039;Ancienneté
 	  */
-	@Override
 	public int getAnnee_Anciennete()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Annee_Anciennete);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Approuve/Desapprouvé par (Matricule) :.
 		@param Approuve_Desapprouve_Matricule Approuve/Desapprouvé par (Matricule) :
 	*/
-	@Override
 	public void setApprouve_Desapprouve_Matricule (String Approuve_Desapprouve_Matricule)
 	{
 		set_Value (COLUMNNAME_Approuve_Desapprouve_Matricule, Approuve_Desapprouve_Matricule);
@@ -196,13 +182,11 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Approuve/Desapprouvé par (Matricule) :.
 		@return Approuve/Desapprouvé par (Matricule) :
 	  */
-	@Override
 	public String getApprouve_Desapprouve_Matricule()
 	{
 		return (String)get_Value(COLUMNNAME_Approuve_Desapprouve_Matricule);
 	}
 
-	@Override
 	public org.compiere.model.I_C_BPartner getApprouve_Desapprouve_Nom() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -212,30 +196,25 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Approuve/Desapprouvé par (Nom) :.
 		@param Approuve_Desapprouve_Nom_ID Approuve/Desapprouvé par (Nom) :
 	*/
-	@Override
 	public void setApprouve_Desapprouve_Nom_ID (int Approuve_Desapprouve_Nom_ID)
 	{
-		if (Approuve_Desapprouve_Nom_ID < 1) {
+		if (Approuve_Desapprouve_Nom_ID < 1)
 			set_ValueNoCheck (COLUMNNAME_Approuve_Desapprouve_Nom_ID, null);
-		} else {
+		else
 			set_ValueNoCheck (COLUMNNAME_Approuve_Desapprouve_Nom_ID, Integer.valueOf(Approuve_Desapprouve_Nom_ID));
-		}
 	}
 
 	/** Get Approuve/Desapprouvé par (Nom) :.
 		@return Approuve/Desapprouvé par (Nom) :
 	  */
-	@Override
 	public int getApprouve_Desapprouve_Nom_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Approuve_Desapprouve_Nom_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
-	@Override
 	public org.eevolution.model.I_HR_Job getApprouve_Desapprouve_Poste() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -245,33 +224,28 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Approuve/Desapprouvé par (Poste) :.
 		@param Approuve_Desapprouve_Poste_ID Approuve/Desapprouvé par (Poste) :
 	*/
-	@Override
 	public void setApprouve_Desapprouve_Poste_ID (int Approuve_Desapprouve_Poste_ID)
 	{
-		if (Approuve_Desapprouve_Poste_ID < 1) {
+		if (Approuve_Desapprouve_Poste_ID < 1)
 			set_Value (COLUMNNAME_Approuve_Desapprouve_Poste_ID, null);
-		} else {
+		else
 			set_Value (COLUMNNAME_Approuve_Desapprouve_Poste_ID, Integer.valueOf(Approuve_Desapprouve_Poste_ID));
-		}
 	}
 
 	/** Get Approuve/Desapprouvé par (Poste) :.
 		@return Approuve/Desapprouvé par (Poste) :
 	  */
-	@Override
 	public int getApprouve_Desapprouve_Poste_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Approuve_Desapprouve_Poste_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Approuver.
 		@param Approuver Approuver
 	*/
-	@Override
 	public void setApprouver (String Approuver)
 	{
 		set_Value (COLUMNNAME_Approuver, Approuver);
@@ -280,7 +254,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Approuver.
 		@return Approuver
 	  */
-	@Override
 	public String getApprouver()
 	{
 		return (String)get_Value(COLUMNNAME_Approuver);
@@ -289,7 +262,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Approuver.
 		@param Approuver_Createur Approuver
 	*/
-	@Override
 	public void setApprouver_Createur (String Approuver_Createur)
 	{
 		set_Value (COLUMNNAME_Approuver_Createur, Approuver_Createur);
@@ -298,13 +270,11 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Approuver.
 		@return Approuver
 	  */
-	@Override
 	public String getApprouver_Createur()
 	{
 		return (String)get_Value(COLUMNNAME_Approuver_Createur);
 	}
 
-	@Override
 	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -314,33 +284,28 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Business Partner .
 		@param C_BPartner_ID Identifies a Business Partner
 	*/
-	@Override
 	public void setC_BPartner_ID (int C_BPartner_ID)
 	{
-		if (C_BPartner_ID < 1) {
+		if (C_BPartner_ID < 1)
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, null);
-		} else {
+		else
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, Integer.valueOf(C_BPartner_ID));
-		}
 	}
 
 	/** Get Business Partner .
 		@return Identifies a Business Partner
 	  */
-	@Override
 	public int getC_BPartner_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_BPartner_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Transaction Date.
 		@param DateTrx Transaction Date
 	*/
-	@Override
 	public void setDateTrx (Timestamp DateTrx)
 	{
 		set_ValueNoCheck (COLUMNNAME_DateTrx, DateTrx);
@@ -349,7 +314,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Transaction Date.
 		@return Transaction Date
 	  */
-	@Override
 	public Timestamp getDateTrx()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_DateTrx);
@@ -358,7 +322,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Dates des Absences Compensés en Début de Congé.
 		@param Date_Absence_Compense_Debut Dates des Absences Compensés en Début de Congé
 	*/
-	@Override
 	public void setDate_Absence_Compense_Debut (String Date_Absence_Compense_Debut)
 	{
 		set_Value (COLUMNNAME_Date_Absence_Compense_Debut, Date_Absence_Compense_Debut);
@@ -367,7 +330,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Dates des Absences Compensés en Début de Congé.
 		@return Dates des Absences Compensés en Début de Congé
 	  */
-	@Override
 	public String getDate_Absence_Compense_Debut()
 	{
 		return (String)get_Value(COLUMNNAME_Date_Absence_Compense_Debut);
@@ -376,7 +338,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Dates des Absences Compensés en Fin de Congé.
 		@param Date_Absence_Compense_Fin Dates des Absences Compensés en Fin de Congé
 	*/
-	@Override
 	public void setDate_Absence_Compense_Fin (String Date_Absence_Compense_Fin)
 	{
 		set_Value (COLUMNNAME_Date_Absence_Compense_Fin, Date_Absence_Compense_Fin);
@@ -385,7 +346,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Dates des Absences Compensés en Fin de Congé.
 		@return Dates des Absences Compensés en Fin de Congé
 	  */
-	@Override
 	public String getDate_Absence_Compense_Fin()
 	{
 		return (String)get_Value(COLUMNNAME_Date_Absence_Compense_Fin);
@@ -394,7 +354,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Date Approbation.
 		@param Date_Approbation Date Approbation
 	*/
-	@Override
 	public void setDate_Approbation (Timestamp Date_Approbation)
 	{
 		set_Value (COLUMNNAME_Date_Approbation, Date_Approbation);
@@ -403,7 +362,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Date Approbation.
 		@return Date Approbation
 	  */
-	@Override
 	public Timestamp getDate_Approbation()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Approbation);
@@ -412,7 +370,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Date de Début Ajustée.
 		@param Date_Debut_Ajustee Date de Début Ajustée
 	*/
-	@Override
 	public void setDate_Debut_Ajustee (Timestamp Date_Debut_Ajustee)
 	{
 		set_Value (COLUMNNAME_Date_Debut_Ajustee, Date_Debut_Ajustee);
@@ -421,7 +378,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Date de Début Ajustée.
 		@return Date de Début Ajustée
 	  */
-	@Override
 	public Timestamp getDate_Debut_Ajustee()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Debut_Ajustee);
@@ -430,7 +386,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Date de Début Compensée.
 		@param Date_Debut_Compensee Date de Début Compensée
 	*/
-	@Override
 	public void setDate_Debut_Compensee (Timestamp Date_Debut_Compensee)
 	{
 		set_Value (COLUMNNAME_Date_Debut_Compensee, Date_Debut_Compensee);
@@ -439,7 +394,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Date de Début Compensée.
 		@return Date de Début Compensée
 	  */
-	@Override
 	public Timestamp getDate_Debut_Compensee()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Debut_Compensee);
@@ -448,7 +402,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Date de Début Effective.
 		@param Date_Debut_Effective Date de Début Effective
 	*/
-	@Override
 	public void setDate_Debut_Effective (Timestamp Date_Debut_Effective)
 	{
 		set_Value (COLUMNNAME_Date_Debut_Effective, Date_Debut_Effective);
@@ -457,7 +410,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Date de Début Effective.
 		@return Date de Début Effective
 	  */
-	@Override
 	public Timestamp getDate_Debut_Effective()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Debut_Effective);
@@ -466,7 +418,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Date de Début Souhaitée.
 		@param Date_Debut_Souhaitee Date de Début Souhaitée
 	*/
-	@Override
 	public void setDate_Debut_Souhaitee (Timestamp Date_Debut_Souhaitee)
 	{
 		set_Value (COLUMNNAME_Date_Debut_Souhaitee, Date_Debut_Souhaitee);
@@ -475,7 +426,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Date de Début Souhaitée.
 		@return Date de Début Souhaitée
 	  */
-	@Override
 	public Timestamp getDate_Debut_Souhaitee()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Debut_Souhaitee);
@@ -484,7 +434,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Date du dernier Congé.
 		@param Date_Dernier_Conge Date du dernier Congé
 	*/
-	@Override
 	public void setDate_Dernier_Conge (Timestamp Date_Dernier_Conge)
 	{
 		set_Value (COLUMNNAME_Date_Dernier_Conge, Date_Dernier_Conge);
@@ -493,7 +442,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Date du dernier Congé.
 		@return Date du dernier Congé
 	  */
-	@Override
 	public Timestamp getDate_Dernier_Conge()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Dernier_Conge);
@@ -502,7 +450,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Date Désapprobation.
 		@param Date_Desapprobation Date Désapprobation
 	*/
-	@Override
 	public void setDate_Desapprobation (Timestamp Date_Desapprobation)
 	{
 		set_Value (COLUMNNAME_Date_Desapprobation, Date_Desapprobation);
@@ -511,7 +458,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Date Désapprobation.
 		@return Date Désapprobation
 	  */
-	@Override
 	public Timestamp getDate_Desapprobation()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Desapprobation);
@@ -520,7 +466,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Date d&#039;Emission.
 		@param Date_Emission Date d&#039;Emission
 	*/
-	@Override
 	public void setDate_Emission (Timestamp Date_Emission)
 	{
 		set_ValueNoCheck (COLUMNNAME_Date_Emission, Date_Emission);
@@ -529,7 +474,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Date d&#039;Emission.
 		@return Date d&#039;Emission
 	  */
-	@Override
 	public Timestamp getDate_Emission()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Emission);
@@ -538,7 +482,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Date de Fin Ajustée.
 		@param Date_Fin_Ajustee Date de Fin Ajustée
 	*/
-	@Override
 	public void setDate_Fin_Ajustee (Timestamp Date_Fin_Ajustee)
 	{
 		set_Value (COLUMNNAME_Date_Fin_Ajustee, Date_Fin_Ajustee);
@@ -547,7 +490,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Date de Fin Ajustée.
 		@return Date de Fin Ajustée
 	  */
-	@Override
 	public Timestamp getDate_Fin_Ajustee()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Fin_Ajustee);
@@ -556,7 +498,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Date de Fin Compensée.
 		@param Date_Fin_Compensee Date de Fin Compensée
 	*/
-	@Override
 	public void setDate_Fin_Compensee (Timestamp Date_Fin_Compensee)
 	{
 		set_Value (COLUMNNAME_Date_Fin_Compensee, Date_Fin_Compensee);
@@ -565,7 +506,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Date de Fin Compensée.
 		@return Date de Fin Compensée
 	  */
-	@Override
 	public Timestamp getDate_Fin_Compensee()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Fin_Compensee);
@@ -574,7 +514,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Date de Fin Effective.
 		@param Date_Fin_Effective Date de Fin Effective
 	*/
-	@Override
 	public void setDate_Fin_Effective (Timestamp Date_Fin_Effective)
 	{
 		set_Value (COLUMNNAME_Date_Fin_Effective, Date_Fin_Effective);
@@ -583,7 +522,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Date de Fin Effective.
 		@return Date de Fin Effective
 	  */
-	@Override
 	public Timestamp getDate_Fin_Effective()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Fin_Effective);
@@ -592,7 +530,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Date de Fin Souhaitée.
 		@param Date_Fin_Souhaitee Date de Fin Souhaitée
 	*/
-	@Override
 	public void setDate_Fin_Souhaitee (Timestamp Date_Fin_Souhaitee)
 	{
 		set_Value (COLUMNNAME_Date_Fin_Souhaitee, Date_Fin_Souhaitee);
@@ -601,7 +538,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Date de Fin Souhaitée.
 		@return Date de Fin Souhaitée
 	  */
-	@Override
 	public Timestamp getDate_Fin_Souhaitee()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Fin_Souhaitee);
@@ -610,7 +546,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Date Probable d&#039;Accouchement.
 		@param Date_Probable_Accouchement Date Probable d&#039;Accouchement
 	*/
-	@Override
 	public void setDate_Probable_Accouchement (Timestamp Date_Probable_Accouchement)
 	{
 		set_Value (COLUMNNAME_Date_Probable_Accouchement, Date_Probable_Accouchement);
@@ -619,7 +554,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Date Probable d&#039;Accouchement.
 		@return Date Probable d&#039;Accouchement
 	  */
-	@Override
 	public Timestamp getDate_Probable_Accouchement()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Probable_Accouchement);
@@ -628,7 +562,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Date de Rejet.
 		@param Date_Rejet Date de Rejet
 	*/
-	@Override
 	public void setDate_Rejet (Timestamp Date_Rejet)
 	{
 		set_Value (COLUMNNAME_Date_Rejet, Date_Rejet);
@@ -637,7 +570,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Date de Rejet.
 		@return Date de Rejet
 	  */
-	@Override
 	public Timestamp getDate_Rejet()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Rejet);
@@ -646,7 +578,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Date de Validation.
 		@param Date_Validation Date de Validation
 	*/
-	@Override
 	public void setDate_Validation (Timestamp Date_Validation)
 	{
 		set_Value (COLUMNNAME_Date_Validation, Date_Validation);
@@ -655,7 +586,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Date de Validation.
 		@return Date de Validation
 	  */
-	@Override
 	public Timestamp getDate_Validation()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Validation);
@@ -664,7 +594,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Désapprouver.
 		@param Desapprouver Désapprouver
 	*/
-	@Override
 	public void setDesapprouver (String Desapprouver)
 	{
 		set_Value (COLUMNNAME_Desapprouver, Desapprouver);
@@ -673,7 +602,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Désapprouver.
 		@return Désapprouver
 	  */
-	@Override
 	public String getDesapprouver()
 	{
 		return (String)get_Value(COLUMNNAME_Desapprouver);
@@ -682,7 +610,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Désapprouver.
 		@param Desapprouver_Createur Désapprouver
 	*/
-	@Override
 	public void setDesapprouver_Createur (String Desapprouver_Createur)
 	{
 		set_Value (COLUMNNAME_Desapprouver_Createur, Desapprouver_Createur);
@@ -691,7 +618,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Désapprouver.
 		@return Désapprouver
 	  */
-	@Override
 	public String getDesapprouver_Createur()
 	{
 		return (String)get_Value(COLUMNNAME_Desapprouver_Createur);
@@ -700,7 +626,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
-	@Override
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -709,7 +634,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Description.
 		@return Optional short description of the record
 	  */
-	@Override
 	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
@@ -718,7 +642,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Disponibilité du Département si la Demande est Acceptée.
 		@param Disponibilite_Departement Disponibilité du Département si la Demande est Acceptée
 	*/
-	@Override
 	public void setDisponibilite_Departement (BigDecimal Disponibilite_Departement)
 	{
 		set_Value (COLUMNNAME_Disponibilite_Departement, Disponibilite_Departement);
@@ -727,20 +650,17 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Disponibilité du Département si la Demande est Acceptée.
 		@return Disponibilité du Département si la Demande est Acceptée
 	  */
-	@Override
 	public BigDecimal getDisponibilite_Departement()
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Disponibilite_Departement);
-		if (bd == null) {
-			return Env.ZERO;
-		}
+		if (bd == null)
+			 return Env.ZERO;
 		return bd;
 	}
 
 	/** Set Matricule Emetteur.
 		@param Emis_Par_Matricule Matricule Emetteur
 	*/
-	@Override
 	public void setEmis_Par_Matricule (String Emis_Par_Matricule)
 	{
 		set_Value (COLUMNNAME_Emis_Par_Matricule, Emis_Par_Matricule);
@@ -749,13 +669,11 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Matricule Emetteur.
 		@return Matricule Emetteur
 	  */
-	@Override
 	public String getEmis_Par_Matricule()
 	{
 		return (String)get_Value(COLUMNNAME_Emis_Par_Matricule);
 	}
 
-	@Override
 	public org.compiere.model.I_C_BPartner getEmis_Par_Nom() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -765,30 +683,25 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Nom Emetteur.
 		@param Emis_Par_Nom_ID Nom Emetteur
 	*/
-	@Override
 	public void setEmis_Par_Nom_ID (int Emis_Par_Nom_ID)
 	{
-		if (Emis_Par_Nom_ID < 1) {
+		if (Emis_Par_Nom_ID < 1)
 			set_ValueNoCheck (COLUMNNAME_Emis_Par_Nom_ID, null);
-		} else {
+		else
 			set_ValueNoCheck (COLUMNNAME_Emis_Par_Nom_ID, Integer.valueOf(Emis_Par_Nom_ID));
-		}
 	}
 
 	/** Get Nom Emetteur.
 		@return Nom Emetteur
 	  */
-	@Override
 	public int getEmis_Par_Nom_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Emis_Par_Nom_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
-	@Override
 	public org.eevolution.model.I_HR_Job getEmis_Par_Poste() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -798,30 +711,25 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Poste Emetteur.
 		@param Emis_Par_Poste_ID Poste Emetteur
 	*/
-	@Override
 	public void setEmis_Par_Poste_ID (int Emis_Par_Poste_ID)
 	{
-		if (Emis_Par_Poste_ID < 1) {
+		if (Emis_Par_Poste_ID < 1)
 			set_Value (COLUMNNAME_Emis_Par_Poste_ID, null);
-		} else {
+		else
 			set_Value (COLUMNNAME_Emis_Par_Poste_ID, Integer.valueOf(Emis_Par_Poste_ID));
-		}
 	}
 
 	/** Get Poste Emetteur.
 		@return Poste Emetteur
 	  */
-	@Override
 	public int getEmis_Par_Poste_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Emis_Par_Poste_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
-	@Override
 	public I_HR_Type_Conge getEmission_Conge_Employe() throws RuntimeException
 	{
 		return (I_HR_Type_Conge)MTable.get(getCtx(), I_HR_Type_Conge.Table_ID)
@@ -831,30 +739,25 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Type de Congé.
 		@param Emission_Conge_Employe_ID Type de Congé
 	*/
-	@Override
 	public void setEmission_Conge_Employe_ID (int Emission_Conge_Employe_ID)
 	{
-		if (Emission_Conge_Employe_ID < 1) {
+		if (Emission_Conge_Employe_ID < 1)
 			set_ValueNoCheck (COLUMNNAME_Emission_Conge_Employe_ID, null);
-		} else {
+		else
 			set_ValueNoCheck (COLUMNNAME_Emission_Conge_Employe_ID, Integer.valueOf(Emission_Conge_Employe_ID));
-		}
 	}
 
 	/** Get Type de Congé.
 		@return Type de Congé
 	  */
-	@Override
 	public int getEmission_Conge_Employe_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Emission_Conge_Employe_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
-	@Override
 	public I_HR_Type_Conge getEmission_Conge() throws RuntimeException
 	{
 		return (I_HR_Type_Conge)MTable.get(getCtx(), I_HR_Type_Conge.Table_ID)
@@ -864,30 +767,25 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Type de Congé.
 		@param Emission_Conge_ID Type de Congé
 	*/
-	@Override
 	public void setEmission_Conge_ID (int Emission_Conge_ID)
 	{
-		if (Emission_Conge_ID < 1) {
+		if (Emission_Conge_ID < 1)
 			set_ValueNoCheck (COLUMNNAME_Emission_Conge_ID, null);
-		} else {
+		else
 			set_ValueNoCheck (COLUMNNAME_Emission_Conge_ID, Integer.valueOf(Emission_Conge_ID));
-		}
 	}
 
 	/** Get Type de Congé.
 		@return Type de Congé
 	  */
-	@Override
 	public int getEmission_Conge_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Emission_Conge_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
-	@Override
 	public I_HR_Autorisation_Conge getEmission_Conge_Responsable() throws RuntimeException
 	{
 		return (I_HR_Autorisation_Conge)MTable.get(getCtx(), I_HR_Autorisation_Conge.Table_ID)
@@ -897,33 +795,28 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Type de Congé.
 		@param Emission_Conge_Responsable_ID Type de Congé
 	*/
-	@Override
 	public void setEmission_Conge_Responsable_ID (int Emission_Conge_Responsable_ID)
 	{
-		if (Emission_Conge_Responsable_ID < 1) {
+		if (Emission_Conge_Responsable_ID < 1)
 			set_ValueNoCheck (COLUMNNAME_Emission_Conge_Responsable_ID, null);
-		} else {
+		else
 			set_ValueNoCheck (COLUMNNAME_Emission_Conge_Responsable_ID, Integer.valueOf(Emission_Conge_Responsable_ID));
-		}
 	}
 
 	/** Get Type de Congé.
 		@return Type de Congé
 	  */
-	@Override
 	public int getEmission_Conge_Responsable_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Emission_Conge_Responsable_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Enfants Comptabilisés pour Congé.
 		@param Enfant_Conge Enfants Comptabilisés pour Congé
 	*/
-	@Override
 	public void setEnfant_Conge (int Enfant_Conge)
 	{
 		set_Value (COLUMNNAME_Enfant_Conge, Integer.valueOf(Enfant_Conge));
@@ -932,17 +825,14 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Enfants Comptabilisés pour Congé.
 		@return Enfants Comptabilisés pour Congé
 	  */
-	@Override
 	public int getEnfant_Conge()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Enfant_Conge);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
-	@Override
 	public I_HR_Ampliation getHR_Ampliation() throws RuntimeException
 	{
 		return (I_HR_Ampliation)MTable.get(getCtx(), I_HR_Ampliation.Table_ID)
@@ -952,57 +842,48 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Ampliation.
 		@param HR_Ampliation_ID Ampliation
 	*/
-	@Override
 	public void setHR_Ampliation_ID (int HR_Ampliation_ID)
 	{
-		if (HR_Ampliation_ID < 1) {
+		if (HR_Ampliation_ID < 1)
 			set_Value (COLUMNNAME_HR_Ampliation_ID, null);
-		} else {
+		else
 			set_Value (COLUMNNAME_HR_Ampliation_ID, Integer.valueOf(HR_Ampliation_ID));
-		}
 	}
 
 	/** Get Ampliation.
 		@return Ampliation	  */
-	@Override
 	public int getHR_Ampliation_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Ampliation_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Congé.
 		@param HR_Holiday_ID Congé
 	*/
-	@Override
 	public void setHR_Holiday_ID (int HR_Holiday_ID)
 	{
-		if (HR_Holiday_ID < 1) {
+		if (HR_Holiday_ID < 1)
 			set_ValueNoCheck (COLUMNNAME_HR_Holiday_ID, null);
-		} else {
+		else
 			set_ValueNoCheck (COLUMNNAME_HR_Holiday_ID, Integer.valueOf(HR_Holiday_ID));
-		}
 	}
 
 	/** Get Congé.
 		@return Congé	  */
-	@Override
 	public int getHR_Holiday_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Holiday_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set HR_Holiday_UU.
 		@param HR_Holiday_UU HR_Holiday_UU
 	*/
-	@Override
 	public void setHR_Holiday_UU (String HR_Holiday_UU)
 	{
 		set_Value (COLUMNNAME_HR_Holiday_UU, HR_Holiday_UU);
@@ -1010,7 +891,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 
 	/** Get HR_Holiday_UU.
 		@return HR_Holiday_UU	  */
-	@Override
 	public String getHR_Holiday_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Holiday_UU);
@@ -1019,7 +899,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Initial.
 		@param Initial Initial
 	*/
-	@Override
 	public void setInitial (String Initial)
 	{
 		set_Value (COLUMNNAME_Initial, Initial);
@@ -1028,7 +907,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Initial.
 		@return Initial
 	  */
-	@Override
 	public String getInitial()
 	{
 		return (String)get_Value(COLUMNNAME_Initial);
@@ -1037,7 +915,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Peut Approuver.
 		@param IsApprobation Peut Approuver
 	*/
-	@Override
 	public void setIsApprobation (boolean IsApprobation)
 	{
 		throw new IllegalArgumentException ("IsApprobation is virtual column");	}
@@ -1045,15 +922,13 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Peut Approuver.
 		@return Peut Approuver
 	  */
-	@Override
 	public boolean isApprobation()
 	{
 		Object oo = get_Value(COLUMNNAME_IsApprobation);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean) {
-				return ((Boolean)oo).booleanValue();
-			}
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
 			return "Y".equals(oo);
 		}
 		return false;
@@ -1062,7 +937,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Peut Approuver.
 		@param IsApprobation_Createur Peut Approuver
 	*/
-	@Override
 	public void setIsApprobation_Createur (boolean IsApprobation_Createur)
 	{
 		set_ValueNoCheck (COLUMNNAME_IsApprobation_Createur, Boolean.valueOf(IsApprobation_Createur));
@@ -1071,15 +945,13 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Peut Approuver.
 		@return Peut Approuver
 	  */
-	@Override
 	public boolean isApprobation_Createur()
 	{
 		Object oo = get_Value(COLUMNNAME_IsApprobation_Createur);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean) {
-				return ((Boolean)oo).booleanValue();
-			}
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
 			return "Y".equals(oo);
 		}
 		return false;
@@ -1088,7 +960,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Approuvé(e).
 		@param IsApprouve Approuvé(e)
 	*/
-	@Override
 	public void setIsApprouve (boolean IsApprouve)
 	{
 		set_Value (COLUMNNAME_IsApprouve, Boolean.valueOf(IsApprouve));
@@ -1097,15 +968,13 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Approuvé(e).
 		@return Approuvé(e)
 	  */
-	@Override
 	public boolean isApprouve()
 	{
 		Object oo = get_Value(COLUMNNAME_IsApprouve);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean) {
-				return ((Boolean)oo).booleanValue();
-			}
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
 			return "Y".equals(oo);
 		}
 		return false;
@@ -1114,7 +983,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Est déduit des jours de congé annuel.
 		@param IsCongeAnnuel Est déduit des jours de congé annuel
 	*/
-	@Override
 	public void setIsCongeAnnuel (boolean IsCongeAnnuel)
 	{
 		set_Value (COLUMNNAME_IsCongeAnnuel, Boolean.valueOf(IsCongeAnnuel));
@@ -1123,15 +991,13 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Est déduit des jours de congé annuel.
 		@return Est déduit des jours de congé annuel
 	  */
-	@Override
 	public boolean isCongeAnnuel()
 	{
 		Object oo = get_Value(COLUMNNAME_IsCongeAnnuel);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean) {
-				return ((Boolean)oo).booleanValue();
-			}
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
 			return "Y".equals(oo);
 		}
 		return false;
@@ -1140,7 +1006,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Définir la période de Congé.
 		@param IsDefinir_Periode_Conge Définir la période de Congé
 	*/
-	@Override
 	public void setIsDefinir_Periode_Conge (boolean IsDefinir_Periode_Conge)
 	{
 		set_Value (COLUMNNAME_IsDefinir_Periode_Conge, Boolean.valueOf(IsDefinir_Periode_Conge));
@@ -1149,15 +1014,13 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Définir la période de Congé.
 		@return Définir la période de Congé
 	  */
-	@Override
 	public boolean isDefinir_Periode_Conge()
 	{
 		Object oo = get_Value(COLUMNNAME_IsDefinir_Periode_Conge);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean) {
-				return ((Boolean)oo).booleanValue();
-			}
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
 			return "Y".equals(oo);
 		}
 		return false;
@@ -1166,7 +1029,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Désapprouvé(e).
 		@param IsDesapprouve Désapprouvé(e)
 	*/
-	@Override
 	public void setIsDesapprouve (boolean IsDesapprouve)
 	{
 		set_Value (COLUMNNAME_IsDesapprouve, Boolean.valueOf(IsDesapprouve));
@@ -1175,15 +1037,13 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Désapprouvé(e).
 		@return Désapprouvé(e)
 	  */
-	@Override
 	public boolean isDesapprouve()
 	{
 		Object oo = get_Value(COLUMNNAME_IsDesapprouve);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean) {
-				return ((Boolean)oo).booleanValue();
-			}
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
 			return "Y".equals(oo);
 		}
 		return false;
@@ -1192,7 +1052,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Message d&#039;Alerte Affiché.
 		@param IsMessageAlerteDisplayed Message d&#039;Alerte Affiché
 	*/
-	@Override
 	public void setIsMessageAlerteDisplayed (boolean IsMessageAlerteDisplayed)
 	{
 		set_Value (COLUMNNAME_IsMessageAlerteDisplayed, Boolean.valueOf(IsMessageAlerteDisplayed));
@@ -1201,15 +1060,13 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Message d&#039;Alerte Affiché.
 		@return Message d&#039;Alerte Affiché
 	  */
-	@Override
 	public boolean isMessageAlerteDisplayed()
 	{
 		Object oo = get_Value(COLUMNNAME_IsMessageAlerteDisplayed);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean) {
-				return ((Boolean)oo).booleanValue();
-			}
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
 			return "Y".equals(oo);
 		}
 		return false;
@@ -1218,7 +1075,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Rejeté(e).
 		@param IsRejetee Rejeté(e)
 	*/
-	@Override
 	public void setIsRejetee (boolean IsRejetee)
 	{
 		set_Value (COLUMNNAME_IsRejetee, Boolean.valueOf(IsRejetee));
@@ -1227,15 +1083,13 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Rejeté(e).
 		@return Rejeté(e)
 	  */
-	@Override
 	public boolean isRejetee()
 	{
 		Object oo = get_Value(COLUMNNAME_IsRejetee);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean) {
-				return ((Boolean)oo).booleanValue();
-			}
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
 			return "Y".equals(oo);
 		}
 		return false;
@@ -1244,7 +1098,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Traité(e).
 		@param IsTraitee Traité(e)
 	*/
-	@Override
 	public void setIsTraitee (boolean IsTraitee)
 	{
 		set_Value (COLUMNNAME_IsTraitee, Boolean.valueOf(IsTraitee));
@@ -1253,15 +1106,13 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Traité(e).
 		@return Traité(e)
 	  */
-	@Override
 	public boolean isTraitee()
 	{
 		Object oo = get_Value(COLUMNNAME_IsTraitee);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean) {
-				return ((Boolean)oo).booleanValue();
-			}
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
 			return "Y".equals(oo);
 		}
 		return false;
@@ -1270,7 +1121,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Peut Valider.
 		@param IsValidation Peut Valider
 	*/
-	@Override
 	public void setIsValidation (boolean IsValidation)
 	{
 		throw new IllegalArgumentException ("IsValidation is virtual column");	}
@@ -1278,15 +1128,13 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Peut Valider.
 		@return Peut Valider
 	  */
-	@Override
 	public boolean isValidation()
 	{
 		Object oo = get_Value(COLUMNNAME_IsValidation);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean) {
-				return ((Boolean)oo).booleanValue();
-			}
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
 			return "Y".equals(oo);
 		}
 		return false;
@@ -1295,7 +1143,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Peut Valider.
 		@param IsValidation_Createur Peut Valider
 	*/
-	@Override
 	public void setIsValidation_Createur (boolean IsValidation_Createur)
 	{
 		set_ValueNoCheck (COLUMNNAME_IsValidation_Createur, Boolean.valueOf(IsValidation_Createur));
@@ -1304,15 +1151,13 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Peut Valider.
 		@return Peut Valider
 	  */
-	@Override
 	public boolean isValidation_Createur()
 	{
 		Object oo = get_Value(COLUMNNAME_IsValidation_Createur);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean) {
-				return ((Boolean)oo).booleanValue();
-			}
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
 			return "Y".equals(oo);
 		}
 		return false;
@@ -1321,7 +1166,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Validé(e).
 		@param IsValidee Validé(e)
 	*/
-	@Override
 	public void setIsValidee (boolean IsValidee)
 	{
 		set_Value (COLUMNNAME_IsValidee, Boolean.valueOf(IsValidee));
@@ -1330,15 +1174,13 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Validé(e).
 		@return Validé(e)
 	  */
-	@Override
 	public boolean isValidee()
 	{
 		Object oo = get_Value(COLUMNNAME_IsValidee);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean) {
-				return ((Boolean)oo).booleanValue();
-			}
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
 			return "Y".equals(oo);
 		}
 		return false;
@@ -1347,7 +1189,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Jour de Conge avec le moins d&#039;Employé.
 		@param Jour_Conge_Max_Depart Jour de Conge avec le moins d&#039;Employé
 	*/
-	@Override
 	public void setJour_Conge_Max_Depart (Timestamp Jour_Conge_Max_Depart)
 	{
 		set_Value (COLUMNNAME_Jour_Conge_Max_Depart, Jour_Conge_Max_Depart);
@@ -1356,7 +1197,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Jour de Conge avec le moins d&#039;Employé.
 		@return Jour de Conge avec le moins d&#039;Employé
 	  */
-	@Override
 	public Timestamp getJour_Conge_Max_Depart()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Jour_Conge_Max_Depart);
@@ -1365,7 +1205,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Nombre de Jour de Congé à Compenser.
 		@param Jours_Conge_A_Compenser Nombre de Jour de Congé à Compenser
 	*/
-	@Override
 	public void setJours_Conge_A_Compenser (int Jours_Conge_A_Compenser)
 	{
 		set_Value (COLUMNNAME_Jours_Conge_A_Compenser, Integer.valueOf(Jours_Conge_A_Compenser));
@@ -1374,20 +1213,17 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Nombre de Jour de Congé à Compenser.
 		@return Nombre de Jour de Congé à Compenser
 	  */
-	@Override
 	public int getJours_Conge_A_Compenser()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Jours_Conge_A_Compenser);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Nombre de Jour de Congé Correspondant à la Sélection.
 		@param Jours_Conge_Correspondant Nombre de Jour de Congé Correspondant à la Sélection
 	*/
-	@Override
 	public void setJours_Conge_Correspondant (int Jours_Conge_Correspondant)
 	{
 		set_Value (COLUMNNAME_Jours_Conge_Correspondant, Integer.valueOf(Jours_Conge_Correspondant));
@@ -1396,20 +1232,17 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Nombre de Jour de Congé Correspondant à la Sélection.
 		@return Nombre de Jour de Congé Correspondant à la Sélection
 	  */
-	@Override
 	public int getJours_Conge_Correspondant()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Jours_Conge_Correspondant);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Nombre de Jour de Congé Déjà Utilisé.
 		@param Jours_Conge_Deja_Utilise Nombre de Jour de Congé Déjà Utilisé
 	*/
-	@Override
 	public void setJours_Conge_Deja_Utilise (int Jours_Conge_Deja_Utilise)
 	{
 		set_Value (COLUMNNAME_Jours_Conge_Deja_Utilise, Integer.valueOf(Jours_Conge_Deja_Utilise));
@@ -1418,20 +1251,17 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Nombre de Jour de Congé Déjà Utilisé.
 		@return Nombre de Jour de Congé Déjà Utilisé
 	  */
-	@Override
 	public int getJours_Conge_Deja_Utilise()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Jours_Conge_Deja_Utilise);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Nombre de Jour de Congé Total.
 		@param Jours_Conge_Total Nombre de Jour de Congé Total
 	*/
-	@Override
 	public void setJours_Conge_Total (int Jours_Conge_Total)
 	{
 		set_Value (COLUMNNAME_Jours_Conge_Total, Integer.valueOf(Jours_Conge_Total));
@@ -1440,20 +1270,17 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Nombre de Jour de Congé Total.
 		@return Nombre de Jour de Congé Total
 	  */
-	@Override
 	public int getJours_Conge_Total()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Jours_Conge_Total);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Matricule de l&#039;Employé.
 		@param Matricule_Employe Matricule de l&#039;Employé
 	*/
-	@Override
 	public void setMatricule_Employe (String Matricule_Employe)
 	{
 		set_Value (COLUMNNAME_Matricule_Employe, Matricule_Employe);
@@ -1462,7 +1289,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Matricule de l&#039;Employé.
 		@return Matricule de l&#039;Employé
 	  */
-	@Override
 	public String getMatricule_Employe()
 	{
 		return (String)get_Value(COLUMNNAME_Matricule_Employe);
@@ -1471,7 +1297,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Message d&#039;Alerte.
 		@param Message_Alerte Message d&#039;Alerte
 	*/
-	@Override
 	public void setMessage_Alerte (String Message_Alerte)
 	{
 		set_Value (COLUMNNAME_Message_Alerte, Message_Alerte);
@@ -1480,7 +1305,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Message d&#039;Alerte.
 		@return Message d&#039;Alerte
 	  */
-	@Override
 	public String getMessage_Alerte()
 	{
 		return (String)get_Value(COLUMNNAME_Message_Alerte);
@@ -1489,7 +1313,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Name.
 		@param Name Alphanumeric identifier of the entity
 	*/
-	@Override
 	public void setName (String Name)
 	{
 		set_Value (COLUMNNAME_Name, Name);
@@ -1498,7 +1321,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Name.
 		@return Alphanumeric identifier of the entity
 	  */
-	@Override
 	public String getName()
 	{
 		return (String)get_Value(COLUMNNAME_Name);
@@ -1515,7 +1337,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Nombre Total d&#039;Emplyé(e)s du Département.
 		@param Nombre_Employe_Departement Nombre Total d&#039;Emplyé(e)s du Département
 	*/
-	@Override
 	public void setNombre_Employe_Departement (int Nombre_Employe_Departement)
 	{
 		set_Value (COLUMNNAME_Nombre_Employe_Departement, Integer.valueOf(Nombre_Employe_Departement));
@@ -1524,20 +1345,17 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Nombre Total d&#039;Emplyé(e)s du Département.
 		@return Nombre Total d&#039;Emplyé(e)s du Département
 	  */
-	@Override
 	public int getNombre_Employe_Departement()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Employe_Departement);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Nombre Max d&#039;Emplyé(e)s du Département en Congé/Jour.
 		@param Nombre_Employe_Departement_Hol Nombre Max d&#039;Emplyé(e)s du Département en Congé/Jour
 	*/
-	@Override
 	public void setNombre_Employe_Departement_Hol (int Nombre_Employe_Departement_Hol)
 	{
 		set_Value (COLUMNNAME_Nombre_Employe_Departement_Hol, Integer.valueOf(Nombre_Employe_Departement_Hol));
@@ -1546,20 +1364,17 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Nombre Max d&#039;Emplyé(e)s du Département en Congé/Jour.
 		@return Nombre Max d&#039;Emplyé(e)s du Département en Congé/Jour
 	  */
-	@Override
 	public int getNombre_Employe_Departement_Hol()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Employe_Departement_Hol);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Nombre de Jour(s) d&#039;Absence Compensé sur le Congé.
 		@param Nombre_Jour_Compense_Ici Nombre de Jour(s) d&#039;Absence Compensé sur le Congé
 	*/
-	@Override
 	public void setNombre_Jour_Compense_Ici (int Nombre_Jour_Compense_Ici)
 	{
 		set_Value (COLUMNNAME_Nombre_Jour_Compense_Ici, Integer.valueOf(Nombre_Jour_Compense_Ici));
@@ -1568,20 +1383,17 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Nombre de Jour(s) d&#039;Absence Compensé sur le Congé.
 		@return Nombre de Jour(s) d&#039;Absence Compensé sur le Congé
 	  */
-	@Override
 	public int getNombre_Jour_Compense_Ici()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Jour_Compense_Ici);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Notifier.
 		@param Notifier Notifier
 	*/
-	@Override
 	public void setNotifier (String Notifier)
 	{
 		set_Value (COLUMNNAME_Notifier, Notifier);
@@ -1590,13 +1402,11 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Notifier.
 		@return Notifier
 	  */
-	@Override
 	public String getNotifier()
 	{
 		return (String)get_Value(COLUMNNAME_Notifier);
 	}
 
-	@Override
 	public org.eevolution.model.I_HR_Job getPoste_Employe() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -1606,33 +1416,28 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Poste de l&#039;Employé.
 		@param Poste_Employe_ID Poste de l&#039;Employé
 	*/
-	@Override
 	public void setPoste_Employe_ID (int Poste_Employe_ID)
 	{
-		if (Poste_Employe_ID < 1) {
+		if (Poste_Employe_ID < 1)
 			set_Value (COLUMNNAME_Poste_Employe_ID, null);
-		} else {
+		else
 			set_Value (COLUMNNAME_Poste_Employe_ID, Integer.valueOf(Poste_Employe_ID));
-		}
 	}
 
 	/** Get Poste de l&#039;Employé.
 		@return Poste de l&#039;Employé
 	  */
-	@Override
 	public int getPoste_Employe_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Poste_Employe_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Rapport.
 		@param Rapport Rapport
 	*/
-	@Override
 	public void setRapport (String Rapport)
 	{
 		set_Value (COLUMNNAME_Rapport, Rapport);
@@ -1641,7 +1446,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Rapport.
 		@return Rapport
 	  */
-	@Override
 	public String getRapport()
 	{
 		return (String)get_Value(COLUMNNAME_Rapport);
@@ -1650,7 +1454,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Rejeter.
 		@param Rejeter Rejeter
 	*/
-	@Override
 	public void setRejeter (String Rejeter)
 	{
 		set_Value (COLUMNNAME_Rejeter, Rejeter);
@@ -1659,7 +1462,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Rejeter.
 		@return Rejeter
 	  */
-	@Override
 	public String getRejeter()
 	{
 		return (String)get_Value(COLUMNNAME_Rejeter);
@@ -1668,7 +1470,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Rejeter.
 		@param Rejeter_Createur Rejeter
 	*/
-	@Override
 	public void setRejeter_Createur (String Rejeter_Createur)
 	{
 		set_Value (COLUMNNAME_Rejeter_Createur, Rejeter_Createur);
@@ -1677,7 +1478,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Rejeter.
 		@return Rejeter
 	  */
-	@Override
 	public String getRejeter_Createur()
 	{
 		return (String)get_Value(COLUMNNAME_Rejeter_Createur);
@@ -1690,7 +1490,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Sex.
 		@param Sex Sex
 	*/
-	@Override
 	public void setSex (String Sex)
 	{
 
@@ -1699,7 +1498,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 
 	/** Get Sex.
 		@return Sex	  */
-	@Override
 	public String getSex()
 	{
 		return (String)get_Value(COLUMNNAME_Sex);
@@ -1708,7 +1506,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Validé/rejeté par (Matricule) :.
 		@param Valide_Rejete_Par_Matricule Validé/rejeté par (Matricule) :
 	*/
-	@Override
 	public void setValide_Rejete_Par_Matricule (String Valide_Rejete_Par_Matricule)
 	{
 		set_Value (COLUMNNAME_Valide_Rejete_Par_Matricule, Valide_Rejete_Par_Matricule);
@@ -1717,13 +1514,11 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Validé/rejeté par (Matricule) :.
 		@return Validé/rejeté par (Matricule) :
 	  */
-	@Override
 	public String getValide_Rejete_Par_Matricule()
 	{
 		return (String)get_Value(COLUMNNAME_Valide_Rejete_Par_Matricule);
 	}
 
-	@Override
 	public org.compiere.model.I_C_BPartner getValide_Rejete_Par_Nom() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -1733,30 +1528,25 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Validé/rejeté par (Nom) :.
 		@param Valide_Rejete_Par_Nom_ID Validé/rejeté par (Nom) :
 	*/
-	@Override
 	public void setValide_Rejete_Par_Nom_ID (int Valide_Rejete_Par_Nom_ID)
 	{
-		if (Valide_Rejete_Par_Nom_ID < 1) {
+		if (Valide_Rejete_Par_Nom_ID < 1)
 			set_Value (COLUMNNAME_Valide_Rejete_Par_Nom_ID, null);
-		} else {
+		else
 			set_Value (COLUMNNAME_Valide_Rejete_Par_Nom_ID, Integer.valueOf(Valide_Rejete_Par_Nom_ID));
-		}
 	}
 
 	/** Get Validé/rejeté par (Nom) :.
 		@return Validé/rejeté par (Nom) :
 	  */
-	@Override
 	public int getValide_Rejete_Par_Nom_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Valide_Rejete_Par_Nom_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
-	@Override
 	public org.eevolution.model.I_HR_Job getValide_Rejete_Par_Poste() throws RuntimeException
 	{
 		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
@@ -1766,60 +1556,52 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Validé/rejeté par (Poste) :.
 		@param Valide_Rejete_Par_Poste_ID Validé/rejeté par (Poste) :
 	*/
-	@Override
 	public void setValide_Rejete_Par_Poste_ID (int Valide_Rejete_Par_Poste_ID)
 	{
-		if (Valide_Rejete_Par_Poste_ID < 1) {
+		if (Valide_Rejete_Par_Poste_ID < 1)
 			set_Value (COLUMNNAME_Valide_Rejete_Par_Poste_ID, null);
-		} else {
+		else
 			set_Value (COLUMNNAME_Valide_Rejete_Par_Poste_ID, Integer.valueOf(Valide_Rejete_Par_Poste_ID));
-		}
 	}
 
 	/** Get Validé/rejeté par (Poste) :.
 		@return Validé/rejeté par (Poste) :
 	  */
-	@Override
 	public int getValide_Rejete_Par_Poste_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Valide_Rejete_Par_Poste_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Valider .
-		@param Valider Valider
+		@param Valider Valider 
 	*/
-	@Override
 	public void setValider (String Valider)
 	{
 		set_Value (COLUMNNAME_Valider, Valider);
 	}
 
 	/** Get Valider .
-		@return Valider
+		@return Valider 
 	  */
-	@Override
 	public String getValider()
 	{
 		return (String)get_Value(COLUMNNAME_Valider);
 	}
 
 	/** Set Valider .
-		@param Valider_Createur Valider
+		@param Valider_Createur Valider 
 	*/
-	@Override
 	public void setValider_Createur (String Valider_Createur)
 	{
 		set_Value (COLUMNNAME_Valider_Createur, Valider_Createur);
 	}
 
 	/** Get Valider .
-		@return Valider
+		@return Valider 
 	  */
-	@Override
 	public String getValider_Createur()
 	{
 		return (String)get_Value(COLUMNNAME_Valider_Createur);
@@ -1828,7 +1610,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Set Personnaliser le Rapport.
 		@param isRapport_Personnalise Personnaliser le Rapport
 	*/
-	@Override
 	public void setisRapport_Personnalise (boolean isRapport_Personnalise)
 	{
 		set_Value (COLUMNNAME_isRapport_Personnalise, Boolean.valueOf(isRapport_Personnalise));
@@ -1837,15 +1618,13 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/** Get Personnaliser le Rapport.
 		@return Personnaliser le Rapport
 	  */
-	@Override
 	public boolean isRapport_Personnalise()
 	{
 		Object oo = get_Value(COLUMNNAME_isRapport_Personnalise);
 		if (oo != null)
 		{
-			 if (oo instanceof Boolean) {
-				return ((Boolean)oo).booleanValue();
-			}
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
 			return "Y".equals(oo);
 		}
 		return false;
