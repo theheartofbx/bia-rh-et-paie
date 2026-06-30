@@ -18,6 +18,7 @@ package org.sitracel.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import org.sitracel.organigramme.model.I_HR_Categorie_Responsabilite;
 
 import org.compiere.util.KeyNamePair;
 
