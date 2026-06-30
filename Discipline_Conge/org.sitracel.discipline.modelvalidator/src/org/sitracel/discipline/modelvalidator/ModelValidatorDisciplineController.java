@@ -122,9 +122,9 @@ public class ModelValidatorDisciplineController {
         }
 
         // Désapprobation
-        boolean nouvelleDesapprobation = punishment.isDesapprobation();
+        boolean nouvelleDesapprobation = punishment.isDesapprouve();
         boolean ancienneDesapprobation = getBooleanOld(punishment,
-            MHRPunishment.COLUMNNAME_IsDesapprobation);
+            MHRPunishment.COLUMNNAME_IsDesapprouve);
         if (nouvelleDesapprobation && !ancienneDesapprobation) {
             NotificationControler.notify(NotificationEvent.SANCTION_DISAPPROVED, punishment);
             return;

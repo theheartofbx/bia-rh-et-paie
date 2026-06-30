@@ -67,7 +67,7 @@ public final class CongeAbsenceValidatorService {
 
         // Charger la demande d'explication liée à cette absence
         MHRDemandeExplication demandeExplication =
-            getDemandeExplicationByAbsence(absence.getHR_Absence_ID(),
+            getDemandeExplicationByAbsence(absence.getAbsence_ID(),
                                             absence.get_TrxName());
 
         if (demandeExplication != null) {
@@ -108,9 +108,9 @@ public final class CongeAbsenceValidatorService {
         if (absenceCompense == null) return;
 
         // Marquer l'absence concernée comme compensée
-        if (absenceCompense.getHR_Absence_ID() > 0) {
+        if (absenceCompense.getAbsence_ID() > 0) {
             MHRAbsence absence = new MHRAbsence(
-                Env.getCtx(), absenceCompense.getHR_Absence_ID(), null);
+                Env.getCtx(), absenceCompense.getAbsence_ID(), null);
             if (absence != null) {
                 absence.setIsDemandeExplicationTraite(true);
                 absence.save(null);
@@ -127,9 +127,9 @@ public final class CongeAbsenceValidatorService {
             org.sitracel.conge.model.MHRAbsenceCompensation absenceCompense) {
         if (absenceCompense == null) return;
 
-        if (absenceCompense.getHR_Absence_ID() > 0) {
+        if (absenceCompense.getAbsence_ID() > 0) {
             MHRAbsence absence = new MHRAbsence(
-                Env.getCtx(), absenceCompense.getHR_Absence_ID(), null);
+                Env.getCtx(), absenceCompense.getAbsence_ID(), null);
             if (absence != null) {
                 absence.setIsDemandeExplicationTraite(false);
                 absence.save(null);
@@ -166,7 +166,7 @@ public final class CongeAbsenceValidatorService {
             Env.getCtx(), null, absence.get_TrxName());
 
         demande.setC_BPartner_ID(absence.getC_BPartner_ID());
-        demande.setHR_Absence_ID(absence.getHR_Absence_ID());
+        demande.setAbsence_ID(absence.getAbsence_ID());
         demande.setEmis_Par_Nom_ID(emetteur.getNumEmploye());
         demande.setEmis_Par_Matricule(emetteur.getMatriculeEmploye());
         demande.setEmis_Par_Poste_ID(emetteur.getNumeroPoste());

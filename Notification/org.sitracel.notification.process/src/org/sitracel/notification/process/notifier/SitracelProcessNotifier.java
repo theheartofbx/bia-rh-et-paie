@@ -138,7 +138,7 @@ public class SitracelProcessNotifier extends SvrProcess {
         );
 
         for (MHRNotificationDestinataire dest : destinataires) {
-            String email = dest.getEMail();
+            String email = dest.getAdresse();
             if (email == null || email.isBlank()) continue;
             try {
                 EMail mail = HRMailUtil.createMail(

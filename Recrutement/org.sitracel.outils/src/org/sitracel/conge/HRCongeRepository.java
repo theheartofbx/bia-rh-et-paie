@@ -281,9 +281,9 @@ public final class HRCongeRepository {
         Set<LocalDate> joursFeries = new HashSet<>();
         if (dateDebut == null || dateFin == null) return joursFeries;
 
-        String sql = "SELECT " + I_HR_Public_Holiday.COLUMNNAME_Date_Ferie
+        String sql = "SELECT " + I_HR_Public_Holiday.COLUMNNAME_Date_Jour_Ferie
             + " FROM " + I_HR_Public_Holiday.Table_Name
-            + " WHERE " + I_HR_Public_Holiday.COLUMNNAME_Date_Ferie + " BETWEEN ? AND ?"
+            + " WHERE " + I_HR_Public_Holiday.COLUMNNAME_Date_Jour_Ferie + " BETWEEN ? AND ?"
             + " AND IsActive = 'Y'";
 
         PreparedStatement pstmt = null;

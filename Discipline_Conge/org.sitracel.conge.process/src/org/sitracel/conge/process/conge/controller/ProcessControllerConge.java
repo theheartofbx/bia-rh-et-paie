@@ -131,7 +131,7 @@ public class ProcessControllerConge {
         conge.setApprouve_Desapprouve_Par_Matricule(bi.getMatriculeEmploye());
         conge.setApprouve_Desapprouve_Par_Poste_ID(bi.getNumeroPoste());
         conge.setIsApprobation(true);
-        conge.setIsDesapprobation(false);
+        conge.setIsDesapprouve(false);
         conge.setDate_Approbation(new Timestamp(System.currentTimeMillis()));
         conge.setDate_Desapprobation(null);
         conge.save(null);
@@ -155,7 +155,7 @@ public class ProcessControllerConge {
         conge.setApprouve_Desapprouve_Par_Matricule(bi.getMatriculeEmploye());
         conge.setApprouve_Desapprouve_Par_Poste_ID(bi.getNumeroPoste());
         conge.setIsApprobation(false);
-        conge.setIsDesapprobation(true);
+        conge.setIsDesapprouve(true);
         conge.setDate_Approbation(null);
         conge.setDate_Desapprobation(new Timestamp(System.currentTimeMillis()));
         conge.save(null);

@@ -138,7 +138,7 @@ public final class CongeProcessService {
         conge.setApprouve_Desapprouve_Par_Matricule(approbateur.getMatriculeEmploye());
         conge.setApprouve_Desapprouve_Par_Poste_ID(approbateur.getNumeroPoste());
         conge.setIsApprobation(true);
-        conge.setIsDesapprobation(false);
+        conge.setIsDesapprouve(false);
         conge.setDate_Approbation(new Timestamp(System.currentTimeMillis()));
         conge.setDate_Desapprobation(null);
         conge.save(null);
@@ -168,7 +168,7 @@ public final class CongeProcessService {
         conge.setApprouve_Desapprouve_Par_Matricule(desapprobateur.getMatriculeEmploye());
         conge.setApprouve_Desapprouve_Par_Poste_ID(desapprobateur.getNumeroPoste());
         conge.setIsApprobation(false);
-        conge.setIsDesapprobation(true);
+        conge.setIsDesapprouve(true);
         conge.setDate_Approbation(null);
         conge.setDate_Desapprobation(new Timestamp(System.currentTimeMillis()));
         conge.save(null);

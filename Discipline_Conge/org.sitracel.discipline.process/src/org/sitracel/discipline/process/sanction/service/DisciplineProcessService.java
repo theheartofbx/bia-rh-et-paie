@@ -119,7 +119,7 @@ public final class DisciplineProcessService {
         punishment.setApprouve_Desapprouve_Par_Matricule(approbateur.getMatriculeEmploye());
         punishment.setApprouve_Desapprouve_Par_Poste_ID(approbateur.getNumeroPoste());
         punishment.setIsApprobation(true);
-        punishment.setIsDesapprobation(false);
+        punishment.setIsDesapprouve(false);
         punishment.setDate_Approbation(new Timestamp(System.currentTimeMillis()));
         punishment.setDate_Desapprobation(null);
         punishment.save(null);
@@ -146,7 +146,7 @@ public final class DisciplineProcessService {
         punishment.setApprouve_Desapprouve_Par_Matricule(desapprobateur.getMatriculeEmploye());
         punishment.setApprouve_Desapprouve_Par_Poste_ID(desapprobateur.getNumeroPoste());
         punishment.setIsApprobation(false);
-        punishment.setIsDesapprobation(true);
+        punishment.setIsDesapprouve(true);
         punishment.setDate_Approbation(null);
         punishment.setDate_Desapprobation(new Timestamp(System.currentTimeMillis()));
         punishment.save(null);

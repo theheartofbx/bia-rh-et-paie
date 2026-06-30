@@ -126,8 +126,8 @@ public final class DisciplineValidatorService {
         }
 
         // Désapprobation
-        if (punishment.isDesapprobation()
-                && !getBooleanOld(punishment, MHRPunishment.COLUMNNAME_IsDesapprobation)) {
+        if (punishment.isDesapprouve()
+                && !getBooleanOld(punishment, MHRPunishment.COLUMNNAME_IsDesapprouve)) {
             NotificationControler.notify(NotificationEvent.SANCTION_DISAPPROVED, punishment);
             return;
         }

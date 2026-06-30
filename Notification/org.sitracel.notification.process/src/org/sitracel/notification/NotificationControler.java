@@ -100,7 +100,7 @@ public class NotificationControler {
                 new MHRNotificationDestinataire(ctx, 0, trxName);
             nr.setHR_Notification_ID(notif.getHR_Notification_ID());
             nr.setC_BPartner_ID(dest.getCBPartnerId());
-            nr.setEMail(email);
+            nr.setAdresse(email);
             nr.setHR_DestinataireType_ID(
                 getDestinataireTypeId(dest.getType())
             );

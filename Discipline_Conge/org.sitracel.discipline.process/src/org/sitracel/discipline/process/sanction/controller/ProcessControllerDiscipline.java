@@ -102,7 +102,7 @@ public class ProcessControllerDiscipline {
         punishment.setApprouve_Desapprouve_Par_Matricule(bi.getMatriculeEmploye());
         punishment.setApprouve_Desapprouve_Par_Poste_ID(bi.getNumeroPoste());
         punishment.setIsApprobation(true);
-        punishment.setIsDesapprobation(false);
+        punishment.setIsDesapprouve(false);
         punishment.setDate_Approbation(new Timestamp(System.currentTimeMillis()));
         punishment.setDate_Desapprobation(null);
         punishment.save(null);
@@ -126,7 +126,7 @@ public class ProcessControllerDiscipline {
         punishment.setApprouve_Desapprouve_Par_Matricule(bi.getMatriculeEmploye());
         punishment.setApprouve_Desapprouve_Par_Poste_ID(bi.getNumeroPoste());
         punishment.setIsApprobation(false);
-        punishment.setIsDesapprobation(true);
+        punishment.setIsDesapprouve(true);
         punishment.setDate_Approbation(null);
         punishment.setDate_Desapprobation(new Timestamp(System.currentTimeMillis()));
         punishment.save(null);

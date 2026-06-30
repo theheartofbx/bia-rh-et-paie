@@ -24,7 +24,7 @@ public final class HRParametreService {
     public static int getParametreNumerique(String nomParametre) {
         if (nomParametre == null || nomParametre.isBlank()) return 0;
 
-        String sql = "SELECT " + I_HR_Parametre_Numerique.COLUMNNAME_Valeur
+        String sql = "SELECT " + I_HR_Parametre_Numerique.COLUMNNAME_Valeur_Parametre
             + " FROM " + I_HR_Parametre_Numerique.Table_Name
             + " WHERE " + I_HR_Parametre_Numerique.COLUMNNAME_Name + " = ?"
             + " AND IsActive = 'Y'";

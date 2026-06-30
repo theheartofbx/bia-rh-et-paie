@@ -72,8 +72,8 @@ public class SitracelCongeGeneralModelValidator {
         }
 
         // Désapprobation
-        if (holiday.isDesapprobation()
-                && !getBooleanOld(po, MHRHoliday.COLUMNNAME_IsDesapprobation)) {
+        if (holiday.isDesapprouve()
+                && !getBooleanOld(po, MHRHoliday.COLUMNNAME_IsDesapprouve)) {
             NotificationControler.notify(NotificationEvent.HOLIDAY_DISAPPROVED, po);
             return;
         }
