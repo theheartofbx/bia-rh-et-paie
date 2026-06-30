@@ -18,6 +18,18 @@ public class BeanDestinataire {
 
     /** Constructeur sans args — pour usage avec setters */
     public BeanDestinataire() {}
+    /** Constructeur à 3 args — canalValue déduit plus tard */
+    public BeanDestinataire(
+            int cBPartnerId,
+            NotificationCanal canal,
+            NotificationTypeDestinataireEmail type
+    ) {
+        this.cBPartnerId = cBPartnerId;
+        this.canal       = canal;
+        this.type        = type;
+    }
+
+
 
     /** Constructeur complet */
     public BeanDestinataire(
