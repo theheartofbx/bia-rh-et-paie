@@ -16,6 +16,8 @@
  *****************************************************************************/
 package org.sitracel.mission.model;
 
+import org.sitracel.recrutement.model.I_HR_Competences;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import org.compiere.model.*;

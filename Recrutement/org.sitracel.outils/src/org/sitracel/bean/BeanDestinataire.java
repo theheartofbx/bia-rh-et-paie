@@ -68,8 +68,12 @@ public class BeanDestinataire {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BeanDestinataire)) return false;
+        if (this == o) {
+			return true;
+		}
+        if (!(o instanceof BeanDestinataire)) {
+			return false;
+		}
         BeanDestinataire that = (BeanDestinataire) o;
         return cBPartnerId == that.cBPartnerId
             && canal == that.canal

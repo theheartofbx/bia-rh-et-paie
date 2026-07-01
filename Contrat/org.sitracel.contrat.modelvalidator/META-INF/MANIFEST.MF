@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Contrat Modelvalidator
+Bundle-SymbolicName: org.sitracel.contrat.modelvalidator
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
+ org.adempiere.plugin.utils;bundle-version="4.1.0",
+ org.sitracel.contrat.model;bundle-version="1.0.0"
+Service-Component: OSGI-INF/*.xml
+Automatic-Module-Name: org.sitracel.contrat.modelvalidator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

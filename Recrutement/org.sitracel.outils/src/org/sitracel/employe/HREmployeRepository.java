@@ -10,8 +10,8 @@ import java.util.List;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
-import org.sitracel.model.MHREmployeeJob;
-import org.sitracel.organigramme.model.MHROrganigramme;
+import org.sitracel.model.I_HR_EmployeeJob;
+import org.sitracel.organigramme.model.I_HR_Organigramme;
 import org.sitracel.paie.model.I_HR_ElementBasePaieEmploye;
 import org.sitracel.paie.model.MHRElementBasePaieEmploye;
 
@@ -38,12 +38,14 @@ public final class HREmployeRepository {
      * (le plus récent selon DateFrom).
      */
     public static Integer getCurrentJobId(Integer bpartnerId) {
-        if (bpartnerId == null) return null;
+        if (bpartnerId == null) {
+			return null;
+		}
 
-        String sql = "SELECT " + MHREmployeeJob.COLUMNNAME_HR_Job_ID
-            + " FROM " + MHREmployeeJob.Table_Name
-            + " WHERE " + MHREmployeeJob.COLUMNNAME_C_BPartner_ID + " = ?"
-            + " ORDER BY " + MHREmployeeJob.COLUMNNAME_DateFrom + " DESC"
+        String sql = "SELECT " + I_HR_EmployeeJob.COLUMNNAME_HR_Job_ID
+            + " FROM " + I_HR_EmployeeJob.Table_Name
+            + " WHERE " + I_HR_EmployeeJob.COLUMNNAME_C_BPartner_ID + " = ?"
+            + " ORDER BY " + I_HR_EmployeeJob.COLUMNNAME_DateFrom + " DESC"
             + " LIMIT 1";
 
         return DB.getSQLValue(null, sql, bpartnerId);
@@ -55,11 +57,13 @@ public final class HREmployeRepository {
      */
     public static List<Integer> getPostesResponsables(Integer posteId) {
         List<Integer> list = new ArrayList<>();
-        if (posteId == null) return list;
+        if (posteId == null) {
+			return list;
+		}
 
-        String sql = "SELECT " + MHROrganigramme.COLUMNNAME_Poste_Responsable_ID
-            + " FROM " + MHROrganigramme.Table_Name
-            + " WHERE " + MHROrganigramme.COLUMNNAME_Poste_ID + " = ?";
+        String sql = "SELECT " + I_HR_Organigramme.COLUMNNAME_Poste_Responsable_ID
+            + " FROM " + I_HR_Organigramme.Table_Name
+            + " WHERE " + I_HR_Organigramme.COLUMNNAME_Poste_ID + " = ?";
 
         try (PreparedStatement ps = DB.prepareStatement(sql, null)) {
             ps.setInt(1, posteId);
@@ -82,12 +86,14 @@ public final class HREmployeRepository {
             Integer posteId, Integer categorieResponsabiliteId) {
 
         List<Integer> list = new ArrayList<>();
-        if (posteId == null || categorieResponsabiliteId == null) return list;
+        if (posteId == null || categorieResponsabiliteId == null) {
+			return list;
+		}
 
-        String sql = "SELECT " + MHROrganigramme.COLUMNNAME_Poste_Responsable_ID
-            + " FROM " + MHROrganigramme.Table_Name
-            + " WHERE " + MHROrganigramme.COLUMNNAME_Poste_ID + " = ?"
-            + " AND " + MHROrganigramme.COLUMNNAME_HR_Categorie_Responsabilite_ID + " = ?";
+        String sql = "SELECT " + I_HR_Organigramme.COLUMNNAME_Poste_Responsable_ID
+            + " FROM " + I_HR_Organigramme.Table_Name
+            + " WHERE " + I_HR_Organigramme.COLUMNNAME_Poste_ID + " = ?"
+            + " AND " + I_HR_Organigramme.COLUMNNAME_HR_Categorie_Responsabilite_ID + " = ?";
 
         try (PreparedStatement ps = DB.prepareStatement(sql, null)) {
             ps.setInt(1, posteId);
@@ -108,11 +114,13 @@ public final class HREmployeRepository {
      */
     public static List<Integer> getEmployeesByJob(Integer posteId) {
         List<Integer> list = new ArrayList<>();
-        if (posteId == null) return list;
+        if (posteId == null) {
+			return list;
+		}
 
-        String sql = "SELECT " + MHREmployeeJob.COLUMNNAME_C_BPartner_ID
-            + " FROM " + MHREmployeeJob.Table_Name
-            + " WHERE " + MHREmployeeJob.COLUMNNAME_HR_Job_ID + " = ?";
+        String sql = "SELECT " + I_HR_EmployeeJob.COLUMNNAME_C_BPartner_ID
+            + " FROM " + I_HR_EmployeeJob.Table_Name
+            + " WHERE " + I_HR_EmployeeJob.COLUMNNAME_HR_Job_ID + " = ?";
 
         try (PreparedStatement ps = DB.prepareStatement(sql, null)) {
             ps.setInt(1, posteId);
@@ -133,7 +141,9 @@ public final class HREmployeRepository {
      */
     public static List<Integer> getEmployeesByRoles(List<String> roles, String trxName) {
         List<Integer> list = new ArrayList<>();
-        if (roles == null || roles.isEmpty()) return list;
+        if (roles == null || roles.isEmpty()) {
+			return list;
+		}
 
         StringBuilder placeholders = new StringBuilder();
         for (int i = 0; i < roles.size(); i++) {
@@ -181,7 +191,9 @@ public final class HREmployeRepository {
             Integer bpartnerId, Timestamp dateMax, String trxName) {
 
         List<MHRElementBasePaieEmploye> resultat = new ArrayList<>();
-        if (bpartnerId == null || dateMax == null) return resultat;
+        if (bpartnerId == null || dateMax == null) {
+			return resultat;
+		}
 
         String sql = "SELECT * FROM " + I_HR_ElementBasePaieEmploye.Table_Name
             + " WHERE " + I_HR_ElementBasePaieEmploye.COLUMNNAME_C_BPartner_ID + " = ?"
@@ -221,8 +233,9 @@ public final class HREmployeRepository {
             List<Integer> categorieIds, Timestamp dateReference) {
 
         List<Integer> list = new ArrayList<>();
-        if (categorieIds == null || categorieIds.isEmpty() || dateReference == null)
-            return list;
+        if (categorieIds == null || categorieIds.isEmpty() || dateReference == null) {
+			return list;
+		}
 
         StringBuilder placeholders = new StringBuilder();
         for (int i = 0; i < categorieIds.size(); i++) {
@@ -230,12 +243,12 @@ public final class HREmployeRepository {
         }
 
         String sql =
-            "SELECT DISTINCT ej." + MHREmployeeJob.COLUMNNAME_C_BPartner_ID
-            + " FROM " + MHROrganigramme.Table_Name + " org"
-            + " JOIN " + MHREmployeeJob.Table_Name + " ej"
-            + "   ON ej." + MHREmployeeJob.COLUMNNAME_HR_Job_ID
-            + "    = org." + MHROrganigramme.COLUMNNAME_Poste_Responsable_ID
-            + " WHERE org." + MHROrganigramme.COLUMNNAME_HR_Categorie_Responsabilite_ID
+            "SELECT DISTINCT ej." + I_HR_EmployeeJob.COLUMNNAME_C_BPartner_ID
+            + " FROM " + I_HR_Organigramme.Table_Name + " org"
+            + " JOIN " + I_HR_EmployeeJob.Table_Name + " ej"
+            + "   ON ej." + I_HR_EmployeeJob.COLUMNNAME_HR_Job_ID
+            + "    = org." + I_HR_Organigramme.COLUMNNAME_Poste_Responsable_ID
+            + " WHERE org." + I_HR_Organigramme.COLUMNNAME_HR_Categorie_Responsabilite_ID
             + "   IN (" + placeholders + ")"
             + " AND org.IsActive = 'Y'";
 
@@ -265,7 +278,9 @@ public final class HREmployeRepository {
      */
     public static List<Integer> getEmployeesByRoleIds(List<Integer> roleIds, String trxName) {
         List<Integer> list = new ArrayList<>();
-        if (roleIds == null || roleIds.isEmpty()) return list;
+        if (roleIds == null || roleIds.isEmpty()) {
+			return list;
+		}
 
         StringBuilder placeholders = new StringBuilder();
         for (int i = 0; i < roleIds.size(); i++) {
@@ -287,7 +302,9 @@ public final class HREmployeRepository {
                 pstmt.setInt(i + 1, roleIds.get(i));
             }
             rs = pstmt.executeQuery();
-            while (rs.next()) list.add(rs.getInt(1));
+            while (rs.next()) {
+				list.add(rs.getInt(1));
+			}
         } catch (SQLException e) {
             log.warning("getEmployeesByRoleIds : " + e.getMessage());
         } finally {

@@ -94,7 +94,7 @@ public class BeanFactory {
 	public static BeanBareme getBareme() {
 		return new BeanBareme();
 	}
-	
+
 
 	public static BeanParametreNotificationCible getParametreNotificationCible(
 			int referenceBPartnerId,

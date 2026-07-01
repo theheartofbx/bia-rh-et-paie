@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.sitracel.bean.BeanConge;
-import org.sitracel.bean.BeanPeriode;
 import org.sitracel.conge.HRCongeService;
 import org.sitracel.employe.HREmployeService;
 import org.sitracel.paie.model.MHRElementBasePaieEmploye;

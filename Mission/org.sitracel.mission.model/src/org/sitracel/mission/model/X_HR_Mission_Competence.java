@@ -17,6 +17,8 @@
 /** Generated Model - DO NOT CHANGE */
 package org.sitracel.mission.model;
 
+import org.sitracel.recrutement.model.I_HR_Competences;
+
 import java.sql.ResultSet;
 import java.util.Properties;
 import org.compiere.model.*;

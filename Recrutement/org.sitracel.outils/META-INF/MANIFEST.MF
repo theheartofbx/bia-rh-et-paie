@@ -20,7 +20,8 @@ Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
  org.sitracel.recrutement.model;bundle-version="1.0.0",
  org.sitracel.mission.model;bundle-version="1.0.0",
  org.sitracel.discipline.model;bundle-version="1.0.0",
- org.sitracel.conge.model;bundle-version="1.0.0"
+ org.sitracel.conge.model;bundle-version="1.0.0",
+ org.sitracel.contrat.model;bundle-version="1.0.0"
 Service-Component: OSGI-INF/*.xml
 Automatic-Module-Name: org.sitracel.outils
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

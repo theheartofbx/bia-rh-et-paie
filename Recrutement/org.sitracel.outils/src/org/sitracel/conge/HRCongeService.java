@@ -10,8 +10,8 @@ import org.sitracel.conge.model.MHREmployeeChildren;
 import org.sitracel.conge.model.MHRTypeConge;
 import org.sitracel.employe.HREmployeService;
 import org.sitracel.model.X_C_BPartner;
-import org.sitracel.parametrage.HRParametreService;
 import org.sitracel.paie.model.MHRElementBasePaieEmploye;
+import org.sitracel.parametrage.HRParametreService;
 import org.sitracel.time.HRCalendrierService;
 
 /**
@@ -41,10 +41,14 @@ public final class HRCongeService {
                                           Timestamp dateActuelle,
                                           String trxName) {
         BeanConge beanConge = BeanFactory.getBeanConge();
-        if (bpartnerId == null || typeCongeId == null) return beanConge;
+        if (bpartnerId == null || typeCongeId == null) {
+			return beanConge;
+		}
 
         MHRTypeConge typeConge = new MHRTypeConge(Env.getCtx(), typeCongeId, trxName);
-        if (typeConge == null || !typeConge.isCongeAnnuel()) return beanConge;
+        if (typeConge == null || !typeConge.isCongeAnnuel()) {
+			return beanConge;
+		}
 
         MHRElementBasePaieEmploye dernierContrat =
             HREmployeService.getDateDernierContrat(bpartnerId, dateActuelle);
@@ -66,7 +70,9 @@ public final class HRCongeService {
             for (BeanPeriode periode : conges) {
                 Integer jours = HRCalendrierService.getNombreJourTravaille(
                     periode.getDateDebutConge(), periode.getDateFinConge());
-                if (jours != null) joursUtilises += jours;
+                if (jours != null) {
+					joursUtilises += jours;
+				}
             }
         }
 
@@ -96,7 +102,9 @@ public final class HRCongeService {
                                                    Timestamp dateActuelle,
                                                    String trxName) {
         BeanConge beanConge = BeanFactory.getBeanConge();
-        if (bpartnerId == null) return beanConge;
+        if (bpartnerId == null) {
+			return beanConge;
+		}
 
         MHRElementBasePaieEmploye dernierContrat =
             HREmployeService.getDateDernierContrat(bpartnerId, dateActuelle);

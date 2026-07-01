@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
-import org.compiere.util.Env;
 import org.sitracel.bean.BeanConge;
 import org.sitracel.bean.BeanPeriode;
 import org.sitracel.beanfactory.BeanFactory;
@@ -19,7 +18,6 @@ import org.sitracel.conge.model.I_HR_Absence;
 import org.sitracel.conge.model.I_HR_Autorisation_Conge;
 import org.sitracel.conge.model.I_HR_Holiday;
 import org.sitracel.conge.model.I_HR_Public_Holiday;
-import org.sitracel.conge.model.MHRPublicHoliday;
 
 /**
  * Repository transversal — requêtes SQL congés et absences.
@@ -46,7 +44,9 @@ public final class HRCongeRepository {
                                                       Timestamp dateDebut,
                                                       Timestamp dateFin,
                                                       String trxName) {
-        if (bpartnerId == null || dateDebut == null || dateFin == null) return false;
+        if (bpartnerId == null || dateDebut == null || dateFin == null) {
+			return false;
+		}
 
         String sql = "SELECT 1 FROM " + I_HR_Holiday.Table_Name
             + " WHERE " + I_HR_Holiday.COLUMNNAME_C_BPartner_ID + " = ?"
@@ -66,7 +66,9 @@ public final class HRCongeRepository {
     public static boolean isJourAnyCongeNonRejete(Integer bpartnerId,
                                                    Timestamp date,
                                                    String trxName) {
-        if (bpartnerId == null || date == null) return false;
+        if (bpartnerId == null || date == null) {
+			return false;
+		}
 
         String sql = "SELECT 1 FROM " + I_HR_Holiday.Table_Name
             + " WHERE " + I_HR_Holiday.COLUMNNAME_C_BPartner_ID + " = ?"
@@ -84,7 +86,9 @@ public final class HRCongeRepository {
                                                             String nomConge,
                                                             Timestamp date,
                                                             String trxName) {
-        if (bpartnerId == null || nomConge == null || date == null) return false;
+        if (bpartnerId == null || nomConge == null || date == null) {
+			return false;
+		}
 
         String sql = "SELECT 1"
             + " FROM " + I_HR_Holiday.Table_Name + " h"
@@ -109,7 +113,9 @@ public final class HRCongeRepository {
                                                             Timestamp dateDebut,
                                                             Timestamp dateFin,
                                                             String trxName) {
-        if (bpartnerId == null || nomConge == null) return null;
+        if (bpartnerId == null || nomConge == null) {
+			return null;
+		}
 
         String sql = "SELECT h." + I_HR_Holiday.COLUMNNAME_Date_Debut_Effective
             + ", h." + I_HR_Holiday.COLUMNNAME_Date_Fin_Effective
@@ -157,7 +163,9 @@ public final class HRCongeRepository {
                                                  String nomConge,
                                                  BeanConge beanConge,
                                                  String trxName) {
-        if (bpartnerId == null || beanConge == null) return beanConge;
+        if (bpartnerId == null || beanConge == null) {
+			return beanConge;
+		}
 
         String sql = "SELECT h." + I_HR_Holiday.COLUMNNAME_Date_Fin_Effective
             + " FROM " + I_HR_Holiday.Table_Name + " h"
@@ -200,7 +208,9 @@ public final class HRCongeRepository {
                                                         Timestamp dateDebut,
                                                         Timestamp dateFin,
                                                         String trxName) {
-        if (bpartnerId == null || dateDebut == null || dateFin == null) return false;
+        if (bpartnerId == null || dateDebut == null || dateFin == null) {
+			return false;
+		}
 
         String sql = "SELECT 1 FROM HR_Punishment p"
             + " JOIN HR_TypeSanction ts ON ts.HR_TypeSanction_ID = p.HR_TypeSanction_ID"
@@ -219,7 +229,9 @@ public final class HRCongeRepository {
     public static boolean isJourSuspensionNonRejete(Integer bpartnerId,
                                                      Timestamp date,
                                                      String trxName) {
-        if (bpartnerId == null || date == null) return false;
+        if (bpartnerId == null || date == null) {
+			return false;
+		}
 
         String sql = "SELECT 1 FROM HR_Punishment p"
             + " JOIN HR_TypeSanction ts ON ts.HR_TypeSanction_ID = p.HR_TypeSanction_ID"
@@ -243,7 +255,9 @@ public final class HRCongeRepository {
                                             Timestamp dateDebut,
                                             Timestamp dateFin,
                                             String trxName) {
-        if (bpartnerId == null || dateDebut == null || dateFin == null) return false;
+        if (bpartnerId == null || dateDebut == null || dateFin == null) {
+			return false;
+		}
 
         String sql = "SELECT 1 FROM " + I_HR_Absence.Table_Name
             + " WHERE " + I_HR_Absence.COLUMNNAME_C_BPartner_ID + " = ?"
@@ -258,7 +272,9 @@ public final class HRCongeRepository {
     public static boolean isJourAbsence(Integer bpartnerId,
                                          Timestamp date,
                                          String trxName) {
-        if (bpartnerId == null || date == null) return false;
+        if (bpartnerId == null || date == null) {
+			return false;
+		}
 
         String sql = "SELECT 1 FROM " + I_HR_Absence.Table_Name
             + " WHERE " + I_HR_Absence.COLUMNNAME_C_BPartner_ID + " = ?"
@@ -279,7 +295,9 @@ public final class HRCongeRepository {
                                                     Timestamp dateFin,
                                                     String trxName) {
         Set<LocalDate> joursFeries = new HashSet<>();
-        if (dateDebut == null || dateFin == null) return joursFeries;
+        if (dateDebut == null || dateFin == null) {
+			return joursFeries;
+		}
 
         String sql = "SELECT " + I_HR_Public_Holiday.COLUMNNAME_Date_Jour_Ferie
             + " FROM " + I_HR_Public_Holiday.Table_Name
@@ -318,7 +336,9 @@ public final class HRCongeRepository {
     public static boolean isAbsenceExist(java.sql.Timestamp dateAbsence,
                                           Integer bpartnerId,
                                           String trxName) {
-        if (dateAbsence == null || bpartnerId == null) return false;
+        if (dateAbsence == null || bpartnerId == null) {
+			return false;
+		}
 
         String sql = "SELECT 1 FROM " + I_HR_Absence.Table_Name
             + " WHERE " + I_HR_Absence.COLUMNNAME_Date_Absence + " = ?"
@@ -347,7 +367,9 @@ public final class HRCongeRepository {
                                             java.sql.Timestamp dateDebut,
                                             java.sql.Timestamp dateFin,
                                             String trxName) {
-        if (bpartnerId == null || dateDebut == null || dateFin == null) return;
+        if (bpartnerId == null || dateDebut == null || dateFin == null) {
+			return;
+		}
 
         String sql = "DELETE FROM " + I_HR_Absence.Table_Name
             + " WHERE " + I_HR_Absence.COLUMNNAME_C_BPartner_ID + " = ?"
@@ -383,7 +405,9 @@ public final class HRCongeRepository {
                                                     Timestamp dateDebut,
                                                     Timestamp dateFin,
                                                     String trxName) {
-        if (bpartnerId <= 0 || dateDebut == null || dateFin == null) return 0;
+        if (bpartnerId <= 0 || dateDebut == null || dateFin == null) {
+			return 0;
+		}
 
         String sql = "SELECT COUNT(*) FROM " + I_HR_Absence.Table_Name
             + " WHERE " + I_HR_Absence.COLUMNNAME_C_BPartner_ID + " = ?"
@@ -400,7 +424,9 @@ public final class HRCongeRepository {
             pstmt.setTimestamp(2, dateDebut);
             pstmt.setTimestamp(3, dateFin);
             rs = pstmt.executeQuery();
-            if (rs.next()) return rs.getInt(1);
+            if (rs.next()) {
+				return rs.getInt(1);
+			}
         } catch (SQLException erreurCatch) {
             log.warning("getNombreAbsencesNonTraitees : " + erreurCatch.getMessage());
         } finally {

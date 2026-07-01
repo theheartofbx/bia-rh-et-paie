@@ -17,6 +17,8 @@
 /** Generated Model - DO NOT CHANGE */
 package org.sitracel.mission.model;
 
+import org.sitracel.organigramme.model.I_HR_Categorie_Responsabilite;
+
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;

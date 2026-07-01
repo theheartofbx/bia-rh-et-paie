@@ -9,10 +9,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.compiere.util.Env;
 import org.sitracel.bean.BeanConge;
 import org.sitracel.bean.BeanIdentifiant;
-import org.sitracel.beanfactory.BeanFactory;
 import org.sitracel.model.MCBPartner;
 import org.sitracel.paie.model.MHRElementBasePaieEmploye;
 
@@ -36,7 +34,9 @@ public final class HREmployeService {
      * Retourne l'identifiant complet d'un employé à partir de son AD_User_ID.
      */
     public static BeanIdentifiant getIdentifiant(Integer adUserId, String trxName) {
-        if (adUserId == null) return null;
+        if (adUserId == null) {
+			return null;
+		}
         return MCBPartner.getIdentifiant(adUserId, trxName);
     }
 
@@ -44,7 +44,9 @@ public final class HREmployeService {
      * Retourne l'identifiant complet d'un employé à partir de son C_BPartner_ID.
      */
     public static BeanIdentifiant getIdentifiantByBPartner(Integer bpartnerId, String trxName) {
-        if (bpartnerId == null) return null;
+        if (bpartnerId == null) {
+			return null;
+		}
         return MCBPartner.getIdentifiantByBPartner(bpartnerId, trxName);
     }
 
@@ -59,12 +61,16 @@ public final class HREmployeService {
     public static MHRElementBasePaieEmploye getDateDernierContrat(
             Integer bpartnerId, Timestamp dateMax) {
 
-        if (bpartnerId == null || dateMax == null) return null;
+        if (bpartnerId == null || dateMax == null) {
+			return null;
+		}
 
         List<MHRElementBasePaieEmploye> listeContrats =
             HREmployeRepository.getDatesDerniersContrats(bpartnerId, dateMax, null);
 
-        if (listeContrats == null || listeContrats.isEmpty()) return null;
+        if (listeContrats == null || listeContrats.isEmpty()) {
+			return null;
+		}
 
         for (int i = 0; i < listeContrats.size(); i++) {
             MHRElementBasePaieEmploye contratActuel = listeContrats.get(i);
@@ -115,10 +121,14 @@ public final class HREmployeService {
         Set<Integer> result   = new LinkedHashSet<>();
         Set<Integer> visites  = new HashSet<>();
 
-        if (bpartnerId == null) return new ArrayList<>();
+        if (bpartnerId == null) {
+			return new ArrayList<>();
+		}
 
         Integer posteInitial = HREmployeRepository.getCurrentJobId(bpartnerId);
-        if (posteInitial == null) return new ArrayList<>();
+        if (posteInitial == null) {
+			return new ArrayList<>();
+		}
 
         explorerHierarchie(posteInitial, visites, result);
         return new ArrayList<>(result);
@@ -133,10 +143,14 @@ public final class HREmployeService {
         Set<Integer> result  = new LinkedHashSet<>();
         Set<Integer> visites = new HashSet<>();
 
-        if (bpartnerId == null || categorieResponsabiliteId == null) return new ArrayList<>();
+        if (bpartnerId == null || categorieResponsabiliteId == null) {
+			return new ArrayList<>();
+		}
 
         Integer posteInitial = HREmployeRepository.getCurrentJobId(bpartnerId);
-        if (posteInitial == null) return new ArrayList<>();
+        if (posteInitial == null) {
+			return new ArrayList<>();
+		}
 
         explorerHierarchieParCategorie(posteInitial, categorieResponsabiliteId, visites, result);
         return new ArrayList<>(result);
@@ -149,7 +163,9 @@ public final class HREmployeService {
     private static void explorerHierarchie(Integer posteCourant,
                                             Set<Integer> visites,
                                             Set<Integer> result) {
-        if (posteCourant == null || visites.contains(posteCourant)) return;
+        if (posteCourant == null || visites.contains(posteCourant)) {
+			return;
+		}
         visites.add(posteCourant);
 
         List<Integer> postesResponsables =
@@ -167,7 +183,9 @@ public final class HREmployeService {
                                                         Set<Integer> visites,
                                                         Set<Integer> result) {
         if (posteCourant == null || categorieId == null
-                || visites.contains(posteCourant)) return;
+                || visites.contains(posteCourant)) {
+			return;
+		}
         visites.add(posteCourant);
 
         List<Integer> postesResponsables =

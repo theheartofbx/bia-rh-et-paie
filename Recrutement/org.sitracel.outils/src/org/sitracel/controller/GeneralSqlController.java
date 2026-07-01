@@ -17,9 +17,6 @@ import org.sitracel.bean.BeanConge;
 import org.sitracel.bean.BeanPeriode;
 import org.sitracel.conge.HRCongeRepository;
 import org.sitracel.employe.HREmployeRepository;
-import org.sitracel.time.HRCalendrierService;
-import org.sitracel.model.MHREmployeeJob;
-import org.sitracel.organigramme.model.MHROrganigramme;
 import org.sitracel.paie.model.I_HR_Calcul_Conge;
 import org.sitracel.paie.model.I_HR_Calcul_Indemnite_Conge;
 import org.sitracel.paie.model.I_HR_Calcul_Paie;
@@ -37,6 +34,7 @@ import org.sitracel.paie.model.MHRHistoriquePaie;
 import org.sitracel.paie.model.MHRPeriodeSalariale;
 import org.sitracel.paie.model.MHRRetenueSalariale;
 import org.sitracel.parametrage.HRParametreService;
+import org.sitracel.time.HRCalendrierService;
 
 /**
  * @deprecated Utiliser les repositories dédiés à la place :
@@ -192,8 +190,9 @@ public class GeneralSqlController {
     public static MHRHistoriquePaie getHistoriquePaie(Integer cbpartnerid,
             Integer hrElementBasePaieID, Integer periodeSalarialeID, String trxName) {
         MHRHistoriquePaie resultat = null;
-        if (cbpartnerid == null || hrElementBasePaieID == null || periodeSalarialeID == null)
-            return null;
+        if (cbpartnerid == null || hrElementBasePaieID == null || periodeSalarialeID == null) {
+			return null;
+		}
         String sql = "SELECT * FROM " + I_HR_Historique_Paie.Table_Name
             + " WHERE " + I_HR_Historique_Paie.COLUMNNAME_C_BPartner_ID + " = ?"
             + " AND " + I_HR_Historique_Paie.COLUMNNAME_HR_Element_Base_Paie_ID + " = ?"
@@ -218,7 +217,9 @@ public class GeneralSqlController {
     }
 
     public static void resetCalculPaie(Integer cbpartnerid, String trxName) {
-        if (cbpartnerid == null) return;
+        if (cbpartnerid == null) {
+			return;
+		}
         String sql = "SELECT * FROM " + I_HR_Calcul_Paie.Table_Name
             + " WHERE " + I_HR_Calcul_Paie.COLUMNNAME_C_BPartner_ID + " = ?";
         PreparedStatement pstmt = null;
@@ -238,7 +239,9 @@ public class GeneralSqlController {
     }
 
     public static void resetCalculConge(Integer cbpartnerid, String trxName) {
-        if (cbpartnerid == null) return;
+        if (cbpartnerid == null) {
+			return;
+		}
         String sql = "SELECT * FROM " + I_HR_Calcul_Conge.Table_Name
             + " WHERE " + I_HR_Calcul_Conge.COLUMNNAME_C_BPartner_ID + " = ?";
         PreparedStatement pstmt = null;
@@ -258,7 +261,9 @@ public class GeneralSqlController {
     }
 
     public static void resetIndemniteConge(Integer cbpartnerid, String trxName) {
-        if (cbpartnerid == null) return;
+        if (cbpartnerid == null) {
+			return;
+		}
         String sql = "SELECT * FROM " + I_HR_Calcul_Indemnite_Conge.Table_Name
             + " WHERE " + I_HR_Calcul_Indemnite_Conge.COLUMNNAME_C_BPartner_ID + " = ?";
         PreparedStatement pstmt = null;
@@ -323,7 +328,9 @@ public class GeneralSqlController {
     public static ArrayList<MHRRetenueSalariale> getAllRetenueEmploye(
             Integer cbpartnerid, MHRPeriodeSalariale periodeSalariale, String trxName) {
         ArrayList<MHRRetenueSalariale> resultat = new ArrayList<>();
-        if (cbpartnerid == null || periodeSalariale == null) return resultat;
+        if (cbpartnerid == null || periodeSalariale == null) {
+			return resultat;
+		}
         String sql = "SELECT * FROM " + I_HR_Retenue_Salariale.Table_Name
             + " WHERE " + I_HR_Retenue_Salariale.COLUMNNAME_C_BPartner_ID + " = ?"
             + " AND " + I_HR_Retenue_Salariale.COLUMNNAME_Debut_Prelevement_ID + " <= ?"
@@ -351,7 +358,9 @@ public class GeneralSqlController {
     public static ArrayList<MHRElementBasePaieEmploye> getElementBasePaieEmploye(
             Integer bpartnerID, Timestamp dateDebut, Timestamp dateFin, String trxName) {
         ArrayList<MHRElementBasePaieEmploye> resultat = new ArrayList<>();
-        if (bpartnerID == null || dateDebut == null || dateFin == null) return resultat;
+        if (bpartnerID == null || dateDebut == null || dateFin == null) {
+			return resultat;
+		}
         String sql = "WITH intervals AS ("
             + " SELECT " + I_HR_ElementBasePaieEmploye.COLUMNNAME_HR_ElementBasePaieEmploye_ID
             + ", " + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut
@@ -381,8 +390,9 @@ public class GeneralSqlController {
                     rs.getInt(I_HR_ElementBasePaieEmploye.COLUMNNAME_HR_ElementBasePaieEmploye_ID),
                     null);
                 if (e != null) {
-                    if (e.getDate_Debut() != null && e.getDate_Debut().before(dateDebut))
-                        e.setDate_Debut(dateDebut);
+                    if (e.getDate_Debut() != null && e.getDate_Debut().before(dateDebut)) {
+						e.setDate_Debut(dateDebut);
+					}
                     Timestamp datFinRS = rs.getTimestamp(
                         I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Fin);
                     if (e.getDate_Fin() == null) {
@@ -403,7 +413,9 @@ public class GeneralSqlController {
 
     public static MHRPeriodeSalariale getPeriodeSalarialeFinRetenue(
             Timestamp dateDebut, Integer nombreMensualite, String trxName) {
-        if (dateDebut == null || nombreMensualite == null || nombreMensualite <= 0) return null;
+        if (dateDebut == null || nombreMensualite == null || nombreMensualite <= 0) {
+			return null;
+		}
         String sql = "SELECT * FROM " + I_HR_Periode_Salariale.Table_Name
             + " WHERE " + I_HR_Periode_Salariale.COLUMNNAME_Date_Debut_Defaut + " >= ?"
             + " ORDER BY " + I_HR_Periode_Salariale.COLUMNNAME_Date_Debut_Defaut + " ASC";
@@ -443,7 +455,9 @@ public class GeneralSqlController {
                                                      String trxName) {
         Integer resultat = null;
         if (searchColumnName == null || tableName == null
-                || columnName == null || value == null) return null;
+                || columnName == null || value == null) {
+			return null;
+		}
 
         String sql = "SELECT " + searchColumnName
             + " FROM " + tableName
@@ -473,7 +487,9 @@ public class GeneralSqlController {
                                     String tableName,
                                     int searchValue,
                                     String trxName) {
-        if (searchColumnName == null || tableName == null) return false;
+        if (searchColumnName == null || tableName == null) {
+			return false;
+		}
 
         String sql = "SELECT 1 FROM " + tableName
             + " WHERE " + tableName + "." + searchColumnName + " = ?";
@@ -515,7 +531,9 @@ public class GeneralSqlController {
             pstmt.setTimestamp(1, firstDayOfYear);
             pstmt.setTimestamp(2, lastDayOfYear);
             rs = pstmt.executeQuery();
-            if (rs.next()) return rs.getInt("count");
+            if (rs.next()) {
+				return rs.getInt("count");
+			}
         } catch (java.sql.SQLException e) {
             log.warning(e.getMessage());
         } finally {

@@ -22,7 +22,9 @@ public final class HRParametreService {
      * @param nomParametre Nom exact du paramètre en base
      */
     public static int getParametreNumerique(String nomParametre) {
-        if (nomParametre == null || nomParametre.isBlank()) return 0;
+        if (nomParametre == null || nomParametre.isBlank()) {
+			return 0;
+		}
 
         String sql = "SELECT " + I_HR_Parametre_Numerique.COLUMNNAME_Valeur_Parametre
             + " FROM " + I_HR_Parametre_Numerique.Table_Name

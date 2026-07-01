@@ -9,8 +9,8 @@ import org.sitracel.contrat.model.I_HR_Affectation;
 import org.sitracel.contrat.model.I_HR_Contrat;
 import org.sitracel.contrat.model.I_HR_ContratStatut;
 import org.sitracel.contrat.model.I_HR_ContratType;
-import org.sitracel.contrat.model.X_HR_Affectation;
-import org.sitracel.contrat.model.X_HR_Contrat;
+import org.sitracel.contrat.model.MHRAffectation;
+import org.sitracel.contrat.model.MHRContrat;
 import org.sitracel.contrat.model.X_HR_ContratStatut;
 import org.sitracel.contrat.model.X_HR_ContratType;
 
@@ -23,9 +23,9 @@ public class SitracelContratModelFactory implements IModelFactory {
         if (tableName.equalsIgnoreCase(I_HR_ContratStatut.Table_Name))
             return X_HR_ContratStatut.class;
         if (tableName.equalsIgnoreCase(I_HR_Contrat.Table_Name))
-            return X_HR_Contrat.class;
+            return MHRContrat.class;
         if (tableName.equalsIgnoreCase(I_HR_Affectation.Table_Name))
-            return X_HR_Affectation.class;
+            return MHRAffectation.class;
         return null;
     }
 
@@ -36,9 +36,9 @@ public class SitracelContratModelFactory implements IModelFactory {
         if (tableName.equalsIgnoreCase(I_HR_ContratStatut.Table_Name))
             return new X_HR_ContratStatut(Env.getCtx(), Record_ID, trxName);
         if (tableName.equalsIgnoreCase(I_HR_Contrat.Table_Name))
-            return new X_HR_Contrat(Env.getCtx(), Record_ID, trxName);
+            return new MHRContrat(Env.getCtx(), Record_ID, trxName);
         if (tableName.equalsIgnoreCase(I_HR_Affectation.Table_Name))
-            return new X_HR_Affectation(Env.getCtx(), Record_ID, trxName);
+            return new MHRAffectation(Env.getCtx(), Record_ID, trxName);
         return null;
     }
 
@@ -49,9 +49,9 @@ public class SitracelContratModelFactory implements IModelFactory {
         if (tableName.equalsIgnoreCase(I_HR_ContratStatut.Table_Name))
             return new X_HR_ContratStatut(Env.getCtx(), rs, trxName);
         if (tableName.equalsIgnoreCase(I_HR_Contrat.Table_Name))
-            return new X_HR_Contrat(Env.getCtx(), rs, trxName);
+            return new MHRContrat(Env.getCtx(), rs, trxName);
         if (tableName.equalsIgnoreCase(I_HR_Affectation.Table_Name))
-            return new X_HR_Affectation(Env.getCtx(), rs, trxName);
+            return new MHRAffectation(Env.getCtx(), rs, trxName);
         return null;
     }
 }

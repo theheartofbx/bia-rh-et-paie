@@ -16,6 +16,8 @@
  *****************************************************************************/
 package org.sitracel.conge.model;
 
+import org.sitracel.model.I_HR_Ampliation;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import org.compiere.model.*;

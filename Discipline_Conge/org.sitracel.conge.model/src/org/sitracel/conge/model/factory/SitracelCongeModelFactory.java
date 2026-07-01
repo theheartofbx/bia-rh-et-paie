@@ -11,7 +11,6 @@ import org.sitracel.conge.model.I_HR_Autorisation_Absence;
 import org.sitracel.conge.model.I_HR_Autorisation_Conge;
 import org.sitracel.conge.model.I_HR_Employee_Children;
 import org.sitracel.conge.model.I_HR_Holiday;
-import org.sitracel.conge.model.I_HR_Holiday_Department;
 import org.sitracel.conge.model.I_HR_Public_Holiday;
 import org.sitracel.conge.model.I_HR_Type_Absence;
 import org.sitracel.conge.model.I_HR_Type_Conge;
@@ -21,7 +20,6 @@ import org.sitracel.conge.model.MHRAutorisationAbsence;
 import org.sitracel.conge.model.MHRAutorisationConge;
 import org.sitracel.conge.model.MHREmployeeChildren;
 import org.sitracel.conge.model.MHRHoliday;
-import org.sitracel.conge.model.MHRHolidayDepartment;
 import org.sitracel.conge.model.MHRPublicHoliday;
 import org.sitracel.conge.model.MHRTypeAbsence;
 import org.sitracel.conge.model.MHRTypeConge;
@@ -42,8 +40,6 @@ public class SitracelCongeModelFactory implements IModelFactory {
             return MHREmployeeChildren.class;
         if (tableName.equalsIgnoreCase(I_HR_Holiday.Table_Name))
             return MHRHoliday.class;
-        if (tableName.equalsIgnoreCase(I_HR_Holiday_Department.Table_Name))
-            return MHRHolidayDepartment.class;
         if (tableName.equalsIgnoreCase(I_HR_Public_Holiday.Table_Name))
             return MHRPublicHoliday.class;
         if (tableName.equalsIgnoreCase(I_HR_Type_Absence.Table_Name))
@@ -67,8 +63,6 @@ public class SitracelCongeModelFactory implements IModelFactory {
             return new MHREmployeeChildren(Env.getCtx(), Record_ID, trxName);
         if (tableName.equalsIgnoreCase(I_HR_Holiday.Table_Name))
             return new MHRHoliday(Env.getCtx(), Record_ID, trxName);
-        if (tableName.equalsIgnoreCase(I_HR_Holiday_Department.Table_Name))
-            return new MHRHolidayDepartment(Env.getCtx(), Record_ID, trxName);
         if (tableName.equalsIgnoreCase(I_HR_Public_Holiday.Table_Name))
             return new MHRPublicHoliday(Env.getCtx(), Record_ID, trxName);
         if (tableName.equalsIgnoreCase(I_HR_Type_Absence.Table_Name))
@@ -92,8 +86,6 @@ public class SitracelCongeModelFactory implements IModelFactory {
             return new MHREmployeeChildren(Env.getCtx(), rs, trxName);
         if (tableName.equalsIgnoreCase(I_HR_Holiday.Table_Name))
             return new MHRHoliday(Env.getCtx(), rs, trxName);
-        if (tableName.equalsIgnoreCase(I_HR_Holiday_Department.Table_Name))
-            return new MHRHolidayDepartment(Env.getCtx(), rs, trxName);
         if (tableName.equalsIgnoreCase(I_HR_Public_Holiday.Table_Name))
             return new MHRPublicHoliday(Env.getCtx(), rs, trxName);
         if (tableName.equalsIgnoreCase(I_HR_Type_Absence.Table_Name))

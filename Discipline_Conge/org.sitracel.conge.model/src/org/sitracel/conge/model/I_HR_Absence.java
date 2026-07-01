@@ -18,17 +18,15 @@ package org.sitracel.conge.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-
-import org.compiere.model.MTable;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
-import org.sitracel.discipline.model.I_HR_Demande_Explication;
 
 /** Generated Interface for HR_Absence
- *  @author iDempiere (generated)
+ *  @author iDempiere (generated) 
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_Absence
+public interface I_HR_Absence 
 {
 
     /** TableName=HR_Absence */
@@ -39,7 +37,7 @@ public interface I_HR_Absence
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org
+    /** AccessLevel = 3 - Client - Org 
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
@@ -204,19 +202,6 @@ Emission
 
 	/** Get HR_Absence_UU	  */
 	public String getHR_Absence_UU();
-
-    /** Column name HR_Demande_Explication_ID */
-    public static final String COLUMNNAME_HR_Demande_Explication_ID = "HR_Demande_Explication_ID";
-
-	/** Set Demande d&#039;
-Explication	  */
-	public void setHR_Demande_Explication_ID (int HR_Demande_Explication_ID);
-
-	/** Get Demande d&#039;
-Explication	  */
-	public int getHR_Demande_Explication_ID();
-
-	public I_HR_Demande_Explication getHR_Demande_Explication() throws RuntimeException;
 
     /** Column name HR_Holiday_ID */
     public static final String COLUMNNAME_HR_Holiday_ID = "HR_Holiday_ID";

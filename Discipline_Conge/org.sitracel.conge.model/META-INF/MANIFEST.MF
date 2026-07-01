@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Export-Package: org.sitracel.conge.model
 Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
  org.adempiere.plugin.utils;bundle-version="4.1.0",
- org.sitracel.discipline.model;bundle-version="1.0.0",
  org.sitracel.organigramme.model;bundle-version="1.0.0",
  org.sitracel.model;bundle-version="1.0.0"
 Service-Component: OSGI-INF/*.xml

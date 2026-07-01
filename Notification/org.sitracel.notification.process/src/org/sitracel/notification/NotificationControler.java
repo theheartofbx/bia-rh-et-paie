@@ -24,6 +24,7 @@ import org.sitracel.model.MCBPartner;
 import org.sitracel.notification.model.MHRNotification;
 import org.sitracel.notification.model.MHRNotificationDestinataire;
 import org.sitracel.notification.model.MHRNotificationQueue;
+import org.sitracel.notification.gestionmodele.NotificationGestionCanal;
 import org.sitracel.organigramme.ActionOrganigramme;
 import org.sitracel.organigramme.ModuleAutorisation;
 import org.sitracel.organigramme.OrganigrammeService;

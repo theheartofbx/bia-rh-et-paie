@@ -197,7 +197,9 @@ public final class OrganigrammeService {
             Set<Integer> resultat,
             String trxName
     ) {
-        if (postesVisites.contains(posteCourant)) return;
+        if (postesVisites.contains(posteCourant)) {
+			return;
+		}
         postesVisites.add(posteCourant);
 
         // Récupérer les postes responsables + leur catégorie
@@ -232,7 +234,9 @@ public final class OrganigrammeService {
             Set<Integer> resultat,
             String trxName
     ) {
-        if (postesVisites.contains(posteCourant)) return;
+        if (postesVisites.contains(posteCourant)) {
+			return;
+		}
         postesVisites.add(posteCourant);
 
         List<int[]> liens = getLiensHierarchiques(posteCourant, trxName);
@@ -302,7 +306,9 @@ public final class OrganigrammeService {
             String trxName
     ) {
         String sql = buildSqlHabilitation(module, action);
-        if (sql == null) return false;
+        if (sql == null) {
+			return false;
+		}
 
         try {
             int count = DB.getSQLValueEx(trxName, sql, typeId, categorieId);

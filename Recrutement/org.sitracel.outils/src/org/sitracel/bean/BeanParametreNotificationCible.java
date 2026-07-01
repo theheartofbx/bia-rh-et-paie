@@ -29,6 +29,6 @@ public class BeanParametreNotificationCible {
 	public Timestamp getDateReference() {
 		return dateReference;
 	}
-    
-    
+
+
 }
