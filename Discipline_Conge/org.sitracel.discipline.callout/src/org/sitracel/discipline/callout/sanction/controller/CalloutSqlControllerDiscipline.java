@@ -24,7 +24,7 @@ public class CalloutSqlControllerDiscipline {
             return null;
         }
 
-        String sql = "SELECT " + MHRSanctionAutorisation.COLUMNNAME_HR_SanctionAutorisation_ID
+        String sql = "SELECT " + MHRSanctionAutorisation.COLUMNNAME_HR_Sanction_Autorisation_ID
             + " FROM " + MHRSanctionAutorisation.Table_Name
             + " WHERE " + MHRSanctionAutorisation.COLUMNNAME_HR_TypeSanction_ID + " = ?"
             + " AND IsActive = 'Y'"

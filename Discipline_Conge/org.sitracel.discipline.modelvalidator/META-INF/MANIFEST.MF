@@ -4,6 +4,7 @@ Bundle-Name: Modelvalidator
 Bundle-SymbolicName: org.sitracel.discipline.modelvalidator
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
+ org.sitracel.discipline.model;bundle-version="1.0.0",
  org.adempiere.plugin.utils;bundle-version="4.1.0",
  org.sitracel.model;bundle-version="1.0.0",
  org.sitracel.outils;bundle-version="1.0.0",

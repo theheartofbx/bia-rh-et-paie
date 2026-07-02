@@ -115,9 +115,9 @@ public final class DisciplineProcessService {
         if (punishment == null || approbateur == null) return;
         if (approbateur.getNomEmploye() == null) return;
 
-        punishment.setApprouve_Desapprouve_Par_Nom_ID(approbateur.getNumEmploye());
-        punishment.setApprouve_Desapprouve_Par_Matricule(approbateur.getMatriculeEmploye());
-        punishment.setApprouve_Desapprouve_Par_Poste_ID(approbateur.getNumeroPoste());
+        punishment.setApprouve_Desapprouve_Nom_ID(approbateur.getNumEmploye());
+        punishment.setApprouve_Desapprouve_Matricule(approbateur.getMatriculeEmploye());
+        punishment.setApprouve_Desapprouve_Poste_ID(approbateur.getNumeroPoste());
         punishment.setIsApprobation(true);
         punishment.setIsDesapprouve(false);
         punishment.setDate_Approbation(new Timestamp(System.currentTimeMillis()));
@@ -142,9 +142,9 @@ public final class DisciplineProcessService {
         if (punishment == null || desapprobateur == null) return;
         if (desapprobateur.getNomEmploye() == null) return;
 
-        punishment.setApprouve_Desapprouve_Par_Nom_ID(desapprobateur.getNumEmploye());
-        punishment.setApprouve_Desapprouve_Par_Matricule(desapprobateur.getMatriculeEmploye());
-        punishment.setApprouve_Desapprouve_Par_Poste_ID(desapprobateur.getNumeroPoste());
+        punishment.setApprouve_Desapprouve_Nom_ID(desapprobateur.getNumEmploye());
+        punishment.setApprouve_Desapprouve_Matricule(desapprobateur.getMatriculeEmploye());
+        punishment.setApprouve_Desapprouve_Poste_ID(desapprobateur.getNumeroPoste());
         punishment.setIsApprobation(false);
         punishment.setIsDesapprouve(true);
         punishment.setDate_Approbation(null);
