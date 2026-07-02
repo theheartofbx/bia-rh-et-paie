@@ -37,7 +37,7 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260630L;
+	private static final long serialVersionUID = 20260702L;
 
     /** Standard Constructor */
     public X_HR_Holiday (Properties ctx, int HR_Holiday_ID, String trxName)
@@ -1393,6 +1393,25 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 		return ii.intValue();
 	}
 
+	/** Set Nombre de Jour de Congé.
+		@param Nombre_Jour_Conge Nombre de Jour de Congé
+	*/
+	public void setNombre_Jour_Conge (int Nombre_Jour_Conge)
+	{
+		set_Value (COLUMNNAME_Nombre_Jour_Conge, Integer.valueOf(Nombre_Jour_Conge));
+	}
+
+	/** Get Nombre de Jour de Congé.
+		@return Nombre de Jour de Congé
+	  */
+	public int getNombre_Jour_Conge()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Jour_Conge);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set Notifier.
 		@param Notifier Notifier
 	*/
@@ -1483,6 +1502,25 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	public String getRejeter_Createur()
 	{
 		return (String)get_Value(COLUMNNAME_Rejeter_Createur);
+	}
+
+	/** Set Salaire Cotisable .
+		@param Salaire_Cotisable Salaire Cotisable 
+	*/
+	public void setSalaire_Cotisable (BigDecimal Salaire_Cotisable)
+	{
+		set_Value (COLUMNNAME_Salaire_Cotisable, Salaire_Cotisable);
+	}
+
+	/** Get Salaire Cotisable .
+		@return Salaire Cotisable 
+	  */
+	public BigDecimal getSalaire_Cotisable()
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Salaire_Cotisable);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
 	}
 
 	/** Femme = F */

@@ -228,7 +228,7 @@ public class PayrollOrchestrator {
         retenue.setReste_Retenue(montant);
         retenue.setDebut_Prelevement_ID(periodeId);   // versé à cette période
         retenue.setIsActive(true);
-        retenue.setIsIndemnitelicenciement(isLicenciement);
+        retenue.setIsIndemniteLicenciement(isLicenciement);
         retenue.setIsIndemniteRetraite(isRetraite);
         retenue.setName(isLicenciement ? "Indemnité de licenciement"
                                        : "Indemnité de retraite");

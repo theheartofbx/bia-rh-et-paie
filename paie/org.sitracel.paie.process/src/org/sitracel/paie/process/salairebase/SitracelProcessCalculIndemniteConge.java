@@ -2,30 +2,40 @@ package org.sitracel.paie.process.salairebase;
 
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
-import org.sitracel.paie.process.controller.ProcessControllerPaie;
+import org.compiere.util.AdempiereUserError;
+import org.sitracel.paie.process.service.PayrollOrchestrator;
 
-public class SitracelProcessCalculIndemniteConge extends SvrProcess{
-	private int bpartnerID;
-	private int holidayID;
+/**
+ * Process iDempiere — Calcul de l'indemnité de congé.
+ *
+ * Point d'entrée OSGi : reçoit les paramètres de l'interface iDempiere
+ * et délègue immédiatement à PayrollOrchestrator.
+ *
+ * Cette classe ne contient AUCUNE logique métier.
+ */
+public class SitracelProcessCalculIndemniteConge extends SvrProcess {
 
-	@Override
-	protected void prepare() {
-		// TODO Auto-generated method stub
-		for (ProcessInfoParameter para : getParameter()) {
-	        String name = para.getParameterName();
-	        if ("C_BPartner_ID".equals(name)) {
-	            bpartnerID = para.getParameterAsInt();
-	        } else if ("HR_Holiday_ID".equals(name)) {
-	            holidayID = para.getParameterAsInt();
-	        }
-	    }
-	}
+    private int bpartnerID;
+    private int holidayID;
 
-	@Override
-	protected String doIt() throws Exception {
-		// TODO Auto-generated method stub
-		ProcessControllerPaie.calculerIndemniteConge(bpartnerID, holidayID);
-		return null;
-	}
+    @Override
+    protected void prepare() {
+        for (ProcessInfoParameter para : getParameter()) {
+            String name = para.getParameterName();
+            if ("C_BPartner_ID".equals(name)) {
+                bpartnerID = para.getParameterAsInt();
+            } else if ("HR_Holiday_ID".equals(name)) {
+                holidayID = para.getParameterAsInt();
+            }
+        }
+    }
 
+    @Override
+    protected String doIt() throws Exception {
+        if (bpartnerID <= 0 || holidayID <= 0) {
+            throw new AdempiereUserError(
+                    "Veuillez sélectionner un employé et un congé avant de lancer le calcul.");
+        }
+        return PayrollOrchestrator.calculerIndemniteConge(bpartnerID, holidayID);
+    }
 }

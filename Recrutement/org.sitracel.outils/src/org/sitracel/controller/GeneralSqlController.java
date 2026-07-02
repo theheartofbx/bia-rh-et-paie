@@ -13,6 +13,8 @@ import org.compiere.model.PO;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.sitracel.model.I_HR_EmployeeJob;
+import org.sitracel.model.MHREmployeeJob;
 import org.sitracel.bean.BeanConge;
 import org.sitracel.bean.BeanPeriode;
 import org.sitracel.conge.HRCongeRepository;
@@ -109,6 +111,13 @@ public class GeneralSqlController {
     public static Set<LocalDate> getAllJoursFeries(Timestamp dateDebut, Timestamp dateFin,
                                                    String trxName) {
         return HRCongeRepository.getAllJoursFeries(dateDebut, dateFin, trxName);
+    }
+
+    /** @deprecated Utiliser {@link HRCongeRepository#getAllPeriodeSuspensionValide} */
+    @Deprecated
+    public static BeanPeriode[] getAllPeriodeSuspensionValide(Integer bpartnerId, Timestamp dateDebut,
+                                                                Timestamp dateFin, String trxName) {
+        return HRCongeRepository.getAllPeriodeSuspensionValide(bpartnerId, dateDebut, dateFin, trxName);
     }
 
     /** @deprecated Utiliser {@link HRCongeRepository#getCongesValideByNameConge} */
@@ -214,6 +223,44 @@ public class GeneralSqlController {
             DB.close(rs, pstmt);
         }
         return resultat;
+    }
+
+    /**
+     * Retourne l'affectation poste (HR_EmployeeJob) d'un employé, si elle
+     * existe, filtrée sur la date de début si fournie.
+     *
+     * NOTE : HR_EmployeeJob est un mécanisme hérité, potentiellement amené
+     * à être remplacé par HR_Affectation (Lot 1) — voir
+     * PLAN_CONTRAT_AFFECTATION.md section 4bis. Non traité ici.
+     */
+    public static MHREmployeeJob getEmployeeJob(Integer cbpartnerid, Timestamp dateDebut, String trxName) {
+        if (cbpartnerid == null) {
+            return null;
+        }
+
+        String sql = "SELECT * FROM " + I_HR_EmployeeJob.Table_Name
+            + " WHERE " + I_HR_EmployeeJob.COLUMNNAME_C_BPartner_ID + " = ?"
+            + (dateDebut != null ? " AND " + I_HR_EmployeeJob.COLUMNNAME_DateFrom + " = ?" : "")
+            + " ORDER BY " + I_HR_EmployeeJob.COLUMNNAME_DateFrom + " DESC";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = DB.prepareStatement(sql, trxName);
+            pstmt.setInt(1, cbpartnerid);
+            if (dateDebut != null) {
+                pstmt.setTimestamp(2, dateDebut);
+            }
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return new MHREmployeeJob(Env.getCtx(), rs, trxName);
+            }
+        } catch (SQLException e) {
+            log.warning("getEmployeeJob : " + e.getMessage());
+        } finally {
+            DB.close(rs, pstmt);
+        }
+        return null;
     }
 
     public static void resetCalculPaie(Integer cbpartnerid, String trxName) {

@@ -15,6 +15,8 @@ import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.sitracel.conge.model.MHREmployeeChildren;
+import org.sitracel.bean.BeanConge;
+import org.sitracel.beanfactory.BeanFactory;
 import org.sitracel.conge.model.MHRHoliday;
 import org.sitracel.model.MCBPartner;
 import org.sitracel.model.X_C_BPartner;
@@ -96,7 +98,7 @@ public class CongeCalculEngine {
         // ÉTAPE 1 — Vérifier la base de calcul depuis hr_holiday
         // ------------------------------------------------------------------
         BigDecimal salaireCotisable = holiday.getSalaire_Cotisable();
-        BigDecimal nombreJourConge  = holiday.getNombre_Jour_Conge();
+        BigDecimal nombreJourConge  = BigDecimal.valueOf(holiday.getNombre_Jour_Conge());
 
         if (salaireCotisable == null || salaireCotisable.compareTo(BigDecimal.ZERO) <= 0) {
             log.warning("calculerIndemniteConge : salaire_cotisable absent ou nul "
@@ -119,10 +121,10 @@ public class CongeCalculEngine {
         // ------------------------------------------------------------------
         // ÉTAPE 3 — Charger les données employé (ancienneté, enfants, contrat)
         // ------------------------------------------------------------------
-        MHREmployeeChildren donneesConge = MHREmployeeChildren.getEnfantMoins6(
+        BeanConge donneesConge = MHREmployeeChildren.getEnfantMoins6(
                 bpartnerId,
                 holiday.getDate_Debut_Effective(),
-                null,
+                BeanFactory.getBeanConge(),
                 trxName);
 
         MHRElementBasePaieEmploye contrat = getContratActifALaDate(
@@ -144,9 +146,7 @@ public class CongeCalculEngine {
         variables.put(CODE_NJC, nombreJourConge);
 
         // Nombre de jours de congé de base accumulés (depuis hr_holiday)
-        BigDecimal njci = holiday.getJours_Conge_Total() != null
-                ? BigDecimal.valueOf(holiday.getJours_Conge_Total())
-                : nombreJourConge;
+        BigDecimal njci = BigDecimal.valueOf(holiday.getJours_Conge_Total());
         variables.put(CODE_NJCI, njci);
 
         // Salaire de base actuel depuis le contrat

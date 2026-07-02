@@ -973,6 +973,19 @@ Absence Compensé sur le Congé
 	  */
 	public int getNombre_Jour_Compense_Ici();
 
+    /** Column name Nombre_Jour_Conge */
+    public static final String COLUMNNAME_Nombre_Jour_Conge = "Nombre_Jour_Conge";
+
+	/** Set Nombre de Jour de Congé.
+	  * Nombre de Jour de Congé
+	  */
+	public void setNombre_Jour_Conge (int Nombre_Jour_Conge);
+
+	/** Get Nombre de Jour de Congé.
+	  * Nombre de Jour de Congé
+	  */
+	public int getNombre_Jour_Conge();
+
     /** Column name Notifier */
     public static final String COLUMNNAME_Notifier = "Notifier";
 
@@ -1043,6 +1056,19 @@ Employé
 	  * Rejeter
 	  */
 	public String getRejeter_Createur();
+
+    /** Column name Salaire_Cotisable */
+    public static final String COLUMNNAME_Salaire_Cotisable = "Salaire_Cotisable";
+
+	/** Set Salaire Cotisable .
+	  * Salaire Cotisable 
+	  */
+	public void setSalaire_Cotisable (BigDecimal Salaire_Cotisable);
+
+	/** Get Salaire Cotisable .
+	  * Salaire Cotisable 
+	  */
+	public BigDecimal getSalaire_Cotisable();
 
     /** Column name Sex */
     public static final String COLUMNNAME_Sex = "Sex";

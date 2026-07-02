@@ -392,6 +392,51 @@ public final class HRCongeRepository {
         }
     }
 
+    /**
+     * Retourne toutes les périodes de suspension valides (non rejetées)
+     * d'un employé chevauchant la période donnée.
+     */
+    public static BeanPeriode[] getAllPeriodeSuspensionValide(Integer bpartnerId,
+                                                                Timestamp dateDebut,
+                                                                Timestamp dateFin,
+                                                                String trxName) {
+        if (bpartnerId == null || dateDebut == null || dateFin == null) {
+            return new BeanPeriode[0];
+        }
+
+        String sql = "SELECT p.Date_Debut_Application, p.Date_Fin_Application"
+            + " FROM HR_Punishment p"
+            + " JOIN HR_Sanction_Autorisation sa ON sa.HR_Sanction_Autorisation_ID = p.Emission_Sanction_ID"
+            + " JOIN HR_TypeSanction ts ON ts.HR_TypeSanction_ID = sa.HR_TypeSanction_ID"
+            + " WHERE p.C_BPartner_ID = ?"
+            + " AND p.IsRejetee = 'N'"
+            + " AND ts.Incidence_Sanction_ID = 'Période de Suspension'"
+            + " AND p.Date_Debut_Application <= ?"
+            + " AND p.Date_Fin_Application >= ?";
+
+        java.util.List<BeanPeriode> list = new java.util.ArrayList<>();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = DB.prepareStatement(sql, trxName);
+            pstmt.setInt(1, bpartnerId);
+            pstmt.setTimestamp(2, dateFin);
+            pstmt.setTimestamp(3, dateDebut);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                BeanPeriode bp = BeanFactory.getBeanPeriode();
+                bp.setDateDebutConge(rs.getTimestamp(1));
+                bp.setDateFinConge(rs.getTimestamp(2));
+                list.add(bp);
+            }
+        } catch (SQLException e) {
+            log.warning("getAllPeriodeSuspensionValide : " + e.getMessage());
+        } finally {
+            DB.close(rs, pstmt);
+        }
+        return list.toArray(new BeanPeriode[0]);
+    }
+
     // =========================================================================
     // COMPTAGE ABSENCES NON TRAITÉES
     // =========================================================================

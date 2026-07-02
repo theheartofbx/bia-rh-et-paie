@@ -190,7 +190,7 @@ public class RetenueEngine {
      * (à ajouter au NP) plutôt qu'une retenue prélevée (à soustraire).
      */
     private static boolean estIndemniteVersee(MHRRetenueSalariale retenue) {
-        return retenue.isIsIndemniteRetraite()
-                || retenue.isIsIndemnitelicenciement();
+        return retenue.isIndemniteRetraite()
+                || retenue.isIndemniteLicenciement();
     }
 }

@@ -20,7 +20,7 @@ import org.sitracel.paie.model.I_HR_Calcul_Paie;
 import org.sitracel.paie.model.I_HR_Concept;
 import org.sitracel.paie.model.I_HR_Element_Base_Paie;
 import org.sitracel.paie.model.I_HR_Element_Conge;
-import org.sitracel.paie.model.I_HR_Gestion_Paie_Employe;
+import org.sitracel.paie.model.I_HR_GestionPaieEmploye;
 import org.sitracel.paie.model.I_HR_Gestion_Presence;
 import org.sitracel.paie.model.I_HR_Rang_Calcul;
 import org.sitracel.paie.model.I_HR_TypeDeCharge;
@@ -286,8 +286,8 @@ public class PayrollRepository {
     public static List<MHRGestionPaieEmploye> getAllGestionPaieEmploye(String trxName) {
         List<MHRGestionPaieEmploye> resultat = new ArrayList<>();
 
-        String sql = "SELECT * FROM " + I_HR_Gestion_Paie_Employe.Table_Name
-                + " WHERE " + I_HR_Gestion_Paie_Employe.COLUMNNAME_IsActive + "='Y'";
+        String sql = "SELECT * FROM " + I_HR_GestionPaieEmploye.Table_Name
+                + " WHERE " + I_HR_GestionPaieEmploye.COLUMNNAME_IsActive + "='Y'";
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;

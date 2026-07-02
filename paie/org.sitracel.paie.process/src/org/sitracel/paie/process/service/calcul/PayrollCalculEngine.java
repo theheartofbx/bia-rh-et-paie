@@ -195,7 +195,7 @@ public class PayrollCalculEngine {
         }
 
         // Prorata de présence si applicable
-        if (config.isIsproportionneltravail()
+        if (config.isProportionnelTravail()
                 && coeffPresence.compareTo(BigDecimal.ONE) < 0
                 && montant.compareTo(BigDecimal.ZERO) > 0) {
             montant = montant.multiply(coeffPresence).setScale(0, RoundingMode.FLOOR);
@@ -337,7 +337,7 @@ public class PayrollCalculEngine {
             Map<String, BigDecimal> variables) {
 
         // Valeurs issues du contrat — les colonnes clés
-        putSafe(variables, "SB",   contrat.getSalaireBase());
+        putSafe(variables, "SB",   contrat.getSalaire_Base());
         putSafe(variables, "IL",   contrat.getIndemnite_Logement());
         putSafe(variables, "IT",   contrat.getIndemnite_Transport());
         putSafe(variables, "IREP", contrat.getIndemnite_Representation());

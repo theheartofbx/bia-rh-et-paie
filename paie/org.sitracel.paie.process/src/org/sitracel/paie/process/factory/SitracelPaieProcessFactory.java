@@ -5,7 +5,6 @@ import org.compiere.process.ProcessCall;
 import org.sitracel.paie.process.salairebase.SitracelProcessActualiserJourNonPaye;
 import org.sitracel.paie.process.salairebase.SitracelProcessCalculIndemniteConge;
 import org.sitracel.paie.process.salairebase.SitracelProcessCalculPaie;
-import org.sitracel.paie.process.salairebase.SitracelProcessCalculerPaie;
 
 public class SitracelPaieProcessFactory implements IProcessFactory{
 
@@ -17,9 +16,6 @@ public class SitracelPaieProcessFactory implements IProcessFactory{
 		}
 		if(className.equals("org.sitracel.paie.process.salairebase.SitracelProcessCalculPaie")) {
 			return new SitracelProcessCalculPaie();
-		}
-		if(className.equals("org.sitracel.paie.process.salairebase.SitracelProcessCalculerPaie")) {
-			return new SitracelProcessCalculerPaie();
 		}
 		if(className.equals("org.sitracel.paie.process.salairebase.SitracelProcessCalculIndemniteConge")) {
 			return new SitracelProcessCalculIndemniteConge();

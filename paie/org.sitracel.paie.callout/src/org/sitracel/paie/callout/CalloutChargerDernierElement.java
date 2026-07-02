@@ -10,7 +10,7 @@ import org.compiere.model.PO;
 import org.compiere.model.Query;
 import org.compiere.util.CLogger;
 import org.sitracel.controller.GeneralSqlController;
-import org.sitracel.model.MHRCategorieResponsabilite;
+import org.sitracel.organigramme.model.MHRCategorieResponsabilite;
 import org.sitracel.paie.model.MHRElementBasePaieEmploye;
 import org.sitracel.paie.model.MHRGestionPaieEmploye;
 

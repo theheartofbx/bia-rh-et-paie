@@ -15,7 +15,7 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.sitracel.paie.model.I_HR_ElementBasePaieEmploye;
 import org.sitracel.paie.model.I_HR_Historique_Paie;
-import org.sitracel.paie.model.I_HR_Parametre_Numerique;
+import org.sitracel.model.I_HR_Parametre_Numerique;
 import org.sitracel.paie.model.MHRElementBasePaieEmploye;
 
 /**
