@@ -108,22 +108,22 @@ public final class MissionCalloutService {
         }
 
         if (validationChangee) {
-            frais.set_ValueOfColumn(MHRMissionFrais.COLUMNNAME_Valide_Par_Nom_ID,
+            frais.set_ValueOfColumn(MHRMissionFrais.COLUMNNAME_Valide_Rejete_Par_Nom_ID,
                 identifiant.getNumEmploye());
-            frais.set_ValueOfColumn(MHRMissionFrais.COLUMNNAME_Valide_Par_Poste_ID,
+            frais.set_ValueOfColumn(MHRMissionFrais.COLUMNNAME_Valide_Rejete_Par_Poste_ID,
                 identifiant.getNumeroPoste());
-            frais.set_ValueOfColumn(MHRMissionFrais.COLUMNNAME_Valide_Par_Matricule,
+            frais.set_ValueOfColumn(MHRMissionFrais.COLUMNNAME_Valide_Rejete_Par_Matricule,
                 identifiant.getMatriculeEmploye());
             frais.set_ValueOfColumn(MHRMissionFrais.COLUMNNAME_Date_Validation,
                 new Timestamp(System.currentTimeMillis()));
         }
 
         if (rejetChange) {
-            frais.set_ValueOfColumn(MHRMissionFrais.COLUMNNAME_Rejete_Par_Nom_ID,
+            frais.set_ValueOfColumn(MHRMissionFrais.COLUMNNAME_Valide_Rejete_Par_Nom_ID,
                 identifiant.getNumEmploye());
-            frais.set_ValueOfColumn(MHRMissionFrais.COLUMNNAME_Rejete_Par_Poste_ID,
+            frais.set_ValueOfColumn(MHRMissionFrais.COLUMNNAME_Valide_Rejete_Par_Poste_ID,
                 identifiant.getNumeroPoste());
-            frais.set_ValueOfColumn(MHRMissionFrais.COLUMNNAME_Rejete_Par_Matricule,
+            frais.set_ValueOfColumn(MHRMissionFrais.COLUMNNAME_Valide_Rejete_Par_Matricule,
                 identifiant.getMatriculeEmploye());
             frais.set_ValueOfColumn(MHRMissionFrais.COLUMNNAME_Date_Rejet,
                 new Timestamp(System.currentTimeMillis()));

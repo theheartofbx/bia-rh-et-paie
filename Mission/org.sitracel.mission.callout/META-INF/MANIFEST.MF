@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Callout
 Bundle-SymbolicName: org.sitracel.mission.callout
 Bundle-Version: 1.0.0.qualifier
+Export-Package: org.sitracel.mission.callout
 Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
  org.adempiere.plugin.utils;bundle-version="4.1.0",
  org.sitracel.model;bundle-version="1.0.0",
