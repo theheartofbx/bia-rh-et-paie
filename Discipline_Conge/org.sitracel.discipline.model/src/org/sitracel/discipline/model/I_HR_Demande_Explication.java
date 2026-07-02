@@ -16,6 +16,9 @@
  *****************************************************************************/
 package org.sitracel.discipline.model;
 
+import org.sitracel.model.I_HR_Ampliation;
+import org.sitracel.conge.model.I_HR_Absence;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import org.compiere.model.*;
@@ -180,6 +183,17 @@ Emission
 	public int getEmis_Par_Poste_ID();
 
 	public org.eevolution.model.I_HR_Job getEmis_Par_Poste() throws RuntimeException;
+
+    /** Column name HR_Absence_ID */
+    public static final String COLUMNNAME_HR_Absence_ID = "HR_Absence_ID";
+
+	/** Set Absence	  */
+	public void setHR_Absence_ID (int HR_Absence_ID);
+
+	/** Get Absence	  */
+	public int getHR_Absence_ID();
+
+	public I_HR_Absence getHR_Absence() throws RuntimeException;
 
     /** Column name HR_Ampliation_ID */
     public static final String COLUMNNAME_HR_Ampliation_ID = "HR_Ampliation_ID";

@@ -17,6 +17,8 @@
 /** Generated Model - DO NOT CHANGE */
 package org.sitracel.discipline.model;
 
+import org.sitracel.model.I_HR_Ampliation;
+
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;

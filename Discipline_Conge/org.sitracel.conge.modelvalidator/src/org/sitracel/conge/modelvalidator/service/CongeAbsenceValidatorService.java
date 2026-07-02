@@ -67,7 +67,7 @@ public final class CongeAbsenceValidatorService {
 
         // Charger la demande d'explication liée à cette absence
         MHRDemandeExplication demandeExplication =
-            getDemandeExplicationByAbsence(absence.getAbsence_ID(),
+            getDemandeExplicationByAbsence(absence.getHR_Absence_ID(),
                                             absence.get_TrxName());
 
         if (demandeExplication != null) {
@@ -166,7 +166,7 @@ public final class CongeAbsenceValidatorService {
             Env.getCtx(), null, absence.get_TrxName());
 
         demande.setC_BPartner_ID(absence.getC_BPartner_ID());
-        demande.setAbsence_ID(absence.getAbsence_ID());
+        demande.setHR_Absence_ID(absence.getHR_Absence_ID());
         demande.setEmis_Par_Nom_ID(emetteur.getNumEmploye());
         demande.setEmis_Par_Matricule(emetteur.getMatriculeEmploye());
         demande.setEmis_Par_Poste_ID(emetteur.getNumeroPoste());

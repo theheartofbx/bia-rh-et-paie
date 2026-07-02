@@ -134,9 +134,9 @@ public final class CongeProcessService {
         if (conge == null || approbateur == null) return;
         if (approbateur.getNomEmploye() == null) return;
 
-        conge.setApprouve_Desapprouve_Par_Nom_ID(approbateur.getNumEmploye());
-        conge.setApprouve_Desapprouve_Par_Matricule(approbateur.getMatriculeEmploye());
-        conge.setApprouve_Desapprouve_Par_Poste_ID(approbateur.getNumeroPoste());
+        conge.setApprouve_Desapprouve_Nom_ID(approbateur.getNumEmploye());
+        conge.setApprouve_Desapprouve_Matricule(approbateur.getMatriculeEmploye());
+        conge.setApprouve_Desapprouve_Poste_ID(approbateur.getNumeroPoste());
         conge.setIsApprobation(true);
         conge.setIsDesapprouve(false);
         conge.setDate_Approbation(new Timestamp(System.currentTimeMillis()));
@@ -164,9 +164,9 @@ public final class CongeProcessService {
         if (conge == null || desapprobateur == null) return;
         if (desapprobateur.getNomEmploye() == null) return;
 
-        conge.setApprouve_Desapprouve_Par_Nom_ID(desapprobateur.getNumEmploye());
-        conge.setApprouve_Desapprouve_Par_Matricule(desapprobateur.getMatriculeEmploye());
-        conge.setApprouve_Desapprouve_Par_Poste_ID(desapprobateur.getNumeroPoste());
+        conge.setApprouve_Desapprouve_Nom_ID(desapprobateur.getNumEmploye());
+        conge.setApprouve_Desapprouve_Matricule(desapprobateur.getMatriculeEmploye());
+        conge.setApprouve_Desapprouve_Poste_ID(desapprobateur.getNumeroPoste());
         conge.setIsApprobation(false);
         conge.setIsDesapprouve(true);
         conge.setDate_Approbation(null);

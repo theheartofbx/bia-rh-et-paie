@@ -15,22 +15,22 @@ public class SitracelCongeProcessFactory implements IProcessFactory{
 	public ProcessCall newProcessInstance(String className) {
 		// TODO Auto-generated method stub
 		
-		if(className.equals("org.sitracel.process.v2.conge.SitracelProcessActualiserAbsence")) {
+		if(className.equals("org.sitracel.conge.process.conge.SitracelProcessActualiserAbsence")) {
 			return new SitracelProcessActualiserAbsence();
 		}
-		if(className.equals("org.sitracel.process.v2.conge.SitracelProcessApprouverConge")) {
+		if(className.equals("org.sitracel.conge.process.conge.SitracelProcessApprouverConge")) {
 			return new SitracelProcessApprouverConge();
 		}
-		if(className.equals("org.sitracel.process.v2.conge.SitracelProcessDesapprouverConge")) {
+		if(className.equals("org.sitracel.conge.process.conge.SitracelProcessDesapprouverConge")) {
 			return new SitracelProcessDesapprouverConge();
 		}
-		if(className.equals("org.sitracel.process.v2.conge.SitracelProcessValiderConge")) {
+		if(className.equals("org.sitracel.conge.process.conge.SitracelProcessValiderConge")) {
 			return new SitracelProcessValiderConge();
 		}
-		if(className.equals("org.sitracel.process.v2.conge.SitracelProcessRejeterConge")) {
+		if(className.equals("org.sitracel.conge.process.conge.SitracelProcessRejeterConge")) {
 			return new SitracelProcessRejeterConge();
 		}
-		if(className.equals("org.sitracel.process.v2.conge.SitracelProcessNotifierConge")) {
+		if(className.equals("org.sitracel.conge.process.conge.SitracelProcessNotifierConge")) {
 			return new SitracelProcessNotifierConge();
 		}
 		

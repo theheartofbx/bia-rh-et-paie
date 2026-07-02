@@ -94,12 +94,12 @@ public class SitracelProcessNotifier extends SvrProcess {
 
     private void sendOne(MHRNotificationQueue q) throws Exception {
 
-        MHRNotification notif = q.getHR_Notification();
+        MHRNotification notif = (MHRNotification) q.getHR_Notification();
         if (notif == null) throw new IllegalStateException(
             "Notification introuvable pour queue #" + q.getHR_NotificationQueue_ID()
         );
 
-        MHRNotificationType notifType = notif.getHR_NotificationType();
+        MHRNotificationType notifType = (MHRNotificationType) notif.getHR_NotificationType();
         if (notifType == null) throw new IllegalStateException(
             "Type de notification introuvable"
         );

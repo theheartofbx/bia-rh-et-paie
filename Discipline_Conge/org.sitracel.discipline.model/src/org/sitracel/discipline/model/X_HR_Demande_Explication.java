@@ -17,6 +17,9 @@
 /** Generated Model - DO NOT CHANGE */
 package org.sitracel.discipline.model;
 
+import org.sitracel.model.I_HR_Ampliation;
+import org.sitracel.conge.model.I_HR_Absence;
+
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
@@ -33,7 +36,7 @@ public class X_HR_Demande_Explication extends PO implements I_HR_Demande_Explica
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260630L;
+	private static final long serialVersionUID = 20260702L;
 
     /** Standard Constructor */
     public X_HR_Demande_Explication (Properties ctx, int HR_Demande_Explication_ID, String trxName)
@@ -282,6 +285,33 @@ public class X_HR_Demande_Explication extends PO implements I_HR_Demande_Explica
 	public int getEmis_Par_Poste_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Emis_Par_Poste_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public I_HR_Absence getHR_Absence() throws RuntimeException
+	{
+		return (I_HR_Absence)MTable.get(getCtx(), I_HR_Absence.Table_ID)
+			.getPO(getHR_Absence_ID(), get_TrxName());
+	}
+
+	/** Set Absence.
+		@param HR_Absence_ID Absence
+	*/
+	public void setHR_Absence_ID (int HR_Absence_ID)
+	{
+		if (HR_Absence_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_HR_Absence_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_HR_Absence_ID, Integer.valueOf(HR_Absence_ID));
+	}
+
+	/** Get Absence.
+		@return Absence	  */
+	public int getHR_Absence_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Absence_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
