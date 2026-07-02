@@ -13,13 +13,13 @@ public class SitracelRecrutementModelValidatorFactory implements IModelValidator
 	@Override
 	public ModelValidator newModelValidatorInstance(String className) {
 		// TODO Auto-generated method stub
-		if(className.equals("org.sitracel.recrutement.modelvalidator.offreemploi")) {
+		if(className.equals("org.sitracel.recrutement.modelvalidator.offreemploi.SitracelModelValidatorOffreEmploi")) {
 			return new SitracelModelValidatorOffreEmploi();
 		}
-		if(className.equals("org.sitracel.recrutement.modelvalidator.sessionrecrutement")) {
+		if(className.equals("org.sitracel.recrutement.modelvalidator.sessionrecrutement.SitracelModelValidatorSessionRecrutement")) {
 			return new SitracelModelValidatorSessionRecrutement();
 		}
-		if(className.equals("org.sitracel.recrutement.modelvalidator.testevaluation")) {
+		if(className.equals("org.sitracel.recrutement.modelvalidator.testevaluation.SitracelModelValidatorTestEvaluation")) {
 			return new SitracelModelValidatorTestEvaluation();
 		}
 		if(className.equals("org.sitracel.recrutement.modelvalidator.SitracelModelValidatorCandidature")) {

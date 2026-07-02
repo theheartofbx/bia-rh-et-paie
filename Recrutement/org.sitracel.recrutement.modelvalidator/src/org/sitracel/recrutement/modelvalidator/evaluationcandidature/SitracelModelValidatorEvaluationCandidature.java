@@ -26,7 +26,7 @@ public class SitracelModelValidatorEvaluationCandidature implements ModelValidat
         if (type == ModelValidator.TYPE_AFTER_NEW
                 || type == ModelValidator.TYPE_AFTER_CHANGE) {
             RecrutementValidatorService.actualiserCandidature(
-                evaluation.getHR_SessionRecrutement_ID(), evaluation);
+                evaluation.getHR_Candidature().getHR_SessionRecrutement_ID(), evaluation);
         }
         return null;
     }

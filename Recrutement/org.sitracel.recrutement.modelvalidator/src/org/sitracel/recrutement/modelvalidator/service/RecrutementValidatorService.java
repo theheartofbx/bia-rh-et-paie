@@ -66,8 +66,10 @@ public final class RecrutementValidatorService {
                         new MHRCandidatEvaluation(Env.getCtx(), null,
                             candidature.get_TrxName());
                     evaluation.setHR_Candidature_ID(candidature.getHR_Candidature_ID());
-                    evaluation.setHR_Competence_ID(competence.getCompetenceID());
-                    evaluation.setHR_NiveauCompetence_ID(competence.getNiveauCompetenceID());
+                    evaluation.setHR_Competences_ID(competence.getCompetenceID());
+                    evaluation.setScoreMax(competence.getScoreMax());
+                    evaluation.setPonderation(competence.getPonderation());
+                    evaluation.setIsCompetenceEvalue(false);
                     evaluation.save(candidature.get_TrxName());
                 }
             }
