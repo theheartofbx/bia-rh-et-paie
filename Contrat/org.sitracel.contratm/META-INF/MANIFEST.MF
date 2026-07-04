@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Contratm
+Bundle-SymbolicName: org.sitracel.contratm
+Bundle-Version: 1.0.0.qualifier
+Export-Package: org.sitracel.contrat.model
+Require-Bundle: org.adempiere.base;bundle-version="12.0.0",
+ org.adempiere.plugin.utils;bundle-version="12.0.0"
+Service-Component: OSGI-INF/SitracelContratModelFactory.xml
+Automatic-Module-Name: org.sitracel.contratm
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

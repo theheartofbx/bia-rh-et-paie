@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Contratmv
+Bundle-SymbolicName: org.sitracel.contratmv
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.adempiere.plugin.utils;bundle-version="12.0.0",
+ org.adempiere.base;bundle-version="12.0.0",
+ org.sitracel.contratm;bundle-version="1.0.0"
+Service-Component: OSGI-INF/*.xml
+Automatic-Module-Name: org.sitracel.contratmv
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
