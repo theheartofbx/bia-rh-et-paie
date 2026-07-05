@@ -4,8 +4,9 @@ Bundle-Name: Contrat Model
 Bundle-SymbolicName: org.sitracel.contrat.model
 Bundle-Version: 1.0.0.qualifier
 Export-Package: org.sitracel.contrat.model
-Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
- org.adempiere.plugin.utils;bundle-version="4.1.0"
-Service-Component: OSGI-INF/*.xml
-Automatic-Module-Name: org.sitracel.contrat.model
+Require-Bundle: org.adempiere.base;bundle-version="4.1",
+ org.adempiere.plugin.utils;bundle-version="4.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.sitracel.contrat.model
+Import-Package: org.compiere.model
+Service-Component: OSGI-INF/*.xml
