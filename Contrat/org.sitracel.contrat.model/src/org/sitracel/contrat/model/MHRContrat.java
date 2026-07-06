@@ -13,8 +13,8 @@ import java.util.Properties;
  *
  * Cette classe ne contient AUCUNE règle de blocage (pas de refus de
  * création, pas d'exception levée). Elle fournit uniquement des méthodes
- * de calcul sur les dates, utilisées ensuite par le ModelValidator
- * (Étape B) pour décider d'autoriser ou non une opération.
+ * de calcul sur les dates, utilisées ensuite par le ModelValidator pour
+ * décider d'autoriser ou non une opération.
  */
 public class MHRContrat extends X_HR_Contrat {
 
@@ -31,10 +31,29 @@ public class MHRContrat extends X_HR_Contrat {
     }
 
     /**
-     * Indique si ce contrat couvre la date donnée.
+     * Retourne la date de fin "effective" à utiliser pour tous les calculs
+     * de période (chevauchement, inclusion, couverture) :
+     *   - Date_Fin si elle est renseignée (le contrat est réellement clos)
+     *   - sinon Date_Fin_Prevue en repli (utile pour un CDD/Stage/Intérim/
+     *     Prestation pas encore clôturé administrativement, mais dont
+     *     l'échéance contractuelle est connue)
+     *   - null si aucune des deux n'est renseignée (CDI en cours, ou
+     *     durée déterminée sans échéance connue)
      *
-     * Un contrat sans Date_Fin est considéré "en cours" (cas du CDI) :
-     * il couvre toute date à partir de Date_Debut, sans limite haute.
+     * Sans ce repli, un CDD dont "Jusqu'au" n'a pas encore été rempli
+     * serait traité comme un contrat sans limite dans le temps — ce qui
+     * bloquerait à tort tout autre contrat de cet employé, même des
+     * années avant ou après.
+     */
+    public Timestamp getDateFinEffective() {
+        if (getDate_Fin() != null) {
+            return getDate_Fin();
+        }
+        return getDate_Fin_Prevue();
+    }
+
+    /**
+     * Indique si ce contrat couvre la date donnée.
      *
      * @param date date à vérifier (non null)
      * @return true si la date tombe dans la période du contrat
@@ -43,15 +62,16 @@ public class MHRContrat extends X_HR_Contrat {
         if (date == null || getDate_Debut() == null) {
             return false;
         }
+        Timestamp finEffective = getDateFinEffective();
         boolean apresDebut = !date.before(getDate_Debut());
-        boolean avantFin = (getDate_Fin() == null) || !date.after(getDate_Fin());
+        boolean avantFin = (finEffective == null) || !date.after(finEffective);
         return apresDebut && avantFin;
     }
 
     /**
      * Indique si la période de ce contrat chevauche celle d'un autre
      * contrat. Deux périodes se chevauchent dès qu'elles partagent au
-     * moins un jour commun. Une Date_Fin null signifie "sans limite".
+     * moins un jour commun. Une fin effective null signifie "sans limite".
      *
      * @param autre l'autre contrat à comparer
      * @return true si les deux périodes se recoupent
@@ -62,13 +82,10 @@ public class MHRContrat extends X_HR_Contrat {
         }
 
         Timestamp debutA = getDate_Debut();
-        Timestamp finA = getDate_Fin();
+        Timestamp finA = getDateFinEffective();
         Timestamp debutB = autre.getDate_Debut();
-        Timestamp finB = autre.getDate_Fin();
+        Timestamp finB = autre.getDateFinEffective();
 
-        // Deux périodes [debutA, finA] et [debutB, finB] se chevauchent
-        // si et seulement si : debutA <= finB ET debutB <= finA
-        // (en traitant une Date_Fin null comme "infini")
         boolean debutAAvantOuEgalFinB = (finB == null) || !debutA.after(finB);
         boolean debutBAvantOuEgalFinA = (finA == null) || !debutB.after(finA);
 

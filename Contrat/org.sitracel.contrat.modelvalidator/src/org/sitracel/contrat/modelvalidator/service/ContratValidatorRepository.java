@@ -88,4 +88,34 @@ public class ContratValidatorRepository {
         }
         return resultat;
     }
+
+    /**
+     * Retourne l'ID du statut de contrat correspondant au nom donné
+     * (ex: "Actif", "Rompu", "Terminé", "Suspendu"), ou null si
+     * introuvable (ex: donnée de référence pas encore saisie).
+     */
+    public static Integer getStatutContratID(String nom, String trxName) {
+        if (nom == null) {
+            return null;
+        }
+
+        String sql = "SELECT HR_ContratStatut_ID FROM HR_ContratStatut"
+            + " WHERE Name = ? AND IsActive = 'Y'";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = DB.prepareStatement(sql, trxName);
+            pstmt.setString(1, nom);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            log.warning("getStatutContratID : " + e.getMessage());
+        } finally {
+            DB.close(rs, pstmt);
+        }
+        return null;
+    }
 }
