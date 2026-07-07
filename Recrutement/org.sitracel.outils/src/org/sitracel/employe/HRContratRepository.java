@@ -4,6 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.compiere.util.CLogger;
@@ -104,5 +106,46 @@ public class HRContratRepository {
             DB.close(rs, pstmt);
         }
         return null;
+    }
+
+    /**
+     * Retourne les C_BPartner_ID des employés dont l'affectation active,
+     * à la date de référence, correspond au poste donné.
+     *
+     * Remplace HREmployeRepository.getEmployeesByJob(), qui interrogeait
+     * l'ancienne table HR_EmployeeJob sans filtre de date (bug latent :
+     * retournait aussi les employés ayant occupé ce poste dans le passé).
+     */
+    public static List<Integer> getBPartnersAffectesAuPoste(int posteId, Timestamp dateReference, String trxName) {
+        List<Integer> resultat = new ArrayList<>();
+        if (posteId <= 0 || dateReference == null) {
+            return resultat;
+        }
+
+        String sql = "SELECT " + I_HR_Affectation.COLUMNNAME_C_BPartner_ID
+            + " FROM " + I_HR_Affectation.Table_Name
+            + " WHERE " + I_HR_Affectation.COLUMNNAME_HR_Job_ID + " = ?"
+            + "   AND " + I_HR_Affectation.COLUMNNAME_Date_Debut + " <= ?"
+            + "   AND (" + I_HR_Affectation.COLUMNNAME_Date_Fin + " IS NULL"
+            + "        OR " + I_HR_Affectation.COLUMNNAME_Date_Fin + " >= ?)"
+            + "   AND IsActive = 'Y'";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = DB.prepareStatement(sql, trxName);
+            pstmt.setInt(1, posteId);
+            pstmt.setTimestamp(2, dateReference);
+            pstmt.setTimestamp(3, dateReference);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                resultat.add(rs.getInt(1));
+            }
+        } catch (SQLException e) {
+            log.warning("getBPartnersAffectesAuPoste : " + e.getMessage());
+        } finally {
+            DB.close(rs, pstmt);
+        }
+        return resultat;
     }
 }

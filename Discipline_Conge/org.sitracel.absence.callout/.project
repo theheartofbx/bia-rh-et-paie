@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+DisciplineProcessService.java <name>org.sitracel.absence.callout</name>
+DisciplineProcessService.java <comment></comment>
+DisciplineProcessService.java <projects>
+DisciplineProcessService.java </projects>
+DisciplineProcessService.java <buildSpec>
+DisciplineProcessService.java DisciplineProcessService.java <buildCommand>
+DisciplineProcessService.java DisciplineProcessService.java DisciplineProcessService.java <name>org.eclipse.jdt.core.javabuilder</name>
+DisciplineProcessService.java DisciplineProcessService.java DisciplineProcessService.java <arguments>
+DisciplineProcessService.java DisciplineProcessService.java DisciplineProcessService.java </arguments>
+DisciplineProcessService.java DisciplineProcessService.java </buildCommand>
+DisciplineProcessService.java DisciplineProcessService.java <buildCommand>
+DisciplineProcessService.java DisciplineProcessService.java DisciplineProcessService.java <name>org.eclipse.pde.ManifestBuilder</name>
+DisciplineProcessService.java DisciplineProcessService.java DisciplineProcessService.java <arguments>
+DisciplineProcessService.java DisciplineProcessService.java DisciplineProcessService.java </arguments>
+DisciplineProcessService.java DisciplineProcessService.java </buildCommand>
+DisciplineProcessService.java DisciplineProcessService.java <buildCommand>
+DisciplineProcessService.java DisciplineProcessService.java DisciplineProcessService.java <name>org.eclipse.pde.SchemaBuilder</name>
+DisciplineProcessService.java DisciplineProcessService.java DisciplineProcessService.java <arguments>
+DisciplineProcessService.java DisciplineProcessService.java DisciplineProcessService.java </arguments>
+DisciplineProcessService.java DisciplineProcessService.java </buildCommand>
+DisciplineProcessService.java DisciplineProcessService.java <buildCommand>
+DisciplineProcessService.java DisciplineProcessService.java DisciplineProcessService.java <name>org.eclipse.pde.ds.core.builder</name>
+DisciplineProcessService.java DisciplineProcessService.java DisciplineProcessService.java <arguments>
+DisciplineProcessService.java DisciplineProcessService.java DisciplineProcessService.java </arguments>
+DisciplineProcessService.java DisciplineProcessService.java </buildCommand>
+DisciplineProcessService.java </buildSpec>
+DisciplineProcessService.java <natures>
+DisciplineProcessService.java DisciplineProcessService.java <nature>org.eclipse.pde.PluginNature</nature>
+DisciplineProcessService.java DisciplineProcessService.java <nature>org.eclipse.jdt.core.javanature</nature>
+DisciplineProcessService.java </natures>
+</projectDescription>

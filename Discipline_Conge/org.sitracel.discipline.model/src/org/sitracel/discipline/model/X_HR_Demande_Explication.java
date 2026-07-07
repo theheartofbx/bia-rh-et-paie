@@ -18,7 +18,7 @@
 package org.sitracel.discipline.model;
 
 import org.sitracel.model.I_HR_Ampliation;
-import org.sitracel.conge.model.I_HR_Absence;
+import org.sitracel.absence.model.I_HR_Absence;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;

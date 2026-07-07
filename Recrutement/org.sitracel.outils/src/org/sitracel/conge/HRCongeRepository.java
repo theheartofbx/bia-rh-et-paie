@@ -14,7 +14,7 @@ import org.compiere.util.DB;
 import org.sitracel.bean.BeanConge;
 import org.sitracel.bean.BeanPeriode;
 import org.sitracel.beanfactory.BeanFactory;
-import org.sitracel.conge.model.I_HR_Absence;
+import org.sitracel.absence.model.I_HR_Absence;
 import org.sitracel.conge.model.I_HR_Autorisation_Conge;
 import org.sitracel.conge.model.I_HR_Holiday;
 import org.sitracel.conge.model.I_HR_Public_Holiday;

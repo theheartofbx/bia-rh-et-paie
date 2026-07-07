@@ -565,10 +565,10 @@ public class GeneralSqlController {
         Timestamp lastDayOfYear  = HRCalendrierService.getLastDayOfThisYear();
 
         String sql = "SELECT COUNT(*) AS count"
-            + " FROM " + org.sitracel.conge.model.I_HR_Absence.Table_Name
-            + " WHERE " + org.sitracel.conge.model.I_HR_Absence.COLUMNNAME_IsConge + " = 'Y'"
-            + " AND "   + org.sitracel.conge.model.I_HR_Absence.COLUMNNAME_IsCongeTraite + " = 'N'"
-            + " AND "   + org.sitracel.conge.model.I_HR_Absence.COLUMNNAME_Date_Absence
+            + " FROM " + org.sitracel.absence.model.I_HR_Absence.Table_Name
+            + " WHERE " + org.sitracel.absence.model.I_HR_Absence.COLUMNNAME_IsConge + " = 'Y'"
+            + " AND "   + org.sitracel.absence.model.I_HR_Absence.COLUMNNAME_IsCongeTraite + " = 'N'"
+            + " AND "   + org.sitracel.absence.model.I_HR_Absence.COLUMNNAME_Date_Absence
             + " BETWEEN ? AND ?";
 
         PreparedStatement pstmt = null;
