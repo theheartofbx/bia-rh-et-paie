@@ -16,12 +16,12 @@
  *****************************************************************************/
 package org.sitracel.conge.model;
 
-import org.sitracel.model.I_HR_Ampliation;
-
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
+import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
+import org.sitracel.model.I_HR_Ampliation;
 
 /** Generated Interface for HR_Holiday
  *  @author iDempiere (generated) 
@@ -602,6 +602,17 @@ Accouchement
 
 	public I_HR_Ampliation getHR_Ampliation() throws RuntimeException;
 
+    /** Column name HR_CongeStatut_ID */
+    public static final String COLUMNNAME_HR_CongeStatut_ID = "HR_CongeStatut_ID";
+
+	/** Set Statut des Congés	  */
+	public void setHR_CongeStatut_ID (int HR_CongeStatut_ID);
+
+	/** Get Statut des Congés	  */
+	public int getHR_CongeStatut_ID();
+
+	public I_HR_CongeStatut getHR_CongeStatut() throws RuntimeException;
+
     /** Column name HR_Holiday_ID */
     public static final String COLUMNNAME_HR_Holiday_ID = "HR_Holiday_ID";
 
@@ -645,19 +656,6 @@ Accouchement
 	  * The record is active in the system
 	  */
 	public boolean isActive();
-
-    /** Column name IsApprobation */
-    public static final String COLUMNNAME_IsApprobation = "IsApprobation";
-
-	/** Set Peut Approuver.
-	  * Peut Approuver
-	  */
-	public void setIsApprobation (boolean IsApprobation);
-
-	/** Get Peut Approuver.
-	  * Peut Approuver
-	  */
-	public boolean isApprobation();
 
     /** Column name IsApprobation_Createur */
     public static final String COLUMNNAME_IsApprobation_Createur = "IsApprobation_Createur";
@@ -766,19 +764,6 @@ Alerte Affiché
 	  * Traité(e)
 	  */
 	public boolean isTraitee();
-
-    /** Column name IsValidation */
-    public static final String COLUMNNAME_IsValidation = "IsValidation";
-
-	/** Set Peut Valider.
-	  * Peut Valider
-	  */
-	public void setIsValidation (boolean IsValidation);
-
-	/** Get Peut Valider.
-	  * Peut Valider
-	  */
-	public boolean isValidation();
 
     /** Column name IsValidation_Createur */
     public static final String COLUMNNAME_IsValidation_Createur = "IsValidation_Createur";
@@ -998,6 +983,32 @@ Absence Compensé sur le Congé
 	  * Notifier
 	  */
 	public String getNotifier();
+
+    /** Column name PeutApprouver */
+    public static final String COLUMNNAME_PeutApprouver = "PeutApprouver";
+
+	/** Set Peut Approuver.
+	  * Peut Approuver
+	  */
+	public void setPeutApprouver (boolean PeutApprouver);
+
+	/** Get Peut Approuver.
+	  * Peut Approuver
+	  */
+	public boolean isPeutApprouver();
+
+    /** Column name PeutValider */
+    public static final String COLUMNNAME_PeutValider = "PeutValider";
+
+	/** Set Peut Valider.
+	  * Peut Valider
+	  */
+	public void setPeutValider (boolean PeutValider);
+
+	/** Get Peut Valider.
+	  * Peut Valider
+	  */
+	public boolean isPeutValider();
 
     /** Column name Poste_Employe_ID */
     public static final String COLUMNNAME_Poste_Employe_ID = "Poste_Employe_ID";

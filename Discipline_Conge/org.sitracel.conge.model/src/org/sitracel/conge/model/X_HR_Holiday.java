@@ -17,8 +17,6 @@
 /** Generated Model - DO NOT CHANGE */
 package org.sitracel.conge.model;
 
-import org.sitracel.model.I_HR_Ampliation;
-
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -37,7 +35,7 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260702L;
+	private static final long serialVersionUID = 20260708L;
 
     /** Standard Constructor */
     public X_HR_Holiday (Properties ctx, int HR_Holiday_ID, String trxName)
@@ -50,6 +48,7 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 			setEmis_Par_Nom_ID (0);
 			setEmis_Par_Poste_ID (0);
 			setEmission_Conge_ID (0);
+			setHR_CongeStatut_ID (0);
 			setHR_Holiday_ID (0);
 			setMatricule_Employe (null);
 			setName (null);
@@ -68,6 +67,7 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 			setEmis_Par_Nom_ID (0);
 			setEmis_Par_Poste_ID (0);
 			setEmission_Conge_ID (0);
+			setHR_CongeStatut_ID (0);
 			setHR_Holiday_ID (0);
 			setMatricule_Employe (null);
 			setName (null);
@@ -86,6 +86,7 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 			setEmis_Par_Nom_ID (0);
 			setEmis_Par_Poste_ID (0);
 			setEmission_Conge_ID (0);
+			setHR_CongeStatut_ID (0);
 			setHR_Holiday_ID (0);
 			setMatricule_Employe (null);
 			setName (null);
@@ -104,6 +105,7 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 			setEmis_Par_Nom_ID (0);
 			setEmis_Par_Poste_ID (0);
 			setEmission_Conge_ID (0);
+			setHR_CongeStatut_ID (0);
 			setHR_Holiday_ID (0);
 			setMatricule_Employe (null);
 			setName (null);
@@ -862,6 +864,33 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 		return ii.intValue();
 	}
 
+	public I_HR_CongeStatut getHR_CongeStatut() throws RuntimeException
+	{
+		return (I_HR_CongeStatut)MTable.get(getCtx(), I_HR_CongeStatut.Table_ID)
+			.getPO(getHR_CongeStatut_ID(), get_TrxName());
+	}
+
+	/** Set Statut des Congés.
+		@param HR_CongeStatut_ID Statut des Congés
+	*/
+	public void setHR_CongeStatut_ID (int HR_CongeStatut_ID)
+	{
+		if (HR_CongeStatut_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_HR_CongeStatut_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_HR_CongeStatut_ID, Integer.valueOf(HR_CongeStatut_ID));
+	}
+
+	/** Get Statut des Congés.
+		@return Statut des Congés	  */
+	public int getHR_CongeStatut_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_HR_CongeStatut_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set Congé.
 		@param HR_Holiday_ID Congé
 	*/
@@ -912,28 +941,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	public String getInitial()
 	{
 		return (String)get_Value(COLUMNNAME_Initial);
-	}
-
-	/** Set Peut Approuver.
-		@param IsApprobation Peut Approuver
-	*/
-	public void setIsApprobation (boolean IsApprobation)
-	{
-		throw new IllegalArgumentException ("IsApprobation is virtual column");	}
-
-	/** Get Peut Approuver.
-		@return Peut Approuver
-	  */
-	public boolean isApprobation()
-	{
-		Object oo = get_Value(COLUMNNAME_IsApprobation);
-		if (oo != null)
-		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
-			return "Y".equals(oo);
-		}
-		return false;
 	}
 
 	/** Set Peut Approuver.
@@ -1111,28 +1118,6 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	public boolean isTraitee()
 	{
 		Object oo = get_Value(COLUMNNAME_IsTraitee);
-		if (oo != null)
-		{
-			 if (oo instanceof Boolean)
-				 return ((Boolean)oo).booleanValue();
-			return "Y".equals(oo);
-		}
-		return false;
-	}
-
-	/** Set Peut Valider.
-		@param IsValidation Peut Valider
-	*/
-	public void setIsValidation (boolean IsValidation)
-	{
-		throw new IllegalArgumentException ("IsValidation is virtual column");	}
-
-	/** Get Peut Valider.
-		@return Peut Valider
-	  */
-	public boolean isValidation()
-	{
-		Object oo = get_Value(COLUMNNAME_IsValidation);
 		if (oo != null)
 		{
 			 if (oo instanceof Boolean)
@@ -1426,6 +1411,50 @@ public class X_HR_Holiday extends PO implements I_HR_Holiday, I_Persistent
 	public String getNotifier()
 	{
 		return (String)get_Value(COLUMNNAME_Notifier);
+	}
+
+	/** Set Peut Approuver.
+		@param PeutApprouver Peut Approuver
+	*/
+	public void setPeutApprouver (boolean PeutApprouver)
+	{
+		throw new IllegalArgumentException ("PeutApprouver is virtual column");	}
+
+	/** Get Peut Approuver.
+		@return Peut Approuver
+	  */
+	public boolean isPeutApprouver()
+	{
+		Object oo = get_Value(COLUMNNAME_PeutApprouver);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Peut Valider.
+		@param PeutValider Peut Valider
+	*/
+	public void setPeutValider (boolean PeutValider)
+	{
+		throw new IllegalArgumentException ("PeutValider is virtual column");	}
+
+	/** Get Peut Valider.
+		@return Peut Valider
+	  */
+	public boolean isPeutValider()
+	{
+		Object oo = get_Value(COLUMNNAME_PeutValider);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
 	}
 
 	public org.eevolution.model.I_HR_Job getPoste_Employe() throws RuntimeException

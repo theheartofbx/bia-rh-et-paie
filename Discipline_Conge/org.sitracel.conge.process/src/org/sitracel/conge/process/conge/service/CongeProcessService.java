@@ -2,18 +2,22 @@ package org.sitracel.conge.process.conge.service;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.List;
 
+import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.sitracel.bean.BeanIdentifiant;
 import org.sitracel.conge.HRCongeRepository;
 import org.sitracel.absence.model.I_HR_Type_Absence;
 import org.sitracel.absence.model.MHRAbsence;
-import org.sitracel.conge.model.MHRAutorisationConge;
 import org.sitracel.conge.model.MHRHoliday;
 import org.sitracel.conge.model.MHRPublicHoliday;
 import org.sitracel.conge.model.MHRTypeConge;
 import org.sitracel.controller.GeneralSqlController;
 import org.sitracel.employe.HREmployeService;
+import org.sitracel.organigramme.ActionOrganigramme;
+import org.sitracel.organigramme.ModuleAutorisation;
+import org.sitracel.organigramme.OrganigrammeService;
 import org.sitracel.time.HRCalendrierService;
 
 /**
@@ -27,9 +31,21 @@ import org.sitracel.time.HRCalendrierService;
  * (SitracelCongeGeneralModelValidator) lors de chaque save().
  * Ne pas ajouter d'appels sendEmail() ici.
  *
+ * Depuis Session 9 : chaque action vérifie réellement, via
+ * OrganigrammeService, que la personne qui agit en a l'autorité.
+ *
+ * CORRECTION (Session 9, suite) : approuverConge()/desapprouverConge()
+ * écrivaient sur IsApprobation — une colonne virtuelle (calcul de
+ * droit "ai-je le droit d'approuver"), jamais enregistrable. Le vrai
+ * champ d'état persistant est IsApprouve. Cette confusion de noms très
+ * proches faisait que l'état "approuvé" n'était probablement jamais
+ * réellement sauvegardé.
+ *
  * Remplace ProcessControllerConge.
  */
 public final class CongeProcessService {
+
+    private static final CLogger log = CLogger.getCLogger(CongeProcessService.class);
 
     private CongeProcessService() {}
 
@@ -37,12 +53,6 @@ public final class CongeProcessService {
     // VALIDATION
     // =========================================================================
 
-    /**
-     * Valide un congé et crée les absences correspondantes.
-     *
-     * @param idConge   ID du congé à valider
-     * @param adUserID  AD_User_ID du valideur
-     */
     public static void validerConge(Integer idConge, Integer adUserID) {
         if (idConge == null || adUserID == null) return;
 
@@ -51,6 +61,12 @@ public final class CongeProcessService {
 
         if (conge == null || valideur == null) return;
         if (valideur.getNomEmploye() == null) return;
+
+        if (!estHabiliteAAgir(conge, valideur.getNumEmploye(), ActionOrganigramme.VALIDATION)) {
+            log.warning("Validation refusée : congé " + idConge
+                + " par C_BPartner_ID " + valideur.getNumEmploye() + " (non habilité)");
+            return;
+        }
 
         MHRTypeConge typeConge = chargerTypeConge(conge);
         int detteConge = GeneralSqlController.getNombreJourAbsencesCongeNonTraite(
@@ -78,12 +94,6 @@ public final class CongeProcessService {
     // REJET
     // =========================================================================
 
-    /**
-     * Rejette un congé et supprime les absences associées.
-     *
-     * @param idConge   ID du congé à rejeter
-     * @param adUserID  AD_User_ID du rejeteur
-     */
     public static void rejeterConge(Integer idConge, Integer adUserID) {
         if (idConge == null || adUserID == null) return;
 
@@ -92,6 +102,12 @@ public final class CongeProcessService {
 
         if (conge == null || rejeteur == null) return;
         if (rejeteur.getNomEmploye() == null) return;
+
+        if (!estHabiliteAAgir(conge, rejeteur.getNumEmploye(), ActionOrganigramme.VALIDATION)) {
+            log.warning("Rejet refusé : congé " + idConge
+                + " par C_BPartner_ID " + rejeteur.getNumEmploye() + " (non habilité)");
+            return;
+        }
 
         MHRTypeConge typeConge = chargerTypeConge(conge);
         int detteConge = GeneralSqlController.getNombreJourAbsencesCongeNonTraite(
@@ -122,8 +138,8 @@ public final class CongeProcessService {
     /**
      * Approuve un congé.
      *
-     * @param idConge   ID du congé à approuver
-     * @param adUserID  AD_User_ID de l'approbateur
+     * CORRECTION : setIsApprouve() (le vrai champ d'état), pas
+     * setIsApprobation() (colonne virtuelle de droit, jamais persistée).
      */
     public static void approuverConge(Integer idConge, Integer adUserID) {
         if (idConge == null || adUserID == null) return;
@@ -134,10 +150,16 @@ public final class CongeProcessService {
         if (conge == null || approbateur == null) return;
         if (approbateur.getNomEmploye() == null) return;
 
+        if (!estHabiliteAAgir(conge, approbateur.getNumEmploye(), ActionOrganigramme.APPROBATION)) {
+            log.warning("Approbation refusée : congé " + idConge
+                + " par C_BPartner_ID " + approbateur.getNumEmploye() + " (non habilité)");
+            return;
+        }
+
         conge.setApprouve_Desapprouve_Nom_ID(approbateur.getNumEmploye());
         conge.setApprouve_Desapprouve_Matricule(approbateur.getMatriculeEmploye());
         conge.setApprouve_Desapprouve_Poste_ID(approbateur.getNumeroPoste());
-        conge.setIsApprobation(true);
+        conge.setIsApprouve(true);
         conge.setIsDesapprouve(false);
         conge.setDate_Approbation(new Timestamp(System.currentTimeMillis()));
         conge.setDate_Desapprobation(null);
@@ -152,8 +174,7 @@ public final class CongeProcessService {
     /**
      * Désapprouve un congé.
      *
-     * @param idConge   ID du congé à désapprouver
-     * @param adUserID  AD_User_ID du désapprobateur
+     * CORRECTION : setIsApprouve(false), même correction que ci-dessus.
      */
     public static void desapprouverConge(Integer idConge, Integer adUserID) {
         if (idConge == null || adUserID == null) return;
@@ -164,10 +185,16 @@ public final class CongeProcessService {
         if (conge == null || desapprobateur == null) return;
         if (desapprobateur.getNomEmploye() == null) return;
 
+        if (!estHabiliteAAgir(conge, desapprobateur.getNumEmploye(), ActionOrganigramme.APPROBATION)) {
+            log.warning("Désapprobation refusée : congé " + idConge
+                + " par C_BPartner_ID " + desapprobateur.getNumEmploye() + " (non habilité)");
+            return;
+        }
+
         conge.setApprouve_Desapprouve_Nom_ID(desapprobateur.getNumEmploye());
         conge.setApprouve_Desapprouve_Matricule(desapprobateur.getMatriculeEmploye());
         conge.setApprouve_Desapprouve_Poste_ID(desapprobateur.getNumeroPoste());
-        conge.setIsApprobation(false);
+        conge.setIsApprouve(false);
         conge.setIsDesapprouve(true);
         conge.setDate_Approbation(null);
         conge.setDate_Desapprobation(new Timestamp(System.currentTimeMillis()));
@@ -179,10 +206,6 @@ public final class CongeProcessService {
     // MISE À JOUR ABSENCES
     // =========================================================================
 
-    /**
-     * Met à jour le nombre de jours à compenser sur un congé en attente.
-     * Appelé par SitracelProcessActualiserAbsence.
-     */
     public static void updateAbsenceConge(Integer idConge) {
         if (idConge == null) return;
 
@@ -205,20 +228,23 @@ public final class CongeProcessService {
     // MÉTHODES PRIVÉES
     // =========================================================================
 
-    /**
-     * Charge le type de congé associé à un congé.
-     */
-    private static MHRTypeConge chargerTypeConge(MHRHoliday conge) {
-        if (conge.getEmission_Conge_ID() <= 0) return null;
-        MHRAutorisationConge autorisation = new MHRAutorisationConge(
-            Env.getCtx(), conge.getEmission_Conge_ID(), null);
-        if (autorisation == null) return null;
-        return new MHRTypeConge(Env.getCtx(), autorisation.getHR_Type_Conge_ID(), null);
+    private static boolean estHabiliteAAgir(MHRHoliday conge, int bpartnerActeur, ActionOrganigramme action) {
+        if (conge.getC_BPartner_ID() <= 0 || conge.getEmission_Conge_ID() <= 0 || bpartnerActeur <= 0) {
+            return false;
+        }
+
+        List<Integer> acteurs = OrganigrammeService.getActeurs(
+            conge.getC_BPartner_ID(), conge.getEmission_Conge_ID(),
+            ModuleAutorisation.CONGE, action, conge.get_TrxName());
+
+        return acteurs.contains(bpartnerActeur);
     }
 
-    /**
-     * Vérifie les droits restants et positionne le message d'alerte si dépassé.
-     */
+    private static MHRTypeConge chargerTypeConge(MHRHoliday conge) {
+        if (conge.getEmission_Conge_ID() <= 0) return null;
+        return new MHRTypeConge(Env.getCtx(), conge.getEmission_Conge_ID(), null);
+    }
+
     private static void verifierDroitsConge(MHRHoliday conge, int detteConge) {
         int solde = conge.getJours_Conge_Total()
             - conge.getJours_Conge_Correspondant()
@@ -235,9 +261,6 @@ public final class CongeProcessService {
         conge.save();
     }
 
-    /**
-     * Crée une absence "En Congé" pour chaque jour ouvrable de la période.
-     */
     private static void creerAbsencesConge(MHRHoliday conge, BeanIdentifiant valideur) {
         if (conge.getDate_Debut_Effective() == null
                 || conge.getDate_Fin_Effective() == null) return;
@@ -280,9 +303,6 @@ public final class CongeProcessService {
         }
     }
 
-    /**
-     * Supprime les absences "En Congé" créées lors de la validation.
-     */
     private static void supprimerAbsencesConge(MHRHoliday conge) {
         if (conge.getDate_Debut_Effective() == null
                 || conge.getDate_Fin_Effective() == null) return;

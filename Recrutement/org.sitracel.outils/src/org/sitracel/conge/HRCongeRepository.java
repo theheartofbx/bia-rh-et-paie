@@ -15,17 +15,27 @@ import org.sitracel.bean.BeanConge;
 import org.sitracel.bean.BeanPeriode;
 import org.sitracel.beanfactory.BeanFactory;
 import org.sitracel.absence.model.I_HR_Absence;
-import org.sitracel.conge.model.I_HR_Autorisation_Conge;
 import org.sitracel.conge.model.I_HR_Holiday;
 import org.sitracel.conge.model.I_HR_Public_Holiday;
 
 /**
- * Repository transversal — requêtes SQL congés et absences.
+ * Repository transversal - requetes SQL conges et absences.
  *
- * Regroupe toutes les requêtes SQL liées aux congés, absences et suspensions
- * utilisées par plusieurs modules (Congés, Discipline, Paie...).
+ * Regroupe toutes les requetes SQL liees aux conges, absences et suspensions
+ * utilisees par plusieurs modules (Conges, Discipline, Paie...).
  *
- * Remplace les méthodes SQL congé/absence de GeneralSqlController.
+ * Remplace les methodes SQL conge/absence de GeneralSqlController.
+ *
+ * Depuis Session 9 : correction de 5 methodes qui interpretaient a tort
+ * Emission_Conge_ID comme pointant vers HR_Autorisation_Conge, alors
+ * qu'il pointe directement vers HR_Type_Conge (confirme via le
+ * dictionnaire AD_Column). Meme correction que chargerTypeConge()
+ * dans CongeProcessService. Egalement corrige : chevaucheSuspensionNonRejete/
+ * isJourSuspensionNonRejete utilisaient HR_TypeSanction.IsSuspension
+ * (colonne inexistante) - bonne condition : Incidence_Sanction_ID =
+ * 'Periode de Suspension', via le bon chemin de jointure
+ * (Emission_Sanction_ID -> HR_Sanction_Autorisation -> HR_TypeSanction),
+ * meme motif que getAllPeriodeSuspensionValide() dans ce meme fichier.
  */
 public final class HRCongeRepository {
 
@@ -34,19 +44,19 @@ public final class HRCongeRepository {
     private HRCongeRepository() {}
 
     // =========================================================================
-    // CHEVAUCHEMENTS — CONGÉS
+    // CHEVAUCHEMENTS - CONGES
     // =========================================================================
 
     /**
-     * Vérifie si un employé a un congé non rejeté qui chevauche la période.
+     * Verifie si un employe a un conge non rejete qui chevauche la periode.
      */
     public static boolean chevaucheAnyCongeNonRejete(Integer bpartnerId,
                                                       Timestamp dateDebut,
                                                       Timestamp dateFin,
                                                       String trxName) {
         if (bpartnerId == null || dateDebut == null || dateFin == null) {
-			return false;
-		}
+            return false;
+        }
 
         String sql = "SELECT 1 FROM " + I_HR_Holiday.Table_Name
             + " WHERE " + I_HR_Holiday.COLUMNNAME_C_BPartner_ID + " = ?"
@@ -61,14 +71,14 @@ public final class HRCongeRepository {
     }
 
     /**
-     * Vérifie si un employé a un congé non rejeté à une date précise.
+     * Verifie si un employe a un conge non rejete a une date precise.
      */
     public static boolean isJourAnyCongeNonRejete(Integer bpartnerId,
                                                    Timestamp date,
                                                    String trxName) {
         if (bpartnerId == null || date == null) {
-			return false;
-		}
+            return false;
+        }
 
         String sql = "SELECT 1 FROM " + I_HR_Holiday.Table_Name
             + " WHERE " + I_HR_Holiday.COLUMNNAME_C_BPartner_ID + " = ?"
@@ -80,22 +90,23 @@ public final class HRCongeRepository {
     }
 
     /**
-     * Vérifie si un employé a un congé validé (par nom de type) à une date.
+     * Verifie si un employe a un conge non rejete (par nom de type) a une date.
+     *
+     * CORRIGE (Session 9) : jointure directe sur HR_Type_Conge via
+     * Emission_Conge_ID (pas via HR_Autorisation_Conge, qui n'a jamais
+     * ete le bon chemin).
      */
     public static boolean isJourCongesNonRejeteByNameConge(Integer bpartnerId,
                                                             String nomConge,
                                                             Timestamp date,
                                                             String trxName) {
         if (bpartnerId == null || nomConge == null || date == null) {
-			return false;
-		}
+            return false;
+        }
 
         String sql = "SELECT 1"
             + " FROM " + I_HR_Holiday.Table_Name + " h"
-            + " JOIN " + I_HR_Autorisation_Conge.Table_Name + " ac"
-            + "   ON ac." + I_HR_Autorisation_Conge.COLUMNNAME_HR_Autorisation_Conge_ID
-            + "    = h." + I_HR_Holiday.COLUMNNAME_Emission_Conge_ID
-            + " JOIN HR_Type_Conge tc ON tc.HR_Type_Conge_ID = ac.HR_Type_Conge_ID"
+            + " JOIN HR_Type_Conge tc ON tc.HR_Type_Conge_ID = h." + I_HR_Holiday.COLUMNNAME_Emission_Conge_ID
             + " WHERE h." + I_HR_Holiday.COLUMNNAME_C_BPartner_ID + " = ?"
             + " AND h." + I_HR_Holiday.COLUMNNAME_IsRejetee + " = 'N'"
             + " AND tc.Nom_Conge = ?"
@@ -106,7 +117,9 @@ public final class HRCongeRepository {
     }
 
     /**
-     * Retourne les périodes de congés validés par nom de type entre deux dates.
+     * Retourne les periodes de conges valides par nom de type entre deux dates.
+     *
+     * CORRIGE (Session 9) : meme correction de jointure.
      */
     public static BeanPeriode[] getCongesValideByNameConge(Integer bpartnerId,
                                                             String nomConge,
@@ -114,16 +127,13 @@ public final class HRCongeRepository {
                                                             Timestamp dateFin,
                                                             String trxName) {
         if (bpartnerId == null || nomConge == null) {
-			return null;
-		}
+            return null;
+        }
 
         String sql = "SELECT h." + I_HR_Holiday.COLUMNNAME_Date_Debut_Effective
             + ", h." + I_HR_Holiday.COLUMNNAME_Date_Fin_Effective
             + " FROM " + I_HR_Holiday.Table_Name + " h"
-            + " JOIN " + I_HR_Autorisation_Conge.Table_Name + " ac"
-            + "   ON ac." + I_HR_Autorisation_Conge.COLUMNNAME_HR_Autorisation_Conge_ID
-            + "    = h." + I_HR_Holiday.COLUMNNAME_Emission_Conge_ID
-            + " JOIN HR_Type_Conge tc ON tc.HR_Type_Conge_ID = ac.HR_Type_Conge_ID"
+            + " JOIN HR_Type_Conge tc ON tc.HR_Type_Conge_ID = h." + I_HR_Holiday.COLUMNNAME_Emission_Conge_ID
             + " WHERE h." + I_HR_Holiday.COLUMNNAME_C_BPartner_ID + " = ?"
             + " AND h." + I_HR_Holiday.COLUMNNAME_IsValidee + " = 'Y'"
             + " AND tc.Nom_Conge = ?"
@@ -155,7 +165,9 @@ public final class HRCongeRepository {
     }
 
     /**
-     * Charge la date du dernier congé validé dans un BeanConge.
+     * Charge la date du dernier conge valide dans un BeanConge.
+     *
+     * CORRIGE (Session 9) : meme correction de jointure.
      */
     public static BeanConge getDateDernierConge(Integer bpartnerId,
                                                  Timestamp dateActuelle,
@@ -164,15 +176,12 @@ public final class HRCongeRepository {
                                                  BeanConge beanConge,
                                                  String trxName) {
         if (bpartnerId == null || beanConge == null) {
-			return beanConge;
-		}
+            return beanConge;
+        }
 
         String sql = "SELECT h." + I_HR_Holiday.COLUMNNAME_Date_Fin_Effective
             + " FROM " + I_HR_Holiday.Table_Name + " h"
-            + " JOIN " + I_HR_Autorisation_Conge.Table_Name + " ac"
-            + "   ON ac." + I_HR_Autorisation_Conge.COLUMNNAME_HR_Autorisation_Conge_ID
-            + "    = h." + I_HR_Holiday.COLUMNNAME_Emission_Conge_ID
-            + " JOIN HR_Type_Conge tc ON tc.HR_Type_Conge_ID = ac.HR_Type_Conge_ID"
+            + " JOIN HR_Type_Conge tc ON tc.HR_Type_Conge_ID = h." + I_HR_Holiday.COLUMNNAME_Emission_Conge_ID
             + " WHERE h." + I_HR_Holiday.COLUMNNAME_C_BPartner_ID + " = ?"
             + " AND h." + I_HR_Holiday.COLUMNNAME_IsValidee + " = 'Y'"
             + " AND tc.Nom_Conge = ?"
@@ -198,25 +207,32 @@ public final class HRCongeRepository {
     }
 
     // =========================================================================
-    // CHEVAUCHEMENTS — SUSPENSIONS
+    // CHEVAUCHEMENTS - SUSPENSIONS
     // =========================================================================
 
     /**
-     * Vérifie si un employé a une suspension non rejetée qui chevauche la période.
+     * Verifie si un employe a une suspension non rejetee qui chevauche la periode.
+     *
+     * CORRIGE (Session 9) : jointure via Emission_Sanction_ID ->
+     * HR_Sanction_Autorisation -> HR_TypeSanction (HR_Punishment n'a pas
+     * de colonne directe vers HR_TypeSanction), et condition
+     * Incidence_Sanction_ID = 'Periode de Suspension' au lieu de la
+     * colonne IsSuspension qui n'existe pas.
      */
     public static boolean chevaucheSuspensionNonRejete(Integer bpartnerId,
                                                         Timestamp dateDebut,
                                                         Timestamp dateFin,
                                                         String trxName) {
         if (bpartnerId == null || dateDebut == null || dateFin == null) {
-			return false;
-		}
+            return false;
+        }
 
         String sql = "SELECT 1 FROM HR_Punishment p"
-            + " JOIN HR_TypeSanction ts ON ts.HR_TypeSanction_ID = p.HR_TypeSanction_ID"
+            + " JOIN HR_Sanction_Autorisation sa ON sa.HR_Sanction_Autorisation_ID = p.Emission_Sanction_ID"
+            + " JOIN HR_TypeSanction ts ON ts.HR_TypeSanction_ID = sa.HR_TypeSanction_ID"
             + " WHERE p.C_BPartner_ID = ?"
             + " AND p.IsRejetee = 'N'"
-            + " AND ts.IsSuspension = 'Y'"
+            + " AND ts.Incidence_Sanction_ID = 'Période de Suspension'"
             + " AND p.Date_Debut_Application <= ?"
             + " AND p.Date_Fin_Application >= ?";
 
@@ -224,20 +240,23 @@ public final class HRCongeRepository {
     }
 
     /**
-     * Vérifie si un employé a une suspension non rejetée à une date précise.
+     * Verifie si un employe a une suspension non rejetee a une date precise.
+     *
+     * CORRIGE (Session 9) : meme correction que ci-dessus.
      */
     public static boolean isJourSuspensionNonRejete(Integer bpartnerId,
                                                      Timestamp date,
                                                      String trxName) {
         if (bpartnerId == null || date == null) {
-			return false;
-		}
+            return false;
+        }
 
         String sql = "SELECT 1 FROM HR_Punishment p"
-            + " JOIN HR_TypeSanction ts ON ts.HR_TypeSanction_ID = p.HR_TypeSanction_ID"
+            + " JOIN HR_Sanction_Autorisation sa ON sa.HR_Sanction_Autorisation_ID = p.Emission_Sanction_ID"
+            + " JOIN HR_TypeSanction ts ON ts.HR_TypeSanction_ID = sa.HR_TypeSanction_ID"
             + " WHERE p.C_BPartner_ID = ?"
             + " AND p.IsRejetee = 'N'"
-            + " AND ts.IsSuspension = 'Y'"
+            + " AND ts.Incidence_Sanction_ID = 'Période de Suspension'"
             + " AND p.Date_Debut_Application <= ?"
             + " AND p.Date_Fin_Application >= ?";
 
@@ -249,15 +268,15 @@ public final class HRCongeRepository {
     // =========================================================================
 
     /**
-     * Vérifie si un employé a une absence enregistrée sur la période.
+     * Verifie si un employe a une absence enregistree sur la periode.
      */
     public static boolean isPeriodeAbsence(Integer bpartnerId,
                                             Timestamp dateDebut,
                                             Timestamp dateFin,
                                             String trxName) {
         if (bpartnerId == null || dateDebut == null || dateFin == null) {
-			return false;
-		}
+            return false;
+        }
 
         String sql = "SELECT 1 FROM " + I_HR_Absence.Table_Name
             + " WHERE " + I_HR_Absence.COLUMNNAME_C_BPartner_ID + " = ?"
@@ -267,14 +286,14 @@ public final class HRCongeRepository {
     }
 
     /**
-     * Vérifie si un employé a une absence enregistrée à une date précise.
+     * Verifie si un employe a une absence enregistree a une date precise.
      */
     public static boolean isJourAbsence(Integer bpartnerId,
                                          Timestamp date,
                                          String trxName) {
         if (bpartnerId == null || date == null) {
-			return false;
-		}
+            return false;
+        }
 
         String sql = "SELECT 1 FROM " + I_HR_Absence.Table_Name
             + " WHERE " + I_HR_Absence.COLUMNNAME_C_BPartner_ID + " = ?"
@@ -285,19 +304,19 @@ public final class HRCongeRepository {
     }
 
     // =========================================================================
-    // JOURS FÉRIÉS
+    // JOURS FERIES
     // =========================================================================
 
     /**
-     * Retourne l'ensemble des jours fériés entre deux dates.
+     * Retourne l'ensemble des jours feries entre deux dates.
      */
     public static Set<LocalDate> getAllJoursFeries(Timestamp dateDebut,
                                                     Timestamp dateFin,
                                                     String trxName) {
         Set<LocalDate> joursFeries = new HashSet<>();
         if (dateDebut == null || dateFin == null) {
-			return joursFeries;
-		}
+            return joursFeries;
+        }
 
         String sql = "SELECT " + I_HR_Public_Holiday.COLUMNNAME_Date_Jour_Ferie
             + " FROM " + I_HR_Public_Holiday.Table_Name
@@ -327,18 +346,18 @@ public final class HRCongeRepository {
     }
 
     // =========================================================================
-    // GESTION DES ABSENCES — DÉPLACÉ DEPUIS AbsenceCalloutRepository
+    // GESTION DES ABSENCES
     // =========================================================================
 
     /**
-     * Vérifie si une absence existe déjà pour un employé à une date donnée.
+     * Verifie si une absence existe deja pour un employe a une date donnee.
      */
-    public static boolean isAbsenceExist(java.sql.Timestamp dateAbsence,
+    public static boolean isAbsenceExist(Timestamp dateAbsence,
                                           Integer bpartnerId,
                                           String trxName) {
         if (dateAbsence == null || bpartnerId == null) {
-			return false;
-		}
+            return false;
+        }
 
         String sql = "SELECT 1 FROM " + I_HR_Absence.Table_Name
             + " WHERE " + I_HR_Absence.COLUMNNAME_Date_Absence + " = ?"
@@ -352,7 +371,7 @@ public final class HRCongeRepository {
             pstmt.setInt(2, bpartnerId);
             rs = pstmt.executeQuery();
             return rs.next();
-        } catch (java.sql.SQLException e) {
+        } catch (SQLException e) {
             log.warning("isAbsenceExist : " + e.getMessage());
         } finally {
             DB.close(rs, pstmt);
@@ -361,15 +380,15 @@ public final class HRCongeRepository {
     }
 
     /**
-     * Supprime toutes les absences de suspension d'un employé sur une période.
+     * Supprime toutes les absences de conge d'un employe sur une periode.
      */
     public static void annulerAbsenceConge(Integer bpartnerId,
-                                            java.sql.Timestamp dateDebut,
-                                            java.sql.Timestamp dateFin,
+                                            Timestamp dateDebut,
+                                            Timestamp dateFin,
                                             String trxName) {
         if (bpartnerId == null || dateDebut == null || dateFin == null) {
-			return;
-		}
+            return;
+        }
 
         String sql = "DELETE FROM " + I_HR_Absence.Table_Name
             + " WHERE " + I_HR_Absence.COLUMNNAME_C_BPartner_ID + " = ?"
@@ -385,7 +404,7 @@ public final class HRCongeRepository {
             pstmt.setTimestamp(2, dateDebut);
             pstmt.setTimestamp(3, dateFin);
             pstmt.executeUpdate();
-        } catch (java.sql.SQLException e) {
+        } catch (SQLException e) {
             log.warning("annulerAbsenceConge : " + e.getMessage());
         } finally {
             DB.close(null, pstmt);
@@ -393,8 +412,8 @@ public final class HRCongeRepository {
     }
 
     /**
-     * Retourne toutes les périodes de suspension valides (non rejetées)
-     * d'un employé chevauchant la période donnée.
+     * Retourne toutes les periodes de suspension valides (non rejetees)
+     * d'un employe chevauchant la periode donnee.
      */
     public static BeanPeriode[] getAllPeriodeSuspensionValide(Integer bpartnerId,
                                                                 Timestamp dateDebut,
@@ -438,21 +457,19 @@ public final class HRCongeRepository {
     }
 
     // =========================================================================
-    // COMPTAGE ABSENCES NON TRAITÉES
+    // COMPTAGE ABSENCES NON TRAITEES
     // =========================================================================
 
     /**
-     * Retourne le nombre d'absences non traitées d'un employé sur une période.
-     * Utilisé par CongeAbsenceValidatorService pour décider si une demande
-     * d'explication doit être créée.
+     * Retourne le nombre d'absences non traitees d'un employe sur une periode.
      */
     public static int getNombreAbsencesNonTraitees(int bpartnerId,
                                                     Timestamp dateDebut,
                                                     Timestamp dateFin,
                                                     String trxName) {
         if (bpartnerId <= 0 || dateDebut == null || dateFin == null) {
-			return 0;
-		}
+            return 0;
+        }
 
         String sql = "SELECT COUNT(*) FROM " + I_HR_Absence.Table_Name
             + " WHERE " + I_HR_Absence.COLUMNNAME_C_BPartner_ID + " = ?"
@@ -470,8 +487,8 @@ public final class HRCongeRepository {
             pstmt.setTimestamp(3, dateFin);
             rs = pstmt.executeQuery();
             if (rs.next()) {
-				return rs.getInt(1);
-			}
+                return rs.getInt(1);
+            }
         } catch (SQLException erreurCatch) {
             log.warning("getNombreAbsencesNonTraitees : " + erreurCatch.getMessage());
         } finally {
