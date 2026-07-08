@@ -8,6 +8,7 @@ import org.compiere.model.PO;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.sitracel.conge.HRCongeRepository;
+import org.sitracel.conge.model.CongeStatut;
 import org.sitracel.conge.model.MHRHoliday;
 import org.sitracel.conge.model.MHRTypeConge;
 import org.sitracel.conge.modelvalidator.service.CongeAbsenceValidatorService;
@@ -19,12 +20,9 @@ import org.sitracel.time.HRCalendrierService;
 /**
  * Point central de traitement des evenements conges.
  *
- * CORRECTION (Session 9, suite) : detecterTransitionEtatConge()
- * utilisait holiday.isApprobation() pour detecter la transition et
- * declencher la notification HOLIDAY_APPROVED - or IsApprobation est
- * une colonne virtuelle de droit ("ai-je le droit d'approuver"),
- * calculee pour l'utilisateur qui consulte, pas l'etat reel de
- * l'enregistrement. Le bon champ est IsApprouve (etat persistant).
+ * Depuis Session 9 (v3) : l'etat repose sur HR_CongeStatut_ID (une
+ * seule colonne), plus sur 5 booleens paralleles. La detection de
+ * transition compare l'ancien et le nouvel ID de statut.
  *
  * NE PAS ajouter de logique metier directement ici.
  */
@@ -39,6 +37,7 @@ public class SitracelCongeGeneralModelValidator {
     public static String conge(PO po, int type) {
 
         if (ModelValidator.TYPE_BEFORE_NEW == type) {
+            po.set_ValueOfColumn(MHRHoliday.COLUMNNAME_HR_CongeStatut_ID, CongeStatut.EMIS);
             po.set_ValueOfColumn(MHRHoliday.COLUMNNAME_IsApprobation_Createur, false);
             po.set_ValueOfColumn(MHRHoliday.COLUMNNAME_IsValidation_Createur, false);
             po.set_ValueOfColumn(MHRHoliday.COLUMNNAME_Date_Emission,
@@ -148,31 +147,26 @@ public class SitracelCongeGeneralModelValidator {
     }
 
     /**
-     * CORRECTION : isApprouve()/COLUMNNAME_IsApprouve (etat reel),
-     * pas isApprobation()/COLUMNNAME_IsApprobation (droit virtuel).
+     * Detecte la transition de statut en comparant l'ancien et le
+     * nouvel HR_CongeStatut_ID, et declenche la notification adaptee.
      */
     private static void detecterTransitionEtatConge(MHRHoliday holiday, PO po) {
 
-        if (holiday.isApprouve()
-                && !getBooleanOld(po, MHRHoliday.COLUMNNAME_IsApprouve)) {
+        Object ancienneValeur = po.get_ValueOld(MHRHoliday.COLUMNNAME_HR_CongeStatut_ID);
+        int ancienStatut = (ancienneValeur instanceof Integer) ? (Integer) ancienneValeur : -1;
+        int nouveauStatut = holiday.getHR_CongeStatut_ID();
+
+        if (ancienStatut == nouveauStatut) {
+            return;
+        }
+
+        if (nouveauStatut == CongeStatut.APPROUVE) {
             NotificationControler.notify(NotificationEvent.HOLIDAY_APPROVED, po);
-            return;
-        }
-
-        if (holiday.isDesapprouve()
-                && !getBooleanOld(po, MHRHoliday.COLUMNNAME_IsDesapprouve)) {
+        } else if (nouveauStatut == CongeStatut.DESAPPROUVE) {
             NotificationControler.notify(NotificationEvent.HOLIDAY_DISAPPROVED, po);
-            return;
-        }
-
-        if (holiday.isValidee()
-                && !getBooleanOld(po, MHRHoliday.COLUMNNAME_IsValidee)) {
+        } else if (nouveauStatut == CongeStatut.VALIDE) {
             NotificationControler.notify(NotificationEvent.HOLIDAY_VALIDATED, po);
-            return;
-        }
-
-        if (holiday.isRejetee()
-                && !getBooleanOld(po, MHRHoliday.COLUMNNAME_IsRejetee)) {
+        } else if (nouveauStatut == CongeStatut.REJETE) {
             NotificationControler.notify(NotificationEvent.HOLIDAY_REJECTED, po);
         }
     }
@@ -186,20 +180,5 @@ public class SitracelCongeGeneralModelValidator {
                 || ModelValidator.TYPE_AFTER_NEW == type) {
             CongeAbsenceValidatorService.updateDepartment(lastElement.getC_BPartner_ID());
         }
-    }
-
-    // =========================================================================
-    // UTILITAIRE
-    // =========================================================================
-
-    private static boolean getBooleanOld(PO po, String columnName) {
-        Object oldValue = po.get_ValueOld(columnName);
-        if (oldValue instanceof Boolean) {
-            return (Boolean) oldValue;
-        }
-        if (oldValue instanceof String) {
-            return "Y".equalsIgnoreCase((String) oldValue);
-        }
-        return false;
     }
 }
