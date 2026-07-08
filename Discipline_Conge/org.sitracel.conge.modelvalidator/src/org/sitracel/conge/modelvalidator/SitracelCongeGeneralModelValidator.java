@@ -12,6 +12,7 @@ import org.sitracel.conge.model.CongeStatut;
 import org.sitracel.conge.model.MHRHoliday;
 import org.sitracel.conge.model.MHRTypeConge;
 import org.sitracel.conge.modelvalidator.service.CongeAbsenceValidatorService;
+import org.sitracel.employe.HRContratService;
 import org.sitracel.enumeration.NotificationEvent;
 import org.sitracel.notification.NotificationControler;
 import org.sitracel.paie.model.MHRElementBasePaieEmploye;
@@ -20,9 +21,10 @@ import org.sitracel.time.HRCalendrierService;
 /**
  * Point central de traitement des evenements conges.
  *
- * Depuis Session 9 (v3) : l'etat repose sur HR_CongeStatut_ID (une
- * seule colonne), plus sur 5 booleens paralleles. La detection de
- * transition compare l'ancien et le nouvel ID de statut.
+ * Depuis Session 9 (v4) : verification de l'eligibilite contrat/
+ * affectation (HRContratService.estEligible()) a la creation, avec
+ * derogation possible pour les roles RH (Lot 1, integration prevue
+ * depuis le debut du plan, jamais faite jusqu'ici).
  *
  * NE PAS ajouter de logique metier directement ici.
  */
@@ -37,15 +39,22 @@ public class SitracelCongeGeneralModelValidator {
     public static String conge(PO po, int type) {
 
         if (ModelValidator.TYPE_BEFORE_NEW == type) {
+            MHRHoliday holiday = (MHRHoliday) po;
+
+            String erreurEligibilite = validerEligibilite(holiday);
+            if (erreurEligibilite != null) {
+                return erreurEligibilite;
+            }
+
             po.set_ValueOfColumn(MHRHoliday.COLUMNNAME_HR_CongeStatut_ID, CongeStatut.EMIS);
             po.set_ValueOfColumn(MHRHoliday.COLUMNNAME_IsApprobation_Createur, false);
             po.set_ValueOfColumn(MHRHoliday.COLUMNNAME_IsValidation_Createur, false);
             po.set_ValueOfColumn(MHRHoliday.COLUMNNAME_Date_Emission,
                 new Timestamp(System.currentTimeMillis()));
 
-            String erreur = validerCoherenceConge((MHRHoliday) po);
-            if (erreur != null) {
-                return erreur;
+            String erreurCoherence = validerCoherenceConge(holiday);
+            if (erreurCoherence != null) {
+                return erreurCoherence;
             }
         }
 
@@ -69,6 +78,35 @@ public class SitracelCongeGeneralModelValidator {
         }
 
         return null;
+    }
+
+    /**
+     * Verifie que l'employe concerne par la demande a un contrat actif
+     * et une affectation, sauf derogation pour un role RH.
+     */
+    private static String validerEligibilite(MHRHoliday conge) {
+        if (conge.getC_BPartner_ID() <= 0) {
+            return null;
+        }
+
+        Timestamp maintenant = new Timestamp(System.currentTimeMillis());
+        String trxName = conge.get_TrxName();
+
+        if (HRContratService.estEligible(conge.getC_BPartner_ID(), maintenant, trxName)) {
+            return null;
+        }
+
+        int adRoleId = Env.getAD_Role_ID(Env.getCtx());
+        if (HRContratService.beneficieDerogationEligibilite(adRoleId, trxName)) {
+            log.info("Dérogation d'éligibilité appliquée pour C_BPartner_ID "
+                + conge.getC_BPartner_ID() + " (rôle RH)");
+            return null;
+        }
+
+        String motif = HRContratService.getMotifInaligibilite(
+            conge.getC_BPartner_ID(), maintenant, trxName);
+        return "Impossible de créer cette demande de congé : "
+            + (motif != null ? motif : "employé non éligible.");
     }
 
     private static String validerCoherenceConge(MHRHoliday conge) {
@@ -146,10 +184,6 @@ public class SitracelCongeGeneralModelValidator {
         return !(debutIdentique && finIdentique);
     }
 
-    /**
-     * Detecte la transition de statut en comparant l'ancien et le
-     * nouvel HR_CongeStatut_ID, et declenche la notification adaptee.
-     */
     private static void detecterTransitionEtatConge(MHRHoliday holiday, PO po) {
 
         Object ancienneValeur = po.get_ValueOld(MHRHoliday.COLUMNNAME_HR_CongeStatut_ID);
