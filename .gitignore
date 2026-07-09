@@ -1,0 +1,7 @@
+# Artefacts de build — jamais versionnés, se régénèrent depuis le code source
+Jar/
+*.zip
+
+# Eclipse / OSGi — dossiers de compilation locaux
+bin/
+target/
