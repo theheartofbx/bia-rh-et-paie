@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.compiere.model.PO;
 import org.compiere.util.Env;
 import org.sitracel.bean.BeanDestinataire;
-import org.sitracel.conge.model.MHRAutorisationConge;
 import org.sitracel.conge.model.MHRHoliday;
 import org.sitracel.discipline.model.MHRDemandeExplication;
 import org.sitracel.discipline.model.MHRPunishment;
@@ -383,11 +382,11 @@ public class NotificationControler {
     // =========================================================================
 
     private static int getTypeCongeId(MHRHoliday h) {
-        if (h.getEmission_Conge_ID() <= 0) return 0;
-        MHRAutorisationConge autorisation = new MHRAutorisationConge(
-            Env.getCtx(), h.getEmission_Conge_ID(), null
-        );
-        return autorisation != null ? autorisation.getHR_Type_Conge_ID() : 0;
+        // CORRIGÉ : Emission_Conge_ID pointe DIRECTEMENT vers HR_Type_Conge,
+        // pas vers HR_Autorisation_Conge (même bug que celui déjà corrigé
+        // dans HRCongeRepository/CongeProcessService — cette copie séparée
+        // dans NotificationControler avait été oubliée).
+        return h.getEmission_Conge_ID();
     }
 
     private static int getTypeSanctionId(MHRPunishment p) {
