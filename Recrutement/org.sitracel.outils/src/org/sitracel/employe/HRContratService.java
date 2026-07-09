@@ -18,14 +18,11 @@ import org.sitracel.contrat.model.MHRContrat;
  * "actif" à une date donnée. Ils ne doivent jamais interroger directement
  * HR_Contrat ou HR_Affectation.
  *
- * Remplace à terme HREmployeService.getDateDernierContrat() (heuristique
- * fragile basée sur HR_ElementBasePaieEmploye) — ce remplacement se fera
- * à l'Étape 6 du plan, une fois ce service éprouvé.
- *
- * Depuis Session 9 : ajout de la dérogation par rôle (utilisée par
- * Congé, et prévue pour Discipline selon le même principe).
- * Ajout également des méthodes de département (via le poste), utilisées
- * par le calcul de disponibilité département dans Congé.
+ * Depuis cette session : ajout de isUserRH(), déplacée depuis
+ * MissionCalloutRepository — un ModelValidator (mission.modelvalidator)
+ * en a besoin sans pouvoir dépendre du bundle callout (mauvais sens de
+ * dépendance), donc centralisée ici comme le reste des vérifications
+ * de droits transversales.
  */
 public final class HRContratService {
 
@@ -74,10 +71,6 @@ public final class HRContratService {
     /**
      * Retourne les C_BPartner_ID des employés appartenant au même
      * département qu'un employé donné, à une date de référence.
-     *
-     * Retourne une liste vide si l'employé n'a pas de département
-     * identifiable à cette date (ce n'est pas une erreur bloquante,
-     * simplement un cas où le calcul de disponibilité ne s'applique pas).
      */
     public static List<Integer> getBPartnersMemeDepartement(int bpartnerId, Timestamp dateReference, String trxName) {
         Integer departementId = getDepartementActuel(bpartnerId, dateReference, trxName);
@@ -130,6 +123,29 @@ public final class HRContratService {
             }
         }
         return false;
+    }
+
+    /**
+     * Indique si l'utilisateur porte, parmi TOUS ses rôles assignés
+     * (pas seulement le rôle courant de la session), un rôle RH.
+     *
+     * Différent de beneficieDerogationEligibilite() qui vérifie un seul
+     * AD_Role_ID donné (typiquement le rôle courant) — ici on scanne
+     * tous les rôles de l'utilisateur.
+     */
+    public static boolean isUserRH(int adUserId, String trxName) {
+        if (adUserId <= 0) {
+            return false;
+        }
+
+        String sql =
+            "SELECT 1 "
+            + "FROM AD_User_Roles ur "
+            + "JOIN AD_Role r ON r.AD_Role_ID = ur.AD_Role_ID "
+            + "WHERE ur.AD_User_ID = ? "
+            + "AND r.Name IN ('Ressource Humaine', 'Ressource Humaine - Responsable')";
+
+        return DB.getSQLValue(trxName, sql, adUserId) == 1;
     }
 
     private static String getNomRole(int adRoleId, String trxName) {

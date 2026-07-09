@@ -1,20 +1,26 @@
 package org.sitracel.mission.callout.service;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 
+import org.compiere.util.CLogger;
 import org.compiere.util.DB;
+import org.sitracel.employe.HRContratService;
 import org.sitracel.mission.model.MHRMissionValidation;
 import org.sitracel.mission.model.MHRTypeValidation;
 
 /**
  * Repository — requêtes SQL propres au callout mission.
  *
- * Regroupe les requêtes nécessaires au recalcul de l'état
- * de validation d'une mission.
- *
- * Remplace SqlControlerMission.
+ * Remplace SqlControlerMission (supprimé).
+ * isUserRH() délègue maintenant à HRContratService (outils) — le
+ * ModelValidator mission en a aussi besoin sans pouvoir dépendre de ce
+ * bundle callout, donc la logique vit désormais dans outils.
  */
 public final class MissionCalloutRepository {
+
+    private static final CLogger log = CLogger.getCLogger(MissionCalloutRepository.class);
 
     private MissionCalloutRepository() {}
 
@@ -22,13 +28,6 @@ public final class MissionCalloutRepository {
     // ÉTAT DE VALIDATION
     // =========================================================================
 
-    /**
-     * Retourne la date de validation finale d'une mission.
-     *
-     * La date finale est le MAX des dates de validation des validations
-     * obligatoires, uniquement si TOUTES les validations obligatoires
-     * sont validées (et aucune rejetée).
-     */
     public static Timestamp getDateValidationFinale(int idMission, String trxName) {
         String sql =
             "SELECT MAX(mv." + MHRMissionValidation.COLUMNNAME_Date_Validation + ") "
@@ -60,10 +59,6 @@ public final class MissionCalloutRepository {
         return DB.getSQLValueTS(trxName, sql, idMission, idMission);
     }
 
-    /**
-     * Vérifie si au moins une validation obligatoire est rejetée.
-     * Si oui, la mission est considérée rejetée.
-     */
     public static boolean existeRejetObligatoire(int idMission, String trxName)
             throws Exception {
         String sql =
@@ -79,10 +74,6 @@ public final class MissionCalloutRepository {
         return DB.getSQLValue(trxName, sql, idMission) == 1;
     }
 
-    /**
-     * Vérifie si toutes les validations obligatoires sont validées.
-     * Si oui, la mission peut être considérée comme validée.
-     */
     public static boolean isMissionValide(int idMission, String trxName)
             throws Exception {
         String sql =
@@ -102,5 +93,50 @@ public final class MissionCalloutRepository {
             + ")";
 
         return DB.getSQLValue(trxName, sql, idMission) == 1;
+    }
+
+    // =========================================================================
+    // DÉTERMINATION DU TYPE DE VALIDATION D'UN VOTANT
+    // =========================================================================
+
+    /** @deprecated Utiliser {@link HRContratService#isUserRH} */
+    @Deprecated
+    public static boolean isUserRH(int adUserId) {
+        return HRContratService.isUserRH(adUserId, null);
+    }
+
+    public static Integer getCategorieResponsabilite(int hrMissionId, int adUserId) {
+        String sql = "SELECT adempiere.fn_get_hr_mission_categorie_responsabilite(?, ?)";
+
+        int value = DB.getSQLValue(null, sql, hrMissionId, adUserId);
+        return value > 0 ? value : null;
+    }
+
+    public static Integer getTypeValidationIdByName(String keyword) {
+        if (keyword == null) return null;
+
+        String sql =
+            "SELECT " + MHRTypeValidation.COLUMNNAME_HR_TypeValidation_ID + " "
+            + "FROM " + MHRTypeValidation.Table_Name + " "
+            + "WHERE UPPER(Name) LIKE ? "
+            + "AND IsActive = 'Y' "
+            + "ORDER BY Created DESC";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = DB.prepareStatement(sql, null);
+            pstmt.setString(1, "%" + keyword.toUpperCase() + "%");
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            log.warning("getTypeValidationIdByName : " + e.getMessage());
+        } finally {
+            DB.close(rs, pstmt);
+        }
+
+        return null;
     }
 }

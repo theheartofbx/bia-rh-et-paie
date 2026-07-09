@@ -6,15 +6,20 @@ import org.adempiere.base.IColumnCallout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.util.Env;
-import org.sitracel.mission.callout.controller.SqlControlerMission;
+import org.sitracel.mission.callout.service.MissionCalloutRepository;
 import org.sitracel.mission.model.MHRMissionValidation;
 
-public class SitracelMissionCalloutMIssionValidation implements IColumnCallout{
+/**
+ * Corrigé : appelait encore l'ancien SqlControlerMission (@Deprecated,
+ * maintenant supprimé) alors que MissionCalloutRepository (le remplaçant)
+ * existait déjà à côté — deux copies du même code, avec un risque de
+ * divergence silencieuse comme celui déjà rencontré dans Discipline.
+ */
+public class SitracelMissionCalloutMIssionValidation implements IColumnCallout {
 
-	@Override
-	public String start(Properties ctx, int WindowNo, GridTab mTab, GridField mField, Object value, Object oldValue) {
-		// TODO Auto-generated method stub
-		if (value == null) {
+    @Override
+    public String start(Properties ctx, int WindowNo, GridTab mTab, GridField mField, Object value, Object oldValue) {
+        if (value == null) {
             return "";
         }
 
@@ -22,18 +27,18 @@ public class SitracelMissionCalloutMIssionValidation implements IColumnCallout{
 
         // Si on coche IsValidee → décocher IsRejetee
         if (mField.getColumnName().equals(MHRMissionValidation.COLUMNNAME_IsValidee) && isChecked) {
-        	mTab.setValue("IsRejetee", "N");
-        	setTypeValidation(ctx, mTab);
+            mTab.setValue("IsRejetee", "N");
+            setTypeValidation(ctx, mTab);
         }
 
         // Si on coche IsRejetee → décocher IsValidee
         if (mField.getColumnName().equals(MHRMissionValidation.COLUMNNAME_IsRejetee) && isChecked) {
-        	mTab.setValue("IsValidee", "N");
-        	setTypeValidation(ctx, mTab);
+            mTab.setValue("IsValidee", "N");
+            setTypeValidation(ctx, mTab);
         }
-		return null;
-	}
-	
+        return null;
+    }
+
     /**
      * Détermine et positionne HR_TypeValidation_ID
      */
@@ -47,8 +52,8 @@ public class SitracelMissionCalloutMIssionValidation implements IColumnCallout{
         }
 
         // 1) RH ?
-        if (SqlControlerMission.isUserRH(adUserId)) {
-            Integer typeId = SqlControlerMission.getTypeValidationIdByName("RH");
+        if (MissionCalloutRepository.isUserRH(adUserId)) {
+            Integer typeId = MissionCalloutRepository.getTypeValidationIdByName("RH");
             if (typeId != null) {
                 mTab.setValue("HR_TypeValidation_ID", typeId);
             }
@@ -56,25 +61,24 @@ public class SitracelMissionCalloutMIssionValidation implements IColumnCallout{
         }
 
         // 2) Catégorie de responsabilité
-        Integer categorie = SqlControlerMission.getCategorieResponsabilite(hrMissionId, adUserId);
+        Integer categorie = MissionCalloutRepository.getCategorieResponsabilite(hrMissionId, adUserId);
 
         if (categorie == null) {
             return;
         }
 
         if (categorie == 1) {
-            Integer typeId = SqlControlerMission.getTypeValidationIdByName("N+1");
+            Integer typeId = MissionCalloutRepository.getTypeValidationIdByName("N+1");
             if (typeId != null) {
                 mTab.setValue("HR_TypeValidation_ID", typeId);
             }
         }
 
         if (categorie == 2) {
-            Integer typeId = SqlControlerMission.getTypeValidationIdByName("N+2");
+            Integer typeId = MissionCalloutRepository.getTypeValidationIdByName("N+2");
             if (typeId != null) {
                 mTab.setValue("HR_TypeValidation_ID", typeId);
             }
         }
     }
-
 }

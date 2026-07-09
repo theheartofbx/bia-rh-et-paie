@@ -27,12 +27,22 @@ public enum ModuleAutorisation {
     ABSENCE(
         "HR_Autorisation_Absence",
         "HR_Type_Absence_ID"
+    ),
+
+    /*
+     * MISSION : la clé n'est PAS le type de mission (HR_Type_Mission_ID)
+     * mais le type de VOTE (HR_TypeValidation_ID) — Mission fonctionne
+     * par vote à plusieurs acteurs (N+1, N+2, RH), pas par approbation
+     * unique comme Congé/Discipline. Voir HR_MissionAutorisation :
+     * "cette catégorie de responsabilité peut-elle voter ce type de
+     * validation".
+     */
+    MISSION(
+        "HR_MissionAutorisation",
+        "HR_TypeValidation_ID"
     );
 
     /*
-     * MISSION — à décommenter quand la table d'autorisation sera créée :
-     * MISSION("HR_Autorisation_Mission", "HR_Type_Mission_ID"),
-     *
      * RECRUTEMENT — à décommenter quand la table sera créée :
      * RECRUTEMENT("HR_Autorisation_Recrutement", "HR_Type_Recrutement_ID"),
      */
