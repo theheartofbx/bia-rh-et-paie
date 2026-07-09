@@ -27,7 +27,7 @@ public final class CongeCalloutService {
         BeanInfoCongeDepartement bean = BeanFactory.getBeanInfoCongeDepartement();
         if (bpartnerId == null || dateDebut == null || dateFin == null) return bean;
 
-        int nbTotal   = CongeCalloutRepository.getNombreEmployeDepartement(bpartnerId, null);
+        int nbTotal   = CongeCalloutRepository.getNombreEmployeDepartement(bpartnerId, dateDebut, null);
         int nbEnConge = CongeCalloutRepository.getNombreEmployeDepartementEnConge(
                             bpartnerId, dateDebut, dateFin, null);
         Timestamp jourCritique = CongeCalloutRepository.getJourCritiqueDepartement(

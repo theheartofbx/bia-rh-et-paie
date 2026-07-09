@@ -148,4 +148,85 @@ public class HRContratRepository {
         }
         return resultat;
     }
+
+    /**
+     * Retourne l'ID du département du poste actuellement occupé par un
+     * employé (via son affectation active), à la date donnée.
+     *
+     * Le département est un attribut du POSTE (HR_Job.HR_Department_ID),
+     * pas de l'affectation elle-même — HR_Affectation ne porte aucune
+     * colonne "département".
+     *
+     * @return null si l'employé n'a pas d'affectation active à cette date,
+     *         ou si son poste n'a pas de département renseigné.
+     */
+    public static Integer getDepartementActuel(Properties ctx, int bpartnerId, Timestamp dateReference, String trxName) {
+        MHRAffectation affectation = getAffectationActive(ctx, bpartnerId, dateReference, trxName);
+        if (affectation == null || affectation.getHR_Job_ID() <= 0) {
+            return null;
+        }
+
+        String sql = "SELECT HR_Department_ID FROM HR_Job WHERE HR_Job_ID = ?";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = DB.prepareStatement(sql, trxName);
+            pstmt.setInt(1, affectation.getHR_Job_ID());
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int departementId = rs.getInt(1);
+                return rs.wasNull() ? null : departementId;
+            }
+        } catch (SQLException e) {
+            log.warning("getDepartementActuel : " + e.getMessage());
+        } finally {
+            DB.close(rs, pstmt);
+        }
+        return null;
+    }
+
+    /**
+     * Retourne les C_BPartner_ID de tous les employés dont le poste actuel
+     * (via leur affectation active) appartient au département donné, à
+     * la date de référence.
+     *
+     * Remplace l'ancienne jointure directe sur HR_EmployeeJob.HR_Department_ID,
+     * qui n'a jamais fonctionné : cette colonne n'existe pas sur
+     * HR_EmployeeJob (bug jamais détecté car l'erreur SQL était avalée
+     * silencieusement par le code appelant).
+     */
+    public static List<Integer> getBPartnersMemeDepartement(int departementId, Timestamp dateReference, String trxName) {
+        List<Integer> resultat = new ArrayList<>();
+        if (departementId <= 0 || dateReference == null) {
+            return resultat;
+        }
+
+        String sql = "SELECT a." + I_HR_Affectation.COLUMNNAME_C_BPartner_ID
+            + " FROM " + I_HR_Affectation.Table_Name + " a"
+            + " JOIN HR_Job j ON j.HR_Job_ID = a." + I_HR_Affectation.COLUMNNAME_HR_Job_ID
+            + " WHERE j.HR_Department_ID = ?"
+            + "   AND a." + I_HR_Affectation.COLUMNNAME_Date_Debut + " <= ?"
+            + "   AND (a." + I_HR_Affectation.COLUMNNAME_Date_Fin + " IS NULL"
+            + "        OR a." + I_HR_Affectation.COLUMNNAME_Date_Fin + " >= ?)"
+            + "   AND a.IsActive = 'Y'";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = DB.prepareStatement(sql, trxName);
+            pstmt.setInt(1, departementId);
+            pstmt.setTimestamp(2, dateReference);
+            pstmt.setTimestamp(3, dateReference);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                resultat.add(rs.getInt(1));
+            }
+        } catch (SQLException e) {
+            log.warning("getBPartnersMemeDepartement : " + e.getMessage());
+        } finally {
+            DB.close(rs, pstmt);
+        }
+        return resultat;
+    }
 }

@@ -1,6 +1,8 @@
 package org.sitracel.employe;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
@@ -22,6 +24,8 @@ import org.sitracel.contrat.model.MHRContrat;
  *
  * Depuis Session 9 : ajout de la dérogation par rôle (utilisée par
  * Congé, et prévue pour Discipline selon le même principe).
+ * Ajout également des méthodes de département (via le poste), utilisées
+ * par le calcul de disponibilité département dans Congé.
  */
 public final class HRContratService {
 
@@ -56,6 +60,31 @@ public final class HRContratService {
 
     public static MHRAffectation getAffectationActive(int bpartnerId, Timestamp dateReference, String trxName) {
         return HRContratRepository.getAffectationActive(Env.getCtx(), bpartnerId, dateReference, trxName);
+    }
+
+    /**
+     * Retourne l'ID du département du poste actuel d'un employé, ou null
+     * si l'employé n'a pas d'affectation active ou si son poste n'a pas
+     * de département renseigné.
+     */
+    public static Integer getDepartementActuel(int bpartnerId, Timestamp dateReference, String trxName) {
+        return HRContratRepository.getDepartementActuel(Env.getCtx(), bpartnerId, dateReference, trxName);
+    }
+
+    /**
+     * Retourne les C_BPartner_ID des employés appartenant au même
+     * département qu'un employé donné, à une date de référence.
+     *
+     * Retourne une liste vide si l'employé n'a pas de département
+     * identifiable à cette date (ce n'est pas une erreur bloquante,
+     * simplement un cas où le calcul de disponibilité ne s'applique pas).
+     */
+    public static List<Integer> getBPartnersMemeDepartement(int bpartnerId, Timestamp dateReference, String trxName) {
+        Integer departementId = getDepartementActuel(bpartnerId, dateReference, trxName);
+        if (departementId == null) {
+            return new ArrayList<>();
+        }
+        return HRContratRepository.getBPartnersMemeDepartement(departementId, dateReference, trxName);
     }
 
     /**
