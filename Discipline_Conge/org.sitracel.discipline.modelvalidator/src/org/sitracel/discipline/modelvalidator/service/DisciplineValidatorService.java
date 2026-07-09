@@ -5,16 +5,27 @@ import java.sql.Timestamp;
 import org.compiere.model.ModelValidator;
 import org.compiere.model.PO;
 import org.compiere.util.Env;
+import org.sitracel.conge.HRCongeRepository;
 import org.sitracel.discipline.model.MHRDemandeExplication;
+import org.sitracel.discipline.model.MHRDureeSanction;
 import org.sitracel.discipline.model.MHRPunishment;
 import org.sitracel.enumeration.NotificationEvent;
 import org.sitracel.notification.NotificationControler;
+import org.sitracel.time.HRCalendrierService;
 
 /**
  * Service — logique métier du modelvalidator discipline.
  *
  * Gère les transitions d'état des sanctions et demandes d'explication,
- * et déclenche les notifications correspondantes.
+ * déclenche les notifications correspondantes, et applique les
+ * garde-fous de validation.
+ *
+ * Depuis cette session : duplication des garde-fous du callout
+ * (CalloutDureeSuspension/CalloutDateDebutApplication) côté serveur —
+ * même principe déjà appliqué à Congé et Absence. Un callout ne se
+ * déclenche que depuis l'écran iDempiere ; seul le ModelValidator
+ * garantit la règle peu importe l'origine de l'enregistrement (import,
+ * API, workflow...).
  *
  * Remplace ModelValidatorDisciplineController.
  */
@@ -83,11 +94,23 @@ public final class DisciplineValidatorService {
     /**
      * Traite les événements sur MHRPunishment.
      *
-     * À la création : initialiser les flags et horodater.
-     * Après création : notifier la création.
-     * Après modification : détecter la transition d'état.
+     * Avant enregistrement (création ou modification) : valide la période
+     * de suspension (garde-fou dupliqué du callout).
+     * À la création : initialise les flags et horodate.
+     * Après création : notifie la création.
+     * Après modification : détecte la transition d'état.
+     *
+     * @return null si tout est valide, un message d'erreur bloquant sinon
      */
-    public static void discipline(MHRPunishment punishment, int type) {
+    public static String discipline(MHRPunishment punishment, int type) {
+
+        // Garde-fou : valider la période de suspension avant tout enregistrement
+        if (ModelValidator.TYPE_BEFORE_NEW == type || ModelValidator.TYPE_BEFORE_CHANGE == type) {
+            String erreur = validerPeriodeSuspension(punishment);
+            if (erreur != null) {
+                return erreur;
+            }
+        }
 
         // À la création : initialiser
         if (ModelValidator.TYPE_BEFORE_NEW == type) {
@@ -106,11 +129,55 @@ public final class DisciplineValidatorService {
         if (ModelValidator.TYPE_AFTER_CHANGE == type) {
             detecterTransitionEtatSanction(punishment);
         }
+
+        return null;
     }
 
     // =========================================================================
     // UTILITAIRES PRIVÉS
     // =========================================================================
+
+    /**
+     * Valide qu'une période de suspension ne chevauche pas une autre
+     * suspension, un congé ou une absence, et que la date de début n'est
+     * pas dans le passé.
+     *
+     * Ne s'applique que si Date_Debut_Application ET HR_Duree_Sanction_ID
+     * sont tous les deux renseignés (sinon rien à valider pour l'instant).
+     *
+     * @return null si valide, un message d'erreur bloquant sinon
+     */
+    private static String validerPeriodeSuspension(MHRPunishment punishment) {
+        Timestamp dateDebut = punishment.getDate_Debut_Application();
+        if (dateDebut == null || punishment.getHR_Duree_Sanction_ID() <= 0) {
+            return null;
+        }
+
+        Timestamp maintenant = new Timestamp(System.currentTimeMillis());
+        if (dateDebut.before(maintenant)) {
+            return "La date de début de la sanction ne peut pas être avant la date d'aujourd'hui.";
+        }
+
+        MHRDureeSanction dureeSanction = new MHRDureeSanction(
+            Env.getCtx(), punishment.getHR_Duree_Sanction_ID(), punishment.get_TrxName());
+        Timestamp dateFin = HRCalendrierService.ajouterJoursOuvrables(
+            dateDebut, dureeSanction.getNombre_De_Jour());
+
+        Integer bpartnerId = punishment.getC_BPartner_ID();
+        String trxName = punishment.get_TrxName();
+
+        if (HRCongeRepository.chevaucheSuspensionNonRejete(bpartnerId, dateDebut, dateFin, trxName)) {
+            return "Une autre période de suspension a été enregistrée durant cette période.";
+        }
+        if (HRCongeRepository.chevaucheAnyCongeNonRejete(bpartnerId, dateDebut, dateFin, trxName)) {
+            return "Une période de congé a été enregistrée durant cette période.";
+        }
+        if (HRCongeRepository.isPeriodeAbsence(bpartnerId, dateDebut, dateFin, trxName)) {
+            return "Une absence a été enregistrée durant cette période.";
+        }
+
+        return null;
+    }
 
     /**
      * Détecte la transition d'état d'une sanction et déclenche la notification.
@@ -119,8 +186,8 @@ public final class DisciplineValidatorService {
     private static void detecterTransitionEtatSanction(MHRPunishment punishment) {
 
         // Approbation
-        if (punishment.isApprobation()
-                && !getBooleanOld(punishment, MHRPunishment.COLUMNNAME_IsApprobation)) {
+        if (punishment.isApprouve()
+                && !getBooleanOld(punishment, MHRPunishment.COLUMNNAME_IsApprouve)) {
             NotificationControler.notify(NotificationEvent.SANCTION_APPROVED, punishment);
             return;
         }

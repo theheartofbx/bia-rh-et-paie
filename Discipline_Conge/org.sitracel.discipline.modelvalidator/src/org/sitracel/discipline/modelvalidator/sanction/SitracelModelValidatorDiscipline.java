@@ -8,6 +8,13 @@ import org.compiere.util.CLogger;
 import org.sitracel.discipline.model.MHRPunishment;
 import org.sitracel.discipline.modelvalidator.service.DisciplineValidatorService;
 
+/**
+ * Corrigé : modelChange() ignorait complètement le retour de
+ * DisciplineValidatorService.discipline() (renvoyait toujours null) —
+ * même si le service voulait bloquer un enregistrement, rien ne
+ * l'empêchait jamais réellement. Le service retourne maintenant un
+ * message d'erreur (String) au lieu de void, et ce message est propagé.
+ */
 public class SitracelModelValidatorDiscipline implements ModelValidator {
 
     @Override
@@ -32,12 +39,11 @@ public class SitracelModelValidatorDiscipline implements ModelValidator {
             return null;
         }
         try {
-            DisciplineValidatorService.discipline((MHRPunishment) po, type);
+            return DisciplineValidatorService.discipline((MHRPunishment) po, type);
         } catch (Exception e) {
             CLogger.get().severe("Erreur discipline() : " + e.getMessage());
             throw e;
         }
-        return null;
     }
 
     @Override
