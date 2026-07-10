@@ -8,7 +8,7 @@ public class SitracelCongeModelValidatorFactory implements IModelValidatorFactor
 
     @Override
     public ModelValidator newModelValidatorInstance(String className) {
-        if (className.equals("org.sitracel.modelvalidator.v2.conge.SitracelModelValidatorConge")) {
+        if (className.equals("org.sitracel.conge.modelvalidator.conge.SitracelModelValidatorConge")) {
             return new SitracelModelValidatorConge();
         }
         return null;

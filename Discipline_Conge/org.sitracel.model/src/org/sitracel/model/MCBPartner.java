@@ -8,201 +8,204 @@ import java.util.Properties;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.util.DB;
 import org.sitracel.bean.BeanIdentifiant;
-// COMMENTÉ — attend découplage paie: import org.sitracel.paie.model.I_HR_ElementBasePaieEmploye;
 
-public class MCBPartner extends X_C_BPartner{
-	private static final long serialVersionUID = 1610077844542696959L;
+/**
+ * Corrigé cette session : getIdentifiant()/getIdentifiantByBPartner()
+ * s'appuyaient sur HR_ElementBasePaieEmploye (ancienne table de paie,
+ * jamais migrée) pour retrouver le poste d'un employé — au lieu de
+ * HR_Affectation. Resté invisible tant que les employés testés avaient
+ * une ligne historique dans cette ancienne table ; révélé en créant des
+ * employés de test propres (uniquement dans HR_Contrat/HR_Affectation),
+ * qui se retrouvaient avec un poste introuvable (champs "Poste de
+ * l'Employé"/"Poste Emetteur" vides malgré leur caractère obligatoire,
+ * bloquant tout l'enregistrement dans Absence/Congé/Discipline).
+ *
+ * Cette méthode est utilisée par TOUT le projet (Congé, Discipline,
+ * Mission, Recrutement) via HREmployeService.getIdentifiant(), qui
+ * délègue directement ici — donc ce bug affectait potentiellement
+ * chaque garde-fou d'habilitation et chaque notification de la session.
+ */
+public class MCBPartner extends X_C_BPartner {
 
-	public MCBPartner(Properties ctx, int C_BPartner_ID, String trxName) {
-		super(ctx, C_BPartner_ID, trxName);
-		// TODO Auto-generated constructor stub
-	}
+private static final long serialVersionUID = 1610077844542696959L;
 
-	public MCBPartner(Properties ctx, ResultSet rs, String trxName) {
-		super(ctx, rs, trxName);
-		// TODO Auto-generated constructor stub
-	}
+public MCBPartner(Properties ctx, int C_BPartner_ID, String trxName) {
+super(ctx, C_BPartner_ID, trxName);
+}
 
-	/**
-	 * Récupère les informations d'identification d'un employé à partir de son utilisateur AD_User.
-	 * On va chercher : nom, matricule, poste, numéro poste, identifiant employé.
-	 */
-	public static BeanIdentifiant getIdentifiant(int adUserId, String trxName) {
+public MCBPartner(Properties ctx, ResultSet rs, String trxName) {
+super(ctx, rs, trxName);
+}
 
-	    if (adUserId <= 0) {
-	        return null;
-	    }
+/**
+ * Récupère les informations d'identification d'un employé à partir
+ * de son utilisateur AD_User (poste retrouvé via son affectation
+ * active, pas via un historique de paie).
+ */
+public static BeanIdentifiant getIdentifiant(int adUserId, String trxName) {
 
-	    String sql =
-	        "SELECT " +
-	        " cb." + I_C_BPartner.COLUMNNAME_Name + " AS Nom, " +
-	        " cb." + I_C_BPartner.COLUMNNAME_Name2 + " AS Prenom, " +
-	        " cb." + I_C_BPartner.COLUMNNAME_Sex + " AS Sexe, " +
-	        " cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID + " AS NumEmploye, " +
-	        " cb." + I_C_BPartner.COLUMNNAME_Value + " AS Matricule, " +
-	        " job." + I_HR_Job.COLUMNNAME_Name + " AS Poste, " +
-	        " job." + I_HR_Job.COLUMNNAME_HR_Job_ID + " AS NumPoste " +
-	        "FROM AD_User ad " +
-	        "INNER JOIN " + I_C_BPartner.Table_Name + " cb " +
-	        "        ON cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID + " = ad.C_BPartner_ID " +
-	        "LEFT JOIN " + "HR_ElementBasePaieEmploye" + " el " +
-	        "       ON el." + "C_BPartner_ID" + " = cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID +
-	        "      AND el.IsActive='Y' " +
-	        "      AND el." + "Date_Debut" + " = ( " +
-	        "          SELECT MAX(e2." + "Date_Debut" + ") " +
-	        "          FROM " + "HR_ElementBasePaieEmploye" + " e2 " +
-	        "          WHERE e2." + "C_BPartner_ID" + " = cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID +
-	        "          AND e2.IsActive='Y' ) " +
-	        "LEFT JOIN " + I_HR_Job.Table_Name + " job " +
-	        "       ON job." + I_HR_Job.COLUMNNAME_HR_Job_ID + " = el." + "HR_Job_ID" +
-	        "      AND job.IsActive='Y' " +
-	        "WHERE ad.AD_User_ID = ?";
+    if (adUserId <= 0) {
+        return null;
+    }
 
-	    try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
+    String sql =
+        "SELECT " +
+        " cb." + I_C_BPartner.COLUMNNAME_Name + " AS Nom, " +
+        " cb." + I_C_BPartner.COLUMNNAME_Name2 + " AS Prenom, " +
+        " cb." + I_C_BPartner.COLUMNNAME_Sex + " AS Sexe, " +
+        " cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID + " AS NumEmploye, " +
+        " cb." + I_C_BPartner.COLUMNNAME_Value + " AS Matricule, " +
+        " job." + I_HR_Job.COLUMNNAME_Name + " AS Poste, " +
+        " job." + I_HR_Job.COLUMNNAME_HR_Job_ID + " AS NumPoste " +
+        "FROM AD_User ad " +
+        "INNER JOIN " + I_C_BPartner.Table_Name + " cb " +
+        "        ON cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID + " = ad.C_BPartner_ID " +
+        "LEFT JOIN HR_Affectation a " +
+        "       ON a.C_BPartner_ID = cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID +
+        "      AND a.IsActive='Y' " +
+        "      AND a.Date_Debut <= now() " +
+        "      AND (a.Date_Fin IS NULL OR a.Date_Fin >= now()) " +
+        "LEFT JOIN " + I_HR_Job.Table_Name + " job " +
+        "       ON job." + I_HR_Job.COLUMNNAME_HR_Job_ID + " = a.HR_Job_ID " +
+        "      AND job.IsActive='Y' " +
+        "WHERE ad.AD_User_ID = ? " +
+        "ORDER BY a.Date_Debut DESC " +
+        "LIMIT 1";
 
-	        pstmt.setInt(1, adUserId);
+    try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
 
-	        try (ResultSet rs = pstmt.executeQuery()) {
+        pstmt.setInt(1, adUserId);
 
-	        	if (!rs.next()) {
-	                return null;
-	            }
+        try (ResultSet rs = pstmt.executeQuery()) {
 
-	            BeanIdentifiant bean = new BeanIdentifiant();
+        if (!rs.next()) {
+                return null;
+            }
 
-	            String nomComplet = buildNomComplet(
-	                rs.getString("Sexe"),
-	                rs.getString("Nom"),
-	                rs.getString("Prenom")
-	            );
+            BeanIdentifiant bean = new BeanIdentifiant();
 
-	            bean.setNomEmploye(nomComplet);
-	            bean.setNumEmploye(rs.getInt("NumEmploye"));
-	            bean.setMatriculeEmploye(rs.getString("Matricule"));
-	            bean.setNomPoste(rs.getString("Poste"));
-	            bean.setNumeroPoste(rs.getInt("NumPoste"));
+            String nomComplet = buildNomComplet(
+                rs.getString("Sexe"),
+                rs.getString("Nom"),
+                rs.getString("Prenom")
+            );
 
-	            return bean;
-	        }
+            bean.setNomEmploye(nomComplet);
+            bean.setNumEmploye(rs.getInt("NumEmploye"));
+            bean.setMatriculeEmploye(rs.getString("Matricule"));
+            bean.setNomPoste(rs.getString("Poste"));
+            bean.setNumeroPoste(rs.getInt("NumPoste"));
 
-	    } catch (SQLException e) {
-	        throw new AdempiereException(
-	            "Erreur lors de la récupération de l'identité utilisateur (AD_User_ID=" + adUserId + ")",
-	            e
-	        );
-	    }
-	}
-	
-	/**
-	 * Récupère les informations d'identification d'un employé
-	 * à partir de son C_BPartner_ID (employé RH).
-	 *
-	 * Infos retournées :
-	 * - Nom
-	 * - Numéro employé
-	 * - Matricule
-	 * - Poste
-	 * - Numéro poste
-	 */
-	public static BeanIdentifiant getIdentifiantByBPartner(
-	        int cBPartnerId,
-	        String trxName
-	) {
+            return bean;
+        }
 
-	    if (cBPartnerId <= 0) {
-	        return null;
-	    }
+    } catch (SQLException e) {
+        throw new AdempiereException(
+            "Erreur lors de la récupération de l'identité utilisateur (AD_User_ID=" + adUserId + ")",
+            e
+        );
+    }
+}
 
-	    String sql =
-	        "SELECT " +
-	        " cb." + I_C_BPartner.COLUMNNAME_Name + " AS Nom, " +
-	        " cb." + I_C_BPartner.COLUMNNAME_Name2 + " AS Prenom, " +
-	        " cb." + I_C_BPartner.COLUMNNAME_Sex + " AS Sexe, " +
-	        " cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID + " AS NumEmploye, " +
-	        " cb." + I_C_BPartner.COLUMNNAME_Value + " AS Matricule, " +
-	        " job." + I_HR_Job.COLUMNNAME_Name + " AS Poste, " +
-	        " job." + I_HR_Job.COLUMNNAME_HR_Job_ID + " AS NumPoste " +
-	        "FROM " + I_C_BPartner.Table_Name + " cb " +
-	        "LEFT JOIN " + "HR_ElementBasePaieEmploye" + " el " +
-	        "       ON el." + "C_BPartner_ID" +
-	        "        = cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID +
-	        "      AND el.IsActive='Y' " +
-	        "      AND el." + "Date_Debut" + " = ( " +
-	        "          SELECT MAX(e2." + "Date_Debut" + ") " +
-	        "          FROM " + "HR_ElementBasePaieEmploye" + " e2 " +
-	        "          WHERE e2." + "C_BPartner_ID" +
-	        "                = cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID +
-	        "          AND e2.IsActive='Y' ) " +
-	        "LEFT JOIN " + I_HR_Job.Table_Name + " job " +
-	        "       ON job." + I_HR_Job.COLUMNNAME_HR_Job_ID +
-	        "        = el." + "HR_Job_ID" +
-	        "      AND job.IsActive='Y' " +
-	        "WHERE cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID + " = ?";
+/**
+ * Récupère les informations d'identification d'un employé
+ * à partir de son C_BPartner_ID (poste retrouvé via son affectation
+ * active, pas via un historique de paie).
+ */
+public static BeanIdentifiant getIdentifiantByBPartner(
+        int cBPartnerId,
+        String trxName
+) {
 
-	    try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
+    if (cBPartnerId <= 0) {
+        return null;
+    }
 
-	        pstmt.setInt(1, cBPartnerId);
+    String sql =
+        "SELECT " +
+        " cb." + I_C_BPartner.COLUMNNAME_Name + " AS Nom, " +
+        " cb." + I_C_BPartner.COLUMNNAME_Name2 + " AS Prenom, " +
+        " cb." + I_C_BPartner.COLUMNNAME_Sex + " AS Sexe, " +
+        " cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID + " AS NumEmploye, " +
+        " cb." + I_C_BPartner.COLUMNNAME_Value + " AS Matricule, " +
+        " job." + I_HR_Job.COLUMNNAME_Name + " AS Poste, " +
+        " job." + I_HR_Job.COLUMNNAME_HR_Job_ID + " AS NumPoste " +
+        "FROM " + I_C_BPartner.Table_Name + " cb " +
+        "LEFT JOIN HR_Affectation a " +
+        "       ON a.C_BPartner_ID = cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID +
+        "      AND a.IsActive='Y' " +
+        "      AND a.Date_Debut <= now() " +
+        "      AND (a.Date_Fin IS NULL OR a.Date_Fin >= now()) " +
+        "LEFT JOIN " + I_HR_Job.Table_Name + " job " +
+        "       ON job." + I_HR_Job.COLUMNNAME_HR_Job_ID + " = a.HR_Job_ID " +
+        "      AND job.IsActive='Y' " +
+        "WHERE cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID + " = ? " +
+        "ORDER BY a.Date_Debut DESC " +
+        "LIMIT 1";
 
-	        try (ResultSet rs = pstmt.executeQuery()) {
+    try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
 
-	        	if (!rs.next()) {
-	                return null;
-	            }
+        pstmt.setInt(1, cBPartnerId);
 
-	            BeanIdentifiant bean = new BeanIdentifiant();
+        try (ResultSet rs = pstmt.executeQuery()) {
 
-	            String nomComplet = buildNomComplet(
-	                rs.getString("Sexe"),
-	                rs.getString("Nom"),
-	                rs.getString("Prenom")
-	            );
+        if (!rs.next()) {
+                return null;
+            }
 
-	            bean.setNomEmploye(nomComplet);
-	            bean.setNumEmploye(rs.getInt("NumEmploye"));
-	            bean.setMatriculeEmploye(rs.getString("Matricule"));
-	            bean.setNomPoste(rs.getString("Poste"));
-	            bean.setNumeroPoste(rs.getInt("NumPoste"));
+            BeanIdentifiant bean = new BeanIdentifiant();
 
-	            return bean;
-	        }
+            String nomComplet = buildNomComplet(
+                rs.getString("Sexe"),
+                rs.getString("Nom"),
+                rs.getString("Prenom")
+            );
 
-	    } catch (SQLException e) {
-	        throw new AdempiereException(
-	            "Erreur récupération identité employé (C_BPartner_ID=" + cBPartnerId + ")",
-	            e
-	        );
-	    }
-	}
-	
-	private static String buildNomComplet(
-	        String sexe,
-	        String nom,
-	        String prenom
-	) {
-	    String civilite = "";
+            bean.setNomEmploye(nomComplet);
+            bean.setNumEmploye(rs.getInt("NumEmploye"));
+            bean.setMatriculeEmploye(rs.getString("Matricule"));
+            bean.setNomPoste(rs.getString("Poste"));
+            bean.setNumeroPoste(rs.getInt("NumPoste"));
 
-	    if ("M".equalsIgnoreCase(sexe)) {
-	        civilite = "M.";
-	    } else if ("F".equalsIgnoreCase(sexe)) {
-	        civilite = "Mme";
-	    }
+            return bean;
+        }
 
-	    StringBuilder sb = new StringBuilder();
+    } catch (SQLException e) {
+        throw new AdempiereException(
+            "Erreur récupération identité employé (C_BPartner_ID=" + cBPartnerId + ")",
+            e
+        );
+    }
+}
 
-	    if (!civilite.isEmpty()) {
-	        sb.append(civilite).append(" ");
-	    }
+private static String buildNomComplet(
+        String sexe,
+        String nom,
+        String prenom
+) {
+    String civilite = "";
 
-	    if (nom != null && !nom.trim().isEmpty()) {
-	        sb.append(nom.trim());
-	    }
+    if ("M".equalsIgnoreCase(sexe)) {
+        civilite = "M.";
+    } else if ("F".equalsIgnoreCase(sexe)) {
+        civilite = "Mme";
+    }
 
-	    if (prenom != null && !prenom.trim().isEmpty()) {
-	        sb.append(" ").append(prenom.trim());
-	    }
+    StringBuilder sb = new StringBuilder();
 
-	    return sb.toString().trim();
-	}
+    if (!civilite.isEmpty()) {
+        sb.append(civilite).append(" ");
+    }
 
+    if (nom != null && !nom.trim().isEmpty()) {
+        sb.append(nom.trim());
+    }
+
+    if (prenom != null && !prenom.trim().isEmpty()) {
+        sb.append(" ").append(prenom.trim());
+    }
+
+    return sb.toString().trim();
+}
 
 }
