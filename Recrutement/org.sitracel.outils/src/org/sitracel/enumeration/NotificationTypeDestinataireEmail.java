@@ -39,7 +39,7 @@ public enum NotificationTypeDestinataireEmail {
     }
 
     public static NotificationTypeDestinataireEmail fromValue(String value) {
-        if (value == null || value.isBlank()) {
+        if (value == null || value.trim().isEmpty()) {
 			return null;
 		}
         return Arrays.stream(values())

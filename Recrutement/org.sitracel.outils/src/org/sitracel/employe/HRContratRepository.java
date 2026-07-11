@@ -47,7 +47,7 @@ public class HRContratRepository {
             + "        OR c." + I_HR_Contrat.COLUMNNAME_Date_Fin + " >= ?)"
             + "   AND c.IsActive = 'Y'"
             + " ORDER BY c." + I_HR_Contrat.COLUMNNAME_Date_Debut + " DESC"
-            + " LIMIT 1";
+            ;
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -87,7 +87,7 @@ public class HRContratRepository {
             + "        OR " + I_HR_Affectation.COLUMNNAME_Date_Fin + " >= ?)"
             + "   AND IsActive = 'Y'"
             + " ORDER BY " + I_HR_Affectation.COLUMNNAME_Date_Debut + " DESC"
-            + " LIMIT 1";
+            ;
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;

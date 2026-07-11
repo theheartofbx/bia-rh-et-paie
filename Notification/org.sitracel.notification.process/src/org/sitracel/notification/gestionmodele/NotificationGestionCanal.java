@@ -42,7 +42,7 @@ public final class NotificationGestionCanal {
         if (cBPartnerId <= 0) return null;
         MCBPartner bp = new MCBPartner(Env.getCtx(), cBPartnerId, null);
         String email = bp.getEMail();
-        return (email != null && !email.isBlank()) ? email.trim() : null;
+        return (email != null && !email.trim().isEmpty()) ? email.trim() : null;
     }
 
     // Mutualisé WhatsApp + SMS — format attendu : +237XXXXXXXXX
@@ -51,6 +51,6 @@ public final class NotificationGestionCanal {
         if (cBPartnerId <= 0) return null;
         MCBPartner bp = new MCBPartner(Env.getCtx(), cBPartnerId, null);
         String phone = bp.getPhone();
-        return (phone != null && !phone.isBlank()) ? phone.trim() : null;
+        return (phone != null && !phone.trim().isEmpty()) ? phone.trim() : null;
     }
 }

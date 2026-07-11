@@ -118,7 +118,7 @@ public final class CongeCalloutRepository {
             + " AND h." + I_HR_Holiday.COLUMNNAME_Date_Debut_Effective + " <= ?"
             + " AND h." + I_HR_Holiday.COLUMNNAME_Date_Fin_Effective + " >= ?"
             + " ORDER BY h." + I_HR_Holiday.COLUMNNAME_Date_Debut_Effective + " DESC"
-            + " LIMIT 1";
+            ;
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;

@@ -44,7 +44,7 @@ public class NotificationSqlControler {
      * Méthode compatible Function<String, Integer> pour computeIfAbsent.
      */
     public static int loadNotificationTypeIdFromDB(String code) {
-        if (code == null || code.isBlank()) return 0;
+        if (code == null || code.trim().isEmpty()) return 0;
 
         String sql =
             "SELECT " + MHRNotificationType.COLUMNNAME_HR_NotificationType_ID
@@ -66,7 +66,7 @@ public class NotificationSqlControler {
      * Cherche par Name au lieu de Value.
      */
     public static int loadNotificationTypeFromDB(String name) {
-        if (name == null || name.isBlank()) return 0;
+        if (name == null || name.trim().isEmpty()) return 0;
 
         String sql =
             "SELECT " + MHRNotificationType.COLUMNNAME_HR_NotificationType_ID
@@ -88,7 +88,7 @@ public class NotificationSqlControler {
      * Ex: "Créée" → 1000000
      */
     public static int loadNotificationStatutIdFromDB(String name) {
-        if (name == null || name.isBlank()) return 0;
+        if (name == null || name.trim().isEmpty()) return 0;
 
         String sql =
             "SELECT " + MHRNotificationStatut.COLUMNNAME_HR_NotificationStatut_ID
@@ -115,7 +115,7 @@ public class NotificationSqlControler {
      * Charge l'ID d'un type de destinataire par son nom (TO / CC / BCC).
      */
     public static int loadDestinataireTypeFromDB(String name) {
-        if (name == null || name.isBlank()) return 0;
+        if (name == null || name.trim().isEmpty()) return 0;
 
         String sql =
             "SELECT " + MHRDestinataireType.COLUMNNAME_HR_DestinataireType_ID
@@ -129,7 +129,7 @@ public class NotificationSqlControler {
      * Charge l'ID d'un canal de notification par son nom (EMAIL / WHATSAPP / SMS).
      */
     public static int loadChannelIdFromDB(String name) {
-        if (name == null || name.isBlank()) return 0;
+        if (name == null || name.trim().isEmpty()) return 0;
 
         String sql =
             "SELECT " + MHRNotificationCanal.COLUMNNAME_HR_NotificationCanal_ID
@@ -157,7 +157,7 @@ public class NotificationSqlControler {
             + " FROM " + MHRNotificationTemplate.Table_Name
             + " WHERE " + MHRNotificationTemplate.COLUMNNAME_HR_NotificationType_ID + " = ?"
             + " AND "  + MHRNotificationTemplate.COLUMNNAME_IsActive + " = 'Y'"
-            + " LIMIT 1";
+            ;
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;

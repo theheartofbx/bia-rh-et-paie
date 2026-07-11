@@ -28,7 +28,7 @@ public class CalloutSqlControllerDiscipline {
             + " FROM " + MHRSanctionAutorisation.Table_Name
             + " WHERE " + MHRSanctionAutorisation.COLUMNNAME_HR_TypeSanction_ID + " = ?"
             + " AND IsActive = 'Y'"
-            + " ORDER BY Created DESC LIMIT 1";
+            + " ORDER BY Created DESC";
 
         int id = DB.getSQLValue(trxName, sql, typeSanctionId);
         return id > 0 ? id : null;

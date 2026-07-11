@@ -186,7 +186,7 @@ public final class HRCongeRepository {
             + " AND h." + I_HR_Holiday.COLUMNNAME_IsValidee + " = 'Y'"
             + " AND tc.Nom_Conge = ?"
             + " ORDER BY h." + I_HR_Holiday.COLUMNNAME_Date_Fin_Effective + " DESC"
-            + " LIMIT 1";
+            ;
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -476,7 +476,14 @@ public final class HRCongeRepository {
             + " AND "   + I_HR_Absence.COLUMNNAME_Date_Absence + " BETWEEN ? AND ?"
             + " AND "   + I_HR_Absence.COLUMNNAME_IsDemandeExplication + " = 'N'"
             + " AND "   + I_HR_Absence.COLUMNNAME_IsDemandeExplicationTraite + " = 'N'"
-            + " AND "   + I_HR_Absence.COLUMNNAME_IsConge + " = 'N'";
+            + " AND "   + I_HR_Absence.COLUMNNAME_IsConge + " = 'N'"
+	        + " AND "   + I_HR_Absence.COLUMNNAME_Date_Absence + " > COALESCE("
+	        + "   (SELECT MAX(de.Date_Emission) FROM HR_Demande_Explication de"
+	        + "    WHERE de.C_BPartner_ID = " + I_HR_Absence.Table_Name + "." + I_HR_Absence.COLUMNNAME_C_BPartner_ID
+	        + "    AND de.IsActive = 'Y'), TIMESTAMP '1900-01-01')"	        
+            + " AND ("  + I_HR_Absence.COLUMNNAME_HR_Type_Absence_ID + " IS NULL"
+            + "  OR "   + I_HR_Absence.COLUMNNAME_HR_Type_Absence_ID
+            + " = (SELECT HR_Type_Absence_ID FROM HR_Type_Absence WHERE Nom_Absence = 'Absence Injustifiée' AND IsActive = 'Y'))";
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;

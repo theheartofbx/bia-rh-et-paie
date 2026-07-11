@@ -70,7 +70,8 @@ public static BeanIdentifiant getIdentifiant(int adUserId, String trxName) {
         "      AND job.IsActive='Y' " +
         "WHERE ad.AD_User_ID = ? " +
         "ORDER BY a.Date_Debut DESC " +
-        "LIMIT 1";
+        "";
+
 
     try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
 
@@ -141,7 +142,8 @@ public static BeanIdentifiant getIdentifiantByBPartner(
         "      AND job.IsActive='Y' " +
         "WHERE cb." + I_C_BPartner.COLUMNNAME_C_BPartner_ID + " = ? " +
         "ORDER BY a.Date_Debut DESC " +
-        "LIMIT 1";
+        "";
+
 
     try (PreparedStatement pstmt = DB.prepareStatement(sql, trxName)) {
 

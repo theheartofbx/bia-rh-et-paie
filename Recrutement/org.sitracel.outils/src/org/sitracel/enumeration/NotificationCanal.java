@@ -33,7 +33,7 @@ public enum NotificationCanal {
     }
 
     public static NotificationCanal fromValue(String value) {
-        if (value == null || value.isBlank()) {
+        if (value == null || value.trim().isEmpty()) {
 			return null;
 		}
         return Arrays.stream(values())

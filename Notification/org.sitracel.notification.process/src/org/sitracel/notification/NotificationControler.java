@@ -2,6 +2,7 @@ package org.sitracel.notification;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -94,7 +95,7 @@ public class NotificationControler {
             String email = NotificationGestionCanal.getEmailByBPartner(
                 dest.getCBPartnerId()
             );
-            if (email == null || email.isBlank()) continue;
+            if (email == null || email.trim().isEmpty()) continue;
 
             MHRNotificationDestinataire nr =
                 new MHRNotificationDestinataire(ctx, 0, trxName);
@@ -332,7 +333,7 @@ public class NotificationControler {
     private static void ajouterRH(
             List<BeanDestinataire> dest, String trxName) {
 
-        List<String> rolesRH = List.of(
+        List<String> rolesRH = Arrays.asList(
             "Responsable Ressources Humaines",
             "Ressource Humaine",
             "Ressource Humaine - Responsable"

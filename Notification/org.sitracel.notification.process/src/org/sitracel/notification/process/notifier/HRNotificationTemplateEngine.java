@@ -24,7 +24,7 @@ public final class HRNotificationTemplateEngine {
     private HRNotificationTemplateEngine() {}
 
     public static String render(String template, Map<String, String> variables) {
-        if (template == null || template.isBlank()) return "";
+        if (template == null || template.trim().isEmpty()) return "";
         if (variables == null || variables.isEmpty()) return template;
 
         StringBuffer resultat = new StringBuffer();

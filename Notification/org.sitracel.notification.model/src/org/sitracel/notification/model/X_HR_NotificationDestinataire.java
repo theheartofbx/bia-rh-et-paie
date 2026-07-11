@@ -31,7 +31,7 @@ public class X_HR_NotificationDestinataire extends PO implements I_HR_Notificati
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260630L;
+	private static final long serialVersionUID = 20260711L;
 
     /** Standard Constructor */
     public X_HR_NotificationDestinataire (Properties ctx, int HR_NotificationDestinataire_ID, String trxName)
@@ -198,33 +198,6 @@ public class X_HR_NotificationDestinataire extends PO implements I_HR_Notificati
 		return ii.intValue();
 	}
 
-	public I_HR_NotificationCanal getHR_NotificationCanal() throws RuntimeException
-	{
-		return (I_HR_NotificationCanal)MTable.get(getCtx(), I_HR_NotificationCanal.Table_ID)
-			.getPO(getHR_NotificationCanal_ID(), get_TrxName());
-	}
-
-	/** Set Canal de Notification.
-		@param HR_NotificationCanal_ID Canal de Notification
-	*/
-	public void setHR_NotificationCanal_ID (int HR_NotificationCanal_ID)
-	{
-		if (HR_NotificationCanal_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_HR_NotificationCanal_ID, null);
-		else
-			set_ValueNoCheck (COLUMNNAME_HR_NotificationCanal_ID, Integer.valueOf(HR_NotificationCanal_ID));
-	}
-
-	/** Get Canal de Notification.
-		@return Canal de Notification	  */
-	public int getHR_NotificationCanal_ID()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_HR_NotificationCanal_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
 	/** Set Destinataire des Notifications.
 		@param HR_NotificationDestinataire_ID Destinataire des Notifications
 	*/
@@ -261,33 +234,6 @@ public class X_HR_NotificationDestinataire extends PO implements I_HR_Notificati
 		return (String)get_Value(COLUMNNAME_HR_NotificationDestinataire_UU);
 	}
 
-	public I_HR_NotificationStatut getHR_NotificationStatut() throws RuntimeException
-	{
-		return (I_HR_NotificationStatut)MTable.get(getCtx(), I_HR_NotificationStatut.Table_ID)
-			.getPO(getHR_NotificationStatut_ID(), get_TrxName());
-	}
-
-	/** Set Statut de la Notification.
-		@param HR_NotificationStatut_ID Statut de la Notification
-	*/
-	public void setHR_NotificationStatut_ID (int HR_NotificationStatut_ID)
-	{
-		if (HR_NotificationStatut_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_HR_NotificationStatut_ID, null);
-		else
-			set_ValueNoCheck (COLUMNNAME_HR_NotificationStatut_ID, Integer.valueOf(HR_NotificationStatut_ID));
-	}
-
-	/** Get Statut de la Notification.
-		@return Statut de la Notification	  */
-	public int getHR_NotificationStatut_ID()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_HR_NotificationStatut_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
 	public I_HR_Notification getHR_Notification() throws RuntimeException
 	{
 		return (I_HR_Notification)MTable.get(getCtx(), I_HR_Notification.Table_ID)
@@ -313,54 +259,5 @@ public class X_HR_NotificationDestinataire extends PO implements I_HR_Notificati
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
-	}
-
-	/** Set Message.
-		@param Message EMail Message
-	*/
-	public void setMessage (String Message)
-	{
-		set_Value (COLUMNNAME_Message, Message);
-	}
-
-	/** Get Message.
-		@return EMail Message
-	  */
-	public String getMessage()
-	{
-		return (String)get_Value(COLUMNNAME_Message);
-	}
-
-	/** Set Nombre de Tentative.
-		@param Nombre_Tentative Nombre de Tentative
-	*/
-	public void setNombre_Tentative (int Nombre_Tentative)
-	{
-		set_Value (COLUMNNAME_Nombre_Tentative, Integer.valueOf(Nombre_Tentative));
-	}
-
-	/** Get Nombre de Tentative.
-		@return Nombre de Tentative	  */
-	public int getNombre_Tentative()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Tentative);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
-	/** Set Objet.
-		@param Objet Objet
-	*/
-	public void setObjet (String Objet)
-	{
-		set_Value (COLUMNNAME_Objet, Objet);
-	}
-
-	/** Get Objet.
-		@return Objet	  */
-	public String getObjet()
-	{
-		return (String)get_Value(COLUMNNAME_Objet);
 	}
 }

@@ -126,17 +126,6 @@ public interface I_HR_NotificationDestinataire
 
 	public I_HR_DestinataireType getHR_DestinataireType() throws RuntimeException;
 
-    /** Column name HR_NotificationCanal_ID */
-    public static final String COLUMNNAME_HR_NotificationCanal_ID = "HR_NotificationCanal_ID";
-
-	/** Set Canal de Notification	  */
-	public void setHR_NotificationCanal_ID (int HR_NotificationCanal_ID);
-
-	/** Get Canal de Notification	  */
-	public int getHR_NotificationCanal_ID();
-
-	public I_HR_NotificationCanal getHR_NotificationCanal() throws RuntimeException;
-
     /** Column name HR_NotificationDestinataire_ID */
     public static final String COLUMNNAME_HR_NotificationDestinataire_ID = "HR_NotificationDestinataire_ID";
 
@@ -154,17 +143,6 @@ public interface I_HR_NotificationDestinataire
 
 	/** Get HR_NotificationDestinataire_UU	  */
 	public String getHR_NotificationDestinataire_UU();
-
-    /** Column name HR_NotificationStatut_ID */
-    public static final String COLUMNNAME_HR_NotificationStatut_ID = "HR_NotificationStatut_ID";
-
-	/** Set Statut de la Notification	  */
-	public void setHR_NotificationStatut_ID (int HR_NotificationStatut_ID);
-
-	/** Get Statut de la Notification	  */
-	public int getHR_NotificationStatut_ID();
-
-	public I_HR_NotificationStatut getHR_NotificationStatut() throws RuntimeException;
 
     /** Column name HR_Notification_ID */
     public static final String COLUMNNAME_HR_Notification_ID = "HR_Notification_ID";
@@ -189,37 +167,6 @@ public interface I_HR_NotificationDestinataire
 	  * The record is active in the system
 	  */
 	public boolean isActive();
-
-    /** Column name Message */
-    public static final String COLUMNNAME_Message = "Message";
-
-	/** Set Message.
-	  * EMail Message
-	  */
-	public void setMessage (String Message);
-
-	/** Get Message.
-	  * EMail Message
-	  */
-	public String getMessage();
-
-    /** Column name Nombre_Tentative */
-    public static final String COLUMNNAME_Nombre_Tentative = "Nombre_Tentative";
-
-	/** Set Nombre de Tentative	  */
-	public void setNombre_Tentative (int Nombre_Tentative);
-
-	/** Get Nombre de Tentative	  */
-	public int getNombre_Tentative();
-
-    /** Column name Objet */
-    public static final String COLUMNNAME_Objet = "Objet";
-
-	/** Set Objet	  */
-	public void setObjet (String Objet);
-
-	/** Get Objet	  */
-	public String getObjet();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";

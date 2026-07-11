@@ -205,7 +205,7 @@ public class IndemniteEngine {
                 + " WHERE " + I_HR_ElementBasePaieEmploye.COLUMNNAME_C_BPartner_ID + "=?"
                 + " AND " + I_HR_ElementBasePaieEmploye.COLUMNNAME_IsActive + "='Y'"
                 + " ORDER BY " + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut + " ASC"
-                + " LIMIT 1";
+                ;
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -241,32 +241,37 @@ public class IndemniteEngine {
      * Calcule la moyenne du SBR sur les 12 derniers mois depuis HR_Historique_Paie.
      */
     private static BigDecimal getMoyenneSBR12Mois(int bpartnerId, String trxName) {
-        String sql = "SELECT AVG(h." + I_HR_Historique_Paie.COLUMNNAME_Montant + ")"
+        String sql = "SELECT h." + I_HR_Historique_Paie.COLUMNNAME_Montant
                 + " FROM " + I_HR_Historique_Paie.Table_Name + " h"
                 + " INNER JOIN adempiere.hr_element_base_paie e"
                 + " ON e.hr_element_base_paie_id = h." + I_HR_Historique_Paie.COLUMNNAME_HR_Element_Base_Paie_ID
                 + " WHERE h." + I_HR_Historique_Paie.COLUMNNAME_C_BPartner_ID + "=?"
                 + " AND e.value=?"
-                + " ORDER BY h." + I_HR_Historique_Paie.COLUMNNAME_Date_Debut + " DESC"
-                + " LIMIT 12";
+                + " ORDER BY h." + I_HR_Historique_Paie.COLUMNNAME_Date_Debut + " DESC";
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;
+        BigDecimal total = BigDecimal.ZERO;
+        int count = 0;
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
             pstmt.setString(2, CODE_SBR);
             rs = pstmt.executeQuery();
-            if (rs.next()) {
-                BigDecimal moyenne = rs.getBigDecimal(1);
-                return moyenne != null ? moyenne : BigDecimal.ZERO;
+            while (rs.next() && count < 12) {
+                BigDecimal montant = rs.getBigDecimal(1);
+                if (montant != null) {
+                    total = total.add(montant);
+                }
+                count++;
             }
         } catch (SQLException e) {
             log.severe("getMoyenneSBR12Mois : " + e.getMessage());
         } finally {
             DB.close(rs, pstmt);
         }
-        return BigDecimal.ZERO;
+        if (count == 0) return BigDecimal.ZERO;
+        return total.divide(BigDecimal.valueOf(count), 2, BigDecimal.ROUND_HALF_UP);
     }
 
     /**

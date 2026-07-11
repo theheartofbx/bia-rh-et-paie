@@ -31,7 +31,7 @@ public final class HRNotificationTemplateUtil {
             + "AND IsActive = 'Y' "
             + "AND (AD_Language = ? OR AD_Language IS NULL) "
             + "ORDER BY CASE WHEN AD_Language = ? THEN 0 ELSE 1 END "
-            + "LIMIT 1",
+            ,
             notificationTypeId, adLanguage, adLanguage
         );
 
@@ -42,7 +42,7 @@ public final class HRNotificationTemplateUtil {
                 + "FROM adempiere.HR_NotificationTemplate "
                 + "WHERE HR_NotificationType_ID = ? "
                 + "AND IsActive = 'Y' "
-                + "LIMIT 1",
+                ,
                 notificationTypeId
             );
         }

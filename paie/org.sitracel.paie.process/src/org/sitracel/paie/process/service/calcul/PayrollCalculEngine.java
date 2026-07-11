@@ -270,7 +270,7 @@ public class PayrollCalculEngine {
                 + " WHERE " + I_HR_ElementBasePaieEmploye.COLUMNNAME_C_BPartner_ID + "=?"
                 + " AND " + I_HR_ElementBasePaieEmploye.COLUMNNAME_IsActive + "='Y'"
                 + " ORDER BY " + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut + " DESC"
-                + " LIMIT 1";
+                ;
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;

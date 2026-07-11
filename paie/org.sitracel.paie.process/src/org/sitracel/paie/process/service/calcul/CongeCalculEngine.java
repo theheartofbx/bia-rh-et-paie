@@ -302,7 +302,7 @@ public class CongeCalculEngine {
                 + " WHERE c_bpartner_id=?"
                 + " AND isactive='Y'"
                 + " AND date_debut<=?"
-                + " ORDER BY date_debut DESC LIMIT 1";
+                + " ORDER BY date_debut DESC";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         try {

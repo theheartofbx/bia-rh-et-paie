@@ -34,7 +34,7 @@ public class MHRNotificationQueue extends X_HR_NotificationQueue {
             + "WHERE s.Name = 'Créée' "
             + "AND q.IsActive = 'Y' "
             + "ORDER BY q.Created ASC "
-            + "LIMIT 100";
+            ;
 
         List<Integer> ids = new ArrayList<>();
         PreparedStatement pstmt = null;
@@ -42,8 +42,11 @@ public class MHRNotificationQueue extends X_HR_NotificationQueue {
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             rs = pstmt.executeQuery();
-            while (rs.next()) {
+            int maxRows = 0;
+            while (rs.next() && maxRows < 100) {
                 ids.add(rs.getInt(1));
+                maxRows++;
+                maxRows++;
             }
         } catch (Exception e) {
             log.warning("MHRNotificationQueue.getNew: " + e.getMessage());

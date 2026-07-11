@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import org.compiere.model.ModelValidator;
 import org.compiere.model.PO;
 import org.compiere.util.Env;
+import org.compiere.util.CLogger;
 import org.sitracel.absence.model.MHRAbsence;
 import org.sitracel.absence.model.MHRAbsenceCompensation;
 import org.sitracel.bean.BeanIdentifiant;
@@ -33,6 +34,8 @@ public final class AbsenceValidatorService {
 
     private AbsenceValidatorService() {}
 
+    private static final CLogger log = CLogger.getCLogger(AbsenceValidatorService.class);
+
     // =========================================================================
     // EVENEMENTS SUR HR_ABSENCE
     // =========================================================================
@@ -49,20 +52,24 @@ public final class AbsenceValidatorService {
      */
     public static String traiterEvenement(PO po, MHRAbsence absence, int type) {
 
-        // A la creation : verifier la coherence de la date, horodater,
-        // et verifier le seuil d'absences
+        // A la creation : verifier la coherence de la date et horodater
         if (ModelValidator.TYPE_BEFORE_NEW == type) {
             String erreur = validerCoherenceDate(absence);
             if (erreur != null) {
                 return erreur;
             }
             absence.setDate_Emission(new Timestamp(System.currentTimeMillis()));
+        }
+
+        // Apres creation : verifier le seuil d'absences
+        // (deplace de BEFORE_NEW car l'absence doit exister en base
+        // avant de creer la demande d'explication et ses notifications)
+        if (ModelValidator.TYPE_AFTER_NEW == type) {
             traiterDemandeExplicationSuiteAbsence(absence);
         }
 
         // Avant modification : ne revalider la date que si elle a
-        // reellement change (evite un faux positif sur un enregistrement
-        // qui se retrouve lui-meme en base)
+        // reellement change
         if (ModelValidator.TYPE_BEFORE_CHANGE == type) {
             if (dateAChange(po, absence.getDate_Absence())) {
                 String erreur = validerCoherenceDate(absence);
@@ -114,8 +121,15 @@ public final class AbsenceValidatorService {
         if (HRCongeRepository.isAbsenceExist(date, bpartnerId, trxName)) {
             return "Une absence a deja ete enregistree a cette date pour cet employe.";
         }
-        if (MHRPublicHoliday.isJourFerie(date, trxName)) {
-            return "La date choisie est un dimanche ou un jour ferie.";
+        // Dimanche
+        if (MHRPublicHoliday.isDimanche(date)) {
+            return "La date choisie est un dimanche.";
+        }
+
+        // Jour ferie
+        String nomFerie = MHRPublicHoliday.getNomJourFerie(date, trxName);
+        if (nomFerie != null) {
+            return "La date choisie est un jour ferie (" + nomFerie + ").";
         }
         if (HRCongeRepository.isJourCongesNonRejeteByNameConge(bpartnerId, "Annuel", date, trxName)) {
             return "La date choisie fait partie des jours de conge de l'employe.";
@@ -216,11 +230,11 @@ public final class AbsenceValidatorService {
 
     private static MHRDemandeExplication getDemandeExplicationByAbsence(
             int absenceId, String trxName) {
-        String sql = "SELECT HR_DemandeExplication_ID"
-            + " FROM HR_DemandeExplication"
+        String sql = "SELECT HR_Demande_Explication_ID"
+            + " FROM HR_Demande_Explication"
             + " WHERE HR_Absence_ID = ?"
             + " AND IsActive = 'Y'"
-            + " LIMIT 1";
+            ;
 
         int id = org.compiere.util.DB.getSQLValue(trxName, sql, absenceId);
         if (id > 0) {
@@ -235,20 +249,52 @@ public final class AbsenceValidatorService {
 
         if (emetteur == null) return;
 
-        MHRDemandeExplication demande = new MHRDemandeExplication(
-            Env.getCtx(), null, absence.get_TrxName());
+        // Identifiant de l'employe concerne
+        BeanIdentifiant employe = HREmployeService.getIdentifiantByBPartner(
+            absence.getC_BPartner_ID(), absence.get_TrxName());
 
+        if (employe == null) return;
+
+        // Delai de reponse par defaut (parametre systeme)
+        int delaiReponseId = HRParametreService.getParametreNumerique(
+            "Délai Réponse Demande Explication");
+        if (delaiReponseId <= 0) {
+            delaiReponseId = 404; // fallback : 2 jours
+        }
+
+        MHRDemandeExplication demande = new MHRDemandeExplication(
+            Env.getCtx(), 0, absence.get_TrxName());
+
+        // Employe concerne
         demande.setC_BPartner_ID(absence.getC_BPartner_ID());
-        demande.setHR_Absence_ID(absence.getHR_Absence_ID());
+        demande.set_ValueOfColumn("Matricule_Employe",
+            employe.getMatriculeEmploye() != null ? employe.getMatriculeEmploye() : "");
+        demande.set_ValueOfColumn("Poste_Employe_ID", employe.getNumeroPoste());
+
+        // Emetteur
         demande.setEmis_Par_Nom_ID(emetteur.getNumEmploye());
         demande.setEmis_Par_Matricule(emetteur.getMatriculeEmploye());
         demande.setEmis_Par_Poste_ID(emetteur.getNumeroPoste());
+
+        // Lien avec l'absence
+        demande.setHR_Absence_ID(absence.getHR_Absence_ID());
+
+        // Champs obligatoires
         demande.setDate_Emission(new Timestamp(System.currentTimeMillis()));
+        demande.set_ValueOfColumn("HR_Delai_Reponse_ID", delaiReponseId);
+        demande.set_ValueOfColumn("Motif_Demande_Explication",
+            "Seuil d'absences injustifiees atteint");
+        demande.set_ValueOfColumn("Name",
+            "DE-" + employe.getMatriculeEmploye() + "-" + System.currentTimeMillis());
         demande.setIsActive(true);
-        demande.save(absence.get_TrxName());
+
+        if (!demande.save(absence.get_TrxName())) {
+            log.warning("creerDemandeExplication : echec de creation pour BPartner "
+                + absence.getC_BPartner_ID());
+            return;
+        }
 
         absence.setIsDemandeExplication(true);
-        absence.save(absence.get_TrxName());
     }
 
     /**

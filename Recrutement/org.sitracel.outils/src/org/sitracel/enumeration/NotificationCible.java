@@ -25,7 +25,7 @@ public enum NotificationCible {
      * ========================== */
 
     public static NotificationCible fromName(String name) {
-        if (name == null || name.isBlank()) {
+        if (name == null || name.trim().isEmpty()) {
             return null;
         }
 

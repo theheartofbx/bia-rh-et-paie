@@ -126,7 +126,7 @@ public final class HRNotificationVariableBuilder {
         if (bpartnerId <= 0) return "";
         MCBPartner bp = new MCBPartner(Env.getCtx(), bpartnerId, null);
         String nom = safe(bp.getName());
-        if (bp.getName2() != null && !bp.getName2().isBlank()) {
+        if (bp.getName2() != null && !bp.getName2().trim().isEmpty()) {
             nom = nom + " " + bp.getName2().trim();
         }
         return nom.trim();

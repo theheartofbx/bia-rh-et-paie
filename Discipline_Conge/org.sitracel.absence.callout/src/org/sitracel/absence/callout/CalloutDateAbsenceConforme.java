@@ -9,28 +9,19 @@ import org.adempiere.base.IColumnCallout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.sitracel.conge.HRCongeRepository;
-import org.sitracel.conge.HRCongeRepository;
 import org.sitracel.absence.model.MHRAbsence;
 import org.sitracel.conge.model.MHRPublicHoliday;
 
 /**
- * Callout — validation de la date d'absence.
+ * Callout - validation de la date d'absence.
  *
- * Vérifie que la date saisie ne correspond pas à :
- *   - une absence déjà enregistrée
- *   - un dimanche ou jour férié
- *   - un jour de congé de l'employé
- *   - un jour de suspension de l'employé
+ * Affichage via le mecanisme standard iDempiere (return message = popup).
  */
 public class CalloutDateAbsenceConforme implements IColumnCallout {
 
-    @Override 
+    @Override
     public String start(Properties ctx, int WindowNo, GridTab mTab,
                         GridField mField, Object value, Object oldValue) {
-
-        // Réinitialiser le message d'alerte
-        mTab.setValue(MHRAbsence.COLUMNNAME_IsMessageAlerteDisplayed, false);
-        mTab.setValue(MHRAbsence.COLUMNNAME_Message_Alerte, "");
 
         Timestamp date     = (Timestamp) mTab.getValue(MHRAbsence.COLUMNNAME_Date_Absence);
         Integer bpartnerId = (Integer)   mTab.getValue(MHRAbsence.COLUMNNAME_C_BPartner_ID);
@@ -39,41 +30,37 @@ public class CalloutDateAbsenceConforme implements IColumnCallout {
 
         String dateFormatee = new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH).format(date);
 
-        // Absence déjà enregistrée ce jour
+        // Absence deja enregistree ce jour
         if (HRCongeRepository.isAbsenceExist(date, bpartnerId, null)) {
             mTab.setValue(MHRAbsence.COLUMNNAME_Date_Absence, null);
-            mTab.setValue(MHRAbsence.COLUMNNAME_IsMessageAlerteDisplayed, true);
-            mTab.setValue(MHRAbsence.COLUMNNAME_Message_Alerte,
-                "Une absence a déjà été enregistrée le " + dateFormatee);
-            return null;
+            return "Une absence a deja ete enregistree le " + dateFormatee + ".";
         }
 
-        // Dimanche ou jour férié
-        if (MHRPublicHoliday.isJourFerie(date, null)) {
+        // Dimanche
+        if (MHRPublicHoliday.isDimanche(date)) {
             mTab.setValue(MHRAbsence.COLUMNNAME_Date_Absence, null);
-            mTab.setValue(MHRAbsence.COLUMNNAME_IsMessageAlerteDisplayed, true);
-            mTab.setValue(MHRAbsence.COLUMNNAME_Message_Alerte,
-                "Le " + dateFormatee + " est un dimanche ou un jour férié.");
-            return null;
+            return "Le " + dateFormatee + " est un dimanche.";
         }
 
-        // Jour de congé de l'employé
+        // Jour ferie
+        String nomFerie = MHRPublicHoliday.getNomJourFerie(date, null);
+        if (nomFerie != null) {
+            mTab.setValue(MHRAbsence.COLUMNNAME_Date_Absence, null);
+            return "Le " + dateFormatee + " est un jour ferie (" + nomFerie + ").";
+        }
+
+        // Jour de conge de l'employe
         if (HRCongeRepository.isJourCongesNonRejeteByNameConge(
                 bpartnerId, "Annuel", date, null)) {
             mTab.setValue(MHRAbsence.COLUMNNAME_Date_Absence, null);
-            mTab.setValue(MHRAbsence.COLUMNNAME_IsMessageAlerteDisplayed, true);
-            mTab.setValue(MHRAbsence.COLUMNNAME_Message_Alerte,
-                "Le " + dateFormatee + " fait partie des jours de congé de l'employé.");
-            return null;
+            return "Le " + dateFormatee + " fait partie des jours de conge de l'employe.";
         }
 
-        // Jour de suspension de l'employé
+        // Jour de suspension de l'employe
         if (HRCongeRepository.isJourSuspensionNonRejete(bpartnerId, date, null)) {
             mTab.setValue(MHRAbsence.COLUMNNAME_Date_Absence, null);
-            mTab.setValue(MHRAbsence.COLUMNNAME_IsMessageAlerteDisplayed, true);
-            mTab.setValue(MHRAbsence.COLUMNNAME_Message_Alerte,
-                "Le " + dateFormatee
-                + " est compris dans une période de suspension de l'employé.");
+            return "Le " + dateFormatee
+                + " est compris dans une periode de suspension de l'employe.";
         }
 
         return null;
