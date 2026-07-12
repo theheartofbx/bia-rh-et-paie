@@ -263,6 +263,30 @@ public final class DisciplineProcessService {
 
         if (typeAbsenceID == null || nombreJours <= 0) return;
 
+        // Recuperer le matricule de l'employe concerne
+        BeanIdentifiant employe = HREmployeService.getIdentifiantByBPartner(
+            punishment.getC_BPartner_ID(), null);
+        String matriculeEmploye = (employe != null)
+            ? employe.getMatriculeEmploye() : "";
+
+        // Verifier que les dates sont toujours disponibles
+        java.util.List<Timestamp> absencesExistantes =
+            HRCongeRepository.getAbsencesExistantesDansPeriode(
+                punishment.getC_BPartner_ID(), debutAbs, finAbs, null);
+        if (!absencesExistantes.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Validation impossible : l'employe a deja des absences ");
+            sb.append("enregistrees aux dates suivantes : ");
+            java.text.SimpleDateFormat sdf =
+                new java.text.SimpleDateFormat("dd/MM/yyyy");
+            for (int i = 0; i < absencesExistantes.size(); i++) {
+                if (i > 0) sb.append(", ");
+                sb.append(sdf.format(absencesExistantes.get(i)));
+            }
+            sb.append(". Veuillez les supprimer ou les traiter avant de valider.");
+            throw new IllegalStateException(sb.toString());
+        }
+
         // Poser le drapeau systeme pour bypasser les controles
         // "jour de conge" et "jour de suspension" dans le
         // ModelValidator Absence (AbsenceValidatorService).
@@ -279,6 +303,8 @@ public final class DisciplineProcessService {
                 if (!estDimanche && !estFerie) {
                     MHRAbsence absence = new MHRAbsence(Env.getCtx(), null, null);
                     absence.setC_BPartner_ID(punishment.getC_BPartner_ID());
+                    absence.setMatricule_Employe(matriculeEmploye);
+                    absence.setPoste_Employe_ID(employe.getNumeroPoste());
                     absence.setEmis_Par_Nom_ID(valideur.getNumEmploye());
                     absence.setEmis_Par_Poste_ID(valideur.getNumeroPoste());
                     absence.setEmis_Par_Matricule(valideur.getMatriculeEmploye());

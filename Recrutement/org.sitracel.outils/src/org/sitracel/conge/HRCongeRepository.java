@@ -352,6 +352,45 @@ public final class HRCongeRepository {
     /**
      * Verifie si une absence existe deja pour un employe a une date donnee.
      */
+    /**
+     * Retourne les dates pour lesquelles une absence existe deja
+     * dans la periode [dateDebut, dateFin[ pour un employe donne.
+     * Utilise par la validation de conge et de suspension pour
+     * verifier la disponibilite avant de creer les absences.
+     */
+    public static java.util.List<Timestamp> getAbsencesExistantesDansPeriode(
+            int bpartnerId, Timestamp dateDebut, Timestamp dateFin,
+            String trxName) {
+        java.util.List<Timestamp> dates = new java.util.ArrayList<Timestamp>();
+        if (dateDebut == null || dateFin == null || bpartnerId <= 0) {
+            return dates;
+        }
+        String sql = "SELECT " + I_HR_Absence.COLUMNNAME_Date_Absence
+            + " FROM " + I_HR_Absence.Table_Name
+            + " WHERE " + I_HR_Absence.COLUMNNAME_C_BPartner_ID + " = ?"
+            + " AND " + I_HR_Absence.COLUMNNAME_Date_Absence + " >= ?"
+            + " AND " + I_HR_Absence.COLUMNNAME_Date_Absence + " < ?"
+            + " AND IsActive = 'Y'"
+            + " ORDER BY " + I_HR_Absence.COLUMNNAME_Date_Absence;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = DB.prepareStatement(sql, trxName);
+            pstmt.setInt(1, bpartnerId);
+            pstmt.setTimestamp(2, dateDebut);
+            pstmt.setTimestamp(3, dateFin);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                dates.add(rs.getTimestamp(1));
+            }
+        } catch (SQLException e) {
+            log.warning("getAbsencesExistantesDansPeriode : " + e.getMessage());
+        } finally {
+            DB.close(rs, pstmt);
+        }
+        return dates;
+    }
+
     public static boolean isAbsenceExist(Timestamp dateAbsence,
                                           Integer bpartnerId,
                                           String trxName) {

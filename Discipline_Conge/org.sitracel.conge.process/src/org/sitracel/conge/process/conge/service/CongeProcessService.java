@@ -151,6 +151,28 @@ public final class CongeProcessService {
             verifierDroitsConge(conge, detteConge);
         }
 
+        // Verifier que les dates sont toujours disponibles
+        // (aucune absence creee entre l'approbation et la validation)
+        java.util.List<Timestamp> absencesExistantes =
+            HRCongeRepository.getAbsencesExistantesDansPeriode(
+                conge.getC_BPartner_ID(),
+                conge.getDate_Debut_Effective(),
+                conge.getDate_Fin_Effective(),
+                null);
+        if (!absencesExistantes.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Validation impossible : l'employe a deja des absences ");
+            sb.append("enregistrees aux dates suivantes : ");
+            java.text.SimpleDateFormat sdf =
+                new java.text.SimpleDateFormat("dd/MM/yyyy");
+            for (int i = 0; i < absencesExistantes.size(); i++) {
+                if (i > 0) sb.append(", ");
+                sb.append(sdf.format(absencesExistantes.get(i)));
+            }
+            sb.append(". Veuillez les supprimer ou les traiter avant de valider.");
+            throw new IllegalStateException(sb.toString());
+        }
+
         conge.setValide_Rejete_Par_Nom_ID(valideur.getNumEmploye());
         conge.setValide_Rejete_Par_Matricule(valideur.getMatriculeEmploye());
         conge.setValide_Rejete_Par_Poste_ID(valideur.getNumeroPoste());
@@ -158,8 +180,9 @@ public final class CongeProcessService {
         conge.setDate_Validation(new Timestamp(System.currentTimeMillis()));
         conge.setDate_Rejet(null);
         conge.save(null);
-        // ✅ Notification HOLIDAY_VALIDATED via modelvalidator
+        // Notification HOLIDAY_VALIDATED via modelvalidator
 
+        // Creer les absences seulement apres validation reussie
         creerAbsencesConge(conge, valideur);
     }
 
@@ -294,6 +317,12 @@ public final class CongeProcessService {
         Timestamp dateDebut = conge.getDate_Debut_Effective();
         Timestamp dateFin   = conge.getDate_Fin_Effective();
 
+        // Recuperer le matricule de l'employe concerne
+        BeanIdentifiant employe = HREmployeService.getIdentifiantByBPartner(
+            conge.getC_BPartner_ID(), null);
+        String matriculeEmploye = (employe != null)
+            ? employe.getMatriculeEmploye() : "";
+
         // Poser le drapeau systeme pour bypasser les controles
         // "jour de conge" et "jour de suspension" dans le
         // ModelValidator Absence (AbsenceValidatorService).
@@ -309,6 +338,8 @@ public final class CongeProcessService {
                 if (!estDimanche && !estFerie) {
                     MHRAbsence absence = new MHRAbsence(Env.getCtx(), null, null);
                     absence.setC_BPartner_ID(conge.getC_BPartner_ID());
+                    absence.setMatricule_Employe(matriculeEmploye);
+                    absence.setPoste_Employe_ID(employe.getNumeroPoste());
                     absence.setEmis_Par_Nom_ID(valideur.getNumEmploye());
                     absence.setEmis_Par_Poste_ID(valideur.getNumeroPoste());
                     absence.setEmis_Par_Matricule(valideur.getMatriculeEmploye());
