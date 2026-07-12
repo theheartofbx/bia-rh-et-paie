@@ -101,14 +101,33 @@ public final class AbsenceValidatorService {
     }
 
     /**
+     * Cle de contexte utilisee par CongeProcessService et
+     * DisciplineProcessService pour signaler que les absences en cours
+     * de creation sont generees par le systeme (validation de conge
+     * ou de suspension). Dans ce cas, les controles "jour de conge"
+     * et "jour de suspension" sont bypasses - le systeme cree
+     * legitimement des absences dans ces periodes.
+     *
+     * Les controles doublon, dimanche et jour ferie restent actifs
+     * en toutes circonstances (filet de securite).
+     */
+    public static final String CTX_CREATION_ABSENCE_SYSTEME =
+        "#IS_CREATION_ABSENCE_SYSTEME";
+
+    /**
      * Verifie que la date d'absence ne tombe pas :
      *   - sur une absence deja enregistree
      *   - un dimanche ou un jour ferie
-     *   - un jour de conge de l'employe
-     *   - un jour de suspension de l'employe
+     *   - un jour de conge de l'employe (sauf creation systeme)
+     *   - un jour de suspension de l'employe (sauf creation systeme)
      *
      * Memes regles que CalloutDateAbsenceConforme, appliquees ici comme
      * un vrai blocage (pas juste un effacement de champ a l'ecran).
+     *
+     * Lorsque le drapeau CTX_CREATION_ABSENCE_SYSTEME est present dans
+     * le contexte, les controles 4 et 5 sont bypasses car c'est le
+     * systeme lui-meme qui cree les absences lors de la validation
+     * d'un conge ou d'une suspension.
      */
     private static String validerCoherenceDate(MHRAbsence absence) {
         Timestamp date = absence.getDate_Absence();
@@ -118,24 +137,34 @@ public final class AbsenceValidatorService {
         }
         String trxName = absence.get_TrxName();
 
+        // Controle 1 - doublon (toujours actif)
         if (HRCongeRepository.isAbsenceExist(date, bpartnerId, trxName)) {
             return "Une absence a deja ete enregistree a cette date pour cet employe.";
         }
-        // Dimanche
+        // Controle 2 - dimanche (toujours actif)
         if (MHRPublicHoliday.isDimanche(date)) {
             return "La date choisie est un dimanche.";
         }
-
-        // Jour ferie
+        // Controle 3 - jour ferie (toujours actif)
         String nomFerie = MHRPublicHoliday.getNomJourFerie(date, trxName);
         if (nomFerie != null) {
             return "La date choisie est un jour ferie (" + nomFerie + ").";
         }
-        if (HRCongeRepository.isJourCongesNonRejeteByNameConge(bpartnerId, "Annuel", date, trxName)) {
-            return "La date choisie fait partie des jours de conge de l'employe.";
-        }
-        if (HRCongeRepository.isJourSuspensionNonRejete(bpartnerId, date, trxName)) {
-            return "La date choisie est comprise dans une periode de suspension de l'employe.";
+
+        // Controles 4 et 5 - bypasses si creation systeme
+        boolean creationSysteme = "Y".equals(
+            Env.getCtx().getProperty(CTX_CREATION_ABSENCE_SYSTEME));
+
+        if (!creationSysteme) {
+            // Controle 4 - jour de conge
+            if (HRCongeRepository.isJourCongesNonRejeteByNameConge(
+                    bpartnerId, "Annuel", date, trxName)) {
+                return "La date choisie fait partie des jours de conge de l'employe.";
+            }
+            // Controle 5 - jour de suspension
+            if (HRCongeRepository.isJourSuspensionNonRejete(bpartnerId, date, trxName)) {
+                return "La date choisie est comprise dans une periode de suspension de l'employe.";
+            }
         }
         return null;
     }

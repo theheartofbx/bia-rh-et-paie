@@ -263,31 +263,39 @@ public final class DisciplineProcessService {
 
         if (typeAbsenceID == null || nombreJours <= 0) return;
 
-        Timestamp courant = debutAbs;
-        while (courant.before(finAbs)) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(courant);
+        // Poser le drapeau systeme pour bypasser les controles
+        // "jour de conge" et "jour de suspension" dans le
+        // ModelValidator Absence (AbsenceValidatorService).
+        Env.getCtx().setProperty("#IS_CREATION_ABSENCE_SYSTEME", "Y");
+        try {
+            Timestamp courant = debutAbs;
+            while (courant.before(finAbs)) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(courant);
 
-            boolean estDimanche = cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
-            boolean estFerie    = MHRPublicHoliday.isJourFerie(courant, null);
+                boolean estDimanche = cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
+                boolean estFerie    = MHRPublicHoliday.isJourFerie(courant, null);
 
-            if (!estDimanche && !estFerie) {
-                MHRAbsence absence = new MHRAbsence(Env.getCtx(), null, null);
-                absence.setC_BPartner_ID(punishment.getC_BPartner_ID());
-                absence.setEmis_Par_Nom_ID(valideur.getNumEmploye());
-                absence.setEmis_Par_Poste_ID(valideur.getNumeroPoste());
-                absence.setEmis_Par_Matricule(valideur.getMatriculeEmploye());
-                absence.setDate_Absence(courant);
-                absence.setDate_Emission(new Timestamp(System.currentTimeMillis()));
-                absence.setHR_Type_Absence_ID(typeAbsenceID);
-                absence.setIsDemandeExplication(false);
-                absence.setIsConge(false);
-                absence.setIsDemandeExplicationTraite(true);
-                absence.setIsCongeTraite(true);
-                absence.save(null);
+                if (!estDimanche && !estFerie) {
+                    MHRAbsence absence = new MHRAbsence(Env.getCtx(), null, null);
+                    absence.setC_BPartner_ID(punishment.getC_BPartner_ID());
+                    absence.setEmis_Par_Nom_ID(valideur.getNumEmploye());
+                    absence.setEmis_Par_Poste_ID(valideur.getNumeroPoste());
+                    absence.setEmis_Par_Matricule(valideur.getMatriculeEmploye());
+                    absence.setDate_Absence(courant);
+                    absence.setDate_Emission(new Timestamp(System.currentTimeMillis()));
+                    absence.setHR_Type_Absence_ID(typeAbsenceID);
+                    absence.setIsDemandeExplication(false);
+                    absence.setIsConge(false);
+                    absence.setIsDemandeExplicationTraite(true);
+                    absence.setIsCongeTraite(true);
+                    absence.save(null);
+                }
+
+                courant = HRCalendrierService.ajouterJoursOuvrables(courant, 1);
             }
-
-            courant = HRCalendrierService.ajouterJoursOuvrables(courant, 1);
+        } finally {
+            Env.getCtx().remove("#IS_CREATION_ABSENCE_SYSTEME");
         }
     }
 
