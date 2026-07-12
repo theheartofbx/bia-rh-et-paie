@@ -46,6 +46,7 @@ public class SitracelProcessNotifier extends SvrProcess {
         int envoyes    = 0;
         int erreurs    = 0;
         int abandonnes = 0;
+        String dernierMessageErreur = null;
 
         for (MHRNotificationQueue q : queue) {
             try {
@@ -70,9 +71,11 @@ public class SitracelProcessNotifier extends SvrProcess {
                 envoyes++;
 
             } catch (Exception erreurCatch) {
+                String msgErreur = erreurCatch.getMessage();
                 log.warning("Erreur envoi notification #"
                     + q.getHR_NotificationQueue_ID()
-                    + " : " + erreurCatch.getMessage());
+                    + " : " + msgErreur);
+                dernierMessageErreur = msgErreur;
 
                 q.setNombre_Tentative(q.getNombre_Tentative() + 1);
                 q.setHR_NotificationStatut_ID(
@@ -86,10 +89,14 @@ public class SitracelProcessNotifier extends SvrProcess {
             q.saveEx();
         }
 
-        return String.format(
+        String resultat = String.format(
             "Traitement terminé — Envoyés: %d | Erreurs: %d | Abandonnés: %d",
             envoyes, erreurs, abandonnes
         );
+        if (dernierMessageErreur != null) {
+            resultat += " | Détail: " + dernierMessageErreur;
+        }
+        return resultat;
     }
 
     private void sendOne(MHRNotificationQueue q) throws Exception {
@@ -137,6 +144,8 @@ public class SitracelProcessNotifier extends SvrProcess {
             template.getMessage_Contenu(), variables
         );
 
+        int envoyes = 0;
+        String dernierErreur = null;
         for (MHRNotificationDestinataire dest : destinataires) {
             String email = dest.getAdresse();
             if (email == null || email.trim().isEmpty()) continue;
@@ -144,11 +153,20 @@ public class SitracelProcessNotifier extends SvrProcess {
                 EMail mail = HRMailUtil.createMail(
                     getCtx(), email.trim(), sujet, corps
                 );
-                mail.send();
+                String result = mail.send();
+                if (!"OK".equals(result)) {
+                    throw new Exception("SMTP: " + result);
+                }
+                envoyes++;
             } catch (Exception erreurCatch) {
+                dernierErreur = erreurCatch.getMessage();
                 log.warning("Échec envoi à " + email
-                    + " : " + erreurCatch.getMessage());
+                    + " : " + dernierErreur);
             }
+        }
+        if (envoyes == 0) {
+            throw new Exception("Aucun email envoyé. Dernière erreur: "
+                + dernierErreur);
         }
     }
 }
