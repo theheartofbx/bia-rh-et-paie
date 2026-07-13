@@ -211,12 +211,16 @@ public final class CongeProcessService {
             return;
         }
 
-        if (conge.getHR_CongeStatut_ID() != CongeStatut.APPROUVE) {
+        int statutActuel = conge.getHR_CongeStatut_ID();
+        if (statutActuel != CongeStatut.APPROUVE && statutActuel != CongeStatut.VALIDE) {
             log.warning("Rejet refusé : congé " + idConge
-                + " n'est pas au statut Approuvé (statut actuel : "
-                + conge.getHR_CongeStatut_ID() + ")");
+                + " n'est pas au statut Approuvé ou Validé (statut actuel : "
+                + statutActuel + ")");
             return;
         }
+
+        // Si le conge etait valide, supprimer les absences creees
+        boolean etaitValide = (statutActuel == CongeStatut.VALIDE);
 
         MHRTypeConge typeConge = chargerTypeConge(conge);
         int detteConge = GeneralSqlController.getNombreJourAbsencesCongeNonTraite(
@@ -233,6 +237,14 @@ public final class CongeProcessService {
         conge.setDate_Validation(null);
         conge.setDate_Rejet(new Timestamp(System.currentTimeMillis()));
         conge.save(null);
+
+        // Supprimer les absences si le conge etait deja valide
+        if (etaitValide) {
+            supprimerAbsencesConge(conge);
+            log.info("Conge " + idConge + " rejete apres validation : "
+                + "absences supprimees");
+        }
+
         // ✅ Notification HOLIDAY_REJECTED via modelvalidator
 
         supprimerAbsencesConge(conge);

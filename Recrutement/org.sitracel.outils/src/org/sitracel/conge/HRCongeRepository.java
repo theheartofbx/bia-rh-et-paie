@@ -60,7 +60,7 @@ public final class HRCongeRepository {
 
         String sql = "SELECT 1 FROM " + I_HR_Holiday.Table_Name
             + " WHERE " + I_HR_Holiday.COLUMNNAME_C_BPartner_ID + " = ?"
-            + " AND " + I_HR_Holiday.COLUMNNAME_IsRejetee + " = 'N'"
+            + " AND HR_CongeStatut_ID <> 1000004"
             + " AND ((" + I_HR_Holiday.COLUMNNAME_Date_Debut_Souhaitee + " <= ?"
             + "   AND " + I_HR_Holiday.COLUMNNAME_Date_Fin_Souhaitee + " >= ?)"
             + " OR (" + I_HR_Holiday.COLUMNNAME_Date_Debut_Ajustee + " <= ?"
@@ -82,7 +82,7 @@ public final class HRCongeRepository {
 
         String sql = "SELECT 1 FROM " + I_HR_Holiday.Table_Name
             + " WHERE " + I_HR_Holiday.COLUMNNAME_C_BPartner_ID + " = ?"
-            + " AND " + I_HR_Holiday.COLUMNNAME_IsRejetee + " = 'N'"
+            + " AND HR_CongeStatut_ID <> 1000004"
             + " AND " + I_HR_Holiday.COLUMNNAME_Date_Debut_Souhaitee + " <= ?"
             + " AND " + I_HR_Holiday.COLUMNNAME_Date_Fin_Souhaitee + " >= ?";
 
@@ -108,7 +108,7 @@ public final class HRCongeRepository {
             + " FROM " + I_HR_Holiday.Table_Name + " h"
             + " JOIN HR_Type_Conge tc ON tc.HR_Type_Conge_ID = h." + I_HR_Holiday.COLUMNNAME_Emission_Conge_ID
             + " WHERE h." + I_HR_Holiday.COLUMNNAME_C_BPartner_ID + " = ?"
-            + " AND h." + I_HR_Holiday.COLUMNNAME_IsRejetee + " = 'N'"
+            + " AND h.HR_CongeStatut_ID <> 1000004"
             + " AND tc.Nom_Conge = ?"
             + " AND h." + I_HR_Holiday.COLUMNNAME_Date_Debut_Souhaitee + " <= ?"
             + " AND h." + I_HR_Holiday.COLUMNNAME_Date_Fin_Souhaitee + " >= ?";
@@ -135,7 +135,7 @@ public final class HRCongeRepository {
             + " FROM " + I_HR_Holiday.Table_Name + " h"
             + " JOIN HR_Type_Conge tc ON tc.HR_Type_Conge_ID = h." + I_HR_Holiday.COLUMNNAME_Emission_Conge_ID
             + " WHERE h." + I_HR_Holiday.COLUMNNAME_C_BPartner_ID + " = ?"
-            + " AND h." + I_HR_Holiday.COLUMNNAME_IsValidee + " = 'Y'"
+            + " AND h.HR_CongeStatut_ID = 1000003"
             + " AND tc.Nom_Conge = ?"
             + " AND h." + I_HR_Holiday.COLUMNNAME_Date_Debut_Effective + " >= ?"
             + " AND h." + I_HR_Holiday.COLUMNNAME_Date_Fin_Effective + " <= ?";
@@ -183,7 +183,7 @@ public final class HRCongeRepository {
             + " FROM " + I_HR_Holiday.Table_Name + " h"
             + " JOIN HR_Type_Conge tc ON tc.HR_Type_Conge_ID = h." + I_HR_Holiday.COLUMNNAME_Emission_Conge_ID
             + " WHERE h." + I_HR_Holiday.COLUMNNAME_C_BPartner_ID + " = ?"
-            + " AND h." + I_HR_Holiday.COLUMNNAME_IsValidee + " = 'Y'"
+            + " AND h.HR_CongeStatut_ID = 1000003"
             + " AND tc.Nom_Conge = ?"
             + " ORDER BY h." + I_HR_Holiday.COLUMNNAME_Date_Fin_Effective + " DESC"
             ;
