@@ -131,17 +131,14 @@ public class RetenueEngine {
     // -------------------------------------------------------------------------
 
     /**
-     * Charge les mouvements actifs d'un type donné pour un employé et une période.
-     *
-     * Un mouvement est actif si :
-     *   - IsActive = 'Y' ET Solde > 0
-     *   - La période courante >= Debut_Prelevement_ID
-     *   - La période courante <= Fin_Prelevement_ID (si définie)
-     *
-     * @param isIndemnite  "Y" = indemnités, "N" = retenues
+     * Charge toutes les retenues actives pour un employé et une période.
+     * Une retenue est active si :
+     *   - isactive = Y ET solde > 0
+     *   - La période courante >= periode de début
+     *   - La période courante <= periode de fin (si définie)
      */
-    private static List<MHRMouvementPaie> getMouvementsActifs(
-            int bpartnerId, int periodeId, String isIndemnite, String trxName) {
+    private static List<MHRMouvementPaie> getRetenuesActives(
+            int bpartnerId, int periodeId, String trxName) {
 
         List<MHRMouvementPaie> resultat = new ArrayList<>();
 
@@ -153,8 +150,7 @@ public class RetenueEngine {
                 + " AND ("
                 +     I_HR_Mouvement_Paie.COLUMNNAME_Fin_Prelevement_ID + " IS NULL"
                 +     " OR " + I_HR_Mouvement_Paie.COLUMNNAME_Fin_Prelevement_ID + ">=?"
-                + ")"
-                + " AND IsIndemnite=?";
+                + ")";
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -163,14 +159,12 @@ public class RetenueEngine {
             pstmt.setInt(1, bpartnerId);
             pstmt.setInt(2, periodeId);
             pstmt.setInt(3, periodeId);
-            pstmt.setString(4, isIndemnite);
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 resultat.add(new MHRMouvementPaie(Env.getCtx(), rs, trxName));
             }
         } catch (SQLException e) {
-            log.severe("getMouvementsActifs [bpartnerId=" + bpartnerId
-                    + " isIndemnite=" + isIndemnite + "] : " + e.getMessage());
+            log.severe("getRetenuesActives [bpartnerId=" + bpartnerId + "] : " + e.getMessage());
         } finally {
             DB.close(rs, pstmt);
         }

@@ -41,6 +41,8 @@ public class X_HR_MouvementPaieType extends PO implements I_HR_MouvementPaieType
       /** if (HR_MouvementPaieType_ID == 0)
         {
 			setHR_MouvementPaieType_ID (0);
+			setIsIndemnite (false);
+// 'N'
 			setName (null);
         } */
     }
@@ -52,6 +54,8 @@ public class X_HR_MouvementPaieType extends PO implements I_HR_MouvementPaieType
       /** if (HR_MouvementPaieType_ID == 0)
         {
 			setHR_MouvementPaieType_ID (0);
+			setIsIndemnite (false);
+// 'N'
 			setName (null);
         } */
     }
@@ -63,6 +67,8 @@ public class X_HR_MouvementPaieType extends PO implements I_HR_MouvementPaieType
       /** if (HR_MouvementPaieType_UU == null)
         {
 			setHR_MouvementPaieType_ID (0);
+			setIsIndemnite (false);
+// 'N'
 			setName (null);
         } */
     }
@@ -74,6 +80,8 @@ public class X_HR_MouvementPaieType extends PO implements I_HR_MouvementPaieType
       /** if (HR_MouvementPaieType_UU == null)
         {
 			setHR_MouvementPaieType_ID (0);
+			setIsIndemnite (false);
+// 'N'
 			setName (null);
         } */
     }
@@ -156,6 +164,28 @@ public class X_HR_MouvementPaieType extends PO implements I_HR_MouvementPaieType
 	public String getHR_MouvementPaieType_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_MouvementPaieType_UU);
+	}
+
+	/** Set Est une Indemnité.
+		@param IsIndemnite Est une Indemnité
+	*/
+	public void setIsIndemnite (boolean IsIndemnite)
+	{
+		set_Value (COLUMNNAME_IsIndemnite, Boolean.valueOf(IsIndemnite));
+	}
+
+	/** Get Est une Indemnité.
+		@return Est une Indemnité	  */
+	public boolean isIndemnite()
+	{
+		Object oo = get_Value(COLUMNNAME_IsIndemnite);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
 	}
 
 	/** Set Name.

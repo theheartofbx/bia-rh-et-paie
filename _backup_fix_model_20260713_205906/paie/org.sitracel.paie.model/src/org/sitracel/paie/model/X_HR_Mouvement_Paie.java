@@ -561,30 +561,4 @@ public class X_HR_Mouvement_Paie extends PO implements I_HR_Mouvement_Paie, I_Pe
 			 return Env.ZERO;
 		return bd;
 	}
-
-    /** Set IsIndemnite.
-     * Y = indemnité versée à l'employé (ajoutée au NP)
-     * N = retenue prélevée (soustraite du NP)
-     */
-    public void setIsIndemnite(String IsIndemnite) {
-        set_Value("IsIndemnite", IsIndemnite);
-    }
-
-    /** Get IsIndemnite. */
-    public String getIsIndemnite() {
-        return (String) get_Value("IsIndemnite");
-    }
-
-    /** Set IsRecurrent.
-     * Y = mouvement CDI sans fin, N = mensualités finies
-     */
-    public void setIsRecurrent(String IsRecurrent) {
-        set_Value("IsRecurrent", IsRecurrent);
-    }
-
-    /** Get IsRecurrent. */
-    public String getIsRecurrent() {
-        return (String) get_Value("IsRecurrent");
-    }
-
 }

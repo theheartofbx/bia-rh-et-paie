@@ -124,6 +124,15 @@ public interface I_HR_MouvementPaieType
 	  */
 	public boolean isActive();
 
+    /** Column name IsIndemnite */
+    public static final String COLUMNNAME_IsIndemnite = "IsIndemnite";
+
+	/** Set Est une Indemnité	  */
+	public void setIsIndemnite (boolean IsIndemnite);
+
+	/** Get Est une Indemnité	  */
+	public boolean isIndemnite();
+
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";
 

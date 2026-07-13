@@ -238,9 +238,9 @@ public class PayrollOrchestrator {
         // car la colonne n'est pas encore enregistrée dans le dictionnaire AD_Column.
         // Quand elle le sera, on pourra utiliser le setter du modèle à la place.
         DB.executeUpdate(
-                "UPDATE " + org.sitracel.paie.model.I_HR_Mouvement_Paie.Table_Name
+                "UPDATE " + I_HR_Mouvement_Paie.Table_Name
                 + " SET IsIndemnite='Y' WHERE "
-                + org.sitracel.paie.model.I_HR_Mouvement_Paie.COLUMNNAME_HR_Mouvement_Paie_ID + "="
+                + I_HR_Mouvement_Paie.COLUMNNAME_HR_Mouvement_Paie_ID + "="
                 + retenue.getHR_Mouvement_Paie_ID(),
                 trxName);
 

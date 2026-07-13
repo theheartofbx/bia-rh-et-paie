@@ -136,6 +136,7 @@ public class PayrollPersistence {
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
+            pstmt.setInt(2, periodeId);
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 new MHRCalculConge(Env.getCtx(), rs, trxName).delete(true);
@@ -159,6 +160,7 @@ public class PayrollPersistence {
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
+            pstmt.setInt(2, periodeId);
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 new MHRCalculIndemniteConge(Env.getCtx(), rs, trxName).delete(true);
@@ -223,6 +225,7 @@ public class PayrollPersistence {
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
+            pstmt.setInt(2, periodeId);
             pstmt.setInt(2, elementId);
             pstmt.setInt(3, periodeId);
             rs = pstmt.executeQuery();
@@ -247,6 +250,7 @@ public class PayrollPersistence {
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
+            pstmt.setInt(2, periodeId);
             pstmt.setInt(2, elementCongeId);
             rs = pstmt.executeQuery();
             if (rs.next()) return new MHRCalculConge(Env.getCtx(), rs, trxName);
@@ -272,6 +276,7 @@ public class PayrollPersistence {
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
+            pstmt.setInt(2, periodeId);
             pstmt.setInt(2, elementId);
             pstmt.setInt(3, periodeId);
             rs = pstmt.executeQuery();
