@@ -256,14 +256,14 @@ public class PayrollRepository {
                 + " LEFT JOIN " + I_HR_TypeDeCharge.Table_Name
                 + " ON " + I_HR_TypeDeCharge.Table_Name + "." + I_HR_TypeDeCharge.COLUMNNAME_HR_TypeDeCharge_ID
                 + "=" + I_HR_Element_Base_Paie.Table_Name + "." + I_HR_Element_Base_Paie.COLUMNNAME_HR_TypeDeCharge_ID
-                + " WHERE " + I_HR_TypeDeCharge.Table_Name + "." + I_HR_TypeDeCharge.COLUMNNAME_Name + "=?)";
+                + " WHERE " + I_HR_TypeDeCharge.Table_Name + "." + I_HR_TypeDeCharge.COLUMNNAME_Name
+                + " IN ('CHARGE SALARIALE', 'AUTRES RETENUES'))";
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
-            pstmt.setString(2, "RETENUE SALARIALE");
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 return rs.getBigDecimal(1);

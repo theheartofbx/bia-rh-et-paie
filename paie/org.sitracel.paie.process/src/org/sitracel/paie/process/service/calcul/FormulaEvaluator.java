@@ -26,6 +26,7 @@ public class FormulaEvaluator {
 
     // Codes éléments traités par des calculateurs natifs
     private static final String CODE_BAIRPP = "BAIRPP";
+    private static final String CODE_BMIRPP = "BMIRPP";
     private static final String CODE_IRPP   = "IRPP";
 
     /**
@@ -49,6 +50,9 @@ public class FormulaEvaluator {
             case CODE_BAIRPP:
                 return calculerBairpp(variables);
 
+            case CODE_BMIRPP:
+                return calculerBmirpp(variables);
+
             case CODE_IRPP:
                 return calculerIrpp(variables);
 
@@ -71,19 +75,20 @@ public class FormulaEvaluator {
      * Les charges salariales = CNPS + PF + PV + CFC-S (somme déjà en variables).
      */
     private static BigDecimal calculerBairpp(Map<String, BigDecimal> variables) {
-        BigDecimal sbr = get(variables, "SBR");
+        return PayrollBairppCalculator.calculer(variables);
+    }
 
-        // Charges salariales déductibles annualisées
-        // On additionne les parts salariales déjà calculées
-        BigDecimal chargesMensuelles = BigDecimal.ZERO
-                .add(get(variables, "PV"))
-                .add(get(variables, "PF"))
-                .add(get(variables, "CFC-S"));
-
-        // Annualiser les charges
-        BigDecimal chargesAnnuelles = chargesMensuelles.multiply(new BigDecimal("12"));
-
-        return PayrollBairppCalculator.calculer(sbr, chargesAnnuelles);
+    /**
+     * BMIRPP = Base Mensuelle IRPP
+     * Formule : si (BAIRPP / 12) < 62000 alors 0, sinon (BAIRPP / 12)
+     */
+    private static BigDecimal calculerBmirpp(Map<String, BigDecimal> variables) {
+        BigDecimal bairpp = get(variables, "BAIRPP");
+        BigDecimal mensuel = bairpp.divide(new BigDecimal("12"), 2, java.math.RoundingMode.FLOOR);
+        if (mensuel.compareTo(new BigDecimal("62000")) < 0) {
+            return BigDecimal.ZERO;
+        }
+        return mensuel;
     }
 
     /**

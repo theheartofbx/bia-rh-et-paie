@@ -101,6 +101,9 @@ public class PayrollCalculEngine {
             return false;
         }
 
+        // Sauvegarder les elements contrat non nuls (SB, CSB, IL, IT...)
+        sauvegarderElementsContrat(bpartnerId, periode, variables, trxName);
+
         for (MHRElementBasePaie element : elements) {
             calculerElement(
                 bpartnerId, periode, contrat, element,
@@ -142,6 +145,39 @@ public class PayrollCalculEngine {
      *
      * Si isproportionneltravail=Y → résultat × coeffPresence
      */
+    /**
+     * Sauvegarde les elements issus du contrat (SB, CSB, IL, IT, etc.)
+     * dans hr_calcul_paie pour que le rapport les affiche.
+     * L'ordre suit HR_GestionPaieEmploye_ID croissant.
+     * Seuls les elements non nuls sont sauvegardes.
+     */
+    private static void sauvegarderElementsContrat(
+            int bpartnerId,
+            MHRPeriodeSalariale periode,
+            Map<String, BigDecimal> variables,
+            String trxName) {
+
+        List<MHRGestionPaieEmploye> configs =
+            PayrollRepository.getAllGestionPaieEmploye(trxName);
+
+        if (configs == null) return;
+
+        for (MHRGestionPaieEmploye cfg : configs) {
+            String code = cfg.getValue();
+            if (code == null) continue;
+
+            BigDecimal montant = variables.get(code);
+            if (montant != null && montant.compareTo(BigDecimal.ZERO) > 0) {
+                MHRElementBasePaie element =
+                    PayrollRepository.getElementBasePaieByValue(code, trxName);
+                if (element != null) {
+                    PayrollPersistence.sauvegarderCalculPaie(
+                        bpartnerId, element, periode, montant, trxName);
+                }
+            }
+        }
+    }
+
     private static void calculerElement(
             int bpartnerId,
             MHRPeriodeSalariale periode,
@@ -166,6 +202,7 @@ public class PayrollCalculEngine {
 
         // Déterminer le type de calcul
         String typeCalcul = getTypeCalculNom(element.getHR_Type_Calcul_ID(), trxName);
+        try {
 
         if (typeCalcul == null || typeCalcul.equalsIgnoreCase("Aucun")) {
             // Valeur déjà dans variables (issue du contrat)
@@ -212,6 +249,10 @@ public class PayrollCalculEngine {
         // Sauvegarder dans l'historique
         PayrollPersistence.sauvegarderHistorique(
                 bpartnerId, element, periode, montant, trxName);
+        } catch (Exception e) {
+            log.warning("Erreur calcul element [" + codeElement + "] : " + e.getMessage());
+            variables.put(codeElement, BigDecimal.ZERO);
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -336,6 +377,18 @@ public class PayrollCalculEngine {
     private static void initialiserVariablesContrat(
             MHRElementBasePaieEmploye contrat,
             Map<String, BigDecimal> variables) {
+
+        // Initialiser toutes les variables config a zero
+        // pour eviter les erreurs exp4j sur variables inconnues
+        java.util.List<MHRGestionPaieEmploye> allConfig =
+            PayrollRepository.getAllGestionPaieEmploye(null);
+        if (allConfig != null) {
+            for (MHRGestionPaieEmploye cfg : allConfig) {
+                if (cfg.getValue() != null) {
+                    variables.put(cfg.getValue(), BigDecimal.ZERO);
+                }
+            }
+        }
 
         // Valeurs issues du contrat — les colonnes clés
         putSafe(variables, "SB",   contrat.getSalaire_Base());
