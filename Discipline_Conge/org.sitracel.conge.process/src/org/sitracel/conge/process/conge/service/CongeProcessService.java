@@ -246,8 +246,6 @@ public final class CongeProcessService {
         }
 
         // ✅ Notification HOLIDAY_REJECTED via modelvalidator
-
-        supprimerAbsencesConge(conge);
     }
 
     // =========================================================================

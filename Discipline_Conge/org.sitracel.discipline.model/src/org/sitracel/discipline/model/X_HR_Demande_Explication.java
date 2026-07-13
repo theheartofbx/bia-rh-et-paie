@@ -17,14 +17,17 @@
 /** Generated Model - DO NOT CHANGE */
 package org.sitracel.discipline.model;
 
-import org.sitracel.model.I_HR_Ampliation;
-import org.sitracel.absence.model.I_HR_Absence;
-
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
+import org.sitracel.absence.model.I_HR_Absence;
+import org.sitracel.model.I_HR_Ampliation;
 
 /** Generated Model for HR_Demande_Explication
  *  @author iDempiere (generated)
@@ -36,7 +39,7 @@ public class X_HR_Demande_Explication extends PO implements I_HR_Demande_Explica
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260702L;
+	private static final long serialVersionUID = 20260713L;
 
     /** Standard Constructor */
     public X_HR_Demande_Explication (Properties ctx, int HR_Demande_Explication_ID, String trxName)
@@ -421,6 +424,28 @@ public class X_HR_Demande_Explication extends PO implements I_HR_Demande_Explica
 	public String getInitial()
 	{
 		return (String)get_Value(COLUMNNAME_Initial);
+	}
+
+	/** Set Créé Par le Système .
+		@param IsCreatedBySystem Créé Par le Système 
+	*/
+	public void setIsCreatedBySystem (boolean IsCreatedBySystem)
+	{
+		set_ValueNoCheck (COLUMNNAME_IsCreatedBySystem, Boolean.valueOf(IsCreatedBySystem));
+	}
+
+	/** Get Créé Par le Système .
+		@return Créé Par le Système 	  */
+	public boolean isCreatedBySystem()
+	{
+		Object oo = get_Value(COLUMNNAME_IsCreatedBySystem);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
 	}
 
 	/** Set Message d&#039;Alerte Affiché.

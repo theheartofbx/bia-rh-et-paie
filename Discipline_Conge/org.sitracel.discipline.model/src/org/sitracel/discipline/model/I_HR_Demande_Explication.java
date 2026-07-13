@@ -16,13 +16,13 @@
  *****************************************************************************/
 package org.sitracel.discipline.model;
 
-import org.sitracel.model.I_HR_Ampliation;
-import org.sitracel.absence.model.I_HR_Absence;
-
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
+import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
+import org.sitracel.absence.model.I_HR_Absence;
+import org.sitracel.model.I_HR_Ampliation;
 
 /** Generated Interface for HR_Demande_Explication
  *  @author iDempiere (generated) 
@@ -262,6 +262,15 @@ Explication	  */
 	  * The record is active in the system
 	  */
 	public boolean isActive();
+
+    /** Column name IsCreatedBySystem */
+    public static final String COLUMNNAME_IsCreatedBySystem = "IsCreatedBySystem";
+
+	/** Set Créé Par le Système 	  */
+	public void setIsCreatedBySystem (boolean IsCreatedBySystem);
+
+	/** Get Créé Par le Système 	  */
+	public boolean isCreatedBySystem();
 
     /** Column name IsMessageAlerteDisplayed */
     public static final String COLUMNNAME_IsMessageAlerteDisplayed = "IsMessageAlerteDisplayed";

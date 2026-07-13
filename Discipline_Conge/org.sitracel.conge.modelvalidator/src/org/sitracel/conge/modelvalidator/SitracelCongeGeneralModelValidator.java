@@ -8,9 +8,11 @@ import org.compiere.model.PO;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.sitracel.conge.HRCongeRepository;
+import org.sitracel.bean.BeanIdentifiant;
 import org.sitracel.conge.model.CongeStatut;
 import org.sitracel.conge.model.MHRHoliday;
 import org.sitracel.conge.model.MHRTypeConge;
+import org.sitracel.employe.HREmployeService;
 import org.sitracel.conge.modelvalidator.service.CongeAbsenceValidatorService;
 import org.sitracel.employe.HRContratService;
 import org.sitracel.enumeration.NotificationEvent;
@@ -52,6 +54,9 @@ public class SitracelCongeGeneralModelValidator {
             po.set_ValueOfColumn(MHRHoliday.COLUMNNAME_Date_Emission,
                 new Timestamp(System.currentTimeMillis()));
 
+            // Generer le nom automatique : "Type - MATRICULE - Mois Annee"
+            genererNomConge(holiday);
+
             String erreurCoherence = validerCoherenceConge(holiday);
             if (erreurCoherence != null) {
                 return erreurCoherence;
@@ -78,6 +83,59 @@ public class SitracelCongeGeneralModelValidator {
         }
 
         return null;
+    }
+
+    /**
+     * Genere un nom unique et lisible pour le conge.
+     * Pattern : "Type - MATRICULE - Mois Annee"
+     * Exemple : "Annuel - TEST-101 - Août 2026"
+     */
+    private static void genererNomConge(MHRHoliday holiday) {
+        String[] MOIS_FR = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+            "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"};
+
+        // Type de conge
+        String nomType = "";
+        if (holiday.getEmission_Conge_ID() > 0) {
+            MHRTypeConge typeConge = new MHRTypeConge(
+                Env.getCtx(), holiday.getEmission_Conge_ID(), null);
+            if (typeConge != null) {
+                nomType = typeConge.getNom_Conge();
+            }
+        }
+        if (nomType == null || nomType.trim().length() == 0) {
+            nomType = "Congé";
+        }
+
+        // Matricule
+        String matricule = holiday.getMatricule_Employe();
+        if (matricule == null || matricule.trim().length() == 0) {
+            BeanIdentifiant employe = HREmployeService.getIdentifiantByBPartner(
+                holiday.getC_BPartner_ID(), null);
+            if (employe != null) {
+                matricule = employe.getMatriculeEmploye();
+            }
+        }
+        if (matricule == null || matricule.trim().length() == 0) {
+            matricule = String.valueOf(holiday.getC_BPartner_ID());
+        }
+
+        // Mois de debut
+        String moisAnnee = "";
+        Timestamp dateDebut = holiday.getDate_Debut_Souhaitee();
+        if (dateDebut != null) {
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.setTime(dateDebut);
+            moisAnnee = MOIS_FR[cal.get(java.util.Calendar.MONTH)]
+                + " " + cal.get(java.util.Calendar.YEAR);
+        }
+
+        String nom = nomType + " - " + matricule;
+        if (moisAnnee.length() > 0) {
+            nom += " - " + moisAnnee;
+        }
+
+        holiday.setName(nom);
     }
 
     /**
