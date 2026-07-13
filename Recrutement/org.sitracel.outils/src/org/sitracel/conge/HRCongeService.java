@@ -8,9 +8,10 @@ import org.sitracel.bean.BeanPeriode;
 import org.sitracel.beanfactory.BeanFactory;
 import org.sitracel.conge.model.MHREmployeeChildren;
 import org.sitracel.conge.model.MHRTypeConge;
+import org.sitracel.contrat.model.MHRContrat;
+import org.sitracel.employe.HRContratService;
 import org.sitracel.employe.HREmployeService;
 import org.sitracel.model.X_C_BPartner;
-import org.sitracel.paie.model.MHRElementBasePaieEmploye;
 import org.sitracel.parametrage.HRParametreService;
 import org.sitracel.time.HRCalendrierService;
 
@@ -50,11 +51,12 @@ public final class HRCongeService {
 			return beanConge;
 		}
 
-        MHRElementBasePaieEmploye dernierContrat =
-            HREmployeService.getDateDernierContrat(bpartnerId, dateActuelle);
+        // Chercher la date d'embauche dans HR_Contrat (nouveau systeme)
+        MHRContrat contratActif =
+            HRContratService.getContratActif(bpartnerId, dateActuelle, trxName);
 
-        Timestamp dateDebutContrat = dernierContrat != null
-            ? dernierContrat.getDate_Debut() : null;
+        Timestamp dateDebutContrat = contratActif != null
+            ? contratActif.getDate_Debut() : null;
 
         // Jours déjà utilisés sur l'année RH courante
         BeanPeriode[] conges = HRCongeRepository.getCongesValideByNameConge(
@@ -106,11 +108,12 @@ public final class HRCongeService {
 			return beanConge;
 		}
 
-        MHRElementBasePaieEmploye dernierContrat =
-            HREmployeService.getDateDernierContrat(bpartnerId, dateActuelle);
+        // Chercher la date d'embauche dans HR_Contrat (nouveau systeme)
+        MHRContrat contratActif =
+            HRContratService.getContratActif(bpartnerId, dateActuelle, trxName);
 
-        Timestamp dateDebutContrat = dernierContrat != null
-            ? dernierContrat.getDate_Debut() : null;
+        Timestamp dateDebutContrat = contratActif != null
+            ? contratActif.getDate_Debut() : null;
 
         beanConge = MHREmployeeChildren.getEnfantMoins6(
             bpartnerId, dateActuelle, beanConge, trxName);
