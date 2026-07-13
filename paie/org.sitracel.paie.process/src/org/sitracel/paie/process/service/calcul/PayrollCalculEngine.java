@@ -155,9 +155,10 @@ public class PayrollCalculEngine {
         if (codeElement == null) return;
 
         // Lire la configuration de cet élément dans HR_GestionPaieEmploye
+        // (optionnel : seuls les éléments contrat y figurent, pas les calculés)
         MHRGestionPaieEmploye config = getConfigElement(codeElement, trxName);
-        if (config == null || !config.isActive()) {
-            // Élément non configuré ou inactif → on saute
+        if (config != null && !config.isActive()) {
+            // Élément explicitement désactivé → on saute
             return;
         }
 
@@ -195,7 +196,7 @@ public class PayrollCalculEngine {
         }
 
         // Prorata de présence si applicable
-        if (config.isProportionnelTravail()
+        if (config != null && config.isProportionnelTravail()
                 && coeffPresence.compareTo(BigDecimal.ONE) < 0
                 && montant.compareTo(BigDecimal.ZERO) > 0) {
             montant = montant.multiply(coeffPresence).setScale(0, RoundingMode.FLOOR);
@@ -348,6 +349,11 @@ public class PayrollCalculEngine {
         putSafe(variables, "CSB",  contrat.getComplement_Salaire());
         putSafe(variables, "ILC",  contrat.getIndemnite_Logement_Complement());
         putSafe(variables, "ITC",  contrat.getIndemnite_Transport_Complement());
+        putSafe(variables, "RIMP", contrat.getRappel_Imposable());
+        putSafe(variables, "RNI",  contrat.getRappel_Non_Imposable());
+        putSafe(variables, "PREN", contrat.getPrime_Rendement());
+        putSafe(variables, "PRES", contrat.getPrime_Responsabilite());
+        putSafe(variables, "PRI",  contrat.getPrime_Risque());
 
         // Initialiser les éléments calculés à zéro
         variables.put("SBR",    BigDecimal.ZERO);
