@@ -316,6 +316,7 @@ public final class AbsenceValidatorService {
         demande.set_ValueOfColumn("Name",
             "DE-" + employe.getMatriculeEmploye() + "-" + System.currentTimeMillis());
         demande.setIsActive(true);
+        demande.set_ValueOfColumn("IsCreatedBySystem", true);
 
         if (!demande.save(absence.get_TrxName())) {
             log.warning("creerDemandeExplication : echec de creation pour BPartner "
