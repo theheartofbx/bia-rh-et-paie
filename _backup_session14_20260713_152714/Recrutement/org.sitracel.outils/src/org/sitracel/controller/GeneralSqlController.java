@@ -26,7 +26,7 @@ import org.sitracel.paie.model.I_HR_ElementBasePaieEmploye;
 import org.sitracel.paie.model.I_HR_GestionPaieEmploye;
 import org.sitracel.paie.model.I_HR_Historique_Paie;
 import org.sitracel.paie.model.I_HR_Periode_Salariale;
-import org.sitracel.paie.model.I_HR_Mouvement_Paie;
+import org.sitracel.paie.model.I_HR_Retenue_Salariale;
 import org.sitracel.paie.model.MHRCalculConge;
 import org.sitracel.paie.model.MHRCalculIndemniteConge;
 import org.sitracel.paie.model.MHRCalculPaie;
@@ -34,7 +34,7 @@ import org.sitracel.paie.model.MHRElementBasePaieEmploye;
 import org.sitracel.paie.model.MHRGestionPaieEmploye;
 import org.sitracel.paie.model.MHRHistoriquePaie;
 import org.sitracel.paie.model.MHRPeriodeSalariale;
-import org.sitracel.paie.model.MHRMouvementPaie;
+import org.sitracel.paie.model.MHRRetenueSalariale;
 import org.sitracel.parametrage.HRParametreService;
 import org.sitracel.time.HRCalendrierService;
 
@@ -372,17 +372,17 @@ public class GeneralSqlController {
         return resultat;
     }
 
-    public static ArrayList<MHRMouvementPaie> getAllRetenueEmploye(
+    public static ArrayList<MHRRetenueSalariale> getAllRetenueEmploye(
             Integer cbpartnerid, MHRPeriodeSalariale periodeSalariale, String trxName) {
-        ArrayList<MHRMouvementPaie> resultat = new ArrayList<>();
+        ArrayList<MHRRetenueSalariale> resultat = new ArrayList<>();
         if (cbpartnerid == null || periodeSalariale == null) {
 			return resultat;
 		}
-        String sql = "SELECT * FROM " + I_HR_Mouvement_Paie.Table_Name
-            + " WHERE " + I_HR_Mouvement_Paie.COLUMNNAME_C_BPartner_ID + " = ?"
-            + " AND " + I_HR_Mouvement_Paie.COLUMNNAME_Debut_Prelevement_ID + " <= ?"
-            + " AND (" + I_HR_Mouvement_Paie.COLUMNNAME_Fin_Prelevement_ID + " >= ?"
-            + "   OR " + I_HR_Mouvement_Paie.COLUMNNAME_Fin_Prelevement_ID + " IS NULL)";
+        String sql = "SELECT * FROM " + I_HR_Retenue_Salariale.Table_Name
+            + " WHERE " + I_HR_Retenue_Salariale.COLUMNNAME_C_BPartner_ID + " = ?"
+            + " AND " + I_HR_Retenue_Salariale.COLUMNNAME_Debut_Prelevement_ID + " <= ?"
+            + " AND (" + I_HR_Retenue_Salariale.COLUMNNAME_Fin_Prelevement_ID + " >= ?"
+            + "   OR " + I_HR_Retenue_Salariale.COLUMNNAME_Fin_Prelevement_ID + " IS NULL)";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         try {
@@ -392,7 +392,7 @@ public class GeneralSqlController {
             pstmt.setInt(3, periodeSalariale.getHR_Periode_Salariale_ID());
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                resultat.add(new MHRMouvementPaie(Env.getCtx(), rs, trxName));
+                resultat.add(new MHRRetenueSalariale(Env.getCtx(), rs, trxName));
             }
         } catch (SQLException e) {
             log.warning(e.getMessage());

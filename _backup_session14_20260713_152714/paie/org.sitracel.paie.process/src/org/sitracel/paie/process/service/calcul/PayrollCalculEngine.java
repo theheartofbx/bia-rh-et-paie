@@ -93,7 +93,7 @@ public class PayrollCalculEngine {
         // ------------------------------------------------------------------
         // ÉTAPE 4 — Réinitialiser les anciens calculs puis recalculer
         // ------------------------------------------------------------------
-        PayrollPersistence.resetCalculPaie(bpartnerId, periodeId, trxName);
+        PayrollPersistence.resetCalculPaie(bpartnerId, trxName);
 
         List<MHRElementBasePaie> elements = PayrollRepository.getElementBasePaieInitialValues(trxName);
         if (elements == null || elements.isEmpty()) {

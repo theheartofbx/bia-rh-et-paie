@@ -39,12 +39,12 @@ import org.sitracel.paie.process.service.persistence.PayrollPersistence;
  * INDEMNITÉ LICENCIEMENT :
  *   calculerIndemniteLicenciement(bpartnerId)
  *   → IndemniteEngine (barème légal camerounais)
- *   → Crée une HR_MouvementPaie (versement unique)
+ *   → Crée une HR_RetenueSalariale (versement unique)
  *
  * INDEMNITÉ RETRAITE :
  *   calculerIndemniteRetraite(bpartnerId)
  *   → IndemniteEngine (2× indemnité licenciement, paramétrable)
- *   → Crée une HR_MouvementPaie (versement unique)
+ *   → Crée une HR_RetenueSalariale (versement unique)
  */
 public class PayrollOrchestrator {
 
@@ -145,7 +145,7 @@ public class PayrollOrchestrator {
 
     /**
      * Calcule et enregistre l'indemnité de licenciement.
-     * Crée une HR_MouvementPaie de type indemnité (ajoutée au NP).
+     * Crée une HR_RetenueSalariale de type indemnité (ajoutée au NP).
      * Le versement se fait lors du prochain calcul de paie.
      *
      * @param bpartnerId  ID de l'employé licencié
@@ -203,9 +203,9 @@ public class PayrollOrchestrator {
     // -------------------------------------------------------------------------
 
     /**
-     * Crée un enregistrement HR_MouvementPaie pour une indemnité versée.
+     * Crée un enregistrement HR_RetenueSalariale pour une indemnité versée.
      * Type indemnité = ajoutée au NP (pas soustraite).
-     * Versement unique : montant_mensualite = montant_total = solde.
+     * Versement unique : montant_mensualite = montant_total = reste_retenue.
      */
     private static void enregistrerIndemniteRetenue(int bpartnerId,
                                                      int periodeId,
@@ -213,19 +213,19 @@ public class PayrollOrchestrator {
                                                      boolean isLicenciement,
                                                      boolean isRetraite,
                                                      String trxName) {
-        org.sitracel.paie.model.MHRMouvementPaie retenue =
-                new org.sitracel.paie.model.MHRMouvementPaie(Env.getCtx(), 0, trxName);
+        org.sitracel.paie.model.MHRRetenueSalariale retenue =
+                new org.sitracel.paie.model.MHRRetenueSalariale(Env.getCtx(), 0, trxName);
 
-        retenue.setHR_Mouvement_Paie_ID(
+        retenue.setHR_Retenue_Salariale_ID(
                 DB.getNextID(Env.getCtx(),
-                        org.sitracel.paie.model.I_HR_Mouvement_Paie.Table_Name,
+                        org.sitracel.paie.model.I_HR_Retenue_Salariale.Table_Name,
                         trxName));
         retenue.setC_BPartner_ID(bpartnerId);
-        retenue.setMontant_Total(montant);
+        retenue.setMontant_Total_Retenue(montant);
         retenue.setMontant_Mensualite(montant);       // versement unique
         retenue.setMontant_Derniere_Mensualite(montant);
         retenue.setNombre_Mensualite(1);
-        retenue.setSolde(montant);
+        retenue.setReste_Retenue(montant);
         retenue.setDebut_Prelevement_ID(periodeId);   // versé à cette période
         retenue.setIsActive(true);
         retenue.setIsIndemniteLicenciement(isLicenciement);
@@ -234,17 +234,7 @@ public class PayrollOrchestrator {
                                        : "Indemnité de retraite");
         retenue.save();
 
-        // Marquer comme indemnité — IsIndemnite est géré directement en SQL
-        // car la colonne n'est pas encore enregistrée dans le dictionnaire AD_Column.
-        // Quand elle le sera, on pourra utiliser le setter du modèle à la place.
-        DB.executeUpdate(
-                "UPDATE " + I_HR_Mouvement_Paie.Table_Name
-                + " SET IsIndemnite='Y' WHERE "
-                + I_HR_Mouvement_Paie.COLUMNNAME_HR_Mouvement_Paie_ID + "="
-                + retenue.getHR_Mouvement_Paie_ID(),
-                trxName);
-
-        log.info("HR_MouvementPaie créée — bpartnerId=" + bpartnerId
+        log.info("HR_RetenueSalariale créée — bpartnerId=" + bpartnerId
                 + " montant=" + montant + " periodeId=" + periodeId);
     }
 

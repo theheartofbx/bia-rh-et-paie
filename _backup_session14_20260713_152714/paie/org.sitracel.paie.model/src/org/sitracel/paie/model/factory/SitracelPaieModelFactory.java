@@ -28,7 +28,7 @@ import org.sitracel.paie.model.I_HR_Mois;
 import org.sitracel.paie.model.I_HR_Periode_Salariale;
 import org.sitracel.paie.model.I_HR_Rang_Calcul;
 import org.sitracel.paie.model.I_HR_RecapSalaire;
-import org.sitracel.paie.model.I_HR_Mouvement_Paie;
+import org.sitracel.paie.model.I_HR_Retenue_Salariale;
 import org.sitracel.paie.model.I_HR_Taux_Salarial;
 import org.sitracel.paie.model.I_HR_TypeContrat;
 import org.sitracel.paie.model.I_HR_Type_Calcul;
@@ -56,7 +56,7 @@ import org.sitracel.paie.model.MHRMois;
 import org.sitracel.paie.model.MHRPeriodeSalariale;
 import org.sitracel.paie.model.MHRRangCalcul;
 import org.sitracel.paie.model.MHRRecapSalaire;
-import org.sitracel.paie.model.MHRMouvementPaie;
+import org.sitracel.paie.model.MHRRetenueSalariale;
 import org.sitracel.paie.model.MHRTauxSalarial;
 import org.sitracel.paie.model.MHRTypeContrat;
 import org.sitracel.paie.model.MHRTypeDeCalcul;
@@ -114,8 +114,8 @@ public class SitracelPaieModelFactory implements IModelFactory {
             return MHRRangCalcul.class;
         if (tableName.equalsIgnoreCase(I_HR_RecapSalaire.Table_Name))
             return MHRRecapSalaire.class;
-        if (tableName.equalsIgnoreCase(I_HR_Mouvement_Paie.Table_Name))
-            return MHRMouvementPaie.class;
+        if (tableName.equalsIgnoreCase(I_HR_Retenue_Salariale.Table_Name))
+            return MHRRetenueSalariale.class;
         if (tableName.equalsIgnoreCase(I_HR_Taux_Salarial.Table_Name))
             return MHRTauxSalarial.class;
         if (tableName.equalsIgnoreCase(I_HR_TypeContrat.Table_Name))
@@ -178,8 +178,8 @@ public class SitracelPaieModelFactory implements IModelFactory {
             return new MHRRangCalcul(Env.getCtx(), Record_ID, trxName);
         if (tableName.equalsIgnoreCase(I_HR_RecapSalaire.Table_Name))
             return new MHRRecapSalaire(Env.getCtx(), Record_ID, trxName);
-        if (tableName.equalsIgnoreCase(I_HR_Mouvement_Paie.Table_Name))
-            return new MHRMouvementPaie(Env.getCtx(), Record_ID, trxName);
+        if (tableName.equalsIgnoreCase(I_HR_Retenue_Salariale.Table_Name))
+            return new MHRRetenueSalariale(Env.getCtx(), Record_ID, trxName);
         if (tableName.equalsIgnoreCase(I_HR_Taux_Salarial.Table_Name))
             return new MHRTauxSalarial(Env.getCtx(), Record_ID, trxName);
         if (tableName.equalsIgnoreCase(I_HR_TypeContrat.Table_Name))
@@ -242,8 +242,8 @@ public class SitracelPaieModelFactory implements IModelFactory {
             return new MHRRangCalcul(Env.getCtx(), rs, trxName);
         if (tableName.equalsIgnoreCase(I_HR_RecapSalaire.Table_Name))
             return new MHRRecapSalaire(Env.getCtx(), rs, trxName);
-        if (tableName.equalsIgnoreCase(I_HR_Mouvement_Paie.Table_Name))
-            return new MHRMouvementPaie(Env.getCtx(), rs, trxName);
+        if (tableName.equalsIgnoreCase(I_HR_Retenue_Salariale.Table_Name))
+            return new MHRRetenueSalariale(Env.getCtx(), rs, trxName);
         if (tableName.equalsIgnoreCase(I_HR_Taux_Salarial.Table_Name))
             return new MHRTauxSalarial(Env.getCtx(), rs, trxName);
         if (tableName.equalsIgnoreCase(I_HR_TypeContrat.Table_Name))

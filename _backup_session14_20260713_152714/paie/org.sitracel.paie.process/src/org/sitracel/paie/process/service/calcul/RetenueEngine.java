@@ -10,8 +10,8 @@ import java.util.List;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
-import org.sitracel.paie.model.I_HR_Mouvement_Paie;
-import org.sitracel.paie.model.MHRMouvementPaie;
+import org.sitracel.paie.model.I_HR_Retenue_Salariale;
+import org.sitracel.paie.model.MHRRetenueSalariale;
 
 /**
  * Moteur de gestion des retenues et indemnités versées.
@@ -25,13 +25,13 @@ import org.sitracel.paie.model.MHRMouvementPaie;
  *
  * Une retenue/indemnité est active pour une période si :
  *   - isactive = Y
- *   - solde > 0
+ *   - reste_retenue > 0
  *   - periode >= debut_prelevement_id
  *   - periode <= fin_prelevement_id (si défini)
  *
  * Extensibilité :
  *   Pour ajouter un nouveau type de retenue ou d'indemnité,
- *   il suffit d'insérer un enregistrement dans HR_MouvementPaie
+ *   il suffit d'insérer un enregistrement dans HR_RetenueSalariale
  *   avec les bons flags — zéro modification Java.
  */
 public class RetenueEngine {
@@ -66,8 +66,8 @@ public class RetenueEngine {
      *
      * Pour chaque retenue active :
      *   - Calcule le montant à prélever ce mois
-     *   - Met à jour solde en base
-     *   - Désactive si solde atteint zéro
+     *   - Met à jour reste_retenue en base
+     *   - Désactive si reste_retenue atteint zéro
      *
      * @param bpartnerId  ID de l'employé
      * @param periodeId   ID de la période salariale courante
@@ -75,55 +75,39 @@ public class RetenueEngine {
      * @return            ResultatRetenues avec les totaux à appliquer sur le NP
      */
     public static ResultatRetenues traiter(int bpartnerId, int periodeId, String trxName) {
-        // Traiter séparément retenues (IsIndemnite='N') et indemnités (IsIndemnite='Y')
-        BigDecimal totalRetenues   = traiterMouvements(bpartnerId, periodeId, "N", trxName);
-        BigDecimal totalIndemnites = traiterMouvements(bpartnerId, periodeId, "Y", trxName);
-        return new ResultatRetenues(totalRetenues, totalIndemnites);
-    }
+        List<MHRRetenueSalariale> retenuesActives = getRetenuesActives(bpartnerId, periodeId, trxName);
 
-    /**
-     * Traite les mouvements d'un type donné (retenues OU indemnités).
-     * Pour chaque mouvement actif, calcule le montant du mois, met à jour
-     * le solde et désactive si soldé.
-     *
-     * @param isIndemnite  "Y" = indemnités (ajoutées au NP),
-     *                     "N" = retenues (soustraites du NP)
-     * @return             total des montants traités ce mois
-     */
-    private static BigDecimal traiterMouvements(int bpartnerId, int periodeId,
-                                                 String isIndemnite, String trxName) {
-        List<MHRMouvementPaie> mouvements =
-                getMouvementsActifs(bpartnerId, periodeId, isIndemnite, trxName);
+        BigDecimal totalRetenues   = BigDecimal.ZERO;
+        BigDecimal totalIndemnites = BigDecimal.ZERO;
 
-        BigDecimal total = BigDecimal.ZERO;
-
-        for (MHRMouvementPaie mouvement : mouvements) {
-            BigDecimal montantCeMois = calculerMontantCeMois(mouvement);
+        for (MHRRetenueSalariale retenue : retenuesActives) {
+            BigDecimal montantCeMois = calculerMontantCeMois(retenue);
 
             if (montantCeMois.compareTo(BigDecimal.ZERO) <= 0) continue;
 
-            // Mettre à jour le solde
-            BigDecimal nouveauSolde = mouvement.getSolde().subtract(montantCeMois);
-            if (nouveauSolde.compareTo(BigDecimal.ZERO) < 0) {
-                nouveauSolde = BigDecimal.ZERO;
+            // Mettre à jour le reste
+            BigDecimal nouveauReste = retenue.getReste_Retenue().subtract(montantCeMois);
+            if (nouveauReste.compareTo(BigDecimal.ZERO) < 0) {
+                nouveauReste = BigDecimal.ZERO;
             }
-            mouvement.setSolde(nouveauSolde);
+            retenue.setReste_Retenue(nouveauReste);
 
             // Désactiver si soldé
-            if (nouveauSolde.compareTo(BigDecimal.ZERO) == 0) {
-                mouvement.setIsActive(false);
+            if (nouveauReste.compareTo(BigDecimal.ZERO) == 0) {
+                retenue.setIsActive(false);
             }
 
-            mouvement.save();
-            total = total.add(montantCeMois);
+            retenue.save();
 
-            log.fine("Mouvement traité [" + mouvement.getName()
-                    + "] montant=" + montantCeMois
-                    + " solde restant=" + nouveauSolde
-                    + " isIndemnite=" + isIndemnite);
+            // Classer : indemnité versée OU retenue prélevée
+            if (estIndemniteVersee(retenue)) {
+                totalIndemnites = totalIndemnites.add(montantCeMois);
+            } else {
+                totalRetenues = totalRetenues.add(montantCeMois);
+            }
         }
 
-        return total;
+        return new ResultatRetenues(totalRetenues, totalIndemnites);
     }
 
     // -------------------------------------------------------------------------
@@ -133,23 +117,23 @@ public class RetenueEngine {
     /**
      * Charge toutes les retenues actives pour un employé et une période.
      * Une retenue est active si :
-     *   - isactive = Y ET solde > 0
+     *   - isactive = Y ET reste_retenue > 0
      *   - La période courante >= periode de début
      *   - La période courante <= periode de fin (si définie)
      */
-    private static List<MHRMouvementPaie> getRetenuesActives(
+    private static List<MHRRetenueSalariale> getRetenuesActives(
             int bpartnerId, int periodeId, String trxName) {
 
-        List<MHRMouvementPaie> resultat = new ArrayList<>();
+        List<MHRRetenueSalariale> resultat = new ArrayList<>();
 
-        String sql = "SELECT * FROM " + I_HR_Mouvement_Paie.Table_Name
-                + " WHERE " + I_HR_Mouvement_Paie.COLUMNNAME_C_BPartner_ID + "=?"
-                + " AND " + I_HR_Mouvement_Paie.COLUMNNAME_IsActive + "='Y'"
-                + " AND " + I_HR_Mouvement_Paie.COLUMNNAME_Solde + ">0"
-                + " AND " + I_HR_Mouvement_Paie.COLUMNNAME_Debut_Prelevement_ID + "<=?"
+        String sql = "SELECT * FROM " + I_HR_Retenue_Salariale.Table_Name
+                + " WHERE " + I_HR_Retenue_Salariale.COLUMNNAME_C_BPartner_ID + "=?"
+                + " AND " + I_HR_Retenue_Salariale.COLUMNNAME_IsActive + "='Y'"
+                + " AND " + I_HR_Retenue_Salariale.COLUMNNAME_Reste_Retenue + ">0"
+                + " AND " + I_HR_Retenue_Salariale.COLUMNNAME_Debut_Prelevement_ID + "<=?"
                 + " AND ("
-                +     I_HR_Mouvement_Paie.COLUMNNAME_Fin_Prelevement_ID + " IS NULL"
-                +     " OR " + I_HR_Mouvement_Paie.COLUMNNAME_Fin_Prelevement_ID + ">=?"
+                +     I_HR_Retenue_Salariale.COLUMNNAME_Fin_Prelevement_ID + " IS NULL"
+                +     " OR " + I_HR_Retenue_Salariale.COLUMNNAME_Fin_Prelevement_ID + ">=?"
                 + ")";
 
         PreparedStatement pstmt = null;
@@ -161,7 +145,7 @@ public class RetenueEngine {
             pstmt.setInt(3, periodeId);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                resultat.add(new MHRMouvementPaie(Env.getCtx(), rs, trxName));
+                resultat.add(new MHRRetenueSalariale(Env.getCtx(), rs, trxName));
             }
         } catch (SQLException e) {
             log.severe("getRetenuesActives [bpartnerId=" + bpartnerId + "] : " + e.getMessage());
@@ -179,8 +163,8 @@ public class RetenueEngine {
      *     → on prend exactement le reste (montant_derniere_mensualite si défini)
      *   - Sinon → montant_mensualite normal
      */
-    private static BigDecimal calculerMontantCeMois(MHRMouvementPaie retenue) {
-        BigDecimal reste      = retenue.getSolde();
+    private static BigDecimal calculerMontantCeMois(MHRRetenueSalariale retenue) {
+        BigDecimal reste      = retenue.getReste_Retenue();
         BigDecimal mensualite = retenue.getMontant_Mensualite();
 
         if (reste == null || reste.compareTo(BigDecimal.ZERO) <= 0) {
@@ -201,13 +185,12 @@ public class RetenueEngine {
         return mensualite;
     }
 
-    // ---------------------------------------------------------------
-    // estIndemniteVersee() SUPPRIMÉE — Session 14
-    // Le tri retenues/indemnités se fait désormais au niveau SQL
-    // via la colonne IsIndemnite dans getMouvementsActifs().
-    //
-    // EXTENSIBILITÉ : pour ajouter un nouveau type d'indemnité,
-    // créer un enregistrement HR_Mouvement_Paie avec IsIndemnite='Y'.
-    // Aucune modification Java requise.
-    // ---------------------------------------------------------------
+    /**
+     * Détermine si une retenue est une indemnité versée à l'employé
+     * (à ajouter au NP) plutôt qu'une retenue prélevée (à soustraire).
+     */
+    private static boolean estIndemniteVersee(MHRRetenueSalariale retenue) {
+        return retenue.isIndemniteRetraite()
+                || retenue.isIndemniteLicenciement();
+    }
 }

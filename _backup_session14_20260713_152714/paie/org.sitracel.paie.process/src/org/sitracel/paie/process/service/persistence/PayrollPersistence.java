@@ -77,17 +77,15 @@ public class PayrollPersistence {
     /**
      * Supprime tous les calculs de paie d'un employé (avant recalcul).
      */
-    public static void resetCalculPaie(int bpartnerId, int periodeId, String trxName) {
+    public static void resetCalculPaie(int bpartnerId, String trxName) {
         String sql = "SELECT * FROM " + I_HR_Calcul_Paie.Table_Name
-                + " WHERE " + I_HR_Calcul_Paie.COLUMNNAME_C_BPartner_ID + "=?"
-                + " AND " + I_HR_Calcul_Paie.COLUMNNAME_HR_Periode_Salariale_ID + "=?";
+                + " WHERE " + I_HR_Calcul_Paie.COLUMNNAME_C_BPartner_ID + "=?";
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
-            pstmt.setInt(2, periodeId);
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 new MHRCalculPaie(Env.getCtx(), rs, trxName).delete(true);
@@ -136,7 +134,6 @@ public class PayrollPersistence {
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
-            pstmt.setInt(2, periodeId);
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 new MHRCalculConge(Env.getCtx(), rs, trxName).delete(true);
@@ -160,7 +157,6 @@ public class PayrollPersistence {
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
-            pstmt.setInt(2, periodeId);
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 new MHRCalculIndemniteConge(Env.getCtx(), rs, trxName).delete(true);
@@ -225,7 +221,6 @@ public class PayrollPersistence {
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
-            pstmt.setInt(2, periodeId);
             pstmt.setInt(2, elementId);
             pstmt.setInt(3, periodeId);
             rs = pstmt.executeQuery();
@@ -250,7 +245,6 @@ public class PayrollPersistence {
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
-            pstmt.setInt(2, periodeId);
             pstmt.setInt(2, elementCongeId);
             rs = pstmt.executeQuery();
             if (rs.next()) return new MHRCalculConge(Env.getCtx(), rs, trxName);
@@ -276,7 +270,6 @@ public class PayrollPersistence {
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
-            pstmt.setInt(2, periodeId);
             pstmt.setInt(2, elementId);
             pstmt.setInt(3, periodeId);
             rs = pstmt.executeQuery();
