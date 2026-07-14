@@ -94,10 +94,8 @@ public class PayrollCalculEngine {
         genererGestionPresence(bpartnerId, periodeId, periode, contrat, trxName);
         BigDecimal coeffPresence = getCoeffPresence(bpartnerId, periodeId, trxName);
 
-        // ------------------------------------------------------------------
-        // ÉTAPE 2b — Ajuster la présence pour embauche en milieu de période
-        // ------------------------------------------------------------------
-        ajusterPresencePourEmbauche(bpartnerId, periodeId, contrat, periode, trxName);
+        // ÉTAPE 2b supprimee — les jours avant contrat sont maintenant
+        // geres directement dans genererGestionPresence() ci-dessus.
 
         // ------------------------------------------------------------------
         // ÉTAPE 3 — Initialiser les variables depuis le contrat
@@ -465,7 +463,7 @@ public class PayrollCalculEngine {
                 + " WHERE a.C_BPartner_ID=?"
                 + " AND a.date_absence >= ? AND a.date_absence <= ?"
                 + " AND a.IsActive='Y'"
-                + " AND a.HR_Type_Absence_ID = 404"
+                + " AND a.HR_Type_Absence_ID = (SELECT HR_Type_Absence_ID FROM HR_Type_Absence WHERE Nom_Absence='En Congé' AND IsActive='Y')"
                 + " AND h.HR_Type_Conge_ID = 101";
         int joursCongeAnnuel = DB.getSQLValue(trxName, sqlCongeAnnuel,
                 bpartnerId, dateDebutPeriode, dateFinPeriode);
@@ -477,7 +475,7 @@ public class PayrollCalculEngine {
                 + " WHERE a.C_BPartner_ID=?"
                 + " AND a.date_absence >= ? AND a.date_absence <= ?"
                 + " AND a.IsActive='Y'"
-                + " AND a.HR_Type_Absence_ID = 404"
+                + " AND a.HR_Type_Absence_ID = (SELECT HR_Type_Absence_ID FROM HR_Type_Absence WHERE Nom_Absence='En Congé' AND IsActive='Y')"
                 + " AND h.HR_Type_Conge_ID = 202";
         int joursCongeMaternite = DB.getSQLValue(trxName, sqlCongeMaternite,
                 bpartnerId, dateDebutPeriode, dateFinPeriode);
@@ -489,8 +487,8 @@ public class PayrollCalculEngine {
                 + " WHERE a.C_BPartner_ID=?"
                 + " AND a.date_absence >= ? AND a.date_absence <= ?"
                 + " AND a.IsActive='Y'"
-                + " AND a.HR_Type_Absence_ID = 404"
-                + " AND h.HR_Type_Conge_ID = 303";
+                + " AND a.HR_Type_Absence_ID = (SELECT HR_Type_Absence_ID FROM HR_Type_Absence WHERE Nom_Absence='En Congé' AND IsActive='Y')"
+                + " AND h.HR_Type_Conge_ID = (SELECT HR_Type_Conge_ID FROM HR_Type_Conge WHERE Name='Paternité' AND IsActive='Y')";
         int joursCongePaternite = DB.getSQLValue(trxName, sqlCongePaternite,
                 bpartnerId, dateDebutPeriode, dateFinPeriode);
         if (joursCongePaternite < 0) joursCongePaternite = 0;
@@ -500,7 +498,7 @@ public class PayrollCalculEngine {
                 + " WHERE C_BPartner_ID=?"
                 + " AND date_absence >= ? AND date_absence <= ?"
                 + " AND IsActive='Y'"
-                + " AND HR_Type_Absence_ID = 505";
+                + " AND HR_Type_Absence_ID = (SELECT HR_Type_Absence_ID FROM HR_Type_Absence WHERE Nom_Absence='Suspendu' AND IsActive='Y')";
         int joursSuspension = DB.getSQLValue(trxName, sqlSuspension,
                 bpartnerId, dateDebutPeriode, dateFinPeriode);
         if (joursSuspension < 0) joursSuspension = 0;
@@ -510,7 +508,7 @@ public class PayrollCalculEngine {
                 + " WHERE C_BPartner_ID=?"
                 + " AND date_absence >= ? AND date_absence <= ?"
                 + " AND IsActive='Y'"
-                + " AND HR_Type_Absence_ID IN (101, 202, 303)";
+                + " AND HR_Type_Absence_ID IN (SELECT HR_Type_Absence_ID FROM HR_Type_Absence WHERE Nom_Absence IN ('Absence Injustifiée','Absence Justifiée','Absence Maladie') AND IsActive='Y')";
         int joursAutres = DB.getSQLValue(trxName, sqlAutres,
                 bpartnerId, dateDebutPeriode, dateFinPeriode);
         if (joursAutres < 0) joursAutres = 0;
