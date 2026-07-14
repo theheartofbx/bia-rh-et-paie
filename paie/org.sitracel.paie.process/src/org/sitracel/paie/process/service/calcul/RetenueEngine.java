@@ -102,24 +102,14 @@ public class RetenueEngine {
 
             if (montantCeMois.compareTo(BigDecimal.ZERO) <= 0) continue;
 
-            // Mode récurrent : ne pas toucher au solde, ne jamais désactiver
-            BigDecimal nouveauSolde = mouvement.getSolde();
-            if (!mouvement.isRecurrent()) {
-                nouveauSolde = mouvement.getSolde().subtract(montantCeMois);
-                if (nouveauSolde.compareTo(BigDecimal.ZERO) < 0) {
-                    nouveauSolde = BigDecimal.ZERO;
-                }
-                mouvement.setSolde(nouveauSolde);
-                if (nouveauSolde.compareTo(BigDecimal.ZERO) == 0) {
-                    mouvement.setIsActive(false);
-                }
-                mouvement.save();
-            }
+            // Le solde n est jamais modifie par le calcul.
+            // L intervalle debut/fin et le montant_mensualite suffisent
+            // a determiner le montant a prelever chaque mois.
+            // Le calcul est donc 100% idempotent (relancable sans risque).
             total = total.add(montantCeMois);
 
             log.fine("Mouvement traité [" + mouvement.getName()
                     + "] montant=" + montantCeMois
-                    + " solde restant=" + nouveauSolde
                     + " isIndemnite=" + isIndemnite);
         }
 
@@ -146,14 +136,13 @@ public class RetenueEngine {
         List<MHRMouvementPaie> resultat = new ArrayList<>();
 
         // Un mouvement est actif si :
-        //   - Mode normal (IsRecurrent='N') : IsActive='Y' ET Solde > 0
-        //   - Mode récurrent (IsRecurrent='Y') : IsActive='Y' (pas de solde requis)
-        //   - Dans les deux cas : période dans la plage de prélèvement
-        //   - IsIndemnite=NULL traité comme 'N' (retenue) par défaut
+        //   - IsActive = Y
+        //   - La periode courante est dans l intervalle [debut, fin]
+        //   - Le solde n est plus verifie ici : l intervalle suffit
+        //   - IsIndemnite=NULL traite comme N (retenue) par defaut
         String sql = "SELECT * FROM " + I_HR_Mouvement_Paie.Table_Name
                 + " WHERE " + I_HR_Mouvement_Paie.COLUMNNAME_C_BPartner_ID + "=?"
                 + " AND " + I_HR_Mouvement_Paie.COLUMNNAME_IsActive + "='Y'"
-                + " AND (IsRecurrent='Y' OR " + I_HR_Mouvement_Paie.COLUMNNAME_Solde + ">0)"
                 + " AND " + I_HR_Mouvement_Paie.COLUMNNAME_Debut_Prelevement_ID + "<=?"
                 + " AND ("
                 +     I_HR_Mouvement_Paie.COLUMNNAME_Fin_Prelevement_ID + " IS NULL"
