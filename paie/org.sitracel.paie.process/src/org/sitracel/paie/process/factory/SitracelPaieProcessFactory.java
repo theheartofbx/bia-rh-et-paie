@@ -2,6 +2,8 @@ package org.sitracel.paie.process.factory;
 
 import org.adempiere.base.IProcessFactory;
 import org.compiere.process.ProcessCall;
+import org.sitracel.paie.process.periodes.SitracelProcessGenererPeriodes;
+import org.sitracel.paie.process.periodes.SitracelProcessVerifierPeriodes;
 import org.sitracel.paie.process.salairebase.SitracelProcessActualiserJourNonPaye;
 import org.sitracel.paie.process.salairebase.SitracelProcessCalculIndemniteConge;
 import org.sitracel.paie.process.salairebase.SitracelProcessCalculPaie;
@@ -19,6 +21,12 @@ public class SitracelPaieProcessFactory implements IProcessFactory{
 		}
 		if(className.equals("org.sitracel.paie.process.salairebase.SitracelProcessCalculIndemniteConge")) {
 			return new SitracelProcessCalculIndemniteConge();
+		}
+		if(className.equals("org.sitracel.paie.process.periodes.SitracelProcessGenererPeriodes")) {
+			return new SitracelProcessGenererPeriodes();
+		}
+		if(className.equals("org.sitracel.paie.process.periodes.SitracelProcessVerifierPeriodes")) {
+			return new SitracelProcessVerifierPeriodes();
 		}
 		return null;
 	}

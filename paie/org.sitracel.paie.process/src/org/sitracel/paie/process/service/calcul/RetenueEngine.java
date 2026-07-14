@@ -102,19 +102,18 @@ public class RetenueEngine {
 
             if (montantCeMois.compareTo(BigDecimal.ZERO) <= 0) continue;
 
-            // Mettre à jour le solde
-            BigDecimal nouveauSolde = mouvement.getSolde().subtract(montantCeMois);
-            if (nouveauSolde.compareTo(BigDecimal.ZERO) < 0) {
-                nouveauSolde = BigDecimal.ZERO;
+            // Mode récurrent : ne pas toucher au solde, ne jamais désactiver
+            if (!"Y".equals(mouvement.getIsRecurrent())) {
+                BigDecimal nouveauSolde = mouvement.getSolde().subtract(montantCeMois);
+                if (nouveauSolde.compareTo(BigDecimal.ZERO) < 0) {
+                    nouveauSolde = BigDecimal.ZERO;
+                }
+                mouvement.setSolde(nouveauSolde);
+                if (nouveauSolde.compareTo(BigDecimal.ZERO) == 0) {
+                    mouvement.setIsActive(false);
+                }
+                mouvement.save();
             }
-            mouvement.setSolde(nouveauSolde);
-
-            // Désactiver si soldé
-            if (nouveauSolde.compareTo(BigDecimal.ZERO) == 0) {
-                mouvement.setIsActive(false);
-            }
-
-            mouvement.save();
             total = total.add(montantCeMois);
 
             log.fine("Mouvement traité [" + mouvement.getName()
@@ -145,16 +144,21 @@ public class RetenueEngine {
 
         List<MHRMouvementPaie> resultat = new ArrayList<>();
 
+        // Un mouvement est actif si :
+        //   - Mode normal (IsRecurrent='N') : IsActive='Y' ET Solde > 0
+        //   - Mode récurrent (IsRecurrent='Y') : IsActive='Y' (pas de solde requis)
+        //   - Dans les deux cas : période dans la plage de prélèvement
+        //   - IsIndemnite=NULL traité comme 'N' (retenue) par défaut
         String sql = "SELECT * FROM " + I_HR_Mouvement_Paie.Table_Name
                 + " WHERE " + I_HR_Mouvement_Paie.COLUMNNAME_C_BPartner_ID + "=?"
                 + " AND " + I_HR_Mouvement_Paie.COLUMNNAME_IsActive + "='Y'"
-                + " AND " + I_HR_Mouvement_Paie.COLUMNNAME_Solde + ">0"
+                + " AND (IsRecurrent='Y' OR " + I_HR_Mouvement_Paie.COLUMNNAME_Solde + ">0)"
                 + " AND " + I_HR_Mouvement_Paie.COLUMNNAME_Debut_Prelevement_ID + "<=?"
                 + " AND ("
                 +     I_HR_Mouvement_Paie.COLUMNNAME_Fin_Prelevement_ID + " IS NULL"
                 +     " OR " + I_HR_Mouvement_Paie.COLUMNNAME_Fin_Prelevement_ID + ">=?"
                 + ")"
-                + " AND IsIndemnite=?";
+                + " AND COALESCE(IsIndemnite,'N')=?";
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -185,11 +189,33 @@ public class RetenueEngine {
      *     → on prend exactement le reste (montant_derniere_mensualite si défini)
      *   - Sinon → montant_mensualite normal
      */
-    private static BigDecimal calculerMontantCeMois(MHRMouvementPaie retenue) {
-        BigDecimal reste      = retenue.getSolde();
-        BigDecimal mensualite = retenue.getMontant_Mensualite();
+    /**
+     * Calcule le montant à prélever/verser ce mois.
+     *
+     * Mode récurrent (IsRecurrent='Y') :
+     *   → Montant_Mensualite fixe chaque mois, sans décrémenter le solde
+     *
+     * Mode normal (IsRecurrent='N') :
+     *   → Si reste <= mensualite → dernière mensualité (absorbe les centimes)
+     *   → Sinon → mensualite normale
+     */
+    private static BigDecimal calculerMontantCeMois(MHRMouvementPaie mouvement) {
+        BigDecimal mensualite = mouvement.getMontant_Mensualite();
 
-        if (reste == null || reste.compareTo(BigDecimal.ZERO) <= 0) {
+        // Mode récurrent : appliquer la mensualité fixe sans limite
+        boolean recurrent = "Y".equals(mouvement.getIsRecurrent());
+        if (recurrent) {
+            if (mensualite == null || mensualite.compareTo(BigDecimal.ZERO) <= 0) {
+                // Fallback : utiliser Montant_Total comme mensualité mensuelle
+                BigDecimal total = mouvement.getMontant_Total();
+                return (total != null) ? total : BigDecimal.ZERO;
+            }
+            return mensualite;
+        }
+
+        // Mode normal : décompter sur le solde
+        BigDecimal solde = mouvement.getSolde();
+        if (solde == null || solde.compareTo(BigDecimal.ZERO) <= 0) {
             return BigDecimal.ZERO;
         }
         if (mensualite == null || mensualite.compareTo(BigDecimal.ZERO) <= 0) {
@@ -197,11 +223,10 @@ public class RetenueEngine {
         }
 
         // Dernière mensualité
-        if (reste.compareTo(mensualite) <= 0) {
-            BigDecimal derniere = retenue.getMontant_Derniere_Mensualite();
+        if (solde.compareTo(mensualite) <= 0) {
+            BigDecimal derniere = mouvement.getMontant_Derniere_Mensualite();
             return (derniere != null && derniere.compareTo(BigDecimal.ZERO) > 0)
-                    ? derniere
-                    : reste;
+                    ? derniere : solde;
         }
 
         return mensualite;

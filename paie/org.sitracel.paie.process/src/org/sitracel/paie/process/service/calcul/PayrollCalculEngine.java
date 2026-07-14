@@ -65,17 +65,24 @@ public class PayrollCalculEngine {
         log.info("Début calcul paie — bpartnerId=" + bpartnerId + " periodeId=" + periodeId);
 
         // ------------------------------------------------------------------
-        // ÉTAPE 1 — Vérifier le contrat actif
+        // ÉTAPE 1 — Charger la période et vérifier le contrat actif
         // ------------------------------------------------------------------
-        MHRElementBasePaieEmploye contrat = getContratActif(bpartnerId, trxName);
-        if (contrat == null) {
-            log.warning("Calcul paie ignoré : aucun contrat actif pour bpartnerId=" + bpartnerId);
-            return false;
-        }
-
         MHRPeriodeSalariale periode = new MHRPeriodeSalariale(Env.getCtx(), periodeId, trxName);
         if (periode == null || periode.getHR_Periode_Salariale_ID() == 0) {
             log.warning("Calcul paie ignoré : période introuvable periodeId=" + periodeId);
+            return false;
+        }
+
+        // Utiliser le milieu de la période comme date de référence
+        // pour éviter les problèmes de bord (début = 16, fin = 15 du mois suivant)
+        Timestamp dateReference = periode.getDate_Debut_Defaut();
+
+        MHRElementBasePaieEmploye contrat = getContratActif(bpartnerId, dateReference, trxName);
+        if (contrat == null) {
+            log.warning("Calcul paie ignoré : aucun élément de paie valide pour "
+                    + "bpartnerId=" + bpartnerId
+                    + " à la date " + dateReference
+                    + " (période : " + periode.getName() + ")");
             return false;
         }
 
@@ -307,18 +314,43 @@ public class PayrollCalculEngine {
      * Charge le contrat actif de l'employé.
      * C'est l'enregistrement HR_ElementBasePaieEmploye avec IsActive=Y.
      */
-    private static MHRElementBasePaieEmploye getContratActif(int bpartnerId, String trxName) {
-        String sql = "SELECT * FROM " + I_HR_ElementBasePaieEmploye.Table_Name
+    /**
+     * Charge l'élément de paie de l'employé valide pour la période donnée.
+     * Un élément est valide si :
+     *   - IsActive = 'Y'
+     *   - Date_Debut <= dateReference
+     *   - Date_Fin IS NULL (CDI) OU Date_Fin >= dateReference
+     *
+     * Si dateReference est null, retourne le plus récent (comportement legacy).
+     */
+    private static MHRElementBasePaieEmploye getContratActif(
+            int bpartnerId, Timestamp dateReference, String trxName) {
+
+        String sql;
+        if (dateReference != null) {
+            sql = "SELECT * FROM " + I_HR_ElementBasePaieEmploye.Table_Name
                 + " WHERE " + I_HR_ElementBasePaieEmploye.COLUMNNAME_C_BPartner_ID + "=?"
                 + " AND " + I_HR_ElementBasePaieEmploye.COLUMNNAME_IsActive + "='Y'"
-                + " ORDER BY " + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut + " DESC"
-                ;
+                + " AND " + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut + "<=?"
+                + " AND (" + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Fin + " IS NULL"
+                + "   OR " + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Fin + ">=?)"
+                + " ORDER BY " + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut + " DESC";
+        } else {
+            sql = "SELECT * FROM " + I_HR_ElementBasePaieEmploye.Table_Name
+                + " WHERE " + I_HR_ElementBasePaieEmploye.COLUMNNAME_C_BPartner_ID + "=?"
+                + " AND " + I_HR_ElementBasePaieEmploye.COLUMNNAME_IsActive + "='Y'"
+                + " ORDER BY " + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut + " DESC";
+        }
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
+            if (dateReference != null) {
+                pstmt.setTimestamp(2, dateReference);
+                pstmt.setTimestamp(3, dateReference);
+            }
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 return new MHRElementBasePaieEmploye(Env.getCtx(), rs, trxName);
