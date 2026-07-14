@@ -3,6 +3,7 @@ package org.sitracel.paie.process.service.calcul;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.PreparedStatement;
+import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -273,9 +274,10 @@ public class PayrollCalculEngine {
             RetenueEngine.ResultatRetenues retenues,
             String trxName) {
 
-        // Charges salariales déjà calculées et en base
+        // Charges salariales déjà calculées et en base — filtrées par période
         BigDecimal chargesSalariales =
-                PayrollRepository.getSumChargesSalariales(bpartnerId, trxName);
+                PayrollRepository.getSumChargesSalariales(
+                        bpartnerId, periode.getHR_Periode_Salariale_ID(), trxName);
 
         BigDecimal sbr = variables.getOrDefault(CODE_SBR, BigDecimal.ZERO);
 

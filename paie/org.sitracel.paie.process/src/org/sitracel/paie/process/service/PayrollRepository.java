@@ -52,11 +52,12 @@ public class PayrollRepository {
      * Retourne le montant déjà calculé pour un employé et un code élément.
      * Ex: getCalculPaieByValue(1000010, "SBR", null) → montant du SBR
      */
-    public static MHRCalculPaie getCalculPaieByValue(int bpartnerId, String value, String trxName) {
+    public static MHRCalculPaie getCalculPaieByValue(int bpartnerId, int periodeId, String value, String trxName) {
         if (value == null) return null;
 
         String sql = "SELECT * FROM " + I_HR_Calcul_Paie.Table_Name
                 + " WHERE " + I_HR_Calcul_Paie.COLUMNNAME_C_BPartner_ID + "=?"
+                + " AND " + I_HR_Calcul_Paie.COLUMNNAME_HR_Periode_Salariale_ID + "=?"
                 + " AND " + I_HR_Calcul_Paie.COLUMNNAME_HR_Element_Base_Paie_ID
                 + " IN (SELECT " + I_HR_Element_Base_Paie.COLUMNNAME_HR_Element_Base_Paie_ID
                 + " FROM " + I_HR_Element_Base_Paie.Table_Name
@@ -67,7 +68,8 @@ public class PayrollRepository {
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
-            pstmt.setString(2, value);
+            pstmt.setInt(2, periodeId);
+            pstmt.setString(3, value);
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 return new MHRCalculPaie(Env.getCtx(), rs, trxName);
@@ -246,10 +248,11 @@ public class PayrollRepository {
      * Retourne la somme des charges salariales d'un employé (PV + PF + CFC-S...).
      * Utilisé pour calculer le net à payer.
      */
-    public static BigDecimal getSumChargesSalariales(int bpartnerId, String trxName) {
+    public static BigDecimal getSumChargesSalariales(int bpartnerId, int periodeId, String trxName) {
         String sql = "SELECT COALESCE(SUM(" + I_HR_Calcul_Paie.COLUMNNAME_Montant + "), 0)"
                 + " FROM " + I_HR_Calcul_Paie.Table_Name
                 + " WHERE " + I_HR_Calcul_Paie.COLUMNNAME_C_BPartner_ID + "=?"
+                + " AND " + I_HR_Calcul_Paie.COLUMNNAME_HR_Periode_Salariale_ID + "=?"
                 + " AND " + I_HR_Calcul_Paie.COLUMNNAME_HR_Element_Base_Paie_ID + " IN ("
                 + " SELECT " + I_HR_Element_Base_Paie.COLUMNNAME_HR_Element_Base_Paie_ID
                 + " FROM " + I_HR_Element_Base_Paie.Table_Name
@@ -264,6 +267,7 @@ public class PayrollRepository {
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
+            pstmt.setInt(2, periodeId);
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 return rs.getBigDecimal(1);

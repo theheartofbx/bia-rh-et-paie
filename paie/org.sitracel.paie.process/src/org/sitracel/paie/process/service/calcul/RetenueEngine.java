@@ -103,8 +103,9 @@ public class RetenueEngine {
             if (montantCeMois.compareTo(BigDecimal.ZERO) <= 0) continue;
 
             // Mode récurrent : ne pas toucher au solde, ne jamais désactiver
+            BigDecimal nouveauSolde = mouvement.getSolde();
             if (!"Y".equals(mouvement.getIsRecurrent())) {
-                BigDecimal nouveauSolde = mouvement.getSolde().subtract(montantCeMois);
+                nouveauSolde = mouvement.getSolde().subtract(montantCeMois);
                 if (nouveauSolde.compareTo(BigDecimal.ZERO) < 0) {
                     nouveauSolde = BigDecimal.ZERO;
                 }
