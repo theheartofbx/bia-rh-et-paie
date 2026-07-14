@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -91,6 +92,11 @@ public class PayrollCalculEngine {
         // ÉTAPE 2 — Charger le coefficient de présence
         // ------------------------------------------------------------------
         BigDecimal coeffPresence = getCoeffPresence(bpartnerId, periodeId, trxName);
+
+        // ------------------------------------------------------------------
+        // ÉTAPE 2b — Ajuster la présence pour embauche en milieu de période
+        // ------------------------------------------------------------------
+        ajusterPresencePourEmbauche(bpartnerId, periodeId, contrat, periode, trxName);
 
         // ------------------------------------------------------------------
         // ÉTAPE 3 — Initialiser les variables depuis le contrat
@@ -316,6 +322,74 @@ public class PayrollCalculEngine {
      * Charge le contrat actif de l'employé.
      * C'est l'enregistrement HR_ElementBasePaieEmploye avec IsActive=Y.
      */
+
+    /**
+     * Ajuste automatiquement la fiche de présence si l'employé a été embauché
+     * en cours de période (Date_Debut du contrat > Date_Debut de la période).
+     *
+     * Règle :
+     *   joursAvantEmbauche = nombre de jours entre début période et début contrat
+     *   Nombre_Jour_Effectif -= joursAvantEmbauche
+     *   Nombre_Jour_Avant_DebutContrat = joursAvantEmbauche
+     *
+     * Ne fait rien si :
+     *   - La période IsAvantDebutContratDeduit = N
+     *   - Le contrat commence avant ou au début de la période (cas normal)
+     *   - La fiche de présence n'existe pas (elle sera créée par le callout)
+     */
+    private static void ajusterPresencePourEmbauche(
+            int bpartnerId, int periodeId,
+            MHRElementBasePaieEmploye contrat,
+            MHRPeriodeSalariale periode,
+            String trxName) {
+
+        // Vérifier que la période demande cette déduction
+        if (!periode.isAvantDebutContratDeduit()) return;
+
+        Timestamp dateDebutContrat = contrat.getDate_Debut();
+        Timestamp dateDebutPeriode = periode.getDate_Debut_Defaut();
+        Timestamp dateFinPeriode   = periode.getDate_Fin_Defaut();
+
+        if (dateDebutContrat == null || dateDebutPeriode == null) return;
+
+        // Le contrat commence avant ou exactement au début de la période → rien à faire
+        if (!dateDebutContrat.after(dateDebutPeriode)) return;
+
+        // Le contrat commence après la fin de la période → cas impossible (getContratActif aurait renvoyé null)
+        if (dateDebutContrat.after(dateFinPeriode)) return;
+
+        // Calculer les jours avant embauche (du début période jusqu'à la veille du contrat)
+        LocalDate ldDebut  = dateDebutPeriode.toLocalDateTime().toLocalDate();
+        LocalDate ldContrat = dateDebutContrat.toLocalDateTime().toLocalDate();
+        int joursAvant = (int) java.time.temporal.ChronoUnit.DAYS.between(ldDebut, ldContrat);
+
+        if (joursAvant <= 0) return;
+
+        // Mettre à jour la fiche de présence si elle existe
+        // DB.executeUpdate en Java 8 iDempiere ne supporte pas Object[]
+        // On passe par un PreparedStatement direct
+        String sql = "UPDATE adempiere.hr_gestion_presence"
+                + " SET nombre_jour_avant_debutcontrat = " + joursAvant + ","
+                + "     nombre_jour_effectif = GREATEST(0, nombre_jour_effectif - " + joursAvant + "),"
+                + "     updated = NOW()"
+                + " WHERE c_bpartner_id = " + bpartnerId
+                + " AND hr_periode_salariale_id = " + periodeId
+                + " AND isactive = 'Y'";
+
+        int updated = DB.executeUpdate(sql, trxName);
+
+        if (updated > 0) {
+            log.info("Présence ajustée pour embauche milieu période — bpartnerId=" + bpartnerId
+                    + " joursAvant=" + joursAvant
+                    + " période=" + periode.getName());
+        } else {
+            // Pas de fiche de présence encore — noter dans le log, le callout la créera
+            log.fine("Pas de fiche présence pour bpartnerId=" + bpartnerId
+                    + " période=" + periode.getName()
+                    + " — joursAvantEmbauche=" + joursAvant + " sera appliqué par le callout");
+        }
+    }
+
     /**
      * Charge l'élément de paie de l'employé valide pour la période donnée.
      * Un élément est valide si :
