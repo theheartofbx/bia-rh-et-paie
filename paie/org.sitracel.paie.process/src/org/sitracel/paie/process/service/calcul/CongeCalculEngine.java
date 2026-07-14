@@ -98,7 +98,9 @@ public class CongeCalculEngine {
         // ÉTAPE 1 — Vérifier la base de calcul depuis hr_holiday
         // ------------------------------------------------------------------
         BigDecimal salaireCotisable = holiday.getSalaire_Cotisable();
-        BigDecimal nombreJourConge  = BigDecimal.valueOf(holiday.getNombre_Jour_Conge());
+        // Jours_Conge_Correspondant = jours ouvrables du conge (hors dimanches)
+        int njc = holiday.getJours_Conge_Correspondant();
+        BigDecimal nombreJourConge = BigDecimal.valueOf(njc);
 
         if (salaireCotisable == null || salaireCotisable.compareTo(BigDecimal.ZERO) <= 0) {
             log.warning("calculerIndemniteConge : salaire_cotisable absent ou nul "
@@ -108,7 +110,7 @@ public class CongeCalculEngine {
         }
 
         if (nombreJourConge == null || nombreJourConge.compareTo(BigDecimal.ZERO) <= 0) {
-            log.warning("calculerIndemniteConge : nombre_jour_conge absent ou nul");
+            log.warning("calculerIndemniteConge : jours_conge_correspondant absent ou nul");
             return false;
         }
 
