@@ -89,8 +89,9 @@ public class PayrollCalculEngine {
         }
 
         // ------------------------------------------------------------------
-        // ÉTAPE 2 — Charger le coefficient de présence
+        // ÉTAPE 2 — Generer la fiche de presence puis charger le coefficient
         // ------------------------------------------------------------------
+        genererGestionPresence(bpartnerId, periodeId, periode, contrat, trxName);
         BigDecimal coeffPresence = getCoeffPresence(bpartnerId, periodeId, trxName);
 
         // ------------------------------------------------------------------
@@ -437,6 +438,154 @@ public class PayrollCalculEngine {
             DB.close(rs, pstmt);
         }
         return null;
+    }
+
+    /**
+     * Genere ou met a jour la fiche de presence pour un employe et une periode.
+     * Sources :
+     *   - HR_Absence : jours d absence categorises par type
+     *     Type 404 (En Conge) → via hr_holiday → hr_type_conge :
+     *       101 = annuel, 202 = maternite, 303 = paternite
+     *     Type 505 (Suspendu) → suspension disciplinaire
+     *     Types 101, 202, 303 (Injustifiee, Justifiee, Maladie) → autres absences
+     *   - Contrat : jours avant debut du contrat si embauche en milieu de periode
+     *
+     * Cette methode est idempotente : on peut la relancer sans risque.
+     */
+    private static void genererGestionPresence(int bpartnerId, int periodeId,
+            MHRPeriodeSalariale periode, MHRElementBasePaieEmploye contrat, String trxName) {
+
+        Timestamp dateDebutPeriode = periode.getDate_Debut_Defaut();
+        Timestamp dateFinPeriode   = periode.getDate_Fin_Defaut();
+        int nombreJourMax = 30;
+
+        // --- Conge annuel : absences liees a un conge de type 101 (Annuel) ---
+        String sqlCongeAnnuel = "SELECT COUNT(*) FROM HR_Absence a"
+                + " JOIN HR_Holiday h ON h.HR_Holiday_ID = a.HR_Holiday_ID"
+                + " WHERE a.C_BPartner_ID=?"
+                + " AND a.date_absence >= ? AND a.date_absence <= ?"
+                + " AND a.IsActive='Y'"
+                + " AND a.HR_Type_Absence_ID = 404"
+                + " AND h.HR_Type_Conge_ID = 101";
+        int joursCongeAnnuel = DB.getSQLValue(trxName, sqlCongeAnnuel,
+                bpartnerId, dateDebutPeriode, dateFinPeriode);
+        if (joursCongeAnnuel < 0) joursCongeAnnuel = 0;
+
+        // --- Conge maternite : absences liees a un conge de type 202 ---
+        String sqlCongeMaternite = "SELECT COUNT(*) FROM HR_Absence a"
+                + " JOIN HR_Holiday h ON h.HR_Holiday_ID = a.HR_Holiday_ID"
+                + " WHERE a.C_BPartner_ID=?"
+                + " AND a.date_absence >= ? AND a.date_absence <= ?"
+                + " AND a.IsActive='Y'"
+                + " AND a.HR_Type_Absence_ID = 404"
+                + " AND h.HR_Type_Conge_ID = 202";
+        int joursCongeMaternite = DB.getSQLValue(trxName, sqlCongeMaternite,
+                bpartnerId, dateDebutPeriode, dateFinPeriode);
+        if (joursCongeMaternite < 0) joursCongeMaternite = 0;
+
+        // --- Conge paternite : absences liees a un conge de type 303 ---
+        String sqlCongePaternite = "SELECT COUNT(*) FROM HR_Absence a"
+                + " JOIN HR_Holiday h ON h.HR_Holiday_ID = a.HR_Holiday_ID"
+                + " WHERE a.C_BPartner_ID=?"
+                + " AND a.date_absence >= ? AND a.date_absence <= ?"
+                + " AND a.IsActive='Y'"
+                + " AND a.HR_Type_Absence_ID = 404"
+                + " AND h.HR_Type_Conge_ID = 303";
+        int joursCongePaternite = DB.getSQLValue(trxName, sqlCongePaternite,
+                bpartnerId, dateDebutPeriode, dateFinPeriode);
+        if (joursCongePaternite < 0) joursCongePaternite = 0;
+
+        // --- Suspensions disciplinaires (type 505) ---
+        String sqlSuspension = "SELECT COUNT(*) FROM HR_Absence"
+                + " WHERE C_BPartner_ID=?"
+                + " AND date_absence >= ? AND date_absence <= ?"
+                + " AND IsActive='Y'"
+                + " AND HR_Type_Absence_ID = 505";
+        int joursSuspension = DB.getSQLValue(trxName, sqlSuspension,
+                bpartnerId, dateDebutPeriode, dateFinPeriode);
+        if (joursSuspension < 0) joursSuspension = 0;
+
+        // --- Autres absences (injustifiee 101, justifiee 202, maladie 303) ---
+        String sqlAutres = "SELECT COUNT(*) FROM HR_Absence"
+                + " WHERE C_BPartner_ID=?"
+                + " AND date_absence >= ? AND date_absence <= ?"
+                + " AND IsActive='Y'"
+                + " AND HR_Type_Absence_ID IN (101, 202, 303)";
+        int joursAutres = DB.getSQLValue(trxName, sqlAutres,
+                bpartnerId, dateDebutPeriode, dateFinPeriode);
+        if (joursAutres < 0) joursAutres = 0;
+
+        // --- Jours avant debut du contrat ---
+        int joursAvantContrat = 0;
+        if (contrat != null && contrat.getDate_Debut() != null) {
+            Timestamp dateDebutContrat = contrat.getDate_Debut();
+            if (dateDebutContrat.after(dateDebutPeriode)) {
+                LocalDate ldDebut   = dateDebutPeriode.toLocalDateTime().toLocalDate();
+                LocalDate ldContrat = dateDebutContrat.toLocalDateTime().toLocalDate();
+                joursAvantContrat = (int) java.time.temporal.ChronoUnit.DAYS.between(ldDebut, ldContrat);
+                if (joursAvantContrat < 0) joursAvantContrat = 0;
+            }
+        }
+
+        // --- Calculer le nombre de jours effectifs ---
+        int totalAbsences = joursCongeAnnuel + joursCongeMaternite + joursCongePaternite
+                + joursSuspension + joursAutres + joursAvantContrat;
+        int joursEffectifs = nombreJourMax - totalAbsences;
+        if (joursEffectifs < 0) joursEffectifs = 0;
+
+        // --- Creer ou mettre a jour la fiche de presence ---
+        String sqlFind = "SELECT HR_Gestion_Presence_ID FROM HR_Gestion_Presence"
+                + " WHERE C_BPartner_ID=? AND HR_Periode_Salariale_ID=? AND IsActive='Y'";
+        int existingId = DB.getSQLValue(trxName, sqlFind, bpartnerId, periodeId);
+
+        if (existingId > 0) {
+            String sqlUpdate = "UPDATE HR_Gestion_Presence SET"
+                    + " Nombre_Jour_Max=" + nombreJourMax
+                    + ", Nombre_Jour_Effectif=" + joursEffectifs
+                    + ", Nombre_Jour_Avant_DebutContrat=" + joursAvantContrat
+                    + ", Nombre_Jour_Conge_Annuel=" + joursCongeAnnuel
+                    + ", Nombre_Jour_Conge_Maternite=" + joursCongeMaternite
+                    + ", Nombre_Jour_Conge_Paternite=" + joursCongePaternite
+                    + ", Nombre_Jour_Suspension=" + joursSuspension
+                    + ", Date_Debut='" + dateDebutPeriode + "'"
+                    + ", Date_Fin='" + dateFinPeriode + "'"
+                    + ", Updated=NOW()"
+                    + " WHERE HR_Gestion_Presence_ID=" + existingId;
+            DB.executeUpdate(sqlUpdate, trxName);
+        } else {
+            int newId = DB.getNextID(Env.getCtx(), "HR_Gestion_Presence", trxName);
+            String sqlInsert = "INSERT INTO HR_Gestion_Presence"
+                    + " (HR_Gestion_Presence_ID, AD_Client_ID, AD_Org_ID, IsActive,"
+                    + "  Created, CreatedBy, Updated, UpdatedBy,"
+                    + "  C_BPartner_ID, HR_Periode_Salariale_ID,"
+                    + "  Date_Debut, Date_Fin,"
+                    + "  Nombre_Jour_Max, Nombre_Jour_Effectif,"
+                    + "  Nombre_Jour_Avant_DebutContrat,"
+                    + "  Nombre_Jour_Conge_Annuel, Nombre_Jour_Conge_Maternite,"
+                    + "  Nombre_Jour_Conge_Paternite, Nombre_Jour_Suspension)"
+                    + " VALUES (" + newId + ", " + Env.getAD_Client_ID(Env.getCtx())
+                    + ", " + Env.getAD_Org_ID(Env.getCtx()) + ", 'Y'"
+                    + ", NOW(), " + Env.getAD_User_ID(Env.getCtx())
+                    + ", NOW(), " + Env.getAD_User_ID(Env.getCtx())
+                    + ", " + bpartnerId + ", " + periodeId
+                    + ", '" + dateDebutPeriode + "', '" + dateFinPeriode + "'"
+                    + ", " + nombreJourMax + ", " + joursEffectifs
+                    + ", " + joursAvantContrat
+                    + ", " + joursCongeAnnuel + ", " + joursCongeMaternite
+                    + ", " + joursCongePaternite + ", " + joursSuspension + ")";
+            DB.executeUpdate(sqlInsert, trxName);
+        }
+
+        log.info("Presence generee — bpartnerId=" + bpartnerId
+                + " periode=" + periode.getName()
+                + " max=" + nombreJourMax
+                + " congeAnnuel=" + joursCongeAnnuel
+                + " maternite=" + joursCongeMaternite
+                + " paternite=" + joursCongePaternite
+                + " suspension=" + joursSuspension
+                + " autres=" + joursAutres
+                + " avantContrat=" + joursAvantContrat
+                + " effectif=" + joursEffectifs);
     }
 
     /**
