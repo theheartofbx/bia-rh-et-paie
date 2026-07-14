@@ -59,7 +59,7 @@ public class SitracelModelValidatorMouvementPaie implements ModelValidator {
             MHRMouvementPaieType typeObj =
                     new MHRMouvementPaieType(Env.getCtx(), typeId, po.get_TrxName());
             if (typeObj != null && typeObj.getHR_MouvementPaieType_ID() > 0) {
-                m.setIsIndemnite(typeObj.getIsIndemnite());
+                m.setIsIndemnite("Y".equalsIgnoreCase(typeObj.getIsIndemnite()));
                 log.fine("MouvementPaie [" + m.getName()
                         + "] IsIndemnite=" + typeObj.getIsIndemnite()
                         + " (type=" + typeObj.getName() + ")");
@@ -71,7 +71,7 @@ public class SitracelModelValidatorMouvementPaie implements ModelValidator {
         // -----------------------------------------------------------
         int nbMensualite = m.getNombre_Mensualite();
         boolean recurrent = (nbMensualite <= 0);
-        m.setIsRecurrent(recurrent ? "Y" : "N");
+        m.setIsRecurrent(recurrent);
 
         // -----------------------------------------------------------
         // 3 & 4. Mensualités + Solde (mode non récurrent uniquement)

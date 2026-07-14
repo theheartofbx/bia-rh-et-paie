@@ -247,6 +247,15 @@ au :
 	  */
 	public boolean isActive();
 
+    /** Column name IsIndemnite */
+    public static final String COLUMNNAME_IsIndemnite = "IsIndemnite";
+
+	/** Set Est une Indemnité	  */
+	public void setIsIndemnite (boolean IsIndemnite);
+
+	/** Get Est une Indemnité	  */
+	public boolean isIndemnite();
+
     /** Column name IsIndemniteLicenciement */
     public static final String COLUMNNAME_IsIndemniteLicenciement = "IsIndemniteLicenciement";
 
@@ -264,6 +273,15 @@ au :
 
 	/** Get Participe au Calcul des Indemnités de Départ à la Retraite	  */
 	public boolean isIndemniteRetraite();
+
+    /** Column name IsRecurrent */
+    public static final String COLUMNNAME_IsRecurrent = "IsRecurrent";
+
+	/** Set Est Récurrent	  */
+	public void setIsRecurrent (boolean IsRecurrent);
+
+	/** Get Est Récurrent	  */
+	public boolean isRecurrent();
 
     /** Column name Montant_Derniere_Mensualite */
     public static final String COLUMNNAME_Montant_Derniere_Mensualite = "Montant_Derniere_Mensualite";

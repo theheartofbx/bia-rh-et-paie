@@ -34,7 +34,7 @@ public class X_HR_Mouvement_Paie extends PO implements I_HR_Mouvement_Paie, I_Pe
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260713L;
+	private static final long serialVersionUID = 20260714L;
 
     /** Standard Constructor */
     public X_HR_Mouvement_Paie (Properties ctx, int HR_Mouvement_Paie_ID, String trxName)
@@ -44,8 +44,12 @@ public class X_HR_Mouvement_Paie extends PO implements I_HR_Mouvement_Paie, I_Pe
         {
 			setC_BPartner_ID (0);
 			setDebut_Prelevement_ID (0);
-			setHR_Element_Base_Paie_ID (0);
+			setHR_MouvementPaieType_ID (0);
 			setHR_Mouvement_Paie_ID (0);
+			setIsIndemnite (false);
+// 'N'
+			setIsRecurrent (false);
+// 'N'
 			setMontant_Total (Env.ZERO);
 			setName (null);
 			setNombre_Mensualite (0);
@@ -60,8 +64,12 @@ public class X_HR_Mouvement_Paie extends PO implements I_HR_Mouvement_Paie, I_Pe
         {
 			setC_BPartner_ID (0);
 			setDebut_Prelevement_ID (0);
-			setHR_Element_Base_Paie_ID (0);
+			setHR_MouvementPaieType_ID (0);
 			setHR_Mouvement_Paie_ID (0);
+			setIsIndemnite (false);
+// 'N'
+			setIsRecurrent (false);
+// 'N'
 			setMontant_Total (Env.ZERO);
 			setName (null);
 			setNombre_Mensualite (0);
@@ -76,8 +84,12 @@ public class X_HR_Mouvement_Paie extends PO implements I_HR_Mouvement_Paie, I_Pe
         {
 			setC_BPartner_ID (0);
 			setDebut_Prelevement_ID (0);
-			setHR_Element_Base_Paie_ID (0);
+			setHR_MouvementPaieType_ID (0);
 			setHR_Mouvement_Paie_ID (0);
+			setIsIndemnite (false);
+// 'N'
+			setIsRecurrent (false);
+// 'N'
 			setMontant_Total (Env.ZERO);
 			setName (null);
 			setNombre_Mensualite (0);
@@ -92,8 +104,12 @@ public class X_HR_Mouvement_Paie extends PO implements I_HR_Mouvement_Paie, I_Pe
         {
 			setC_BPartner_ID (0);
 			setDebut_Prelevement_ID (0);
-			setHR_Element_Base_Paie_ID (0);
+			setHR_MouvementPaieType_ID (0);
 			setHR_Mouvement_Paie_ID (0);
+			setIsIndemnite (false);
+// 'N'
+			setIsRecurrent (false);
+// 'N'
 			setMontant_Total (Env.ZERO);
 			setName (null);
 			setNombre_Mensualite (0);
@@ -407,6 +423,28 @@ public class X_HR_Mouvement_Paie extends PO implements I_HR_Mouvement_Paie, I_Pe
 		return (String)get_Value(COLUMNNAME_HR_Mouvement_Paie_UU);
 	}
 
+	/** Set Est une Indemnité.
+		@param IsIndemnite Est une Indemnité
+	*/
+	public void setIsIndemnite (boolean IsIndemnite)
+	{
+		set_Value (COLUMNNAME_IsIndemnite, Boolean.valueOf(IsIndemnite));
+	}
+
+	/** Get Est une Indemnité.
+		@return Est une Indemnité	  */
+	public boolean isIndemnite()
+	{
+		Object oo = get_Value(COLUMNNAME_IsIndemnite);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
 	/** Set Participe au Calcul des Indemnités de Licenciement.
 		@param IsIndemniteLicenciement Participe au Calcul des Indemnités de Licenciement
 	*/
@@ -442,6 +480,28 @@ public class X_HR_Mouvement_Paie extends PO implements I_HR_Mouvement_Paie, I_Pe
 	public boolean isIndemniteRetraite()
 	{
 		Object oo = get_Value(COLUMNNAME_IsIndemniteRetraite);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Est Récurrent.
+		@param IsRecurrent Est Récurrent
+	*/
+	public void setIsRecurrent (boolean IsRecurrent)
+	{
+		set_Value (COLUMNNAME_IsRecurrent, Boolean.valueOf(IsRecurrent));
+	}
+
+	/** Get Est Récurrent.
+		@return Est Récurrent	  */
+	public boolean isRecurrent()
+	{
+		Object oo = get_Value(COLUMNNAME_IsRecurrent);
 		if (oo != null)
 		{
 			 if (oo instanceof Boolean)
@@ -561,30 +621,4 @@ public class X_HR_Mouvement_Paie extends PO implements I_HR_Mouvement_Paie, I_Pe
 			 return Env.ZERO;
 		return bd;
 	}
-
-    /** Set IsIndemnite.
-     * Y = indemnité versée à l'employé (ajoutée au NP)
-     * N = retenue prélevée (soustraite du NP)
-     */
-    public void setIsIndemnite(String IsIndemnite) {
-        set_Value("IsIndemnite", IsIndemnite);
-    }
-
-    /** Get IsIndemnite. */
-    public String getIsIndemnite() {
-        return (String) get_Value("IsIndemnite");
-    }
-
-    /** Set IsRecurrent.
-     * Y = mouvement CDI sans fin, N = mensualités finies
-     */
-    public void setIsRecurrent(String IsRecurrent) {
-        set_Value("IsRecurrent", IsRecurrent);
-    }
-
-    /** Get IsRecurrent. */
-    public String getIsRecurrent() {
-        return (String) get_Value("IsRecurrent");
-    }
-
 }

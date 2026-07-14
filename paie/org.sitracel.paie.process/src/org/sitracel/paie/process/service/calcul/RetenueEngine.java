@@ -104,7 +104,7 @@ public class RetenueEngine {
 
             // Mode récurrent : ne pas toucher au solde, ne jamais désactiver
             BigDecimal nouveauSolde = mouvement.getSolde();
-            if (!"Y".equals(mouvement.getIsRecurrent())) {
+            if (!mouvement.isRecurrent()) {
                 nouveauSolde = mouvement.getSolde().subtract(montantCeMois);
                 if (nouveauSolde.compareTo(BigDecimal.ZERO) < 0) {
                     nouveauSolde = BigDecimal.ZERO;
@@ -204,7 +204,7 @@ public class RetenueEngine {
         BigDecimal mensualite = mouvement.getMontant_Mensualite();
 
         // Mode récurrent : appliquer la mensualité fixe sans limite
-        boolean recurrent = "Y".equals(mouvement.getIsRecurrent());
+        boolean recurrent = mouvement.isRecurrent();
         if (recurrent) {
             if (mensualite == null || mensualite.compareTo(BigDecimal.ZERO) <= 0) {
                 // Fallback : utiliser Montant_Total comme mensualité mensuelle
