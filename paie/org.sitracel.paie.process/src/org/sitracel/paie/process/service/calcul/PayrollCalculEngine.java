@@ -457,41 +457,21 @@ public class PayrollCalculEngine {
         Timestamp dateFinPeriode   = periode.getDate_Fin_Defaut();
         int nombreJourMax = 30;
 
-        // --- Conge annuel : absences liees a un conge de type 101 (Annuel) ---
-        String sqlCongeAnnuel = "SELECT COUNT(*) FROM HR_Absence a"
-                + " JOIN HR_Holiday h ON h.HR_Holiday_ID = a.HR_Holiday_ID"
-                + " WHERE a.C_BPartner_ID=?"
-                + " AND a.date_absence >= ? AND a.date_absence <= ?"
-                + " AND a.IsActive='Y'"
-                + " AND a.HR_Type_Absence_ID = (SELECT HR_Type_Absence_ID FROM HR_Type_Absence WHERE Nom_Absence='En Congé' AND IsActive='Y')"
-                + " AND h.HR_Type_Conge_ID = 101";
+        // --- Conges : toutes les absences de type "En Congé" ---
+        // Le type d absence suffit comme reference, pas de jointure HR_Holiday
+        // (hr_holiday_id n est pas toujours renseigne sur les absences)
+        String sqlCongeAnnuel = "SELECT COUNT(*) FROM HR_Absence"
+                + " WHERE C_BPartner_ID=?"
+                + " AND date_absence >= ? AND date_absence <= ?"
+                + " AND IsActive='Y'"
+                + " AND HR_Type_Absence_ID = (SELECT HR_Type_Absence_ID FROM HR_Type_Absence WHERE Nom_Absence='En Congé' AND IsActive='Y')";
         int joursCongeAnnuel = DB.getSQLValue(trxName, sqlCongeAnnuel,
                 bpartnerId, dateDebutPeriode, dateFinPeriode);
         if (joursCongeAnnuel < 0) joursCongeAnnuel = 0;
 
-        // --- Conge maternite : absences liees a un conge de type 202 ---
-        String sqlCongeMaternite = "SELECT COUNT(*) FROM HR_Absence a"
-                + " JOIN HR_Holiday h ON h.HR_Holiday_ID = a.HR_Holiday_ID"
-                + " WHERE a.C_BPartner_ID=?"
-                + " AND a.date_absence >= ? AND a.date_absence <= ?"
-                + " AND a.IsActive='Y'"
-                + " AND a.HR_Type_Absence_ID = (SELECT HR_Type_Absence_ID FROM HR_Type_Absence WHERE Nom_Absence='En Congé' AND IsActive='Y')"
-                + " AND h.HR_Type_Conge_ID = 202";
-        int joursCongeMaternite = DB.getSQLValue(trxName, sqlCongeMaternite,
-                bpartnerId, dateDebutPeriode, dateFinPeriode);
-        if (joursCongeMaternite < 0) joursCongeMaternite = 0;
-
-        // --- Conge paternite : absences liees a un conge de type 303 ---
-        String sqlCongePaternite = "SELECT COUNT(*) FROM HR_Absence a"
-                + " JOIN HR_Holiday h ON h.HR_Holiday_ID = a.HR_Holiday_ID"
-                + " WHERE a.C_BPartner_ID=?"
-                + " AND a.date_absence >= ? AND a.date_absence <= ?"
-                + " AND a.IsActive='Y'"
-                + " AND a.HR_Type_Absence_ID = (SELECT HR_Type_Absence_ID FROM HR_Type_Absence WHERE Nom_Absence='En Congé' AND IsActive='Y')"
-                + " AND h.HR_Type_Conge_ID = (SELECT HR_Type_Conge_ID FROM HR_Type_Conge WHERE Name='Paternité' AND IsActive='Y')";
-        int joursCongePaternite = DB.getSQLValue(trxName, sqlCongePaternite,
-                bpartnerId, dateDebutPeriode, dateFinPeriode);
-        if (joursCongePaternite < 0) joursCongePaternite = 0;
+        // Maternite et paternite inclus dans le total conges ci-dessus
+        int joursCongeMaternite = 0;
+        int joursCongePaternite = 0;
 
         // --- Suspensions disciplinaires (type 505) ---
         String sqlSuspension = "SELECT COUNT(*) FROM HR_Absence"
