@@ -74,8 +74,9 @@ public class CongeCalculEngine {
     /**
      * Calcule les indemnités de congé pour un employé partant en congé.
      *
-     * Prérequis : hr_holiday.salaire_cotisable et nombre_jour_conge
-     * doivent être renseignés (calculés lors de la validation du congé).
+     * Le salaire_cotisable est calcule dynamiquement depuis
+     * hr_historique_paie (cumul SBR sur la periode de reference).
+     * Prerequis : hr_historique_paie alimente sur la periode de reference.
      *
      * @param bpartner  employé concerné
      * @param holiday   congé validé
@@ -95,17 +96,48 @@ public class CongeCalculEngine {
                 + " holidayId=" + holiday.getHR_Holiday_ID());
 
         // ------------------------------------------------------------------
-        // ÉTAPE 1 — Vérifier la base de calcul depuis hr_holiday
+        // ÉTAPE 1 — Calculer la base depuis hr_historique_paie
         // ------------------------------------------------------------------
-        BigDecimal salaireCotisable = holiday.getSalaire_Cotisable();
+        // Periode de reference : de date_dernier_conge (ou date embauche)
+        // jusqu a date_debut_effective du conge
+        Timestamp dateDebutRef = holiday.getDate_Dernier_Conge();
+        if (dateDebutRef == null) {
+            // Premier conge : utiliser la date d embauche
+            MHRElementBasePaieEmploye contratRef = getContratActifALaDate(
+                    bpartnerId, holiday.getDate_Debut_Effective(), trxName);
+            if (contratRef != null) {
+                dateDebutRef = contratRef.getDate_Debut();
+            }
+        }
+        Timestamp dateFinRef = holiday.getDate_Debut_Effective();
+
+        BigDecimal salaireCotisable = BigDecimal.ZERO;
+        if (dateDebutRef != null && dateFinRef != null) {
+            // Cumul des SBR sur la periode de reference depuis hr_historique_paie
+            String sqlSC = "SELECT COALESCE(SUM(hp.Montant), 0)"
+                    + " FROM HR_Historique_Paie hp"
+                    + " JOIN HR_Periode_Salariale ps ON ps.HR_Periode_Salariale_ID = hp.HR_Periode_Salariale_ID"
+                    + " JOIN HR_Element_Base_Paie e ON e.HR_Element_Base_Paie_ID = hp.HR_Element_Base_Paie_ID"
+                    + " WHERE hp.C_BPartner_ID=?"
+                    + " AND e.Value='SBR'"
+                    + " AND ps.Date_Debut_Defaut >= ?"
+                    + " AND ps.Date_Debut_Defaut < ?";
+            salaireCotisable = DB.getSQLValueBD(trxName, sqlSC, bpartnerId, dateDebutRef, dateFinRef);
+            if (salaireCotisable == null) salaireCotisable = BigDecimal.ZERO;
+
+            // Mettre a jour hr_holiday pour affichage
+            holiday.setSalaire_Cotisable(salaireCotisable);
+            holiday.save();
+        }
+
         // Jours_Conge_Correspondant = jours ouvrables du conge (hors dimanches)
         int njc = holiday.getJours_Conge_Correspondant();
         BigDecimal nombreJourConge = BigDecimal.valueOf(njc);
 
-        if (salaireCotisable == null || salaireCotisable.compareTo(BigDecimal.ZERO) <= 0) {
-            log.warning("calculerIndemniteConge : salaire_cotisable absent ou nul "
-                    + "— vérifier que le congé a bien été validé avec calcul de la "
-                    + "période de référence (date_dernier_conge → date_debut_effective)");
+        if (salaireCotisable.compareTo(BigDecimal.ZERO) <= 0) {
+            log.warning("calculerIndemniteConge : salaire_cotisable=0 "
+                    + "— aucun SBR trouve dans hr_historique_paie entre "
+                    + dateDebutRef + " et " + dateFinRef);
             return false;
         }
 
@@ -139,8 +171,8 @@ public class CongeCalculEngine {
         // ------------------------------------------------------------------
         Map<String, BigDecimal> variables = new HashMap<>();
 
-        // Base période de référence — cumul SBR de date_dernier_conge à date_debut_effective
-        // Stocké dans hr_holiday.salaire_cotisable lors de la validation du congé
+        // Base periode de reference — cumul SBR calcule dynamiquement
+        // depuis hr_historique_paie (mis a jour dans hr_holiday a l etape 1)
         variables.put(CODE_SC,   salaireCotisable);
         variables.put(CODE_SCPR, salaireCotisable); // alias pour compatibilité formules
 
