@@ -21,13 +21,15 @@ import java.sql.Timestamp;
 
 import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
+import org.sitracel.contrat.model.I_HR_Contrat;
+import org.sitracel.contrat.model.I_HR_ContratType;
 
 /** Generated Interface for HR_ElementBasePaieEmploye
- *  @author iDempiere (generated)
+ *  @author iDempiere (generated) 
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_ElementBasePaieEmploye
+public interface I_HR_ElementBasePaieEmploye 
 {
 
     /** TableName=HR_ElementBasePaieEmploye */
@@ -38,7 +40,7 @@ public interface I_HR_ElementBasePaieEmploye
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org
+    /** AccessLevel = 3 - Client - Org 
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
@@ -172,6 +174,28 @@ au :
 
 	public I_HR_CategorieProfessionnelle getHR_CategorieProfessionnelle() throws RuntimeException;
 
+    /** Column name HR_ContratType_ID */
+    public static final String COLUMNNAME_HR_ContratType_ID = "HR_ContratType_ID";
+
+	/** Set Type de Contrat	  */
+	public void setHR_ContratType_ID (int HR_ContratType_ID);
+
+	/** Get Type de Contrat	  */
+	public int getHR_ContratType_ID();
+
+	public I_HR_ContratType getHR_ContratType() throws RuntimeException;
+
+    /** Column name HR_Contrat_ID */
+    public static final String COLUMNNAME_HR_Contrat_ID = "HR_Contrat_ID";
+
+	/** Set Contrat	  */
+	public void setHR_Contrat_ID (int HR_Contrat_ID);
+
+	/** Get Contrat	  */
+	public int getHR_Contrat_ID();
+
+	public I_HR_Contrat getHR_Contrat() throws RuntimeException;
+
     /** Column name HR_Echelon_ID */
     public static final String COLUMNNAME_HR_Echelon_ID = "HR_Echelon_ID";
 
@@ -233,17 +257,6 @@ au :
 	public int getHR_Taux_Salarial_ID();
 
 	public I_HR_Taux_Salarial getHR_Taux_Salarial() throws RuntimeException;
-
-    /** Column name HR_TypeContrat_ID */
-    public static final String COLUMNNAME_HR_TypeContrat_ID = "HR_TypeContrat_ID";
-
-	/** Set Type de Contrat	  */
-	public void setHR_TypeContrat_ID (int HR_TypeContrat_ID);
-
-	/** Get Type de Contrat	  */
-	public int getHR_TypeContrat_ID();
-
-	public I_HR_TypeContrat getHR_TypeContrat() throws RuntimeException;
 
     /** Column name Indemnite_Deces */
     public static final String COLUMNNAME_Indemnite_Deces = "Indemnite_Deces";

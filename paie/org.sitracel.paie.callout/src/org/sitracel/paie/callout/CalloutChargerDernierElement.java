@@ -10,7 +10,6 @@ import org.compiere.model.PO;
 import org.compiere.model.Query;
 import org.compiere.util.CLogger;
 import org.sitracel.controller.GeneralSqlController;
-import org.sitracel.organigramme.model.MHRCategorieResponsabilite;
 import org.sitracel.paie.model.MHRElementBasePaieEmploye;
 import org.sitracel.paie.model.MHRGestionPaieEmploye;
 
@@ -83,10 +82,10 @@ public class CalloutChargerDernierElement implements IColumnCallout {
         	mTab.setValue(MHRElementBasePaieEmploye.COLUMNNAME_HR_Taux_Salarial_ID, valeur);
         }
 
-        valeur = last.get_Value(MHRElementBasePaieEmploye.COLUMNNAME_HR_TypeContrat_ID);
+        valeur = last.get_Value(MHRElementBasePaieEmploye.COLUMNNAME_HR_ContratType_ID);
         
         if(valeur!=null) {
-        	mTab.setValue(MHRElementBasePaieEmploye.COLUMNNAME_HR_TypeContrat_ID, valeur);
+        	mTab.setValue(MHRElementBasePaieEmploye.COLUMNNAME_HR_ContratType_ID, valeur);
         }
 
         return "";
