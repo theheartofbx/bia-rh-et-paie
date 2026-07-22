@@ -20,7 +20,6 @@ public class CalloutChargerDernierElement implements IColumnCallout {
     @Override
     public String start(Properties ctx, int WindowNo, GridTab mTab, GridField mField, Object value, Object oldValue) {
 
-        // ✅ Exécuter uniquement si la case est cochée
         if (!(value instanceof Boolean) || !((Boolean) value)) {
             return "";
         }
@@ -30,7 +29,6 @@ public class CalloutChargerDernierElement implements IColumnCallout {
             return "";
         }
 
-        // Charger le dernier enregistrement existant pour ce partenaire
         PO last = new Query(ctx, MHRElementBasePaieEmploye.Table_Name,
                 MHRElementBasePaieEmploye.COLUMNNAME_C_BPartner_ID + "=?",
                 null)
@@ -42,50 +40,37 @@ public class CalloutChargerDernierElement implements IColumnCallout {
             return "";
         }
 
-        // Copier les valeurs des colonnes de gestion
+        // Copier les valeurs des éléments de gestion
         ArrayList<MHRGestionPaieEmploye> listeGestion =
                 GeneralSqlController.getAllGestionPaieEmploye(null);
-        Object valeur = null;
-        
+
         for (MHRGestionPaieEmploye gestion : listeGestion) {
             try {
-                valeur = last.get_Value(gestion.getName());
+                Object valeur = last.get_Value(gestion.getName());
                 if (valeur != null) {
                     mTab.setValue(gestion.getName(), valeur);
                 }
             } catch (Exception e) {
-                log.warning("⚠️ Erreur champ : " + gestion.getName() + " - " + e.getMessage());
+                log.warning("Erreur champ : " + gestion.getName() + " - " + e.getMessage());
             }
         }
-        
-        valeur = last.get_Value(MHRElementBasePaieEmploye.COLUMNNAME_HR_CategorieProfessionnelle_ID);
-        
-        if(valeur!=null) {
-        	mTab.setValue(MHRElementBasePaieEmploye.COLUMNNAME_HR_CategorieProfessionnelle_ID, valeur);
+
+        // Catégorie professionnelle
+        Object valeur = last.get_Value(MHRElementBasePaieEmploye.COLUMNNAME_HR_CategorieProfessionnelle_ID);
+        if (valeur != null) {
+            mTab.setValue(MHRElementBasePaieEmploye.COLUMNNAME_HR_CategorieProfessionnelle_ID, valeur);
         }
-        
+
+        // Échelon
         valeur = last.get_Value(MHRElementBasePaieEmploye.COLUMNNAME_HR_Echelon_ID);
-        
-        if(valeur!=null) {
-        	mTab.setValue(MHRElementBasePaieEmploye.COLUMNNAME_HR_Echelon_ID, valeur);
+        if (valeur != null) {
+            mTab.setValue(MHRElementBasePaieEmploye.COLUMNNAME_HR_Echelon_ID, valeur);
         }
 
-        valeur = last.get_Value(MHRElementBasePaieEmploye.COLUMNNAME_HR_Job_ID);
-        
-        if(valeur!=null) {
-        	mTab.setValue(MHRElementBasePaieEmploye.COLUMNNAME_HR_Job_ID, valeur);
-        }
-
+        // Taux salarial
         valeur = last.get_Value(MHRElementBasePaieEmploye.COLUMNNAME_HR_Taux_Salarial_ID);
-        
-        if(valeur!=null) {
-        	mTab.setValue(MHRElementBasePaieEmploye.COLUMNNAME_HR_Taux_Salarial_ID, valeur);
-        }
-
-        valeur = last.get_Value(MHRElementBasePaieEmploye.COLUMNNAME_HR_ContratType_ID);
-        
-        if(valeur!=null) {
-        	mTab.setValue(MHRElementBasePaieEmploye.COLUMNNAME_HR_ContratType_ID, valeur);
+        if (valeur != null) {
+            mTab.setValue(MHRElementBasePaieEmploye.COLUMNNAME_HR_Taux_Salarial_ID, valeur);
         }
 
         return "";

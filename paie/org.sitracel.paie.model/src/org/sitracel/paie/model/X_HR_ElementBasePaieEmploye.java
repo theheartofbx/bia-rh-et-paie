@@ -28,7 +28,6 @@ import org.compiere.model.PO;
 import org.compiere.model.POInfo;
 import org.compiere.util.Env;
 import org.sitracel.contrat.model.I_HR_Contrat;
-import org.sitracel.contrat.model.I_HR_ContratType;
 
 /** Generated Model for HR_ElementBasePaieEmploye
  *  @author iDempiere (generated)
@@ -40,7 +39,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260721L;
+	private static final long serialVersionUID = 20260722L;
 
     /** Standard Constructor */
     public X_HR_ElementBasePaieEmploye (Properties ctx, int HR_ElementBasePaieEmploye_ID, String trxName)
@@ -50,9 +49,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
         {
 			setC_BPartner_ID (0);
 			setDate_Debut (new Timestamp( System.currentTimeMillis() ));
-			setHR_ContratType_ID (0);
 			setHR_ElementBasePaieEmploye_ID (0);
-			setHR_Job_ID (0);
 			setHR_Taux_Salarial_ID (0);
 			setSalaire_Base (Env.ZERO);
         } */
@@ -66,9 +63,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
         {
 			setC_BPartner_ID (0);
 			setDate_Debut (new Timestamp( System.currentTimeMillis() ));
-			setHR_ContratType_ID (0);
 			setHR_ElementBasePaieEmploye_ID (0);
-			setHR_Job_ID (0);
 			setHR_Taux_Salarial_ID (0);
 			setSalaire_Base (Env.ZERO);
         } */
@@ -82,9 +77,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
         {
 			setC_BPartner_ID (0);
 			setDate_Debut (new Timestamp( System.currentTimeMillis() ));
-			setHR_ContratType_ID (0);
 			setHR_ElementBasePaieEmploye_ID (0);
-			setHR_Job_ID (0);
 			setHR_Taux_Salarial_ID (0);
 			setSalaire_Base (Env.ZERO);
         } */
@@ -98,9 +91,7 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
         {
 			setC_BPartner_ID (0);
 			setDate_Debut (new Timestamp( System.currentTimeMillis() ));
-			setHR_ContratType_ID (0);
 			setHR_ElementBasePaieEmploye_ID (0);
-			setHR_Job_ID (0);
 			setHR_Taux_Salarial_ID (0);
 			setSalaire_Base (Env.ZERO);
         } */
@@ -281,33 +272,6 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 		return ii.intValue();
 	}
 
-	public I_HR_ContratType getHR_ContratType() throws RuntimeException
-	{
-		return (I_HR_ContratType)MTable.get(getCtx(), I_HR_ContratType.Table_ID)
-			.getPO(getHR_ContratType_ID(), get_TrxName());
-	}
-
-	/** Set Type de Contrat.
-		@param HR_ContratType_ID Type de Contrat
-	*/
-	public void setHR_ContratType_ID (int HR_ContratType_ID)
-	{
-		if (HR_ContratType_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_HR_ContratType_ID, null);
-		else
-			set_ValueNoCheck (COLUMNNAME_HR_ContratType_ID, Integer.valueOf(HR_ContratType_ID));
-	}
-
-	/** Get Type de Contrat.
-		@return Type de Contrat	  */
-	public int getHR_ContratType_ID()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_HR_ContratType_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
 	public I_HR_Contrat getHR_Contrat() throws RuntimeException
 	{
 		return (I_HR_Contrat)MTable.get(getCtx(), I_HR_Contrat.Table_ID)
@@ -420,33 +384,6 @@ public class X_HR_ElementBasePaieEmploye extends PO implements I_HR_ElementBaseP
 	public int getHR_GestionPaieEmploye_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_GestionPaieEmploye_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
-	public org.eevolution.model.I_HR_Job getHR_Job() throws RuntimeException
-	{
-		return (org.eevolution.model.I_HR_Job)MTable.get(getCtx(), org.eevolution.model.I_HR_Job.Table_ID)
-			.getPO(getHR_Job_ID(), get_TrxName());
-	}
-
-	/** Set Payroll Job.
-		@param HR_Job_ID Payroll Job
-	*/
-	public void setHR_Job_ID (int HR_Job_ID)
-	{
-		if (HR_Job_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_HR_Job_ID, null);
-		else
-			set_ValueNoCheck (COLUMNNAME_HR_Job_ID, Integer.valueOf(HR_Job_ID));
-	}
-
-	/** Get Payroll Job.
-		@return Payroll Job	  */
-	public int getHR_Job_ID()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Job_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();

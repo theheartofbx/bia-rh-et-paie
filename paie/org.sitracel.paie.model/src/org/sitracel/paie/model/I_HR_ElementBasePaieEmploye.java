@@ -22,7 +22,6 @@ import java.sql.Timestamp;
 import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
 import org.sitracel.contrat.model.I_HR_Contrat;
-import org.sitracel.contrat.model.I_HR_ContratType;
 
 /** Generated Interface for HR_ElementBasePaieEmploye
  *  @author iDempiere (generated) 
@@ -174,17 +173,6 @@ au :
 
 	public I_HR_CategorieProfessionnelle getHR_CategorieProfessionnelle() throws RuntimeException;
 
-    /** Column name HR_ContratType_ID */
-    public static final String COLUMNNAME_HR_ContratType_ID = "HR_ContratType_ID";
-
-	/** Set Type de Contrat	  */
-	public void setHR_ContratType_ID (int HR_ContratType_ID);
-
-	/** Get Type de Contrat	  */
-	public int getHR_ContratType_ID();
-
-	public I_HR_ContratType getHR_ContratType() throws RuntimeException;
-
     /** Column name HR_Contrat_ID */
     public static final String COLUMNNAME_HR_Contrat_ID = "HR_Contrat_ID";
 
@@ -235,17 +223,6 @@ au :
 	public int getHR_GestionPaieEmploye_ID();
 
 	public I_HR_GestionPaieEmploye getHR_GestionPaieEmploye() throws RuntimeException;
-
-    /** Column name HR_Job_ID */
-    public static final String COLUMNNAME_HR_Job_ID = "HR_Job_ID";
-
-	/** Set Payroll Job	  */
-	public void setHR_Job_ID (int HR_Job_ID);
-
-	/** Get Payroll Job	  */
-	public int getHR_Job_ID();
-
-	public org.eevolution.model.I_HR_Job getHR_Job() throws RuntimeException;
 
     /** Column name HR_Taux_Salarial_ID */
     public static final String COLUMNNAME_HR_Taux_Salarial_ID = "HR_Taux_Salarial_ID";
