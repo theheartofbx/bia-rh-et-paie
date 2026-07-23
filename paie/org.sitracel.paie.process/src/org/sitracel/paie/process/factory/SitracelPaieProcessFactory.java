@@ -7,28 +7,24 @@ import org.sitracel.paie.process.periodes.SitracelProcessVerifierPeriodes;
 import org.sitracel.paie.process.salairebase.SitracelProcessActualiserJourNonPaye;
 import org.sitracel.paie.process.salairebase.SitracelProcessCalculIndemniteConge;
 import org.sitracel.paie.process.salairebase.SitracelProcessCalculPaie;
+import org.sitracel.paie.process.salairebase.SitracelProcessCalculPaieTous;
 
-public class SitracelPaieProcessFactory implements IProcessFactory{
+public class SitracelPaieProcessFactory implements IProcessFactory {
 
-	@Override
-	public ProcessCall newProcessInstance(String className) {
-		// TODO Auto-generated method stub
-		if(className.equals("org.sitracel.paie.process.salairebase.SitracelProcessActualiserJourNonPaye")) {
-			return new SitracelProcessActualiserJourNonPaye();
-		}
-		if(className.equals("org.sitracel.paie.process.salairebase.SitracelProcessCalculPaie")) {
-			return new SitracelProcessCalculPaie();
-		}
-		if(className.equals("org.sitracel.paie.process.salairebase.SitracelProcessCalculIndemniteConge")) {
-			return new SitracelProcessCalculIndemniteConge();
-		}
-		if(className.equals("org.sitracel.paie.process.periodes.SitracelProcessGenererPeriodes")) {
-			return new SitracelProcessGenererPeriodes();
-		}
-		if(className.equals("org.sitracel.paie.process.periodes.SitracelProcessVerifierPeriodes")) {
-			return new SitracelProcessVerifierPeriodes();
-		}
-		return null;
-	}
-
+    @Override
+    public ProcessCall newProcessInstance(String className) {
+        if (className.equals("org.sitracel.paie.process.salairebase.SitracelProcessActualiserJourNonPaye"))
+            return new SitracelProcessActualiserJourNonPaye();
+        if (className.equals("org.sitracel.paie.process.salairebase.SitracelProcessCalculPaie"))
+            return new SitracelProcessCalculPaie();
+        if (className.equals("org.sitracel.paie.process.salairebase.SitracelProcessCalculPaieTous"))
+            return new SitracelProcessCalculPaieTous();
+        if (className.equals("org.sitracel.paie.process.salairebase.SitracelProcessCalculIndemniteConge"))
+            return new SitracelProcessCalculIndemniteConge();
+        if (className.equals("org.sitracel.paie.process.periodes.SitracelProcessGenererPeriodes"))
+            return new SitracelProcessGenererPeriodes();
+        if (className.equals("org.sitracel.paie.process.periodes.SitracelProcessVerifierPeriodes"))
+            return new SitracelProcessVerifierPeriodes();
+        return null;
+    }
 }
