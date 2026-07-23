@@ -22,7 +22,7 @@ import org.sitracel.paie.process.service.PeriodeSalarialeService;
  */
 public class SitracelProcessCalculPaieTous extends SvrProcess {
 
-    private int mois  = 0;
+    private int moisId = 0; // ID dans hr_mois
     private int annee = 0;
 
     @Override
@@ -30,7 +30,7 @@ public class SitracelProcessCalculPaieTous extends SvrProcess {
         for (ProcessInfoParameter para : getParameter()) {
             String name = para.getParameterName();
             if ("Mois".equals(name)) {
-                mois = para.getParameterAsInt();
+                moisId = para.getParameterAsInt();
             } else if ("Annee".equals(name)) {
                 annee = para.getParameterAsInt();
             }
@@ -40,33 +40,34 @@ public class SitracelProcessCalculPaieTous extends SvrProcess {
     @Override
     protected String doIt() throws Exception {
 
-        if (mois < 1 || mois > 12) {
+        if (moisId <= 0) {
             throw new AdempiereUserError(
-                    "Veuillez sélectionner un mois valide (1-12).");
+                    "Veuillez sélectionner un mois valide.");
         }
-        if (annee < 2000 || annee > 2100) {
+        // Lire la valeur numérique du mois depuis hr_mois
+        int mois = org.compiere.util.DB.getSQLValue(get_TrxName(),
+                "SELECT valeur_integer FROM adempiere.hr_mois WHERE hr_mois_id=?", moisId);
+        if (mois <= 0) {
+            throw new AdempiereUserError("Mois introuvable dans hr_mois (ID=" + moisId + ").");
+        }
+
+        if (annee < 1980 || annee > 2100) {
             throw new AdempiereUserError(
-                    "Veuillez saisir une année valide (ex: 2026).");
+                    "L'année saisie (" + annee + ") est invalide. Veuillez saisir une année entre 1980 et 2100.");
         }
 
         // Jour de début de période (paramètre PERIODE_JOUR_DEBUT, défaut 16)
         int jourDebut = PeriodeSalarialeService.getParametre(
                 "PERIODE_JOUR_DEBUT", 16, get_TrxName());
 
-        // La période du mois M commence le jourDebut du mois M-1
-        // Ex: Juillet 2026 = du 16 juin 2026 au 15 juillet 2026
-        LocalDate dateDebutPeriode;
-        if (mois == 1) {
-            dateDebutPeriode = LocalDate.of(annee - 1, 12, jourDebut);
-        } else {
-            dateDebutPeriode = LocalDate.of(annee, mois - 1, jourDebut);
-        }
-
-        Timestamp tsDebut = Timestamp.valueOf(dateDebutPeriode.atStartOfDay());
+        // Juillet 2026 va du 16 juillet au 15 août
+        // On passe le 16 du mois sélectionné comme date de référence
+        LocalDate dateReference = LocalDate.of(annee, mois, jourDebut);
+        Timestamp tsReference = Timestamp.valueOf(dateReference.atStartOfDay());
 
         // Garantir que la période existe (la crée si absente)
         MHRPeriodeSalariale periode = PeriodeSalarialeService.garantirPeriodePourDate(
-                tsDebut, get_TrxName());
+                tsReference, get_TrxName());
 
         if (periode == null || periode.getHR_Periode_Salariale_ID() <= 0) {
             throw new AdempiereUserError(
