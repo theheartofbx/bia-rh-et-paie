@@ -13,7 +13,12 @@ import org.sitracel.conge.model.MHRHoliday;
 import org.sitracel.model.MCBPartner;
 import org.sitracel.paie.model.MHRGestionPaieEmploye;
 import org.sitracel.paie.model.MHRPeriodeSalariale;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import org.sitracel.paie.process.service.calcul.CongeCalculEngine;
+import org.sitracel.paie.process.service.PeriodeSalarialeService;
 import org.sitracel.paie.process.service.calcul.IndemniteEngine;
 import org.sitracel.paie.process.service.calcul.PayrollCalculEngine;
 import org.sitracel.paie.process.service.persistence.PayrollPersistence;
@@ -132,6 +137,90 @@ public class PayrollOrchestrator {
             return "Calcul indemnité congé abandonné : employé ou congé introuvable.";
         }
 
+        // ---------------------------------------------------------------
+        // Garantir que la paie existe sur toute la période de référence
+        // Période de référence : de date_dernier_conge (ou date_debut contrat)
+        // jusqu'à date_debut_effective du congé
+        // ---------------------------------------------------------------
+        Timestamp dateDebutRef = holiday.getDate_Dernier_Conge();
+        Timestamp dateFinRef   = holiday.getDate_Debut_Effective();
+
+        if (dateDebutRef == null) {
+            // Premier congé : utiliser la date de début du contrat actif
+            String sqlContrat = "SELECT date_debut FROM adempiere.hr_elementbasepaieemploye "
+                    + "WHERE c_bpartner_id=? AND isactive='Y' "
+                    + "ORDER BY date_debut ASC LIMIT 1";
+            PreparedStatement pstmt = null;
+            ResultSet rs = null;
+            try {
+                pstmt = org.compiere.util.DB.prepareStatement(sqlContrat, null);
+                pstmt.setInt(1, bpartnerId);
+                rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    dateDebutRef = rs.getTimestamp(1);
+                }
+            } catch (Exception e) {
+                log.warning("Impossible de trouver la date début contrat : " + e.getMessage());
+            } finally {
+                org.compiere.util.DB.close(rs, pstmt);
+            }
+        }
+
+        if (dateDebutRef != null && dateFinRef != null) {
+            // Parcourir chaque mois de la période de référence
+            // et calculer la paie si elle n'existe pas dans hr_historique_paie
+            int jourDebut = PeriodeSalarialeService.getParametre(
+                    "PERIODE_JOUR_DEBUT", 16, null);
+
+            LocalDate debut = dateDebutRef.toLocalDateTime().toLocalDate();
+            LocalDate fin   = dateFinRef.toLocalDateTime().toLocalDate();
+
+            // Commencer au mois qui suit dateDebutRef
+            LocalDate curseur = LocalDate.of(debut.getYear(), debut.getMonthValue(), 1)
+                    .plusMonths(1);
+
+            while (!curseur.isAfter(LocalDate.of(fin.getYear(), fin.getMonthValue(), 1))) {
+                int moisCurseur  = curseur.getMonthValue();
+                int anneeCurseur = curseur.getYear();
+
+                // Date de début de la période (jourDebut du mois précédent)
+                LocalDate dateDebutPeriode;
+                if (moisCurseur == 1) {
+                    dateDebutPeriode = LocalDate.of(anneeCurseur - 1, 12, jourDebut);
+                } else {
+                    dateDebutPeriode = LocalDate.of(anneeCurseur, moisCurseur - 1, jourDebut);
+                }
+
+                Timestamp tsDebutPeriode = Timestamp.valueOf(
+                        dateDebutPeriode.atStartOfDay());
+
+                // Garantir que la période salariale existe
+                org.sitracel.paie.model.MHRPeriodeSalariale periode =
+                        PeriodeSalarialeService.garantirPeriodePourDate(
+                                tsDebutPeriode, null);
+
+                if (periode != null && periode.getHR_Periode_Salariale_ID() > 0) {
+                    // Vérifier si la paie existe déjà dans hr_historique_paie
+                    String sqlCheck = "SELECT COUNT(*) FROM adempiere.hr_historique_paie "
+                            + "WHERE c_bpartner_id=? AND hr_periode_salariale_id=?";
+                    int count = org.compiere.util.DB.getSQLValue(null, sqlCheck,
+                            bpartnerId, periode.getHR_Periode_Salariale_ID());
+
+                    if (count == 0) {
+                        log.info("Calcul automatique de la paie pour la période "
+                                + periode.getName() + " avant calcul indemnité congé");
+                        PayrollCalculEngine.calculerPaie(
+                                bpartnerId, periode.getHR_Periode_Salariale_ID(), null);
+                    }
+                }
+
+                curseur = curseur.plusMonths(1);
+            }
+        }
+
+        // ---------------------------------------------------------------
+        // Lancer le calcul de l'indemnité de congé
+        // ---------------------------------------------------------------
         boolean ok = CongeCalculEngine.calculerIndemniteConge(bpartner, holiday, null);
 
         return ok

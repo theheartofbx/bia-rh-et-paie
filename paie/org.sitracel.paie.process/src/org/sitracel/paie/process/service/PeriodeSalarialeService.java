@@ -184,7 +184,7 @@ public class PeriodeSalarialeService {
         return p;
     }
 
-    static int getParametre(String nom, int defaut, String trxName) {
+    public static int getParametre(String nom, int defaut, String trxName) {
         try {
             String sql = "SELECT Valeur_Parametre FROM HR_Parametre_Numerique "
                     + "WHERE Name=? AND IsActive='Y'";
