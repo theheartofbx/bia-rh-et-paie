@@ -55,8 +55,8 @@ public class PeriodeSalarialeRepository {
                 + " WHERE " + I_HR_Periode_Salariale.COLUMNNAME_Date_Debut_Defaut + "<=?"
                 + " AND " + I_HR_Periode_Salariale.COLUMNNAME_Date_Fin_Defaut + ">=?"
                 + " AND " + I_HR_Periode_Salariale.COLUMNNAME_IsActive + "='Y'"
-                + " ORDER BY " + I_HR_Periode_Salariale.COLUMNNAME_Date_Debut_Defaut + " DESC"
-                + " LIMIT 1";
+                + " ORDER BY " + I_HR_Periode_Salariale.COLUMNNAME_Date_Debut_Defaut + " DESC";
+                
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;

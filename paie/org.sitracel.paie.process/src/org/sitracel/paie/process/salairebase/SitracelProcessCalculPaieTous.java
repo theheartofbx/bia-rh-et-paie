@@ -74,7 +74,7 @@ public class SitracelProcessCalculPaieTous extends SvrProcess {
                     + mois + "/" + annee + ".");
         }
 
-        addLog("Période : " + periode.getName()
+        log.info("Période : " + periode.getName()
                 + " (ID=" + periode.getHR_Periode_Salariale_ID() + ")");
 
         return PayrollOrchestrator.calculerPaieTousEmployes(

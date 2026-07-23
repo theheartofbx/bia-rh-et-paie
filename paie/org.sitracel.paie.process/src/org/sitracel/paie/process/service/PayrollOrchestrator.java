@@ -149,7 +149,7 @@ public class PayrollOrchestrator {
             // Premier congé : utiliser la date de début du contrat actif
             String sqlContrat = "SELECT date_debut FROM adempiere.hr_elementbasepaieemploye "
                     + "WHERE c_bpartner_id=? AND isactive='Y' "
-                    + "ORDER BY date_debut ASC LIMIT 1";
+                    + "ORDER BY date_debut ASC";
             PreparedStatement pstmt = null;
             ResultSet rs = null;
             try {
