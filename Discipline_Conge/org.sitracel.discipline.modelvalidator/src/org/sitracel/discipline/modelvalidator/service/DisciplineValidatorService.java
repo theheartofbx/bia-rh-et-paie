@@ -12,8 +12,7 @@ import org.sitracel.discipline.model.MHRPunishment;
 import org.sitracel.enumeration.NotificationEvent;
 import org.sitracel.notification.NotificationControler;
 import org.sitracel.time.HRCalendrierService;
-import org.sitracel.contrat.HRContratService;
-import java.util.List;
+import org.sitracel.employe.HRContratService;
 
 /**
  * Service — logique métier du modelvalidator discipline.
