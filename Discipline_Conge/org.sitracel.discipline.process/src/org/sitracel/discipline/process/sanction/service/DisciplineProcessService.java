@@ -81,10 +81,14 @@ public final class DisciplineProcessService {
         punishment.setIsRejetee(false);
         punishment.setDate_Validation(new Timestamp(System.currentTimeMillis()));
         punishment.setDate_Rejet(null);
-        punishment.save(null);
+        if (!punishment.save(null)) {
+            log.warning("Validation impossible : erreur lors de la sauvegarde de la sanction " + idSanction);
+            return;
+        }
         // ✅ Notification SANCTION_VALIDATED via modelvalidator
 
         creerAbsencesSuspension(punishment, valideur);
+        punishment.save(null); // Sauvegarder date_fin_application
         creerDossierDisciplinaire(punishment);
     }
 
@@ -118,7 +122,10 @@ public final class DisciplineProcessService {
         punishment.setIsRejetee(true);
         punishment.setDate_Validation(null);
         punishment.setDate_Rejet(new Timestamp(System.currentTimeMillis()));
-        punishment.save(null);
+        if (!punishment.save(null)) {
+            log.warning("Rejet impossible : erreur lors de la sauvegarde de la sanction " + idSanction);
+            return;
+        }
         // ✅ Notification SANCTION_REJECTED via modelvalidator
 
         supprimerAbsencesSuspension(punishment);
@@ -153,7 +160,10 @@ public final class DisciplineProcessService {
         punishment.setIsDesapprouve(false);
         punishment.setDate_Approbation(new Timestamp(System.currentTimeMillis()));
         punishment.setDate_Desapprobation(null);
-        punishment.save(null);
+        if (!punishment.save(null)) {
+            log.warning("Approbation impossible : erreur lors de la sauvegarde de la sanction " + idSanction);
+            return;
+        }
         // ✅ Notification SANCTION_APPROVED via modelvalidator
     }
 
@@ -186,7 +196,10 @@ public final class DisciplineProcessService {
         punishment.setIsDesapprouve(true);
         punishment.setDate_Approbation(null);
         punishment.setDate_Desapprobation(new Timestamp(System.currentTimeMillis()));
-        punishment.save(null);
+        if (!punishment.save(null)) {
+            log.warning("Desapprobation impossible : erreur lors de la sauvegarde de la sanction " + idSanction);
+            return;
+        }
         // ✅ Notification SANCTION_DISAPPROVED via modelvalidator
     }
 
@@ -346,11 +359,26 @@ public final class DisciplineProcessService {
     private static void creerDossierDisciplinaire(MHRPunishment punishment) {
         if (punishment == null) return;
 
+        // Resoudre le type de sanction via l'autorisation
+        MHRSanctionAutorisation autorisation = new MHRSanctionAutorisation(
+            Env.getCtx(), punishment.getEmission_Sanction_ID(), null);
+        int typeSanctionId = (autorisation != null) ? autorisation.getHR_TypeSanction_ID() : 0;
+
         MHRDossierDisciplinaire dossier =
             new MHRDossierDisciplinaire(Env.getCtx(), 0, null);
         dossier.setC_BPartner_ID(punishment.getC_BPartner_ID());
         dossier.setHR_Punishment_ID(punishment.getHR_Punishment_ID());
-        dossier.setDate_Emission(new Timestamp(System.currentTimeMillis()));
+        dossier.setDate_Emission(punishment.getDate_Emission());
+        dossier.setDate_Validation(punishment.getDate_Validation());
+        dossier.setValide_Rejete_Par_Nom_ID(punishment.getValide_Rejete_Par_Nom_ID());
+        dossier.setValide_Rejete_Par_Poste_ID(punishment.getValide_Rejete_Par_Poste_ID());
+        dossier.setValide_Rejete_Par_Matricule(punishment.getValide_Rejete_Par_Matricule());
+        dossier.setPoste_Employe_ID(punishment.getPoste_Employe_ID());
+        dossier.setMatricule_Employe(punishment.getMatricule_Employe());
+        dossier.setMotif(punishment.getMotif_Demande_Explication());
+        if (typeSanctionId > 0) {
+            dossier.setHR_TypeSanction_ID(typeSanctionId);
+        }
         dossier.save(null);
     }
 }

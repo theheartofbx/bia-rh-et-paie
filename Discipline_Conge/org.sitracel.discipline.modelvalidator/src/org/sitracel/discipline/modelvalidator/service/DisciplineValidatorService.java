@@ -206,8 +206,28 @@ public final class DisciplineValidatorService {
             punishment.setName(nomSanction);
         }
 
-        // Après création : notifier
+        // Après création : poser flags createur + notifier
         if (ModelValidator.TYPE_AFTER_NEW == type) {
+            // Verifier si le createur peut approuver/valider
+            int adUserId = Env.getAD_User_ID(Env.getCtx());
+            if (punishment.getEmission_Sanction_ID() > 0) {
+                int typeSanctionId = org.compiere.util.DB.getSQLValue(
+                    punishment.get_TrxName(),
+                    "SELECT hr_typesanction_id FROM HR_Sanction_Autorisation WHERE HR_Sanction_Autorisation_ID = ?",
+                    punishment.getEmission_Sanction_ID());
+                String peutApprouver = org.compiere.util.DB.getSQLValueString(
+                    punishment.get_TrxName(),
+                    "SELECT adempiere.fn_est_habilite(?, ?, ?, 'hr_sanction_autorisation', 'hr_typesanction_id', 'isapprobation')",
+                    punishment.getC_BPartner_ID(), adUserId, typeSanctionId);
+                String peutValider = org.compiere.util.DB.getSQLValueString(
+                    punishment.get_TrxName(),
+                    "SELECT adempiere.fn_est_habilite(?, ?, ?, 'hr_sanction_autorisation', 'hr_typesanction_id', 'isvalidation')",
+                    punishment.getC_BPartner_ID(), adUserId, typeSanctionId);
+                punishment.setIsApprobation_Createur("Y".equals(peutApprouver));
+                punishment.setIsValidation_Createur("Y".equals(peutValider));
+                punishment.save(punishment.get_TrxName());
+            }
+
             NotificationControler.notify(
                 NotificationEvent.SANCTION_CREATED, punishment);
         }
