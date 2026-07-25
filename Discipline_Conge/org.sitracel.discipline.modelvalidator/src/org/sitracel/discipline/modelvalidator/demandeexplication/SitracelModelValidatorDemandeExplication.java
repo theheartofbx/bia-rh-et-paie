@@ -26,9 +26,8 @@ public class SitracelModelValidatorDemandeExplication implements ModelValidator 
 
     @Override
     public String modelChange(PO po, int type) throws Exception {
-        DisciplineValidatorService.demandeExplication(
+        return DisciplineValidatorService.demandeExplication(
             (MHRDemandeExplication) po, type);
-        return null;
     }
 
     @Override

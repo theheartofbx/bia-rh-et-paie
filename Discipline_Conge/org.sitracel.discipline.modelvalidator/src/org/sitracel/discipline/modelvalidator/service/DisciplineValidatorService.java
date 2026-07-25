@@ -12,6 +12,8 @@ import org.sitracel.discipline.model.MHRPunishment;
 import org.sitracel.enumeration.NotificationEvent;
 import org.sitracel.notification.NotificationControler;
 import org.sitracel.time.HRCalendrierService;
+import org.sitracel.contrat.HRContratService;
+import java.util.List;
 
 /**
  * Service — logique métier du modelvalidator discipline.
@@ -43,17 +45,44 @@ public final class DisciplineValidatorService {
      * À la création : horodater l'émission et notifier l'employé.
      * À la modification : détecter si une réponse vient d'être saisie.
      */
-    public static void demandeExplication(MHRDemandeExplication demandeExplication,
+    public static String demandeExplication(MHRDemandeExplication demandeExplication,
                                            int type) {
 
-        // À la création : horodater et nommer
+        // À la création : controles + horodater + nommer
         if (ModelValidator.TYPE_BEFORE_NEW == type) {
-            demandeExplication.setDate_Emission(
-                new Timestamp(System.currentTimeMillis()));
+
+            int bpartnerId = demandeExplication.getC_BPartner_ID();
+            String trxName = demandeExplication.get_TrxName();
+            Timestamp maintenant = new Timestamp(System.currentTimeMillis());
+
+            // A. Eligibilite : contrat + affectation actifs
+            if (bpartnerId > 0 && !demandeExplication.isCreatedBySystem()) {
+                if (!HRContratService.estEligible(bpartnerId, maintenant, trxName)) {
+                    String motif = HRContratService.getMotifInaligibilite(bpartnerId, maintenant, trxName);
+                    return "Impossible de creer cette demande d'explication : "
+                        + (motif != null ? motif : "employe non eligible.");
+                }
+            }
+
+            // B. Emetteur habilite : superieur hierarchique ou RH
+            if (!demandeExplication.isCreatedBySystem()) {
+                int adUserId = Env.getAD_User_ID(Env.getCtx());
+                int emitterBP = org.compiere.util.DB.getSQLValue(trxName,
+                    "SELECT C_BPartner_ID FROM AD_User WHERE AD_User_ID = ?", adUserId);
+                if (emitterBP == bpartnerId) {
+                    return "Un employe ne peut pas emettre une demande d'explication pour lui-meme.";
+                }
+                int hasAccess = org.compiere.util.DB.getSQLValue(trxName,
+                    "SELECT adempiere.fn_has_access(?, ?)", bpartnerId, adUserId);
+                if (hasAccess != 1) {
+                    return "Vous n'etes pas autorise a emettre une demande d'explication pour cet employe.";
+                }
+            }
+
+            demandeExplication.setDate_Emission(maintenant);
 
             // Nom unique : DE-AAAA-NNNNN
-            int nextSeq = org.compiere.util.DB.getSQLValue(
-                demandeExplication.get_TrxName(),
+            int nextSeq = org.compiere.util.DB.getSQLValue(trxName,
                 "SELECT COALESCE(MAX(HR_Demande_Explication_ID), 0) + 1 FROM HR_Demande_Explication");
             java.util.Calendar cal = java.util.Calendar.getInstance();
             String nomDE = String.format("DE-%d-%05d", cal.get(java.util.Calendar.YEAR), nextSeq);
@@ -93,6 +122,8 @@ public final class DisciplineValidatorService {
                     demandeExplication);
             }
         }
+
+        return null;
     }
 
     // =========================================================================
@@ -120,11 +151,43 @@ public final class DisciplineValidatorService {
             }
         }
 
-        // À la création : initialiser
+        // À la création : controles + initialiser
         if (ModelValidator.TYPE_BEFORE_NEW == type) {
+
+            int bpartnerId = punishment.getC_BPartner_ID();
+            String trxName = punishment.get_TrxName();
+            Timestamp maintenant = new Timestamp(System.currentTimeMillis());
+
+            // A. Eligibilite : contrat + affectation actifs
+            if (bpartnerId > 0) {
+                if (!HRContratService.estEligible(bpartnerId, maintenant, trxName)) {
+                    String motif = HRContratService.getMotifInaligibilite(bpartnerId, maintenant, trxName);
+                    return "Impossible de creer cette mesure disciplinaire : "
+                        + (motif != null ? motif : "employe non eligible.");
+                }
+            }
+
+            // B. Demande d'explication obligatoire
+            if (punishment.getDemande_Explication_ID() <= 0) {
+                return "Une demande d'explication est obligatoire pour emettre une mesure disciplinaire.";
+            }
+
+            // C. Emetteur habilite
+            int adUserId = Env.getAD_User_ID(Env.getCtx());
+            int emitterBP = org.compiere.util.DB.getSQLValue(trxName,
+                "SELECT C_BPartner_ID FROM AD_User WHERE AD_User_ID = ?", adUserId);
+            if (emitterBP == bpartnerId) {
+                return "Un employe ne peut pas emettre une mesure disciplinaire pour lui-meme.";
+            }
+            int hasAccess = org.compiere.util.DB.getSQLValue(trxName,
+                "SELECT adempiere.fn_has_access(?, ?)", bpartnerId, adUserId);
+            if (hasAccess != 1) {
+                return "Vous n'etes pas autorise a emettre une mesure disciplinaire pour cet employe.";
+            }
+
             punishment.setIsApprobation_Createur(false);
             punishment.setIsValidation_Createur(false);
-            punishment.setDate_Emission(new Timestamp(System.currentTimeMillis()));
+            punishment.setDate_Emission(maintenant);
 
             // Nom unique : SANC-AAAA-NNNNN
             int nextSeq = org.compiere.util.DB.getSQLValue(
