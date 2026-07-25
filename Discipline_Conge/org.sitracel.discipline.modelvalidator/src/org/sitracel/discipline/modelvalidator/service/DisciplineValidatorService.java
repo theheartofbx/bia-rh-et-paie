@@ -55,7 +55,7 @@ public final class DisciplineValidatorService {
             Timestamp maintenant = new Timestamp(System.currentTimeMillis());
 
             // A. Eligibilite : contrat + affectation actifs
-            if (bpartnerId > 0 && !demandeExplication.isCreatedBySystem()) {
+            if (bpartnerId > 0 && !"Y".equals(demandeExplication.get_ValueAsString("IsCreatedBySystem"))) {
                 if (!HRContratService.estEligible(bpartnerId, maintenant, trxName)) {
                     String motif = HRContratService.getMotifInaligibilite(bpartnerId, maintenant, trxName);
                     return "Impossible de creer cette demande d'explication : "
@@ -64,7 +64,7 @@ public final class DisciplineValidatorService {
             }
 
             // B. Emetteur habilite : superieur hierarchique ou RH
-            if (!demandeExplication.isCreatedBySystem()) {
+            if (!"Y".equals(demandeExplication.get_ValueAsString("IsCreatedBySystem"))) {
                 int adUserId = Env.getAD_User_ID(Env.getCtx());
                 int emitterBP = org.compiere.util.DB.getSQLValue(trxName,
                     "SELECT C_BPartner_ID FROM AD_User WHERE AD_User_ID = ?", adUserId);
@@ -169,6 +169,15 @@ public final class DisciplineValidatorService {
             // B. Demande d'explication obligatoire
             if (punishment.getDemande_Explication_ID() <= 0) {
                 return "Une demande d'explication est obligatoire pour emettre une mesure disciplinaire.";
+            }
+
+            // B2. Une DE ne peut servir qu'a une seule sanction
+            int sanctionExistante = org.compiere.util.DB.getSQLValue(trxName,
+                "SELECT HR_Punishment_ID FROM HR_Punishment "
+                + "WHERE Demande_Explication_ID = ? AND IsActive = 'Y'",
+                punishment.getDemande_Explication_ID());
+            if (sanctionExistante > 0) {
+                return "Cette demande d'explication est deja liee a une mesure disciplinaire existante.";
             }
 
             // C. Emetteur habilite
