@@ -46,10 +46,18 @@ public final class DisciplineValidatorService {
     public static void demandeExplication(MHRDemandeExplication demandeExplication,
                                            int type) {
 
-        // À la création : horodater
+        // À la création : horodater et nommer
         if (ModelValidator.TYPE_BEFORE_NEW == type) {
             demandeExplication.setDate_Emission(
                 new Timestamp(System.currentTimeMillis()));
+
+            // Nom unique : DE-AAAA-NNNNN
+            int nextSeq = org.compiere.util.DB.getSQLValue(
+                demandeExplication.get_TrxName(),
+                "SELECT COALESCE(MAX(HR_Demande_Explication_ID), 0) + 1 FROM HR_Demande_Explication");
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            String nomDE = String.format("DE-%d-%05d", cal.get(java.util.Calendar.YEAR), nextSeq);
+            demandeExplication.setName(nomDE);
         }
 
         // Après création : notifier l'employé
@@ -117,6 +125,14 @@ public final class DisciplineValidatorService {
             punishment.setIsApprobation_Createur(false);
             punishment.setIsValidation_Createur(false);
             punishment.setDate_Emission(new Timestamp(System.currentTimeMillis()));
+
+            // Nom unique : SANC-AAAA-NNNNN
+            int nextSeq = org.compiere.util.DB.getSQLValue(
+                punishment.get_TrxName(),
+                "SELECT COALESCE(MAX(HR_Punishment_ID), 0) + 1 FROM HR_Punishment");
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            String nomSanction = String.format("SANC-%d-%05d", cal.get(java.util.Calendar.YEAR), nextSeq);
+            punishment.setName(nomSanction);
         }
 
         // Après création : notifier

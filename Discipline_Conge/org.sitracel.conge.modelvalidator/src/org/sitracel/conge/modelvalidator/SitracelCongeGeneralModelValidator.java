@@ -120,19 +120,21 @@ public class SitracelCongeGeneralModelValidator {
             matricule = String.valueOf(holiday.getC_BPartner_ID());
         }
 
-        // Mois de debut
-        String moisAnnee = "";
+        // Periode (dates debut et fin)
+        String periode = "";
         Timestamp dateDebut = holiday.getDate_Debut_Souhaitee();
-        if (dateDebut != null) {
-            java.util.Calendar cal = java.util.Calendar.getInstance();
-            cal.setTime(dateDebut);
-            moisAnnee = MOIS_FR[cal.get(java.util.Calendar.MONTH)]
-                + " " + cal.get(java.util.Calendar.YEAR);
+        Timestamp dateFin = holiday.getDate_Fin_Souhaitee();
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM");
+        java.text.SimpleDateFormat sdfFull = new java.text.SimpleDateFormat("dd/MM/yyyy");
+        if (dateDebut != null && dateFin != null) {
+            periode = sdf.format(dateDebut) + " au " + sdfFull.format(dateFin);
+        } else if (dateDebut != null) {
+            periode = sdfFull.format(dateDebut);
         }
 
         String nom = nomType + " - " + matricule;
-        if (moisAnnee.length() > 0) {
-            nom += " - " + moisAnnee;
+        if (periode.length() > 0) {
+            nom += " - " + periode;
         }
 
         holiday.setName(nom);

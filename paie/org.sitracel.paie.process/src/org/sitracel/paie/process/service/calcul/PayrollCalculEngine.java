@@ -115,7 +115,7 @@ public class PayrollCalculEngine {
         }
 
         // Sauvegarder les elements contrat non nuls (SB, CSB, IL, IT...)
-        sauvegarderElementsContrat(bpartnerId, periode, variables, trxName);
+        sauvegarderElementsContrat(bpartnerId, periode, coeffPresence, variables, trxName);
 
         for (MHRElementBasePaie element : elements) {
             calculerElement(
@@ -167,6 +167,7 @@ public class PayrollCalculEngine {
     private static void sauvegarderElementsContrat(
             int bpartnerId,
             MHRPeriodeSalariale periode,
+            BigDecimal coeffPresence,
             Map<String, BigDecimal> variables,
             String trxName) {
 
@@ -181,6 +182,14 @@ public class PayrollCalculEngine {
 
             BigDecimal montant = variables.get(code);
             if (montant != null && montant.compareTo(BigDecimal.ZERO) > 0) {
+
+                // Appliquer le prorata de presence si applicable
+                if (cfg.isProportionnelTravail()
+                        && coeffPresence.compareTo(BigDecimal.ONE) < 0) {
+                    montant = montant.multiply(coeffPresence).setScale(0, RoundingMode.FLOOR);
+                    variables.put(code, montant);
+                }
+
                 MHRElementBasePaie element =
                     PayrollRepository.getElementBasePaieByValue(code, trxName);
                 if (element != null) {
@@ -506,8 +515,10 @@ public class PayrollCalculEngine {
         }
 
         // --- Calculer le nombre de jours effectifs ---
+        // Seuls les conges et suspensions reduisent les jours effectifs
+        // Les autres absences (injustifiee, justifiee, maladie) sont informatives
         int totalAbsences = joursCongeAnnuel + joursCongeMaternite + joursCongePaternite
-                + joursSuspension + joursAutres + joursAvantContrat;
+                + joursSuspension + joursAvantContrat;
         int joursEffectifs = nombreJourMax - totalAbsences;
         if (joursEffectifs < 0) joursEffectifs = 0;
 
