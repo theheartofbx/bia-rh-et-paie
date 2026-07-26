@@ -305,11 +305,9 @@ public class PayrollOrchestrator {
         org.sitracel.paie.model.MHRMouvementPaie retenue =
                 new org.sitracel.paie.model.MHRMouvementPaie(Env.getCtx(), 0, trxName);
 
-        retenue.setHR_Mouvement_Paie_ID(
-                DB.getNextID(Env.getCtx(),
-                        org.sitracel.paie.model.I_HR_Mouvement_Paie.Table_Name,
-                        trxName));
+
         retenue.setC_BPartner_ID(bpartnerId);
+        retenue.setHR_MouvementPaieType_ID(isLicenciement ? 1000001 : 1000002);
         retenue.setMontant_Total(montant);
         retenue.setMontant_Mensualite(montant);       // versement unique
         retenue.setMontant_Derniere_Mensualite(montant);
@@ -323,15 +321,7 @@ public class PayrollOrchestrator {
                                        : "Indemnité de retraite");
         retenue.save();
 
-        // Marquer comme indemnité — IsIndemnite est géré directement en SQL
-        // car la colonne n'est pas encore enregistrée dans le dictionnaire AD_Column.
-        // Quand elle le sera, on pourra utiliser le setter du modèle à la place.
-        DB.executeUpdate(
-                "UPDATE " + org.sitracel.paie.model.I_HR_Mouvement_Paie.Table_Name
-                + " SET IsIndemnite='Y' WHERE "
-                + org.sitracel.paie.model.I_HR_Mouvement_Paie.COLUMNNAME_HR_Mouvement_Paie_ID + "="
-                + retenue.getHR_Mouvement_Paie_ID(),
-                trxName);
+
 
         log.info("HR_MouvementPaie créée — bpartnerId=" + bpartnerId
                 + " montant=" + montant + " periodeId=" + periodeId);

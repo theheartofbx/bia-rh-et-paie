@@ -18,16 +18,15 @@ package org.sitracel.paie.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-
-import org.compiere.model.MTable;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_Gestion_Presence
- *  @author iDempiere (generated)
+ *  @author iDempiere (generated) 
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_Gestion_Presence
+public interface I_HR_Gestion_Presence 
 {
 
     /** TableName=HR_Gestion_Presence */
@@ -38,7 +37,7 @@ public interface I_HR_Gestion_Presence
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org
+    /** AccessLevel = 3 - Client - Org 
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
@@ -189,6 +188,19 @@ Heures Travaillés Max	  */
 	/** Get Nombre d&#039;
 Heures Travaillés Max	  */
 	public int getNombre_Heure_Travaille_Max();
+
+    /** Column name Nombre_Jour_Apres_FinContrat */
+    public static final String COLUMNNAME_Nombre_Jour_Apres_FinContrat = "Nombre_Jour_Apres_FinContrat";
+
+	/** Set Nombre de Jour Après la Fin du Contrat.
+	  * Nombre de Jour Après la Fin du Contrat
+	  */
+	public void setNombre_Jour_Apres_FinContrat (int Nombre_Jour_Apres_FinContrat);
+
+	/** Get Nombre de Jour Après la Fin du Contrat.
+	  * Nombre de Jour Après la Fin du Contrat
+	  */
+	public int getNombre_Jour_Apres_FinContrat();
 
     /** Column name Nombre_Jour_Avant_DebutContrat */
     public static final String COLUMNNAME_Nombre_Jour_Avant_DebutContrat = "Nombre_Jour_Avant_DebutContrat";

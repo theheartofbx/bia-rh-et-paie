@@ -514,11 +514,23 @@ public class PayrollCalculEngine {
             }
         }
 
+        // --- Jours apres fin du contrat (licenciement, rupture, retraite) ---
+        int joursApresContrat = 0;
+        if (contrat != null && contrat.getDate_Fin() != null) {
+            Timestamp dateFinContrat = contrat.getDate_Fin();
+            if (dateFinContrat.before(dateFinPeriode)) {
+                LocalDate ldFinContrat = dateFinContrat.toLocalDateTime().toLocalDate();
+                LocalDate ldFinPeriode = dateFinPeriode.toLocalDateTime().toLocalDate();
+                joursApresContrat = (int) java.time.temporal.ChronoUnit.DAYS.between(ldFinContrat, ldFinPeriode);
+                if (joursApresContrat < 0) joursApresContrat = 0;
+            }
+        }
+
         // --- Calculer le nombre de jours effectifs ---
         // Seuls les conges et suspensions reduisent les jours effectifs
         // Les autres absences (injustifiee, justifiee, maladie) sont informatives
         int totalAbsences = joursCongeAnnuel + joursCongeMaternite + joursCongePaternite
-                + joursSuspension + joursAvantContrat;
+                + joursSuspension + joursAvantContrat + joursApresContrat;
         int joursEffectifs = nombreJourMax - totalAbsences;
         if (joursEffectifs < 0) joursEffectifs = 0;
 
@@ -574,6 +586,7 @@ public class PayrollCalculEngine {
                 + " suspension=" + joursSuspension
                 + " autres=" + joursAutres
                 + " avantContrat=" + joursAvantContrat
+                + " apresContrat=" + joursApresContrat
                 + " effectif=" + joursEffectifs);
     }
 

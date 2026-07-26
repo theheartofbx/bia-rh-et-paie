@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.compiere.util.CLogger;
+import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.sitracel.bean.BeanIdentifiant;
 import org.sitracel.conge.HRCongeRepository;
@@ -15,6 +16,7 @@ import org.sitracel.controller.GeneralSqlController;
 import org.sitracel.discipline.model.MHRDossierDisciplinaire;
 import org.sitracel.discipline.model.MHRDureeSanction;
 import org.sitracel.discipline.model.MHRPunishment;
+import org.sitracel.paie.process.service.PayrollOrchestrator;
 import org.sitracel.discipline.model.MHRSanctionAutorisation;
 import org.sitracel.discipline.model.MHRTypeSanction;
 import org.sitracel.discipline.model.X_HR_TypeSanction;
@@ -73,6 +75,30 @@ public final class DisciplineProcessService {
             return "Vous n'etes pas habilite a valider cette sanction.";
         }
 
+        // --- Garde-fous de transition d'etat ---
+        if (punishment.isValidee()) {
+            return "Cette sanction a deja ete validee.";
+        }
+        if (punishment.isRejetee()) {
+            return "Cette sanction a deja ete rejetee et ne peut plus etre modifiee.";
+        }
+        if (!punishment.isApprouve()) {
+            return "Cette sanction doit etre approuvee avant de pouvoir etre validee.";
+        }
+
+
+        // --- Garde-fous de transition d'etat ---
+        if (punishment.isValidee()) {
+            return "Cette sanction a deja ete validee.";
+        }
+        if (punishment.isRejetee()) {
+            return "Cette sanction a deja ete rejetee et ne peut plus etre modifiee.";
+        }
+        if (!punishment.isApprouve()) {
+            return "Cette sanction doit etre approuvee avant de pouvoir etre validee.";
+        }
+
+
         punishment.setValide_Rejete_Par_Nom_ID(valideur.getNumEmploye());
         punishment.setValide_Rejete_Par_Matricule(valideur.getMatriculeEmploye());
         punishment.setValide_Rejete_Par_Poste_ID(valideur.getNumeroPoste());
@@ -90,6 +116,19 @@ public final class DisciplineProcessService {
         String errSusp = creerAbsencesSuspension(punishment, valideur);
         if (errSusp != null) return errSusp;
         creerDossierDisciplinaire(punishment);
+
+        // =================================================================
+        // LICENCIEMENT — fermer contrat, affectation, elements de paie
+        //                et calculer l'indemnite legale
+        // =================================================================
+        if (punishment.isLicenciement()) {
+            String errLic = traiterLicenciement(punishment, valideur);
+            if (errLic != null) {
+                log.warning("Licenciement partiel : " + errLic);
+                // On ne bloque pas la validation, on log le warning
+            }
+        }
+
         return null;
     }
 
@@ -114,6 +153,24 @@ public final class DisciplineProcessService {
                 + " par C_BPartner_ID " + rejeteur.getNumEmploye() + " (non habilité)");
             return "Vous n'etes pas habilite a rejeter cette sanction.";
         }
+
+        // --- Garde-fous de transition d'etat ---
+        if (punishment.isValidee()) {
+            return "Cette sanction a deja ete validee et ne peut plus etre rejetee.";
+        }
+        if (punishment.isRejetee()) {
+            return "Cette sanction a deja ete rejetee.";
+        }
+
+
+        // --- Garde-fous de transition d'etat ---
+        if (punishment.isValidee()) {
+            return "Cette sanction a deja ete validee et ne peut plus etre rejetee.";
+        }
+        if (punishment.isRejetee()) {
+            return "Cette sanction a deja ete rejetee.";
+        }
+
 
         punishment.setValide_Rejete_Par_Nom_ID(rejeteur.getNumEmploye());
         punishment.setValide_Rejete_Par_Matricule(rejeteur.getMatriculeEmploye());
@@ -155,6 +212,36 @@ public final class DisciplineProcessService {
             return "Vous n'etes pas habilite a approuver cette sanction.";
         }
 
+        // --- Garde-fous de transition d'etat ---
+        if (punishment.isApprouve()) {
+            return "Cette sanction a deja ete approuvee.";
+        }
+        if (punishment.isDesapprouve()) {
+            return "Cette sanction a ete desapprouvee. Elle ne peut plus etre approuvee.";
+        }
+        if (punishment.isValidee()) {
+            return "Cette sanction a deja ete validee et ne peut plus etre modifiee.";
+        }
+        if (punishment.isRejetee()) {
+            return "Cette sanction a deja ete rejetee et ne peut plus etre modifiee.";
+        }
+
+
+        // --- Garde-fous de transition d'etat ---
+        if (punishment.isApprouve()) {
+            return "Cette sanction a deja ete approuvee.";
+        }
+        if (punishment.isDesapprouve()) {
+            return "Cette sanction a ete desapprouvee. Elle ne peut plus etre approuvee.";
+        }
+        if (punishment.isValidee()) {
+            return "Cette sanction a deja ete validee et ne peut plus etre modifiee.";
+        }
+        if (punishment.isRejetee()) {
+            return "Cette sanction a deja ete rejetee et ne peut plus etre modifiee.";
+        }
+
+
         punishment.setApprouve_Desapprouve_Nom_ID(approbateur.getNumEmploye());
         punishment.setApprouve_Desapprouve_Matricule(approbateur.getMatriculeEmploye());
         punishment.setApprouve_Desapprouve_Poste_ID(approbateur.getNumeroPoste());
@@ -191,6 +278,30 @@ public final class DisciplineProcessService {
                 + " par C_BPartner_ID " + desapprobateur.getNumEmploye() + " (non habilité)");
             return "Vous n'etes pas habilite a desapprouver cette sanction.";
         }
+
+        // --- Garde-fous de transition d'etat ---
+        if (punishment.isDesapprouve()) {
+            return "Cette sanction a deja ete desapprouvee.";
+        }
+        if (punishment.isValidee()) {
+            return "Cette sanction a deja ete validee et ne peut plus etre modifiee.";
+        }
+        if (punishment.isRejetee()) {
+            return "Cette sanction a deja ete rejetee et ne peut plus etre modifiee.";
+        }
+
+
+        // --- Garde-fous de transition d'etat ---
+        if (punishment.isDesapprouve()) {
+            return "Cette sanction a deja ete desapprouvee.";
+        }
+        if (punishment.isValidee()) {
+            return "Cette sanction a deja ete validee et ne peut plus etre modifiee.";
+        }
+        if (punishment.isRejetee()) {
+            return "Cette sanction a deja ete rejetee et ne peut plus etre modifiee.";
+        }
+
 
         punishment.setApprouve_Desapprouve_Nom_ID(desapprobateur.getNumEmploye());
         punishment.setApprouve_Desapprouve_Matricule(desapprobateur.getMatriculeEmploye());
@@ -385,4 +496,86 @@ public final class DisciplineProcessService {
         }
         dossier.save(null);
     }
+
+    // =========================================================================
+    // LICENCIEMENT
+    // =========================================================================
+
+    /**
+     * Traite les consequences d'un licenciement valide :
+     * 1. Ferme le contrat actif (statut Rompu, date_rupture, motif)
+     * 2. Ferme l'affectation active (date_fin)
+     * 3. Ferme les elements de paie (date_fin)
+     * 4. Calcule et enregistre l'indemnite de licenciement
+     */
+    private static String traiterLicenciement(MHRPunishment punishment, BeanIdentifiant valideur) {
+        int bpartnerId = punishment.getC_BPartner_ID();
+        Timestamp dateLicenciement = new Timestamp(System.currentTimeMillis());
+        String motif = punishment.getMotif_Demande_Explication();
+        StringBuilder warnings = new StringBuilder();
+
+        // 1. Fermer le contrat actif
+        String sqlContrat = "UPDATE adempiere.hr_contrat"
+            + " SET hr_contratstatut_id = 303,"
+            + "     date_rupture = ?,"
+            + "     motif_rupture = ?,"
+            + "     updated = statement_timestamp(),"
+            + "     updatedby = ?"
+            + " WHERE c_bpartner_id = ?"
+            + "   AND hr_contratstatut_id = 101"
+            + "   AND isactive = 'Y'";
+        int nbContrat = DB.executeUpdate(sqlContrat, new Object[]{
+            dateLicenciement, motif, Env.getAD_User_ID(Env.getCtx()), bpartnerId
+        }, false, null);
+        if (nbContrat == 0) warnings.append("Aucun contrat actif trouve. ");
+        else log.info("Licenciement : " + nbContrat + " contrat(s) ferme(s) pour bpartnerId=" + bpartnerId);
+
+        // 2. Fermer l'affectation active
+        String sqlAffect = "UPDATE adempiere.hr_affectation"
+            + " SET date_fin = ?,"
+            + "     updated = statement_timestamp(),"
+            + "     updatedby = ?"
+            + " WHERE c_bpartner_id = ?"
+            + "   AND date_fin IS NULL"
+            + "   AND isactive = 'Y'";
+        int nbAffect = DB.executeUpdate(sqlAffect, new Object[]{
+            dateLicenciement, Env.getAD_User_ID(Env.getCtx()), bpartnerId
+        }, false, null);
+        if (nbAffect == 0) warnings.append("Aucune affectation active trouvee. ");
+        else log.info("Licenciement : " + nbAffect + " affectation(s) fermee(s) pour bpartnerId=" + bpartnerId);
+
+        // 3. Fermer les elements de paie
+        String sqlElem = "UPDATE adempiere.hr_elementbasepaieemploye"
+            + " SET date_fin = ?,"
+            + "     updated = statement_timestamp(),"
+            + "     updatedby = ?"
+            + " WHERE c_bpartner_id = ?"
+            + "   AND date_fin IS NULL"
+            + "   AND isactive = 'Y'";
+        int nbElem = DB.executeUpdate(sqlElem, new Object[]{
+            dateLicenciement, Env.getAD_User_ID(Env.getCtx()), bpartnerId
+        }, false, null);
+        log.info("Licenciement : " + nbElem + " element(s) de paie ferme(s) pour bpartnerId=" + bpartnerId);
+
+        // 4. Calculer et enregistrer l'indemnite de licenciement
+        try {
+            int periodeId = DB.getSQLValue(null,
+                "SELECT HR_Periode_Salariale_ID FROM HR_Periode_Salariale"
+                + " WHERE Date_Debut_Defaut <= now() AND Date_Fin_Defaut >= now()"
+                + " AND IsActive='Y'");
+            if (periodeId <= 0) {
+                warnings.append("Periode salariale courante introuvable - indemnite non calculee. ");
+            } else {
+                String result = PayrollOrchestrator.calculerIndemniteLicenciement(
+                    bpartnerId, periodeId);
+                log.info("Licenciement indemnite : " + result);
+            }
+        } catch (Exception e) {
+            log.severe("Erreur calcul indemnite licenciement : " + e.getMessage());
+            warnings.append("Erreur calcul indemnite : " + e.getMessage());
+        }
+
+        return warnings.length() > 0 ? warnings.toString() : null;
+    }
+
 }

@@ -20,11 +20,7 @@ package org.sitracel.paie.model;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
-
-import org.compiere.model.I_Persistent;
-import org.compiere.model.MTable;
-import org.compiere.model.PO;
-import org.compiere.model.POInfo;
+import org.compiere.model.*;
 
 /** Generated Model for HR_Gestion_Presence
  *  @author iDempiere (generated)
@@ -36,7 +32,7 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20250819L;
+	private static final long serialVersionUID = 20260726L;
 
     /** Standard Constructor */
     public X_HR_Gestion_Presence (Properties ctx, int HR_Gestion_Presence_ID, String trxName)
@@ -91,29 +87,25 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
     /** AccessLevel
       * @return 3 - Client - Org
       */
-    @Override
-	protected int get_AccessLevel()
+    protected int get_AccessLevel()
     {
       return accessLevel.intValue();
     }
 
     /** Load Meta Data */
-    @Override
-	protected POInfo initPO (Properties ctx)
+    protected POInfo initPO (Properties ctx)
     {
       POInfo poi = POInfo.getPOInfo (ctx, Table_ID, get_TrxName());
       return poi;
     }
 
-    @Override
-	public String toString()
+    public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Gestion_Presence[")
         .append(get_ID()).append("]");
       return sb.toString();
     }
 
-	@Override
 	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException
 	{
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
@@ -123,33 +115,28 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 	/** Set Business Partner .
 		@param C_BPartner_ID Identifies a Business Partner
 	*/
-	@Override
 	public void setC_BPartner_ID (int C_BPartner_ID)
 	{
-		if (C_BPartner_ID < 1) {
+		if (C_BPartner_ID < 1)
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, null);
-		} else {
+		else
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, Integer.valueOf(C_BPartner_ID));
-		}
 	}
 
 	/** Get Business Partner .
 		@return Identifies a Business Partner
 	  */
-	@Override
 	public int getC_BPartner_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_BPartner_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set à Partir de :.
 		@param Date_Debut à Partir de :
 	*/
-	@Override
 	public void setDate_Debut (Timestamp Date_Debut)
 	{
 		set_ValueNoCheck (COLUMNNAME_Date_Debut, Date_Debut);
@@ -158,7 +145,6 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 	/** Get à Partir de :.
 		@return à Partir de :
 	  */
-	@Override
 	public Timestamp getDate_Debut()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Debut);
@@ -167,7 +153,6 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 	/** Set Jusqu&#039;au :.
 		@param Date_Fin Jusqu&#039;au :
 	*/
-	@Override
 	public void setDate_Fin (Timestamp Date_Fin)
 	{
 		set_ValueNoCheck (COLUMNNAME_Date_Fin, Date_Fin);
@@ -176,7 +161,6 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 	/** Get Jusqu&#039;au :.
 		@return Jusqu&#039;au :
 	  */
-	@Override
 	public Timestamp getDate_Fin()
 	{
 		return (Timestamp)get_Value(COLUMNNAME_Date_Fin);
@@ -185,32 +169,27 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 	/** Set Gestion de la Présence.
 		@param HR_Gestion_Presence_ID Gestion de la Présence
 	*/
-	@Override
 	public void setHR_Gestion_Presence_ID (int HR_Gestion_Presence_ID)
 	{
-		if (HR_Gestion_Presence_ID < 1) {
+		if (HR_Gestion_Presence_ID < 1)
 			set_ValueNoCheck (COLUMNNAME_HR_Gestion_Presence_ID, null);
-		} else {
+		else
 			set_ValueNoCheck (COLUMNNAME_HR_Gestion_Presence_ID, Integer.valueOf(HR_Gestion_Presence_ID));
-		}
 	}
 
 	/** Get Gestion de la Présence.
 		@return Gestion de la Présence	  */
-	@Override
 	public int getHR_Gestion_Presence_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Gestion_Presence_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set HR_Gestion_Presence_UU.
 		@param HR_Gestion_Presence_UU HR_Gestion_Presence_UU
 	*/
-	@Override
 	public void setHR_Gestion_Presence_UU (String HR_Gestion_Presence_UU)
 	{
 		set_Value (COLUMNNAME_HR_Gestion_Presence_UU, HR_Gestion_Presence_UU);
@@ -218,13 +197,11 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 
 	/** Get HR_Gestion_Presence_UU.
 		@return HR_Gestion_Presence_UU	  */
-	@Override
 	public String getHR_Gestion_Presence_UU()
 	{
 		return (String)get_Value(COLUMNNAME_HR_Gestion_Presence_UU);
 	}
 
-	@Override
 	public I_HR_Periode_Salariale getHR_Periode_Salariale() throws RuntimeException
 	{
 		return (I_HR_Periode_Salariale)MTable.get(getCtx(), I_HR_Periode_Salariale.Table_ID)
@@ -234,32 +211,27 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 	/** Set Période Salariale.
 		@param HR_Periode_Salariale_ID Période Salariale
 	*/
-	@Override
 	public void setHR_Periode_Salariale_ID (int HR_Periode_Salariale_ID)
 	{
-		if (HR_Periode_Salariale_ID < 1) {
+		if (HR_Periode_Salariale_ID < 1)
 			set_ValueNoCheck (COLUMNNAME_HR_Periode_Salariale_ID, null);
-		} else {
+		else
 			set_ValueNoCheck (COLUMNNAME_HR_Periode_Salariale_ID, Integer.valueOf(HR_Periode_Salariale_ID));
-		}
 	}
 
 	/** Get Période Salariale.
 		@return Période Salariale	  */
-	@Override
 	public int getHR_Periode_Salariale_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Periode_Salariale_ID);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Nombre d&#039;Heures Travaillés.
 		@param Nombre_Heure_Travaille Nombre d&#039;Heures Travaillés
 	*/
-	@Override
 	public void setNombre_Heure_Travaille (int Nombre_Heure_Travaille)
 	{
 		set_Value (COLUMNNAME_Nombre_Heure_Travaille, Integer.valueOf(Nombre_Heure_Travaille));
@@ -267,20 +239,17 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 
 	/** Get Nombre d&#039;Heures Travaillés.
 		@return Nombre d&#039;Heures Travaillés	  */
-	@Override
 	public int getNombre_Heure_Travaille()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Heure_Travaille);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Nombre d&#039;Heures Travaillés Max.
 		@param Nombre_Heure_Travaille_Max Nombre d&#039;Heures Travaillés Max
 	*/
-	@Override
 	public void setNombre_Heure_Travaille_Max (int Nombre_Heure_Travaille_Max)
 	{
 		set_Value (COLUMNNAME_Nombre_Heure_Travaille_Max, Integer.valueOf(Nombre_Heure_Travaille_Max));
@@ -288,20 +257,36 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 
 	/** Get Nombre d&#039;Heures Travaillés Max.
 		@return Nombre d&#039;Heures Travaillés Max	  */
-	@Override
 	public int getNombre_Heure_Travaille_Max()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Heure_Travaille_Max);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Nombre de Jour Après la Fin du Contrat.
+		@param Nombre_Jour_Apres_FinContrat Nombre de Jour Après la Fin du Contrat
+	*/
+	public void setNombre_Jour_Apres_FinContrat (int Nombre_Jour_Apres_FinContrat)
+	{
+		set_Value (COLUMNNAME_Nombre_Jour_Apres_FinContrat, Integer.valueOf(Nombre_Jour_Apres_FinContrat));
+	}
+
+	/** Get Nombre de Jour Après la Fin du Contrat.
+		@return Nombre de Jour Après la Fin du Contrat
+	  */
+	public int getNombre_Jour_Apres_FinContrat()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Jour_Apres_FinContrat);
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Nombre de Jour Avant le Début du Contrat.
 		@param Nombre_Jour_Avant_DebutContrat Nombre de Jour Avant le Début du Contrat
 	*/
-	@Override
 	public void setNombre_Jour_Avant_DebutContrat (int Nombre_Jour_Avant_DebutContrat)
 	{
 		set_Value (COLUMNNAME_Nombre_Jour_Avant_DebutContrat, Integer.valueOf(Nombre_Jour_Avant_DebutContrat));
@@ -310,20 +295,17 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 	/** Get Nombre de Jour Avant le Début du Contrat.
 		@return Nombre de Jour Avant le Début du Contrat
 	  */
-	@Override
 	public int getNombre_Jour_Avant_DebutContrat()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Jour_Avant_DebutContrat);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Nombre de Jour de Congé Annuel.
 		@param Nombre_Jour_Conge_Annuel Nombre de Jour de Congé Annuel
 	*/
-	@Override
 	public void setNombre_Jour_Conge_Annuel (int Nombre_Jour_Conge_Annuel)
 	{
 		set_Value (COLUMNNAME_Nombre_Jour_Conge_Annuel, Integer.valueOf(Nombre_Jour_Conge_Annuel));
@@ -332,20 +314,17 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 	/** Get Nombre de Jour de Congé Annuel.
 		@return Nombre de Jour de Congé Annuel
 	  */
-	@Override
 	public int getNombre_Jour_Conge_Annuel()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Jour_Conge_Annuel);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Nombre de Jour de Congé Maternité.
 		@param Nombre_Jour_Conge_Maternite Nombre de Jour de Congé Maternité
 	*/
-	@Override
 	public void setNombre_Jour_Conge_Maternite (int Nombre_Jour_Conge_Maternite)
 	{
 		set_Value (COLUMNNAME_Nombre_Jour_Conge_Maternite, Integer.valueOf(Nombre_Jour_Conge_Maternite));
@@ -354,20 +333,17 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 	/** Get Nombre de Jour de Congé Maternité.
 		@return Nombre de Jour de Congé Maternité
 	  */
-	@Override
 	public int getNombre_Jour_Conge_Maternite()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Jour_Conge_Maternite);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Nombre de Jour de Congé Paternité.
 		@param Nombre_Jour_Conge_Paternite Nombre de Jour de Congé Paternité
 	*/
-	@Override
 	public void setNombre_Jour_Conge_Paternite (int Nombre_Jour_Conge_Paternite)
 	{
 		set_Value (COLUMNNAME_Nombre_Jour_Conge_Paternite, Integer.valueOf(Nombre_Jour_Conge_Paternite));
@@ -376,20 +352,17 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 	/** Get Nombre de Jour de Congé Paternité.
 		@return Nombre de Jour de Congé Paternité
 	  */
-	@Override
 	public int getNombre_Jour_Conge_Paternite()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Jour_Conge_Paternite);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Nombre de Jour Effectif.
 		@param Nombre_Jour_Effectif Nombre de Jour Effectif
 	*/
-	@Override
 	public void setNombre_Jour_Effectif (int Nombre_Jour_Effectif)
 	{
 		set_Value (COLUMNNAME_Nombre_Jour_Effectif, Integer.valueOf(Nombre_Jour_Effectif));
@@ -398,20 +371,17 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 	/** Get Nombre de Jour Effectif.
 		@return Nombre de Jour Effectif
 	  */
-	@Override
 	public int getNombre_Jour_Effectif()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Jour_Effectif);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Nombre de Jour Max.
 		@param Nombre_Jour_Max Nombre de Jour Max
 	*/
-	@Override
 	public void setNombre_Jour_Max (int Nombre_Jour_Max)
 	{
 		set_Value (COLUMNNAME_Nombre_Jour_Max, Integer.valueOf(Nombre_Jour_Max));
@@ -420,20 +390,17 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 	/** Get Nombre de Jour Max.
 		@return Nombre de Jour Max
 	  */
-	@Override
 	public int getNombre_Jour_Max()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Jour_Max);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 
 	/** Set Nombre de Jour de Suspension.
 		@param Nombre_Jour_Suspension Nombre de Jour de Suspension
 	*/
-	@Override
 	public void setNombre_Jour_Suspension (int Nombre_Jour_Suspension)
 	{
 		set_Value (COLUMNNAME_Nombre_Jour_Suspension, Integer.valueOf(Nombre_Jour_Suspension));
@@ -442,13 +409,11 @@ public class X_HR_Gestion_Presence extends PO implements I_HR_Gestion_Presence, 
 	/** Get Nombre de Jour de Suspension.
 		@return Nombre de Jour de Suspension
 	  */
-	@Override
 	public int getNombre_Jour_Suspension()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Nombre_Jour_Suspension);
-		if (ii == null) {
-			return 0;
-		}
+		if (ii == null)
+			 return 0;
 		return ii.intValue();
 	}
 }

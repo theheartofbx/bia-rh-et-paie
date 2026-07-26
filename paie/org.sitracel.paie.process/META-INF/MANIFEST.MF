@@ -3,7 +3,9 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Process
 Bundle-SymbolicName: org.sitracel.paie.process
 Bundle-Version: 1.0.0.qualifier
-Export-Package: org.sitracel.paie.process.controller
+Export-Package: org.sitracel.paie.process.controller,
+ org.sitracel.paie.process.service,
+ org.sitracel.paie.process.service.calcul
 Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
  org.sitracel.conge.model;bundle-version="1.0.0",
  org.sitracel.paie.model;bundle-version="1.0.0",

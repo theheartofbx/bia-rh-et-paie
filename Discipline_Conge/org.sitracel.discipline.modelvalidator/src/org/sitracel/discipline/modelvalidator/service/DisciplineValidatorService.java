@@ -150,6 +150,26 @@ public final class DisciplineValidatorService {
             }
         }
 
+        // Avant modification : bloquer si sanction deja traitee
+        if (ModelValidator.TYPE_BEFORE_CHANGE == type) {
+            if (punishment.isValidee() || punishment.isRejetee()) {
+                Object oldDateDebut = punishment.get_ValueOld("Date_Debut_Application");
+                Object oldDuree = punishment.get_ValueOld("HR_Duree_Sanction_ID");
+                Object newDateDebut = punishment.get_Value("Date_Debut_Application");
+                Object newDuree = punishment.get_Value("HR_Duree_Sanction_ID");
+
+                boolean dateChanged = (oldDateDebut == null && newDateDebut != null)
+                    || (oldDateDebut != null && !oldDateDebut.equals(newDateDebut));
+                boolean dureeChanged = (oldDuree == null && newDuree != null)
+                    || (oldDuree != null && !oldDuree.equals(newDuree));
+
+                if (dateChanged || dureeChanged) {
+                    return "Impossible de modifier la date de debut ou le delai de suspension : "
+                        + "cette sanction a deja ete " + (punishment.isValidee() ? "validee" : "rejetee") + ".";
+                }
+            }
+        }
+
         // À la création : controles + initialiser
         if (ModelValidator.TYPE_BEFORE_NEW == type) {
 
