@@ -252,7 +252,7 @@ public final class DisciplineProcessService {
 
         MHRTypeSanction typeSanction = new MHRTypeSanction(
             Env.getCtx(), autorisation.getHR_TypeSanction_ID(), null);
-        if (typeSanction == null) return;
+        if (typeSanction == null) return null;
 
         // Agir uniquement pour les suspensions
         if (!X_HR_TypeSanction.INCIDENCE_SANCTION_ID_PériodeDeSuspension
