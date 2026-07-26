@@ -10,7 +10,10 @@ public class SitracelProcessRejeterSanction extends SvrProcess {
 
     @Override
     protected String doIt() throws Exception {
-        DisciplineProcessService.rejeterSanction(getRecord_ID(), getAD_User_ID());
-        return null;
+        String result = DisciplineProcessService.rejeterSanction(getRecord_ID(), getAD_User_ID());
+        if (result != null) {
+            throw new Exception(result);
+        }
+        return "Rejet effectue avec succes.";
     }
 }

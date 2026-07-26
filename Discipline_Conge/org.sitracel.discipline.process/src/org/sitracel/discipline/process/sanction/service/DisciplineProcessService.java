@@ -58,19 +58,19 @@ public final class DisciplineProcessService {
      * Valide une sanction, crée les absences de suspension
      * et le dossier disciplinaire.
      */
-    public static void validerSanction(Integer idSanction, Integer adUserID) {
-        if (idSanction == null || adUserID == null) return;
+    public static String validerSanction(Integer idSanction, Integer adUserID) {
+        if (idSanction == null || adUserID == null) return "Parametres invalides.";
 
         BeanIdentifiant valideur = HREmployeService.getIdentifiant(adUserID, null);
         MHRPunishment punishment = new MHRPunishment(Env.getCtx(), idSanction, null);
 
-        if (punishment == null || valideur == null) return;
-        if (valideur.getNomEmploye() == null) return;
+        if (punishment == null || valideur == null) return "Donnees introuvables.";
+        if (valideur.getNomEmploye() == null) return "Identifiant valideur introuvable.";
 
         if (!estHabiliteAAgir(punishment, valideur.getNumEmploye(), ActionOrganigramme.VALIDATION)) {
             log.warning("Validation refusée : sanction " + idSanction
                 + " par C_BPartner_ID " + valideur.getNumEmploye() + " (non habilité)");
-            return;
+            return "Vous n'etes pas habilite a valider cette sanction.";
         }
 
         punishment.setValide_Rejete_Par_Nom_ID(valideur.getNumEmploye());
@@ -83,13 +83,14 @@ public final class DisciplineProcessService {
         punishment.setDate_Rejet(null);
         if (!punishment.save(null)) {
             log.warning("Validation impossible : erreur lors de la sauvegarde de la sanction " + idSanction);
-            return;
+            return "Validation impossible : la periode de suspension n'est plus disponible. Verifiez les absences et conges.";
         }
         // ✅ Notification SANCTION_VALIDATED via modelvalidator
 
-        creerAbsencesSuspension(punishment, valideur);
-        punishment.save(null); // Sauvegarder date_fin_application
+        String errSusp = creerAbsencesSuspension(punishment, valideur);
+        if (errSusp != null) return errSusp;
         creerDossierDisciplinaire(punishment);
+        return null;
     }
 
     // =========================================================================
@@ -99,19 +100,19 @@ public final class DisciplineProcessService {
     /**
      * Rejette une sanction et supprime les absences de suspension associées.
      */
-    public static void rejeterSanction(Integer idSanction, Integer adUserID) {
-        if (idSanction == null || adUserID == null) return;
+    public static String rejeterSanction(Integer idSanction, Integer adUserID) {
+        if (idSanction == null || adUserID == null) return "Parametres invalides.";
 
         BeanIdentifiant rejeteur = HREmployeService.getIdentifiant(adUserID, null);
         MHRPunishment punishment = new MHRPunishment(Env.getCtx(), idSanction, null);
 
-        if (punishment == null || rejeteur == null) return;
-        if (rejeteur.getNomEmploye() == null) return;
+        if (punishment == null || rejeteur == null) return "Donnees introuvables.";
+        if (rejeteur.getNomEmploye() == null) return "Identifiant rejeteur introuvable.";
 
         if (!estHabiliteAAgir(punishment, rejeteur.getNumEmploye(), ActionOrganigramme.VALIDATION)) {
             log.warning("Rejet refusé : sanction " + idSanction
                 + " par C_BPartner_ID " + rejeteur.getNumEmploye() + " (non habilité)");
-            return;
+            return "Vous n'etes pas habilite a rejeter cette sanction.";
         }
 
         punishment.setValide_Rejete_Par_Nom_ID(rejeteur.getNumEmploye());
@@ -124,11 +125,12 @@ public final class DisciplineProcessService {
         punishment.setDate_Rejet(new Timestamp(System.currentTimeMillis()));
         if (!punishment.save(null)) {
             log.warning("Rejet impossible : erreur lors de la sauvegarde de la sanction " + idSanction);
-            return;
+            return "Rejet impossible : erreur lors de la sauvegarde.";
         }
         // ✅ Notification SANCTION_REJECTED via modelvalidator
 
         supprimerAbsencesSuspension(punishment);
+        return null;
     }
 
     // =========================================================================
@@ -138,19 +140,19 @@ public final class DisciplineProcessService {
     /**
      * Approuve une sanction.
      */
-    public static void approuverSanction(Integer idSanction, Integer adUserID) {
-        if (idSanction == null || adUserID == null) return;
+    public static String approuverSanction(Integer idSanction, Integer adUserID) {
+        if (idSanction == null || adUserID == null) return "Parametres invalides.";
 
         BeanIdentifiant approbateur = HREmployeService.getIdentifiant(adUserID, null);
         MHRPunishment punishment = new MHRPunishment(Env.getCtx(), idSanction, null);
 
-        if (punishment == null || approbateur == null) return;
-        if (approbateur.getNomEmploye() == null) return;
+        if (punishment == null || approbateur == null) return "Donnees introuvables.";
+        if (approbateur.getNomEmploye() == null) return "Identifiant approbateur introuvable.";
 
         if (!estHabiliteAAgir(punishment, approbateur.getNumEmploye(), ActionOrganigramme.APPROBATION)) {
             log.warning("Approbation refusée : sanction " + idSanction
                 + " par C_BPartner_ID " + approbateur.getNumEmploye() + " (non habilité)");
-            return;
+            return "Vous n'etes pas habilite a approuver cette sanction.";
         }
 
         punishment.setApprouve_Desapprouve_Nom_ID(approbateur.getNumEmploye());
@@ -162,9 +164,10 @@ public final class DisciplineProcessService {
         punishment.setDate_Desapprobation(null);
         if (!punishment.save(null)) {
             log.warning("Approbation impossible : erreur lors de la sauvegarde de la sanction " + idSanction);
-            return;
+            return "Approbation impossible : erreur lors de la sauvegarde.";
         }
         // ✅ Notification SANCTION_APPROVED via modelvalidator
+        return null;
     }
 
     // =========================================================================
@@ -174,19 +177,19 @@ public final class DisciplineProcessService {
     /**
      * Désapprouve une sanction.
      */
-    public static void desapprouverSanction(Integer idSanction, Integer adUserID) {
-        if (idSanction == null || adUserID == null) return;
+    public static String desapprouverSanction(Integer idSanction, Integer adUserID) {
+        if (idSanction == null || adUserID == null) return "Parametres invalides.";
 
         BeanIdentifiant desapprobateur = HREmployeService.getIdentifiant(adUserID, null);
         MHRPunishment punishment = new MHRPunishment(Env.getCtx(), idSanction, null);
 
-        if (punishment == null || desapprobateur == null) return;
-        if (desapprobateur.getNomEmploye() == null) return;
+        if (punishment == null || desapprobateur == null) return "Donnees introuvables.";
+        if (desapprobateur.getNomEmploye() == null) return "Identifiant desapprobateur introuvable.";
 
         if (!estHabiliteAAgir(punishment, desapprobateur.getNumEmploye(), ActionOrganigramme.APPROBATION)) {
             log.warning("Désapprobation refusée : sanction " + idSanction
                 + " par C_BPartner_ID " + desapprobateur.getNumEmploye() + " (non habilité)");
-            return;
+            return "Vous n'etes pas habilite a desapprouver cette sanction.";
         }
 
         punishment.setApprouve_Desapprouve_Nom_ID(desapprobateur.getNumEmploye());
@@ -198,9 +201,10 @@ public final class DisciplineProcessService {
         punishment.setDate_Desapprobation(new Timestamp(System.currentTimeMillis()));
         if (!punishment.save(null)) {
             log.warning("Desapprobation impossible : erreur lors de la sauvegarde de la sanction " + idSanction);
-            return;
+            return "Desapprobation impossible : erreur lors de la sauvegarde.";
         }
         // ✅ Notification SANCTION_DISAPPROVED via modelvalidator
+        return null;
     }
 
     // =========================================================================
@@ -238,13 +242,13 @@ public final class DisciplineProcessService {
      * Crée une absence "Suspendu" pour chaque jour ouvrable de la suspension.
      * N'agit que si le type de sanction est une suspension.
      */
-    private static void creerAbsencesSuspension(MHRPunishment punishment,
+    private static String creerAbsencesSuspension(MHRPunishment punishment,
                                                   BeanIdentifiant valideur) {
-        if (punishment == null || valideur == null) return;
+        if (punishment == null || valideur == null) return null;
 
         MHRSanctionAutorisation autorisation = new MHRSanctionAutorisation(
             Env.getCtx(), punishment.getEmission_Sanction_ID(), null);
-        if (autorisation == null) return;
+        if (autorisation == null) return null;
 
         MHRTypeSanction typeSanction = new MHRTypeSanction(
             Env.getCtx(), autorisation.getHR_TypeSanction_ID(), null);
@@ -252,7 +256,7 @@ public final class DisciplineProcessService {
 
         // Agir uniquement pour les suspensions
         if (!X_HR_TypeSanction.INCIDENCE_SANCTION_ID_PériodeDeSuspension
-                .equalsIgnoreCase(typeSanction.getIncidence_Sanction_ID())) return;
+                .equalsIgnoreCase(typeSanction.getIncidence_Sanction_ID())) return null;
 
         MHRDureeSanction dureeSanction = new MHRDureeSanction(
             Env.getCtx(), punishment.getHR_Duree_Sanction_ID(), null);
@@ -261,11 +265,10 @@ public final class DisciplineProcessService {
         Timestamp debutAbs = punishment.getDate_Debut_Application();
         Timestamp finAbs   = HRCalendrierService.ajouterJoursOuvrables(debutAbs, nombreJours);
 
-        // Mettre à jour la date de fin de la suspension
+        // Sauvegarder la date de fin AVANT de creer les absences
         if (nombreJours > 0) {
             punishment.setDate_Fin_Application(finAbs);
-        } else {
-            punishment.setDate_Fin_Application(null);
+            punishment.save(null);
         }
 
         Integer typeAbsenceID = GeneralSqlController.getIDFromTableNameAndName(
@@ -274,7 +277,7 @@ public final class DisciplineProcessService {
             I_HR_Type_Absence.COLUMNNAME_Nom_Absence,
             "Suspendu", null);
 
-        if (typeAbsenceID == null || nombreJours <= 0) return;
+        if (typeAbsenceID == null || nombreJours <= 0) return null;
 
         // Recuperer le matricule de l'employe concerne
         BeanIdentifiant employe = HREmployeService.getIdentifiantByBPartner(
@@ -297,7 +300,7 @@ public final class DisciplineProcessService {
                 sb.append(sdf.format(absencesExistantes.get(i)));
             }
             sb.append(". Veuillez les supprimer ou les traiter avant de valider.");
-            throw new IllegalStateException(sb.toString());
+            return sb.toString();
         }
 
         // Poser le drapeau systeme pour bypasser les controles
@@ -336,6 +339,7 @@ public final class DisciplineProcessService {
         } finally {
             Env.getCtx().remove("#IS_CREATION_ABSENCE_SYSTEME");
         }
+        return null;
     }
 
     /**

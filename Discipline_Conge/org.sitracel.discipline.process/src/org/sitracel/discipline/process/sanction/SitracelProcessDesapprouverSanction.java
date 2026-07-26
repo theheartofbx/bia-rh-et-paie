@@ -10,7 +10,10 @@ public class SitracelProcessDesapprouverSanction extends SvrProcess {
 
     @Override
     protected String doIt() throws Exception {
-        DisciplineProcessService.desapprouverSanction(getRecord_ID(), getAD_User_ID());
-        return null;
+        String result = DisciplineProcessService.desapprouverSanction(getRecord_ID(), getAD_User_ID());
+        if (result != null) {
+            throw new Exception(result);
+        }
+        return "Desapprobation effectuee avec succes.";
     }
 }
