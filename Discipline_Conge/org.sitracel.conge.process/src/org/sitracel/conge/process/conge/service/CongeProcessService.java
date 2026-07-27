@@ -20,6 +20,7 @@ import org.sitracel.organigramme.ActionOrganigramme;
 import org.sitracel.organigramme.ModuleAutorisation;
 import org.sitracel.organigramme.OrganigrammeService;
 import org.sitracel.time.HRCalendrierService;
+import org.sitracel.paie.process.service.PayrollOrchestrator;
 
 /**
  * Service - logique metier des processus de gestion des conges.
@@ -184,6 +185,15 @@ public final class CongeProcessService {
 
         // Creer les absences seulement apres validation reussie
         creerAbsencesConge(conge, valideur);
+
+        // Calculer automatiquement l'indemnite de conge
+        try {
+            String resultIndemnite = PayrollOrchestrator.calculerIndemniteConge(
+                conge.getC_BPartner_ID(), conge.getHR_Holiday_ID());
+            log.info("Indemnite conge auto : " + resultIndemnite);
+        } catch (Exception e) {
+            log.warning("Erreur calcul indemnite conge automatique : " + e.getMessage());
+        }
     }
 
     // =========================================================================

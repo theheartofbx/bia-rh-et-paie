@@ -325,6 +325,17 @@ public class PayrollOrchestrator {
                                                      boolean isLicenciement,
                                                      boolean isRetraite,
                                                      String trxName) {
+        enregistrerIndemniteRetenue(bpartnerId, periodeId, montant, isLicenciement, isRetraite,
+            isLicenciement ? 1000001 : (isRetraite ? 1000002 : 1000000), trxName);
+    }
+
+    private static void enregistrerIndemniteRetenue(int bpartnerId,
+                                                     int periodeId,
+                                                     java.math.BigDecimal montant,
+                                                     boolean isLicenciement,
+                                                     boolean isRetraite,
+                                                     int mouvementPaieTypeId,
+                                                     String trxName) {
         org.sitracel.paie.model.MHRMouvementPaie retenue =
                 new org.sitracel.paie.model.MHRMouvementPaie(Env.getCtx(), 0, trxName);
 
@@ -341,7 +352,8 @@ public class PayrollOrchestrator {
         retenue.setIsIndemniteLicenciement(isLicenciement);
         retenue.setIsIndemniteRetraite(isRetraite);
         retenue.setName(isLicenciement ? "Indemnité de licenciement"
-                                       : "Indemnité de retraite");
+                                       : (isRetraite ? "Indemnité de retraite"
+                                       : "Indemnité de congé"));
         retenue.setIsIndemnite(true);
         retenue.save();
 
