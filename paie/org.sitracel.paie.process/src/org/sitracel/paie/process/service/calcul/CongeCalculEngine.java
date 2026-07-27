@@ -180,8 +180,11 @@ public class CongeCalculEngine {
         // Nombre de jours de congé à indemniser
         variables.put(CODE_NJC, nombreJourConge);
 
-        // Nombre de jours de congé de base accumulés (depuis hr_holiday)
-        BigDecimal njci = BigDecimal.valueOf(holiday.getJours_Conge_Total());
+        // Nombre de jours de congé de BASE (sans bonus anciennete ni enfants)
+        // Les bonus sont ajoutes separement via CANC et CEMS
+        // pour eviter le double comptage (Jours_Conge_Total les inclut deja)
+        int njciBase = org.sitracel.conge.HRCongeService.getNombreJourCongeAnnuelBase();
+        BigDecimal njci = BigDecimal.valueOf(njciBase);
         variables.put(CODE_NJCI, njci);
 
         // Salaire de base actuel depuis le contrat
@@ -201,10 +204,11 @@ public class CongeCalculEngine {
         sauvegarderEtStockerConge(bpartnerId, holiday, CODE_CEMS, cems, variables, trxName);
 
         // CANC : 2 jours par tranche de 3 ans d'ancienneté
+        // Utilise annee_anciennete du conge (posee par le callout)
         BigDecimal canc = BigDecimal.ZERO;
-        if (donneesConge != null && donneesConge.getMoisAnciennete() != null) {
-            int nbAnnees = donneesConge.getMoisAnciennete() / 36;
-            canc = BigDecimal.valueOf(nbAnnees * 2);
+        int anneeAnc = holiday.getAnnee_Anciennete();
+        if (anneeAnc > 0) {
+            canc = BigDecimal.valueOf((anneeAnc / 3) * 2);
         }
         sauvegarderEtStockerConge(bpartnerId, holiday, CODE_CANC, canc, variables, trxName);
 
