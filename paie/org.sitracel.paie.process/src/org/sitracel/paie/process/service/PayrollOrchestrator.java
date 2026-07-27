@@ -223,9 +223,32 @@ public class PayrollOrchestrator {
         // ---------------------------------------------------------------
         boolean ok = CongeCalculEngine.calculerIndemniteConge(bpartner, holiday, null);
 
-        return ok
-                ? "Indemnité de congé calculée pour l'employé " + bpartnerId
-                : "Calcul indemnité congé ignoré — vérifier salaire_cotisable et logs.";
+        if (!ok) {
+            return "Calcul indemnité congé ignoré — vérifier salaire_cotisable et logs.";
+        }
+
+        // Creer le mouvement de paie pour l'indemnite de conge
+        java.math.BigDecimal npConge = DB.getSQLValueBD(null,
+            "SELECT cc.montant FROM adempiere.hr_calcul_conge cc"
+            + " JOIN adempiere.hr_element_conge ec ON ec.hr_element_conge_id=cc.hr_element_conge_id"
+            + " WHERE cc.c_bpartner_id=? AND ec.value='NP'"
+            + " AND cc.hr_holiday_id=?",
+            bpartnerId, holidayId);
+
+        if (npConge != null && npConge.compareTo(java.math.BigDecimal.ZERO) > 0) {
+            int periodeId = DB.getSQLValue(null,
+                "SELECT HR_Periode_Salariale_ID FROM HR_Periode_Salariale"
+                + " WHERE Date_Debut_Defaut <= now() AND Date_Fin_Defaut >= now()"
+                + " AND IsActive='Y'");
+            if (periodeId > 0) {
+                enregistrerIndemniteRetenue(bpartnerId, periodeId, npConge,
+                    false, false, 1000000, null);
+                log.info("Mouvement de paie indemnite conge cree : " + npConge + " FCFA");
+            }
+        }
+
+        return "Indemnité de congé calculée pour l'employé " + bpartnerId
+            + " — NP congé : " + (npConge != null ? npConge.toPlainString() : "0") + " FCFA";
     }
 
     // -------------------------------------------------------------------------
@@ -307,7 +330,7 @@ public class PayrollOrchestrator {
 
 
         retenue.setC_BPartner_ID(bpartnerId);
-        retenue.setHR_MouvementPaieType_ID(isLicenciement ? 1000001 : 1000002);
+        retenue.setHR_MouvementPaieType_ID(mouvementPaieTypeId);
         retenue.setMontant_Total(montant);
         retenue.setMontant_Mensualite(montant);       // versement unique
         retenue.setMontant_Derniere_Mensualite(montant);
