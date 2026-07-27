@@ -236,6 +236,12 @@ public class PayrollOrchestrator {
             bpartnerId, holidayId);
 
         if (npConge != null && npConge.compareTo(java.math.BigDecimal.ZERO) > 0) {
+            // Supprimer l'ancien mouvement indemnite conge pour cet employe
+            DB.executeUpdate(
+                "DELETE FROM adempiere.hr_mouvement_paie"
+                + " WHERE c_bpartner_id=" + bpartnerId
+                + " AND hr_mouvementpaietype_id=1000000", false, null);
+
             int periodeId = DB.getSQLValue(null,
                 "SELECT HR_Periode_Salariale_ID FROM HR_Periode_Salariale"
                 + " WHERE Date_Debut_Defaut <= now() AND Date_Fin_Defaut >= now()"
