@@ -548,6 +548,7 @@ public class PayrollCalculEngine {
                     + ", Nombre_Jour_Conge_Maternite=" + joursCongeMaternite
                     + ", Nombre_Jour_Conge_Paternite=" + joursCongePaternite
                     + ", Nombre_Jour_Suspension=" + joursSuspension
+                    + ", Nombre_Jour_Apres_FinContrat=" + joursApresContrat
                     + ", Date_Debut='" + dateDebutPeriode + "'"
                     + ", Date_Fin='" + dateFinPeriode + "'"
                     + ", Updated=NOW()"
@@ -563,7 +564,8 @@ public class PayrollCalculEngine {
                     + "  Nombre_Jour_Max, Nombre_Jour_Effectif,"
                     + "  Nombre_Jour_Avant_DebutContrat,"
                     + "  Nombre_Jour_Conge_Annuel, Nombre_Jour_Conge_Maternite,"
-                    + "  Nombre_Jour_Conge_Paternite, Nombre_Jour_Suspension)"
+                    + "  Nombre_Jour_Conge_Paternite, Nombre_Jour_Suspension,"
+                    + "  Nombre_Jour_Apres_FinContrat)"
                     + " VALUES (" + newId + ", " + Env.getAD_Client_ID(Env.getCtx())
                     + ", " + Env.getAD_Org_ID(Env.getCtx()) + ", 'Y'"
                     + ", NOW(), " + Env.getAD_User_ID(Env.getCtx())
@@ -573,7 +575,8 @@ public class PayrollCalculEngine {
                     + ", " + nombreJourMax + ", " + joursEffectifs
                     + ", " + joursAvantContrat
                     + ", " + joursCongeAnnuel + ", " + joursCongeMaternite
-                    + ", " + joursCongePaternite + ", " + joursSuspension + ")";
+                    + ", " + joursCongePaternite + ", " + joursSuspension
+                    + ", " + joursApresContrat + ")";
             DB.executeUpdate(sqlInsert, trxName);
         }
 

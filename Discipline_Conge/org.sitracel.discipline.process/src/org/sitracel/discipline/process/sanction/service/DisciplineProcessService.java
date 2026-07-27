@@ -75,30 +75,6 @@ public final class DisciplineProcessService {
             return "Vous n'etes pas habilite a valider cette sanction.";
         }
 
-        // --- Garde-fous de transition d'etat ---
-        if (punishment.isValidee()) {
-            return "Cette sanction a deja ete validee.";
-        }
-        if (punishment.isRejetee()) {
-            return "Cette sanction a deja ete rejetee et ne peut plus etre modifiee.";
-        }
-        if (!punishment.isApprouve()) {
-            return "Cette sanction doit etre approuvee avant de pouvoir etre validee.";
-        }
-
-
-        // --- Garde-fous de transition d'etat ---
-        if (punishment.isValidee()) {
-            return "Cette sanction a deja ete validee.";
-        }
-        if (punishment.isRejetee()) {
-            return "Cette sanction a deja ete rejetee et ne peut plus etre modifiee.";
-        }
-        if (!punishment.isApprouve()) {
-            return "Cette sanction doit etre approuvee avant de pouvoir etre validee.";
-        }
-
-
         punishment.setValide_Rejete_Par_Nom_ID(valideur.getNumEmploye());
         punishment.setValide_Rejete_Par_Matricule(valideur.getMatriculeEmploye());
         punishment.setValide_Rejete_Par_Poste_ID(valideur.getNumeroPoste());
@@ -113,9 +89,42 @@ public final class DisciplineProcessService {
         }
         // ✅ Notification SANCTION_VALIDATED via modelvalidator
 
+        // Verifier que la date de debut n'est pas avant la date de validation
+        if (punishment.getDate_Debut_Application() != null) {
+            Timestamp dateValidation = punishment.getDate_Validation();
+            Timestamp dateDebut = punishment.getDate_Debut_Application();
+            // Comparer les dates sans l'heure
+            Calendar calVal = Calendar.getInstance();
+            calVal.setTime(dateValidation);
+            calVal.set(Calendar.HOUR_OF_DAY, 0);
+            calVal.set(Calendar.MINUTE, 0);
+            calVal.set(Calendar.SECOND, 0);
+            calVal.set(Calendar.MILLISECOND, 0);
+            Calendar calDeb = Calendar.getInstance();
+            calDeb.setTime(dateDebut);
+            calDeb.set(Calendar.HOUR_OF_DAY, 0);
+            calDeb.set(Calendar.MINUTE, 0);
+            calDeb.set(Calendar.SECOND, 0);
+            calDeb.set(Calendar.MILLISECOND, 0);
+            if (calDeb.before(calVal)) {
+                return "La date de debut d'application (" 
+                    + new java.text.SimpleDateFormat("dd/MM/yyyy").format(dateDebut)
+                    + ") ne peut pas etre anterieure a la date de validation ("
+                    + new java.text.SimpleDateFormat("dd/MM/yyyy").format(dateValidation) + ").";
+            }
+        }
+
         String errSusp = creerAbsencesSuspension(punishment, valideur);
         if (errSusp != null) return errSusp;
         creerDossierDisciplinaire(punishment);
+
+        // =================================================================
+        // SUSPENSION DU CONTRAT
+        // =================================================================
+        if (punishment.getDate_Debut_Application() != null 
+                && punishment.getDate_Fin_Application() != null) {
+            traiterSuspensionContrat(punishment);
+        }
 
         // =================================================================
         // LICENCIEMENT — fermer contrat, affectation, elements de paie
@@ -153,15 +162,6 @@ public final class DisciplineProcessService {
                 + " par C_BPartner_ID " + rejeteur.getNumEmploye() + " (non habilité)");
             return "Vous n'etes pas habilite a rejeter cette sanction.";
         }
-
-        // --- Garde-fous de transition d'etat ---
-        if (punishment.isValidee()) {
-            return "Cette sanction a deja ete validee et ne peut plus etre rejetee.";
-        }
-        if (punishment.isRejetee()) {
-            return "Cette sanction a deja ete rejetee.";
-        }
-
 
         // --- Garde-fous de transition d'etat ---
         if (punishment.isValidee()) {
@@ -495,6 +495,55 @@ public final class DisciplineProcessService {
             dossier.setHR_TypeSanction_ID(typeSanctionId);
         }
         dossier.save(null);
+    }
+
+
+    // =========================================================================
+    // SUSPENSION DU CONTRAT
+    // =========================================================================
+
+    /**
+     * Passe le contrat actif en statut "Suspendu" (202) uniquement si
+     * la date de debut d'application est aujourd'hui ou deja passee.
+     * Si la date de debut est dans le futur, le Scheduler s'en chargera.
+     */
+    private static void traiterSuspensionContrat(MHRPunishment punishment) {
+        Timestamp dateDebut = punishment.getDate_Debut_Application();
+        if (dateDebut == null) return;
+
+        // Comparer date_debut avec aujourd'hui (sans l'heure)
+        Calendar calDebut = Calendar.getInstance();
+        calDebut.setTime(dateDebut);
+        calDebut.set(Calendar.HOUR_OF_DAY, 0);
+        calDebut.set(Calendar.MINUTE, 0);
+        calDebut.set(Calendar.SECOND, 0);
+        calDebut.set(Calendar.MILLISECOND, 0);
+
+        Calendar calAujourdhui = Calendar.getInstance();
+        calAujourdhui.set(Calendar.HOUR_OF_DAY, 0);
+        calAujourdhui.set(Calendar.MINUTE, 0);
+        calAujourdhui.set(Calendar.SECOND, 0);
+        calAujourdhui.set(Calendar.MILLISECOND, 0);
+
+        if (calDebut.after(calAujourdhui)) {
+            log.info("Suspension contrat differee : debut le "
+                + new java.text.SimpleDateFormat("dd/MM/yyyy").format(dateDebut)
+                + " pour bpartnerId=" + punishment.getC_BPartner_ID());
+            return;
+        }
+
+        int bpartnerId = punishment.getC_BPartner_ID();
+        String sql = "UPDATE adempiere.hr_contrat"
+            + " SET hr_contratstatut_id = 202,"
+            + "     updated = statement_timestamp(),"
+            + "     updatedby = " + Env.getAD_User_ID(Env.getCtx())
+            + " WHERE c_bpartner_id = " + bpartnerId
+            + "   AND hr_contratstatut_id = 101"
+            + "   AND isactive = 'Y'";
+        int nb = DB.executeUpdate(sql, false, null);
+        if (nb > 0) {
+            log.info("Suspension contrat : statut passe a Suspendu pour bpartnerId=" + bpartnerId);
+        }
     }
 
     // =========================================================================

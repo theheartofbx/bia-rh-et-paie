@@ -319,6 +319,7 @@ public class PayrollOrchestrator {
         retenue.setIsIndemniteRetraite(isRetraite);
         retenue.setName(isLicenciement ? "Indemnité de licenciement"
                                        : "Indemnité de retraite");
+        retenue.setIsIndemnite(true);
         retenue.save();
 
 

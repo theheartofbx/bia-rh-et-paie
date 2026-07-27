@@ -280,9 +280,22 @@ public final class DisciplineValidatorService {
             return null;
         }
 
-        Timestamp maintenant = new Timestamp(System.currentTimeMillis());
-        if (dateDebut.before(maintenant)) {
-            return "La date de début de la sanction ne peut pas être avant la date d'aujourd'hui.";
+        // Comparer les dates sans l'heure (sinon 27/07 00:00 < 27/07 15:30)
+        java.util.Calendar calDebut = java.util.Calendar.getInstance();
+        calDebut.setTime(dateDebut);
+        calDebut.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        calDebut.set(java.util.Calendar.MINUTE, 0);
+        calDebut.set(java.util.Calendar.SECOND, 0);
+        calDebut.set(java.util.Calendar.MILLISECOND, 0);
+
+        java.util.Calendar calAuj = java.util.Calendar.getInstance();
+        calAuj.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        calAuj.set(java.util.Calendar.MINUTE, 0);
+        calAuj.set(java.util.Calendar.SECOND, 0);
+        calAuj.set(java.util.Calendar.MILLISECOND, 0);
+
+        if (calDebut.before(calAuj)) {
+            return "La date de debut de la sanction ne peut pas etre avant la date d'aujourd'hui.";
         }
 
         MHRDureeSanction dureeSanction = new MHRDureeSanction(
