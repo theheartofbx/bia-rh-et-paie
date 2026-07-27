@@ -27,6 +27,7 @@ import org.sitracel.paie.model.MHRElementBasePaieEmploye;
 import org.sitracel.paie.model.MHRElementConge;
 import org.sitracel.paie.process.service.PayrollRepository;
 import org.sitracel.paie.process.service.persistence.PayrollPersistence;
+import org.sitracel.paie.process.service.calcul.fiscal.BaremeFiscalCameroun;
 
 /**
  * Moteur de calcul des indemnités de congé.
@@ -245,6 +246,20 @@ public class CongeCalculEngine {
 
         String codeElement = element.getValue();
         BigDecimal montant = BigDecimal.ZERO;
+
+        // Traitement special IRPP : utiliser BaremeFiscalCameroun
+        // car les formules en base utilisent des ternaires (? :)
+        // que exp4j ne supporte pas
+        if ("IRPP".equals(codeElement)) {
+            BigDecimal ibc = variables.getOrDefault(CODE_IBC, BigDecimal.ZERO);
+            if (ibc.compareTo(BigDecimal.ZERO) > 0) {
+                montant = BaremeFiscalCameroun.calculer(ibc);
+                montant = montant != null ? montant.setScale(0, RoundingMode.FLOOR) : BigDecimal.ZERO;
+            }
+            sauvegarderEtStockerConge(bpartnerId, holiday, codeElement, montant, variables, trxName);
+            return;
+        }
+
         String typeCalcul  = getTypeCalculNom(element.getHR_Type_Calcul_ID(), trxName);
 
         if (typeCalcul == null || typeCalcul.equalsIgnoreCase("Aucun")) {
@@ -409,7 +424,8 @@ public class CongeCalculEngine {
                 + " INNER JOIN adempiere.hr_typedecharge tc"
                 + " ON tc.hr_typedecharge_id = ec.hr_typedecharge_id"
                 + " WHERE cc.c_bpartner_id=?"
-                + " AND tc.name='RETENUE CONGÉ'";
+                + " AND tc.name='RETENUE CONGÉ'"
+                + " AND ec.value <> 'IRPP'";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         try {

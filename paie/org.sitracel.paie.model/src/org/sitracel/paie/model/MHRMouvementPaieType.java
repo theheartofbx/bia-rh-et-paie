@@ -21,14 +21,16 @@ public class MHRMouvementPaieType extends X_HR_MouvementPaieType {
 
     /**
      * Retourne IsIndemnite ('Y' ou 'N').
-     * Utilise get_Value car la colonne n'a pas de getter généré.
      */
     public String getIsIndemnite() {
         Object val = get_Value("IsIndemnite");
-        return val != null ? val.toString() : "N";
+        if (val == null) return "N";
+        if (val instanceof Boolean) return ((Boolean) val) ? "Y" : "N";
+        return "Y".equalsIgnoreCase(val.toString()) ? "Y" : "N";
     }
 
+    @Override
     public boolean isIndemnite() {
-        return "Y".equalsIgnoreCase(getIsIndemnite());
+        return "Y".equals(getIsIndemnite());
     }
 }
