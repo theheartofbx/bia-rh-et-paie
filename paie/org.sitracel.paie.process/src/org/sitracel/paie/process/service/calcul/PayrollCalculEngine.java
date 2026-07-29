@@ -195,6 +195,9 @@ public class PayrollCalculEngine {
                 if (element != null) {
                     PayrollPersistence.sauvegarderCalculPaie(
                         bpartnerId, element, periode, montant, trxName);
+                    // Historiciser les elements contrat pour le calcul des indemnites de conge
+                    PayrollPersistence.sauvegarderHistorique(
+                        bpartnerId, element, periode, montant, trxName);
                 }
             }
         }
