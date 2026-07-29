@@ -13,11 +13,6 @@ import org.compiere.model.PO;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.sitracel.paie.model.MHRElementBasePaieEmploye;
-import org.compiere.util.Env;
-import org.sitracel.conge.model.MHRHoliday;
-import org.sitracel.model.MCBPartner;
-import org.sitracel.paie.process.service.PayrollOrchestrator;
-import org.sitracel.paie.process.service.calcul.PayrollCalculEngine;
 
 public class SitracelModelValidatorElementBasePaieEmploye implements ModelValidator {
 
@@ -62,16 +57,6 @@ public class SitracelModelValidatorElementBasePaieEmploye implements ModelValida
         }
 
         MHRElementBasePaieEmploye element = (MHRElementBasePaieEmploye) po;
-
-        // ---------------------------------------------------------------
-        // AFTER : recalculer conge et paie si les elements changent
-        // ---------------------------------------------------------------
-        if (type == ModelValidator.TYPE_AFTER_CHANGE
-                || type == ModelValidator.TYPE_AFTER_NEW
-                || type == ModelValidator.TYPE_AFTER_DELETE) {
-            recalculerCongeEtPaieSiNecessaire(element);
-            return null;
-        }
 
         if (type != ModelValidator.TYPE_BEFORE_NEW
                 && type != ModelValidator.TYPE_BEFORE_CHANGE) {
@@ -215,56 +200,5 @@ public class SitracelModelValidatorElementBasePaieEmploye implements ModelValida
         return null;
     }
 
-    // -------------------------------------------------------------------------
-    // Recalcul automatique conge + paie courante
-    // -------------------------------------------------------------------------
-
-    /**
-     * Quand les elements de paie d un employe changent :
-     * 1. Si un conge valide futur existe -> recalculer l indemnite de conge
-     * 2. Recalculer la paie de la periode salariale courante
-     */
-    private void recalculerCongeEtPaieSiNecessaire(MHRElementBasePaieEmploye element) {
-        int bpartnerId = element.getC_BPartner_ID();
-        if (bpartnerId <= 0) return;
-
-        String trxName = element.get_TrxName();
-
-        // 1. Conge valide futur : recalculer l indemnite
-        try {
-            String sqlConge = "SELECT hr_holiday_id FROM adempiere.hr_holiday"
-                    + " WHERE c_bpartner_id = ?"
-                    + " AND hr_congestatut_id = 1000003"
-                    + " AND date_debut_effective > now()"
-                    + " AND isactive = 'Y'";
-
-            int holidayId = DB.getSQLValue(trxName, sqlConge, bpartnerId);
-            if (holidayId > 0) {
-                log.info("Element paie modifie pour bpartner=" + bpartnerId
-                        + " -> recalcul indemnite conge (holiday=" + holidayId + ")");
-                PayrollOrchestrator.calculerIndemniteConge(bpartnerId, holidayId);
-            }
-        } catch (Exception e) {
-            log.warning("Erreur recalcul conge apres modification element paie : "
-                    + e.getMessage());
-        }
-
-        // 2. Paie de la periode courante : recalculer
-        try {
-            int periodeId = DB.getSQLValue(trxName,
-                    "SELECT hr_periode_salariale_id FROM adempiere.hr_periode_salariale"
-                    + " WHERE date_debut_defaut <= now()"
-                    + " AND date_fin_defaut >= now()"
-                    + " AND isactive = 'Y'");
-            if (periodeId > 0) {
-                log.info("Element paie modifie pour bpartner=" + bpartnerId
-                        + " -> recalcul paie periode courante (periode=" + periodeId + ")");
-                PayrollCalculEngine.calculerPaie(bpartnerId, periodeId, trxName);
-            }
-        } catch (Exception e) {
-            log.warning("Erreur recalcul paie apres modification element paie : "
-                    + e.getMessage());
-        }
-    }
 
 }
