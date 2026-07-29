@@ -25,6 +25,7 @@ import org.sitracel.paie.model.MHRBaremeConge;
 import org.sitracel.paie.model.MHRCalculConge;
 import org.sitracel.paie.model.MHRElementBasePaieEmploye;
 import org.sitracel.paie.model.MHRElementConge;
+import org.sitracel.paie.model.X_HR_DetailIndemniteBrutConge;
 import org.sitracel.paie.process.service.PayrollRepository;
 import org.sitracel.paie.process.service.persistence.PayrollPersistence;
 import org.sitracel.paie.process.service.calcul.fiscal.BaremeFiscalCameroun;
@@ -119,8 +120,9 @@ public class CongeCalculEngine {
                     + " FROM HR_Historique_Paie hp"
                     + " JOIN HR_Periode_Salariale ps ON ps.HR_Periode_Salariale_ID = hp.HR_Periode_Salariale_ID"
                     + " JOIN HR_Element_Base_Paie e ON e.HR_Element_Base_Paie_ID = hp.HR_Element_Base_Paie_ID"
+                    + " JOIN HR_GestionPaieEmploye g ON g.Value = e.Value AND g.IsActive = 'Y'"
                     + " WHERE hp.C_BPartner_ID=?"
-                    + " AND e.Value='SBR'"
+                    + " AND g.IsIndemniteConge = 'Y'"
                     + " AND ps.Date_Debut_Defaut >= ?"
                     + " AND ps.Date_Debut_Defaut < ?";
             salaireCotisable = DB.getSQLValueBD(trxName, sqlSC, bpartnerId, dateDebutRef, dateFinRef);
@@ -318,6 +320,118 @@ public class CongeCalculEngine {
     // -------------------------------------------------------------------------
     // Méthodes privées
     // -------------------------------------------------------------------------
+
+
+    // -------------------------------------------------------------------------
+    // Detail IBC — alimentation HR_DetailIndemniteBrutConge (mode test)
+    // -------------------------------------------------------------------------
+
+    /**
+     * Alimente HR_DetailIndemniteBrutConge avec le detail mois par mois
+     * des elements participant au calcul de l indemnite de conge.
+     *
+     * Utilise le flag IsIndemniteConge de HR_GestionPaieEmploye pour
+     * determiner quels elements prendre en compte (meme logique que
+     * le cumul SC). Une ligne par element par periode.
+     *
+     * Ne modifie PAS le calcul — table de detail pour verification.
+     * Pour debrancher : commenter l appel dans PayrollOrchestrator.
+     */
+    public static void alimenterDetailIBC(int bpartnerId,
+                                           MHRHoliday holiday,
+                                           String trxName) {
+        if (holiday == null) return;
+
+        Timestamp dateDebutRef = holiday.getDate_Dernier_Conge();
+        if (dateDebutRef == null) {
+            MHRElementBasePaieEmploye contratRef = getContratActifALaDate(
+                    bpartnerId, holiday.getDate_Debut_Effective(), trxName);
+            if (contratRef != null) {
+                dateDebutRef = contratRef.getDate_Debut();
+            }
+        }
+        Timestamp dateFinRef = holiday.getDate_Debut_Effective();
+
+        if (dateDebutRef == null || dateFinRef == null) {
+            log.warning("alimenterDetailIBC : dates de reference nulles, abandon");
+            return;
+        }
+
+        int holidayId = holiday.getHR_Holiday_ID();
+
+        // 1. Purger les anciennes lignes de detail pour ce conge
+        DB.executeUpdate(
+            "DELETE FROM HR_DetailIndemniteBrutConge"
+            + " WHERE C_BPartner_ID=" + bpartnerId
+            + " AND HR_Holiday_ID=" + holidayId,
+            false, trxName);
+
+        // 2. Lire chaque element IsIndemniteConge mois par mois
+        String sql = "SELECT hp.HR_Periode_Salariale_ID,"
+                + " hp.HR_Element_Base_Paie_ID,"
+                + " hp.Montant,"
+                + " ps.Name AS nom_periode,"
+                + " e.Value AS code_element"
+                + " FROM HR_Historique_Paie hp"
+                + " JOIN HR_Periode_Salariale ps"
+                + "   ON ps.HR_Periode_Salariale_ID = hp.HR_Periode_Salariale_ID"
+                + " JOIN HR_Element_Base_Paie e"
+                + "   ON e.HR_Element_Base_Paie_ID = hp.HR_Element_Base_Paie_ID"
+                + " JOIN HR_GestionPaieEmploye g"
+                + "   ON g.Value = e.Value AND g.IsActive = 'Y'"
+                + " WHERE hp.C_BPartner_ID=?"
+                + " AND g.IsIndemniteConge = 'Y'"
+                + " AND ps.Date_Debut_Defaut >= ?"
+                + " AND ps.Date_Debut_Defaut < ?"
+                + " ORDER BY ps.Date_Debut_Defaut, e.Value";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        int count = 0;
+        BigDecimal totalVerif = BigDecimal.ZERO;
+        try {
+            pstmt = DB.prepareStatement(sql, trxName);
+            pstmt.setInt(1, bpartnerId);
+            pstmt.setTimestamp(2, dateDebutRef);
+            pstmt.setTimestamp(3, dateFinRef);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                int periodeId    = rs.getInt(1);
+                int elementId    = rs.getInt(2);
+                BigDecimal mont  = rs.getBigDecimal(3);
+                String nomPeriode  = rs.getString(4);
+                String codeElement = rs.getString(5);
+
+                if (mont == null) mont = BigDecimal.ZERO;
+                totalVerif = totalVerif.add(mont);
+
+                X_HR_DetailIndemniteBrutConge detail =
+                    new X_HR_DetailIndemniteBrutConge(
+                        Env.getCtx(), 0, trxName);
+                detail.setC_BPartner_ID(bpartnerId);
+                detail.setHR_Holiday_ID(holidayId);
+                detail.setHR_Periode_Salariale_ID(periodeId);
+                detail.setHR_Element_Base_Paie_ID(elementId);
+                detail.setMontant(mont);
+                detail.save();
+                count++;
+
+                log.info("DetailIBC : periode=" + nomPeriode
+                        + " element=" + codeElement
+                        + " montant=" + mont.toPlainString());
+            }
+        } catch (SQLException e) {
+            log.severe("alimenterDetailIBC : " + e.getMessage());
+        } finally {
+            DB.close(rs, pstmt);
+        }
+
+        log.info("alimenterDetailIBC termine : " + count
+                + " lignes, total=" + totalVerif.toPlainString()
+                + " vs SC=" + holiday.getSalaire_Cotisable()
+                + " pour conge ID=" + holidayId);
+    }
 
     private static void sauvegarderEtStockerConge(int bpartnerId,
                                                     MHRHoliday holiday,

@@ -223,6 +223,12 @@ public class PayrollOrchestrator {
         // ---------------------------------------------------------------
         boolean ok = CongeCalculEngine.calculerIndemniteConge(bpartner, holiday, null);
 
+        // --- MODE TEST : alimenter le detail IBC mois par mois ---
+        // Commenter cette ligne une fois les tests termines
+        if (ok) {
+            CongeCalculEngine.alimenterDetailIBC(bpartnerId, holiday, null);
+        }
+
         if (!ok) {
             return "Calcul indemnité congé ignoré — vérifier salaire_cotisable et logs.";
         }
