@@ -22,8 +22,12 @@ public class SitracelModelValidatorOffreEmploi implements ModelValidator {
 
     @Override
     public String modelChange(PO po, int type) throws Exception {
+        MHROffreEmploi offreEmploi = (MHROffreEmploi) po;
+        if (type == ModelValidator.TYPE_BEFORE_NEW) {
+            RecrutementValidatorService.avantCreationOffreEmploi(offreEmploi);
+        }
         if (type == ModelValidator.TYPE_AFTER_NEW) {
-            RecrutementValidatorService.creationOffreEmploi((MHROffreEmploi) po);
+            RecrutementValidatorService.apresCreationOffreEmploi(offreEmploi);
         }
         return null;
     }

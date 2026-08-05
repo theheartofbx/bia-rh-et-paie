@@ -23,8 +23,11 @@ public class SitracelModelValidatorCandidature implements ModelValidator {
     @Override
     public String modelChange(PO po, int type) throws Exception {
         MHRCandidature candidature = (MHRCandidature) po;
+        if (type == ModelValidator.TYPE_BEFORE_NEW) {
+            RecrutementValidatorService.avantCreationCandidature(candidature);
+        }
         if (type == ModelValidator.TYPE_AFTER_NEW) {
-            RecrutementValidatorService.creationCandidature(candidature);
+            RecrutementValidatorService.apresCreationCandidature(candidature);
         }
         if (type == ModelValidator.TYPE_BEFORE_DELETE) {
             RecrutementValidatorService.suppressionCandidature(candidature);
