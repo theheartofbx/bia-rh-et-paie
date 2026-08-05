@@ -14,6 +14,7 @@ import org.sitracel.enumeration.NotificationEvent;
 import org.sitracel.notification.NotificationControler;
 import org.sitracel.recrutement.model.MHRCandidatEvaluation;
 import org.sitracel.recrutement.model.MHRCandidature;
+import org.sitracel.recrutement.model.MHROffreCritereEvaluation;
 import org.sitracel.recrutement.model.MHROffreEmploi;
 import org.sitracel.recrutement.model.MHROffreTestEvaluation;
 import org.sitracel.recrutement.model.MHRSessionRecrutement;
@@ -22,13 +23,7 @@ import org.sitracel.recrutement.modelvalidator.controller.ModelValidatorSqlContr
 /**
  * Service — logique métier du modelvalidator recrutement.
  *
- * Corrigé Session 18 :
- * - Split BEFORE_NEW / AFTER_NEW pour persister Date_Creation
- * - Suppression DB.commit() dans création candidature
- * - Constructeur MHRCandidatEvaluation : 0 au lieu de null
- * - Catch avec log.warning au lieu de catch vide
- * - Ajout validerScoreEvaluation (garde-fou serveur, dupliqué du callout)
- * - Propagation trxName dans actualiserCandidature et suppressionCandidature
+ * Session 18 : garde-fous complets sur test/critère/session.
  */
 public final class RecrutementValidatorService {
 
@@ -40,13 +35,11 @@ public final class RecrutementValidatorService {
     // OFFRE D'EMPLOI
     // =========================================================================
 
-    /** BEFORE_NEW : initialiser la date de création (persistée avec le save principal) */
     public static void avantCreationOffreEmploi(MHROffreEmploi offreEmploi) {
         if (offreEmploi == null) return;
         offreEmploi.setDate_Creation(new Timestamp(System.currentTimeMillis()));
     }
 
-    /** AFTER_NEW : notification (l'ID est maintenant assigné) */
     public static void apresCreationOffreEmploi(MHROffreEmploi offreEmploi) {
         if (offreEmploi == null) return;
         NotificationControler.notify(NotificationEvent.OFFRE_EMPLOI_CREEE, offreEmploi);
@@ -56,93 +49,299 @@ public final class RecrutementValidatorService {
     // SESSION DE RECRUTEMENT
     // =========================================================================
 
-    /** BEFORE_NEW : initialiser la date de création */
-    public static void creationSessionRecrutement(MHRSessionRecrutement sessionRecrutement) {
-        if (sessionRecrutement == null) return;
-        sessionRecrutement.setDate_Creation(new Timestamp(System.currentTimeMillis()));
+    public static void creationSessionRecrutement(MHRSessionRecrutement session) {
+        if (session == null) return;
+        session.setDate_Creation(new Timestamp(System.currentTimeMillis()));
+    }
+
+    /**
+     * Garde-fou : changement de test sur une session.
+     * - Pas de candidats → autorisé
+     * - Candidats sans scores → supprimer évaluations, recréer avec nouveau test
+     * - Candidats avec scores → BLOQUÉ
+     *
+     * @return message d'erreur si bloqué, null si OK
+     */
+    public static String verifierChangementTestSession(MHRSessionRecrutement session) {
+        if (session == null) return null;
+        if (!session.is_ValueChanged(MHRSessionRecrutement.COLUMNNAME_HR_OffreTestEvaluation_ID)) {
+            return null; // pas de changement de test
+        }
+
+        int sessionID = session.getHR_SessionRecrutement_ID();
+        String trxName = session.get_TrxName();
+
+        int nbCandidats = ModelValidatorSqlControllerRecrutement
+                .compteCandidatsDansSession(sessionID, trxName);
+        if (nbCandidats == 0) return null; // pas de candidat, libre
+
+        int nbScores = ModelValidatorSqlControllerRecrutement
+                .compteScoresSaisisDansSession(sessionID, trxName);
+        if (nbScores > 0) {
+            return "Impossible de changer le test : " + nbScores
+                    + " score(s) déjà saisi(s) pour " + nbCandidats
+                    + " candidat(s). Supprimez les évaluations d'abord.";
+        }
+
+        // Candidats sans scores → régénérer
+        regenererEvaluationsSession(session);
+        return null;
+    }
+
+    /**
+     * Supprime toutes les évaluations d'une session et les recrée
+     * selon les critères du test actuellement lié.
+     */
+    private static void regenererEvaluationsSession(MHRSessionRecrutement session) {
+        int sessionID = session.getHR_SessionRecrutement_ID();
+        String trxName = session.get_TrxName();
+
+        // 1. Supprimer les anciennes évaluations
+        ModelValidatorSqlControllerRecrutement.supprimerEvaluationsSession(sessionID, trxName);
+
+        // 2. Récupérer le nouveau test et ses critères
+        int nouveauTestID = session.getHR_OffreTestEvaluation_ID();
+        if (nouveauTestID <= 0) return;
+
+        ArrayList<BeanEvaluationCompetence> criteres =
+                ModelValidatorSqlControllerRecrutement
+                        .getCompetenceFromTestEvaluation(nouveauTestID, trxName);
+        if (criteres == null || criteres.isEmpty()) return;
+
+        // 3. Recréer pour chaque candidat
+        ArrayList<Integer> candidatureIDs =
+                ModelValidatorSqlControllerRecrutement
+                        .getCandidatureIDsFromSession(sessionID, trxName);
+        for (Integer candidatureID : candidatureIDs) {
+            creerEvaluationsPourCandidature(candidatureID, criteres, trxName);
+        }
+
+        log.info("Session " + sessionID + " : évaluations régénérées pour "
+                + candidatureIDs.size() + " candidat(s) × "
+                + criteres.size() + " critère(s)");
     }
 
     // =========================================================================
     // TEST D'ÉVALUATION
     // =========================================================================
 
-    /** BEFORE_NEW : initialiser la date de création */
-    public static void creationTestEvaluation(MHROffreTestEvaluation testEvaluation) {
-        if (testEvaluation == null) return;
-        testEvaluation.setDate_Creation(new Timestamp(System.currentTimeMillis()));
+    public static void creationTestEvaluation(MHROffreTestEvaluation test) {
+        if (test == null) return;
+        test.setDate_Creation(new Timestamp(System.currentTimeMillis()));
+    }
+
+    /**
+     * Garde-fou : suppression d'un test.
+     * Bloqué si utilisé dans une session avec des candidats.
+     *
+     * @return message d'erreur si bloqué, null si OK
+     */
+    public static String verifierSuppressionTest(MHROffreTestEvaluation test) {
+        if (test == null) return null;
+        String trxName = test.get_TrxName();
+        int testID = test.getHR_OffreTestEvaluation_ID();
+
+        int nbCandidats = ModelValidatorSqlControllerRecrutement
+                .compteCandidatsPourTest(testID, trxName);
+        if (nbCandidats > 0) {
+            return "Impossible de supprimer ce test : il est utilisé dans une session "
+                    + "qui contient " + nbCandidats + " candidat(s).";
+        }
+        return null;
+    }
+
+    // =========================================================================
+    // CRITÈRE D'ÉVALUATION (HR_OffreCritereEvaluation)
+    // =========================================================================
+
+    /**
+     * AFTER_NEW d'un critère : créer les évaluations pour les candidats existants.
+     * Si aucun candidat → ne fait rien.
+     */
+    public static void apresCreationCritere(MHROffreCritereEvaluation critere) {
+        if (critere == null) return;
+        String trxName = critere.get_TrxName();
+        int testID = critere.getHR_OffreTestEvaluation_ID();
+
+        ArrayList<Integer> sessionIDs =
+                ModelValidatorSqlControllerRecrutement.getSessionIDsPourTest(testID, trxName);
+        if (sessionIDs.isEmpty()) return;
+
+        for (Integer sessionID : sessionIDs) {
+            ArrayList<Integer> candidatureIDs =
+                    ModelValidatorSqlControllerRecrutement
+                            .getCandidatureIDsFromSession(sessionID, trxName);
+            for (Integer candidatureID : candidatureIDs) {
+                MHRCandidatEvaluation eval =
+                        new MHRCandidatEvaluation(Env.getCtx(), 0, trxName);
+                eval.setHR_Candidature_ID(candidatureID);
+                eval.setHR_Competences_ID(critere.getHR_Competences_ID());
+                eval.setScoreMax(critere.getScoreMax());
+                eval.setPonderation(critere.getPonderation());
+                eval.setIsCompetenceEvalue(false);
+                eval.save(trxName);
+            }
+        }
+    }
+
+    /**
+     * BEFORE_CHANGE d'un critère : vérifier si des scores existent.
+     * - Scores saisis → bloquer la modification
+     * - Pas de scores → propager ScoreMax et Pondération aux évaluations
+     *
+     * @return message d'erreur si bloqué, null si OK
+     */
+    public static String verifierModificationCritere(MHROffreCritereEvaluation critere) {
+        if (critere == null) return null;
+
+        boolean scoreMaxChange = critere.is_ValueChanged(
+                MHROffreCritereEvaluation.COLUMNNAME_ScoreMax);
+        boolean ponderationChange = critere.is_ValueChanged(
+                MHROffreCritereEvaluation.COLUMNNAME_Ponderation);
+        boolean competenceChange = critere.is_ValueChanged(
+                MHROffreCritereEvaluation.COLUMNNAME_HR_Competences_ID);
+
+        if (!scoreMaxChange && !ponderationChange && !competenceChange) {
+            return null; // rien de critique n'a changé
+        }
+
+        String trxName = critere.get_TrxName();
+        int testID = critere.getHR_OffreTestEvaluation_ID();
+
+        int nbCandidats = ModelValidatorSqlControllerRecrutement
+                .compteCandidatsPourTest(testID, trxName);
+        if (nbCandidats == 0) return null; // pas de candidat, libre
+
+        if (competenceChange) {
+            return "Impossible de changer la compétence : "
+                    + nbCandidats + " candidat(s) ont déjà des évaluations liées.";
+        }
+
+        int nbScores = ModelValidatorSqlControllerRecrutement
+                .compteScoresPourTestEtCompetence(
+                        testID, critere.getHR_Competences_ID(), trxName);
+        if (nbScores > 0) {
+            return "Impossible de modifier ce critère : " + nbScores
+                    + " score(s) déjà saisi(s). Effacez les scores d'abord.";
+        }
+
+        // Pas de scores → la propagation se fera dans AFTER_CHANGE
+        return null;
+    }
+
+    /**
+     * AFTER_CHANGE d'un critère (appelé seulement si BEFORE a passé) :
+     * propager ScoreMax/Pondération aux évaluations non notées.
+     */
+    public static void propagerModificationCritere(MHROffreCritereEvaluation critere) {
+        if (critere == null) return;
+
+        boolean scoreMaxChange = critere.is_ValueChanged(
+                MHROffreCritereEvaluation.COLUMNNAME_ScoreMax);
+        boolean ponderationChange = critere.is_ValueChanged(
+                MHROffreCritereEvaluation.COLUMNNAME_Ponderation);
+        if (!scoreMaxChange && !ponderationChange) return;
+
+        String trxName = critere.get_TrxName();
+        int testID = critere.getHR_OffreTestEvaluation_ID();
+        int competenceID = critere.getHR_Competences_ID();
+
+        ArrayList<Integer> sessionIDs =
+                ModelValidatorSqlControllerRecrutement.getSessionIDsPourTest(testID, trxName);
+
+        for (Integer sessionID : sessionIDs) {
+            ArrayList<Integer> candidatureIDs =
+                    ModelValidatorSqlControllerRecrutement
+                            .getCandidatureIDsFromSession(sessionID, trxName);
+            for (Integer candidatureID : candidatureIDs) {
+                ArrayList<MHRCandidatEvaluation> evals =
+                        ModelValidatorSqlControllerRecrutement
+                                .getEvaluationsFromCandidature(candidatureID, trxName);
+                for (MHRCandidatEvaluation eval : evals) {
+                    if (eval.getHR_Competences_ID() == competenceID) {
+                        if (scoreMaxChange) eval.setScoreMax(critere.getScoreMax());
+                        if (ponderationChange) eval.setPonderation(critere.getPonderation());
+                        eval.save(trxName);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * BEFORE_DELETE d'un critère : vérifier si des scores existent.
+     * - Scores saisis → bloquer
+     * - Pas de scores → supprimer les évaluations correspondantes
+     *
+     * @return message d'erreur si bloqué, null si OK
+     */
+    public static String verifierSuppressionCritere(MHROffreCritereEvaluation critere) {
+        if (critere == null) return null;
+        String trxName = critere.get_TrxName();
+        int testID = critere.getHR_OffreTestEvaluation_ID();
+        int competenceID = critere.getHR_Competences_ID();
+
+        int nbScores = ModelValidatorSqlControllerRecrutement
+                .compteScoresPourTestEtCompetence(testID, competenceID, trxName);
+        if (nbScores > 0) {
+            return "Impossible de supprimer ce critère : " + nbScores
+                    + " score(s) déjà saisi(s) pour cette compétence.";
+        }
+
+        // Pas de scores → supprimer les évaluations orphelines
+        ModelValidatorSqlControllerRecrutement
+                .supprimerEvaluationsCompetencePourTest(testID, competenceID, trxName);
+        return null;
     }
 
     // =========================================================================
     // CANDIDATURE
     // =========================================================================
 
-    /** BEFORE_NEW : initialiser la date de création (persistée avec le save principal) */
     public static void avantCreationCandidature(MHRCandidature candidature) {
         if (candidature == null) return;
         candidature.setDate_Creation(new Timestamp(System.currentTimeMillis()));
     }
 
-    /**
-     * AFTER_NEW : créer automatiquement une ligne HR_CandidatEvaluation
-     * par compétence du test d'évaluation, puis notifier.
-     *
-     * Corrigé Session 18 :
-     * - Supprimé DB.commit() (laisse iDempiere gérer la transaction)
-     * - Constructeur : 0 au lieu de null
-     * - Catch avec log.warning au lieu de catch vide
-     */
     public static void apresCreationCandidature(MHRCandidature candidature) {
         if (candidature == null) return;
         String trxName = candidature.get_TrxName();
         try {
             MHRSessionRecrutement session = new MHRSessionRecrutement(
-                Env.getCtx(), candidature.getHR_SessionRecrutement_ID(), trxName);
+                    Env.getCtx(), candidature.getHR_SessionRecrutement_ID(), trxName);
             if (session == null || session.get_ID() == 0) return;
 
             MHROffreTestEvaluation testEvaluation = new MHROffreTestEvaluation(
-                Env.getCtx(), session.getHR_OffreTestEvaluation_ID(), trxName);
+                    Env.getCtx(), session.getHR_OffreTestEvaluation_ID(), trxName);
             if (testEvaluation == null || testEvaluation.get_ID() == 0) return;
 
-            ArrayList<BeanEvaluationCompetence> listeCompetence =
-                ModelValidatorSqlControllerRecrutement.getCompetenceFromTestEvaluation(
-                    testEvaluation.getHR_OffreTestEvaluation_ID(), trxName);
+            ArrayList<BeanEvaluationCompetence> criteres =
+                    ModelValidatorSqlControllerRecrutement.getCompetenceFromTestEvaluation(
+                            testEvaluation.getHR_OffreTestEvaluation_ID(), trxName);
 
-            if (listeCompetence != null) {
-                for (BeanEvaluationCompetence competence : listeCompetence) {
-                    MHRCandidatEvaluation evaluation =
-                        new MHRCandidatEvaluation(Env.getCtx(), 0, trxName);
-                    evaluation.setHR_Candidature_ID(candidature.getHR_Candidature_ID());
-                    evaluation.setHR_Competences_ID(competence.getCompetenceID());
-                    evaluation.setScoreMax(competence.getScoreMax());
-                    evaluation.setPonderation(competence.getPonderation());
-                    evaluation.setIsCompetenceEvalue(false);
-                    evaluation.save(trxName);
-                }
+            if (criteres != null) {
+                creerEvaluationsPourCandidature(
+                        candidature.getHR_Candidature_ID(), criteres, trxName);
             }
         } catch (Exception erreurCatch) {
             log.log(Level.WARNING,
-                "Création évaluations candidature " + candidature.get_ID()
-                + " : " + erreurCatch.getMessage(), erreurCatch);
+                    "Création évaluations candidature " + candidature.get_ID()
+                            + " : " + erreurCatch.getMessage(), erreurCatch);
         }
         NotificationControler.notify(NotificationEvent.CANDIDATURE_RECUE, candidature);
     }
 
-    // =========================================================================
-    // SUPPRESSION CANDIDATURE
-    // =========================================================================
-
-    /** BEFORE_DELETE : supprimer les lignes d'évaluation enfants */
     public static void suppressionCandidature(MHRCandidature candidature) {
         if (candidature == null) return;
         String trxName = candidature.get_TrxName();
         ArrayList<Integer> listeEvaluationID =
-            ModelValidatorSqlControllerRecrutement.getListeCompetenceFromCandidatureID(
-                candidature.getHR_Candidature_ID(), trxName);
+                ModelValidatorSqlControllerRecrutement.getListeCompetenceFromCandidatureID(
+                        candidature.getHR_Candidature_ID(), trxName);
         if (listeEvaluationID == null) return;
         for (Integer evaluationID : listeEvaluationID) {
             if (evaluationID != null) {
                 MHRCandidatEvaluation evaluation =
-                    new MHRCandidatEvaluation(Env.getCtx(), evaluationID.intValue(), trxName);
+                        new MHRCandidatEvaluation(Env.getCtx(), evaluationID.intValue(), trxName);
                 if (evaluation != null && evaluation.get_ID() > 0) {
                     evaluation.delete(true, trxName);
                 }
@@ -151,15 +350,9 @@ public final class RecrutementValidatorService {
     }
 
     // =========================================================================
-    // ÉVALUATION DES CANDIDATS — VALIDATION + CLASSEMENT
+    // ÉVALUATION — VALIDATION + CLASSEMENT
     // =========================================================================
 
-    /**
-     * Garde-fou serveur : le score ne peut pas dépasser le maximum.
-     * Duplique la logique du callout CalloutScoreCompetence.
-     *
-     * @return message d'erreur si invalide, null si OK
-     */
     public static String validerScoreEvaluation(MHRCandidatEvaluation evaluation) {
         if (evaluation == null) return null;
         BigDecimal score = evaluation.getScore();
@@ -172,43 +365,54 @@ public final class RecrutementValidatorService {
         return null;
     }
 
-    /**
-     * Recalcule le classement de toutes les candidatures d'une session
-     * après modification d'une évaluation.
-     */
     public static void actualiserCandidature(Integer sessionRecrutementID,
                                               MHRCandidatEvaluation candidatEvaluation) {
         if (sessionRecrutementID == null) return;
         String trxName = (candidatEvaluation != null) ? candidatEvaluation.get_TrxName() : null;
         ArrayList<BeanCandidatEvaluation> listeCandidatures =
-            calculerRangCandidatures(sessionRecrutementID, trxName);
+                calculerRangCandidatures(sessionRecrutementID, trxName);
         if (listeCandidatures == null) return;
         for (BeanCandidatEvaluation candidature : listeCandidatures) {
             MHRCandidature c = new MHRCandidature(
-                Env.getCtx(), candidature.getCandidatureID(), trxName);
+                    Env.getCtx(), candidature.getCandidatureID(), trxName);
             c.setRangCandidat(candidature.getRang());
             c.setScoreTotal(candidature.getScoreTotal());
             c.save(trxName);
         }
         NotificationControler.notify(
-            NotificationEvent.CANDIDATURE_CLASSEE, candidatEvaluation);
+                NotificationEvent.CANDIDATURE_CLASSEE, candidatEvaluation);
     }
 
-    /**
-     * Calcule le score total et le rang de chaque candidature dans une session.
-     * Tri décroissant par score total → rang 1 = meilleur candidat.
-     */
+    // =========================================================================
+    // MÉTHODES PRIVÉES
+    // =========================================================================
+
+    /** Créer une ligne CandidatEvaluation par critère pour une candidature */
+    private static void creerEvaluationsPourCandidature(
+            int candidatureID, ArrayList<BeanEvaluationCompetence> criteres, String trxName) {
+        for (BeanEvaluationCompetence critere : criteres) {
+            MHRCandidatEvaluation eval =
+                    new MHRCandidatEvaluation(Env.getCtx(), 0, trxName);
+            eval.setHR_Candidature_ID(candidatureID);
+            eval.setHR_Competences_ID(critere.getCompetenceID());
+            eval.setScoreMax(critere.getScoreMax());
+            eval.setPonderation(critere.getPonderation());
+            eval.setIsCompetenceEvalue(false);
+            eval.save(trxName);
+        }
+    }
+
     private static ArrayList<BeanCandidatEvaluation> calculerRangCandidatures(
             Integer sessionRecrutementID, String trxName) {
         ArrayList<BeanCandidatEvaluation> listeCandidatures =
-            ModelValidatorSqlControllerRecrutement
-                .getCandidaturesFromSessionRecrutement(sessionRecrutementID, trxName);
+                ModelValidatorSqlControllerRecrutement
+                        .getCandidaturesFromSessionRecrutement(sessionRecrutementID, trxName);
         if (listeCandidatures == null || listeCandidatures.isEmpty()) return null;
 
         for (BeanCandidatEvaluation candidature : listeCandidatures) {
             ArrayList<MHRCandidatEvaluation> listeEvaluations =
-                ModelValidatorSqlControllerRecrutement
-                    .getEvaluationsFromCandidature(candidature.getCandidatureID(), trxName);
+                    ModelValidatorSqlControllerRecrutement
+                            .getEvaluationsFromCandidature(candidature.getCandidatureID(), trxName);
             BigDecimal scoreTotal = BigDecimal.ZERO;
             if (listeEvaluations != null) {
                 for (MHRCandidatEvaluation evaluation : listeEvaluations) {
@@ -221,7 +425,7 @@ public final class RecrutementValidatorService {
         }
 
         Collections.sort(listeCandidatures,
-            (a, b) -> b.getScoreTotal().compareTo(a.getScoreTotal()));
+                (a, b) -> b.getScoreTotal().compareTo(a.getScoreTotal()));
 
         for (int i = 0; i < listeCandidatures.size(); i++) {
             listeCandidatures.get(i).setRang(i + 1);

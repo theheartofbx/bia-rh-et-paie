@@ -22,9 +22,13 @@ public class SitracelModelValidatorSessionRecrutement implements ModelValidator 
 
     @Override
     public String modelChange(PO po, int type) throws Exception {
+        MHRSessionRecrutement session = (MHRSessionRecrutement) po;
         if (type == ModelValidator.TYPE_BEFORE_NEW) {
-            RecrutementValidatorService.creationSessionRecrutement(
-                (MHRSessionRecrutement) po);
+            RecrutementValidatorService.creationSessionRecrutement(session);
+        }
+        if (type == ModelValidator.TYPE_BEFORE_CHANGE) {
+            String erreur = RecrutementValidatorService.verifierChangementTestSession(session);
+            if (erreur != null) return erreur;
         }
         return null;
     }

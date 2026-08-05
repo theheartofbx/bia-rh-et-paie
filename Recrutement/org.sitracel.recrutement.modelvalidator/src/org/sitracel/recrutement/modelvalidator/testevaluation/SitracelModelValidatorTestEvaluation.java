@@ -22,9 +22,13 @@ public class SitracelModelValidatorTestEvaluation implements ModelValidator {
 
     @Override
     public String modelChange(PO po, int type) throws Exception {
+        MHROffreTestEvaluation test = (MHROffreTestEvaluation) po;
         if (type == ModelValidator.TYPE_BEFORE_NEW) {
-            RecrutementValidatorService.creationTestEvaluation(
-                (MHROffreTestEvaluation) po);
+            RecrutementValidatorService.creationTestEvaluation(test);
+        }
+        if (type == ModelValidator.TYPE_BEFORE_DELETE) {
+            String erreur = RecrutementValidatorService.verifierSuppressionTest(test);
+            if (erreur != null) return erreur;
         }
         return null;
     }
