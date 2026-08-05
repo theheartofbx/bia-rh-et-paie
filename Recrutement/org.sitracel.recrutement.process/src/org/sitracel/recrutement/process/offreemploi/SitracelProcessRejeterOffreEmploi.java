@@ -3,19 +3,12 @@ package org.sitracel.recrutement.process.offreemploi;
 import org.compiere.process.SvrProcess;
 import org.sitracel.recrutement.process.controller.ProcessControllerRecrutement;
 
-public class SitracelProcessRejeterOffreEmploi extends SvrProcess{
+public class SitracelProcessRejeterOffreEmploi extends SvrProcess {
+    @Override
+    protected void prepare() {}
 
-	@Override
-	protected void prepare() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected String doIt() throws Exception {
-		// TODO Auto-generated method stub
-		ProcessControllerRecrutement.rejeterOffreEmploi(getRecord_ID(), getAD_User_ID());
-		return null;
-	}
-
+    @Override
+    protected String doIt() throws Exception {
+        return ProcessControllerRecrutement.rejeterOffreEmploi(getRecord_ID(), getAD_User_ID());
+    }
 }
