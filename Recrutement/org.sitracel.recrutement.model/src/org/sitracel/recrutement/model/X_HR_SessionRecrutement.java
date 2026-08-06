@@ -33,7 +33,7 @@ public class X_HR_SessionRecrutement extends PO implements I_HR_SessionRecruteme
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260630L;
+	private static final long serialVersionUID = 20260806L;
 
     /** Standard Constructor */
     public X_HR_SessionRecrutement (Properties ctx, int HR_SessionRecrutement_ID, String trxName)
@@ -478,6 +478,28 @@ public class X_HR_SessionRecrutement extends PO implements I_HR_SessionRecruteme
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Peut Valider.
+		@param PeutValider Peut Valider
+	*/
+	public void setPeutValider (boolean PeutValider)
+	{
+		throw new IllegalArgumentException ("PeutValider is virtual column");	}
+
+	/** Get Peut Valider.
+		@return Peut Valider
+	  */
+	public boolean isPeutValider()
+	{
+		Object oo = get_Value(COLUMNNAME_PeutValider);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
 	}
 
 	/** Set Rejeter.

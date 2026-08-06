@@ -18,16 +18,15 @@ package org.sitracel.recrutement.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-
-import org.compiere.model.MTable;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_Candidature
- *  @author iDempiere (generated)
+ *  @author iDempiere (generated) 
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_Candidature
+public interface I_HR_Candidature 
 {
 
     /** TableName=HR_Candidature */
@@ -38,7 +37,7 @@ public interface I_HR_Candidature
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org
+    /** AccessLevel = 3 - Client - Org 
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
@@ -295,6 +294,32 @@ public interface I_HR_Candidature
 	/** Get Nombre de Compétence Total	  */
 	public int getNombreCompetenceTotal();
 
+    /** Column name PeutRejeter */
+    public static final String COLUMNNAME_PeutRejeter = "PeutRejeter";
+
+	/** Set Peut Rejeter.
+	  * Peut Rejeter
+	  */
+	public void setPeutRejeter (boolean PeutRejeter);
+
+	/** Get Peut Rejeter.
+	  * Peut Rejeter
+	  */
+	public boolean isPeutRejeter();
+
+    /** Column name PeutValider */
+    public static final String COLUMNNAME_PeutValider = "PeutValider";
+
+	/** Set Peut Valider.
+	  * Peut Valider
+	  */
+	public void setPeutValider (boolean PeutValider);
+
+	/** Get Peut Valider.
+	  * Peut Valider
+	  */
+	public boolean isPeutValider();
+
     /** Column name RangCandidat */
     public static final String COLUMNNAME_RangCandidat = "RangCandidat";
 
@@ -398,12 +423,12 @@ public interface I_HR_Candidature
     public static final String COLUMNNAME_Valider = "Valider";
 
 	/** Set Valider .
-	  * Valider
+	  * Valider 
 	  */
 	public void setValider (String Valider);
 
 	/** Get Valider .
-	  * Valider
+	  * Valider 
 	  */
 	public String getValider();
 }

@@ -18,16 +18,15 @@ package org.sitracel.recrutement.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-
-import org.compiere.model.MTable;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for HR_OffreTestEvaluation
- *  @author iDempiere (generated)
+ *  @author iDempiere (generated) 
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_OffreTestEvaluation
+public interface I_HR_OffreTestEvaluation 
 {
 
     /** TableName=HR_OffreTestEvaluation */
@@ -38,7 +37,7 @@ public interface I_HR_OffreTestEvaluation
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org
+    /** AccessLevel = 3 - Client - Org 
      */
     BigDecimal accessLevel = BigDecimal.valueOf(3);
 
@@ -218,6 +217,19 @@ public interface I_HR_OffreTestEvaluation
 	  */
 	public String getName();
 
+    /** Column name PeutValider */
+    public static final String COLUMNNAME_PeutValider = "PeutValider";
+
+	/** Set Peut Valider.
+	  * Peut Valider
+	  */
+	public void setPeutValider (boolean PeutValider);
+
+	/** Get Peut Valider.
+	  * Peut Valider
+	  */
+	public boolean isPeutValider();
+
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
 
@@ -281,12 +293,12 @@ public interface I_HR_OffreTestEvaluation
     public static final String COLUMNNAME_Valider = "Valider";
 
 	/** Set Valider .
-	  * Valider
+	  * Valider 
 	  */
 	public void setValider (String Valider);
 
 	/** Get Valider .
-	  * Valider
+	  * Valider 
 	  */
 	public String getValider();
 }

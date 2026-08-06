@@ -290,6 +290,19 @@ Emploi	  */
 	/** Get Nombre de Candidat Recherché	  */
 	public int getNombre_Candidat();
 
+    /** Column name PeutValider */
+    public static final String COLUMNNAME_PeutValider = "PeutValider";
+
+	/** Set Peut Valider.
+	  * Peut Valider
+	  */
+	public void setPeutValider (boolean PeutValider);
+
+	/** Get Peut Valider.
+	  * Peut Valider
+	  */
+	public boolean isPeutValider();
+
     /** Column name Rejeter */
     public static final String COLUMNNAME_Rejeter = "Rejeter";
 
