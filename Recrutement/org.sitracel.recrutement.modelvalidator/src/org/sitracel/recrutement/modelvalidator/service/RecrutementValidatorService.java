@@ -183,6 +183,7 @@ public final class RecrutementValidatorService {
                 eval.save(trxName);
             }
         }
+        recalculerScoreTotalMaxPourTest(testID, trxName);
     }
 
     /**
@@ -267,6 +268,7 @@ public final class RecrutementValidatorService {
                 }
             }
         }
+        recalculerScoreTotalMaxPourTest(testID, trxName);
     }
 
     /**
@@ -292,6 +294,7 @@ public final class RecrutementValidatorService {
         // Pas de scores → supprimer les évaluations orphelines
         ModelValidatorSqlControllerRecrutement
                 .supprimerEvaluationsCompetencePourTest(testID, competenceID, trxName);
+        recalculerScoreTotalMaxPourTest(testID, trxName);
         return null;
     }
 
@@ -408,6 +411,48 @@ public final class RecrutementValidatorService {
             eval.setPonderation(critere.getPonderation());
             eval.setIsCompetenceEvalue(false);
             eval.save(trxName);
+        }
+        recalculerScoreTotalMax(candidatureID, trxName);
+    }
+
+    /**
+     * Recalcule ScoreTotalMax d'une candidature = somme des ScoreMax de ses évaluations.
+     * Appelé après toute modification des évaluations (ajout/suppression/modification critère,
+     * changement de test, création candidature).
+     */
+    public static void recalculerScoreTotalMax(int candidatureID, String trxName) {
+        BigDecimal total = BigDecimal.ZERO;
+        ArrayList<MHRCandidatEvaluation> evals =
+                ModelValidatorSqlControllerRecrutement
+                        .getEvaluationsFromCandidature(candidatureID, trxName);
+        for (MHRCandidatEvaluation eval : evals) {
+            if (eval.getScoreMax() != null) {
+                total = total.add(eval.getScoreMax());
+            }
+        }
+        MHRCandidature cand = new MHRCandidature(Env.getCtx(), candidatureID, trxName);
+        if (cand != null && cand.get_ID() > 0) {
+            cand.setScoreTotalMax(total);
+            cand.save(trxName);
+        }
+    }
+
+    /** Recalcule ScoreTotalMax pour tous les candidats d'une session */
+    public static void recalculerScoreTotalMaxSession(int sessionID, String trxName) {
+        ArrayList<Integer> candidatureIDs =
+                ModelValidatorSqlControllerRecrutement
+                        .getCandidatureIDsFromSession(sessionID, trxName);
+        for (Integer candidatureID : candidatureIDs) {
+            recalculerScoreTotalMax(candidatureID, trxName);
+        }
+    }
+
+    /** Recalcule ScoreTotalMax pour tous les candidats de toutes les sessions d'un test */
+    private static void recalculerScoreTotalMaxPourTest(int testID, String trxName) {
+        ArrayList<Integer> sessionIDs =
+                ModelValidatorSqlControllerRecrutement.getSessionIDsPourTest(testID, trxName);
+        for (Integer sessionID : sessionIDs) {
+            recalculerScoreTotalMaxSession(sessionID, trxName);
         }
     }
 
