@@ -32,6 +32,9 @@ public class SitracelModelValidatorCandidature implements ModelValidator {
         if (type == ModelValidator.TYPE_BEFORE_DELETE) {
             RecrutementValidatorService.suppressionCandidature(candidature);
         }
+        if (type == ModelValidator.TYPE_AFTER_DELETE) {
+            RecrutementValidatorService.recalculerApresSuppressionCandidature(candidature);
+        }
         return null;
     }
 

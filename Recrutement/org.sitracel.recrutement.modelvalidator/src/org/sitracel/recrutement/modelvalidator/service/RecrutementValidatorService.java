@@ -361,6 +361,23 @@ public final class RecrutementValidatorService {
         }
     }
 
+    /** Recalcule rangs et scores après suppression d'une candidature */
+    public static void recalculerApresSuppressionCandidature(MHRCandidature candidature) {
+        if (candidature == null) return;
+        int sessionID = candidature.getHR_SessionRecrutement_ID();
+        if (sessionID <= 0) return;
+        String trxName = candidature.get_TrxName();
+        ArrayList<BeanCandidatEvaluation> listeCandidatures =
+                calculerRangCandidatures(sessionID, trxName);
+        if (listeCandidatures == null) return;
+        for (BeanCandidatEvaluation c : listeCandidatures) {
+            MHRCandidature cand = new MHRCandidature(Env.getCtx(), c.getCandidatureID(), trxName);
+            cand.setRangCandidat(c.getRang());
+            cand.setScoreTotal(c.getScoreTotal());
+            cand.save(trxName);
+        }
+    }
+
     // =========================================================================
     // ÉVALUATION — VALIDATION + CLASSEMENT
     // =========================================================================
@@ -427,7 +444,9 @@ public final class RecrutementValidatorService {
                         .getEvaluationsFromCandidature(candidatureID, trxName);
         for (MHRCandidatEvaluation eval : evals) {
             if (eval.getScoreMax() != null) {
-                total = total.add(eval.getScoreMax());
+                BigDecimal pond = BigDecimal.valueOf(eval.getPonderation());
+                if (pond.compareTo(BigDecimal.ZERO) <= 0) pond = BigDecimal.ONE;
+                total = total.add(eval.getScoreMax().multiply(pond));
             }
         }
         MHRCandidature cand = new MHRCandidature(Env.getCtx(), candidatureID, trxName);
@@ -471,7 +490,9 @@ public final class RecrutementValidatorService {
             if (listeEvaluations != null) {
                 for (MHRCandidatEvaluation evaluation : listeEvaluations) {
                     if (evaluation.getScore() != null) {
-                        scoreTotal = scoreTotal.add(evaluation.getScore());
+                        BigDecimal pond = BigDecimal.valueOf(evaluation.getPonderation());
+                        if (pond.compareTo(BigDecimal.ZERO) <= 0) pond = BigDecimal.ONE;
+                        scoreTotal = scoreTotal.add(evaluation.getScore().multiply(pond));
                     }
                 }
             }
