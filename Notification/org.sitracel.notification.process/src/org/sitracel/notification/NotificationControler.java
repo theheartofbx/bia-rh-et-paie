@@ -24,6 +24,8 @@ import org.sitracel.model.MCBPartner;
 import org.sitracel.notification.model.MHRNotification;
 import org.sitracel.notification.model.MHRNotificationDestinataire;
 import org.sitracel.notification.model.MHRNotificationQueue;
+import org.sitracel.notification.model.MHRNotificationType;
+import org.sitracel.notification.model.MHRNotificationTemplate;
 import org.sitracel.notification.gestionmodele.NotificationGestionCanal;
 import org.sitracel.organigramme.ActionOrganigramme;
 import org.sitracel.organigramme.ModuleAutorisation;
@@ -108,13 +110,51 @@ public class NotificationControler {
             nr.saveEx();
         }
 
-        // 5. Une seule entrée de queue
+        // 5. Résoudre le template pour récupérer objet et contenu
+        String objet = null;
+        String message = null;
+        MHRNotificationType notifType = new MHRNotificationType(ctx, typeId, trxName);
+        if (notifType != null && notifType.getHR_NotificationTemplate_ID() > 0) {
+            MHRNotificationTemplate template = new MHRNotificationTemplate(
+                ctx, notifType.getHR_NotificationTemplate_ID(), trxName);
+            if (template != null && template.get_ID() > 0) {
+                objet = template.getMessage_Objet();
+                message = template.getMessage_Contenu();
+            }
+        }
+        // Si pas de template lié au type, chercher par HR_NotificationType_ID
+        if ((objet == null || objet.isEmpty()) && typeId > 0) {
+            String sqlTpl = "SELECT Message_Objet, Message_Contenu"
+                + " FROM HR_NotificationTemplate"
+                + " WHERE HR_NotificationType_ID = ? AND IsActive = 'Y'"
+                + " AND AD_Language = 'fr_FR'"
+                + " ORDER BY Created DESC";
+            java.sql.PreparedStatement pstmt = null;
+            java.sql.ResultSet rs = null;
+            try {
+                pstmt = org.compiere.util.DB.prepareStatement(sqlTpl, trxName);
+                pstmt.setInt(1, typeId);
+                rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    objet = rs.getString("Message_Objet");
+                    message = rs.getString("Message_Contenu");
+                }
+            } catch (Exception e) {
+                // ignore
+            } finally {
+                org.compiere.util.DB.close(rs, pstmt);
+            }
+        }
+
+        // 6. Créer l'entrée de queue avec objet et message
         MHRNotificationQueue q = new MHRNotificationQueue(ctx, 0, trxName);
         q.setHR_Notification_ID(notif.getHR_Notification_ID());
         q.setHR_NotificationStatut_ID(
             getNotificationStatutId(NotificationStatut.CREATED)
         );
         q.setNombre_Tentative(0);
+        if (objet != null) q.setObjet(objet);
+        if (message != null) q.setMessage(message);
         q.saveEx();
     }
 
