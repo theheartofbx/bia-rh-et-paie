@@ -30,6 +30,11 @@ public class ProcessControllerRecrutement {
         // Garde-fous
         if ("Y".equals(offre.get_Value("IsValidee")))
             throw new AdempiereException("Cette offre est déjà validée.");
+        // Vérifier qu'un poste est défini
+        int posteID = offre.getPoste_ID();
+        if (posteID <= 0)
+            throw new AdempiereException("Impossible de valider : aucun poste défini sur l'offre.");
+
         int nbComp = DB.getSQLValueEx(null,
             "SELECT COUNT(*) FROM HR_OffreCompetences WHERE HR_OffreEmploi_ID=? AND IsActive='Y'",
             offreEmploiID);

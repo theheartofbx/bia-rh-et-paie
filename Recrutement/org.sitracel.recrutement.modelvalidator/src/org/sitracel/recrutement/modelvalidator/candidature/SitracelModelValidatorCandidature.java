@@ -24,6 +24,8 @@ public class SitracelModelValidatorCandidature implements ModelValidator {
     public String modelChange(PO po, int type) throws Exception {
         MHRCandidature candidature = (MHRCandidature) po;
         if (type == ModelValidator.TYPE_BEFORE_NEW) {
+            String erreur = RecrutementValidatorService.verifierCandidature(candidature);
+            if (erreur != null) return erreur;
             RecrutementValidatorService.avantCreationCandidature(candidature);
         }
         if (type == ModelValidator.TYPE_AFTER_NEW) {

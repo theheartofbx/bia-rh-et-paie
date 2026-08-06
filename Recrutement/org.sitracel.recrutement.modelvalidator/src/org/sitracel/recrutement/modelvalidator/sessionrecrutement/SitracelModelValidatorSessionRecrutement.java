@@ -24,10 +24,18 @@ public class SitracelModelValidatorSessionRecrutement implements ModelValidator 
     public String modelChange(PO po, int type) throws Exception {
         MHRSessionRecrutement session = (MHRSessionRecrutement) po;
         if (type == ModelValidator.TYPE_BEFORE_NEW) {
+            String erreur = RecrutementValidatorService.verifierDatesSession(session);
+            if (erreur != null) return erreur;
             RecrutementValidatorService.creationSessionRecrutement(session);
         }
         if (type == ModelValidator.TYPE_BEFORE_CHANGE) {
-            String erreur = RecrutementValidatorService.verifierChangementTestSession(session);
+            String erreur = RecrutementValidatorService.verifierDatesSession(session);
+            if (erreur != null) return erreur;
+            erreur = RecrutementValidatorService.verifierChangementTestSession(session);
+            if (erreur != null) return erreur;
+        }
+        if (type == ModelValidator.TYPE_BEFORE_DELETE) {
+            String erreur = RecrutementValidatorService.verifierSuppressionSession(session);
             if (erreur != null) return erreur;
         }
         return null;

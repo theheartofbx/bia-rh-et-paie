@@ -24,12 +24,12 @@ public class SitracelModelValidatorEvaluationCandidature implements ModelValidat
     public String modelChange(PO po, int type) throws Exception {
         MHRCandidatEvaluation evaluation = (MHRCandidatEvaluation) po;
 
-        // Garde-fou serveur : score ne peut pas dépasser le maximum
-        // (dupliqué du callout CalloutScoreCompetence pour protection côté serveur)
+        // Garde-fous serveur : score négatif, score > max, auto IsCompetenceEvalue
         if (type == ModelValidator.TYPE_BEFORE_NEW
                 || type == ModelValidator.TYPE_BEFORE_CHANGE) {
             String erreur = RecrutementValidatorService.validerScoreEvaluation(evaluation);
             if (erreur != null) return erreur;
+            RecrutementValidatorService.majIsCompetenceEvalue(evaluation);
         }
 
         // Recalcul du classement après toute modification d'évaluation

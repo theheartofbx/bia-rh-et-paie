@@ -267,6 +267,13 @@ public class ModelValidatorSqlControllerRecrutement {
         return resultat;
     }
 
+    /** Vérifie si un candidat (BPartner) est déjà dans une session */
+    public static int compteDoublonCandidature(int sessionID, int bpartnerID, String trxName) {
+        String sql = "SELECT COUNT(*) FROM HR_Candidature"
+                + " WHERE HR_SessionRecrutement_ID = ? AND C_BPartner_ID = ? AND IsActive = 'Y'";
+        return DB.getSQLValueEx(trxName, sql, sessionID, bpartnerID);
+    }
+
     /** Liste des IDs de sessions utilisant un test donné */
     public static ArrayList<Integer> getSessionIDsPourTest(int testID, String trxName) {
         ArrayList<Integer> resultat = new ArrayList<>();

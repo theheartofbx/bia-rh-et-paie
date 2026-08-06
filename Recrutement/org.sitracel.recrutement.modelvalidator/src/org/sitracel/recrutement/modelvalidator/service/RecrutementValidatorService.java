@@ -50,6 +50,34 @@ public final class RecrutementValidatorService {
     // SESSION DE RECRUTEMENT
     // =========================================================================
 
+    /**
+     * Vérifie la cohérence Date_Debut / Date_Fin de la session.
+     */
+    public static String verifierDatesSession(MHRSessionRecrutement session) {
+        if (session == null) return null;
+        Timestamp dateDebut = session.getDate_Debut();
+        Timestamp dateFin = session.getDate_Fin();
+        if (dateDebut != null && dateFin != null && dateFin.before(dateDebut)) {
+            return "La date de fin ne peut pas être antérieure à la date de début.";
+        }
+        return null;
+    }
+
+    /**
+     * Bloque la suppression d'une session qui contient des candidatures.
+     */
+    public static String verifierSuppressionSession(MHRSessionRecrutement session) {
+        if (session == null) return null;
+        int nbCandidats = ModelValidatorSqlControllerRecrutement
+                .compteCandidatsDansSession(session.getHR_SessionRecrutement_ID(),
+                        session.get_TrxName());
+        if (nbCandidats > 0) {
+            return "Impossible de supprimer cette session : elle contient "
+                    + nbCandidats + " candidature(s). Supprimez-les d'abord.";
+        }
+        return null;
+    }
+
     public static void creationSessionRecrutement(MHRSessionRecrutement session) {
         if (session == null) return;
         session.setDate_Creation(new Timestamp(System.currentTimeMillis()));
@@ -302,6 +330,49 @@ public final class RecrutementValidatorService {
     // CANDIDATURE
     // =========================================================================
 
+    /**
+     * Vérifications avant création d'une candidature :
+     * - Candidat (BPartner) obligatoire
+     * - Pas de doublon dans la même session
+     * - Session pas expirée (Date_Fin)
+     */
+    public static String verifierCandidature(MHRCandidature candidature) {
+        if (candidature == null) return null;
+        String trxName = candidature.get_TrxName();
+
+        // 8. Candidature sans BPartner
+        int bpartnerID = candidature.getC_BPartner_ID();
+        if (bpartnerID <= 0) {
+            return "Veuillez sélectionner un candidat (tiers) pour cette candidature.";
+        }
+
+        // 1. Doublon : même candidat dans la même session
+        int sessionID = candidature.getHR_SessionRecrutement_ID();
+        if (sessionID > 0) {
+            int doublons = ModelValidatorSqlControllerRecrutement
+                    .compteDoublonCandidature(sessionID, bpartnerID, trxName);
+            if (doublons > 0) {
+                return "Ce candidat est déjà enregistré dans cette session de recrutement.";
+            }
+
+            // 5. Candidature après Date_Fin de la session
+            MHRSessionRecrutement session = new MHRSessionRecrutement(
+                    Env.getCtx(), sessionID, trxName);
+            if (session != null && session.get_ID() > 0) {
+                Timestamp dateFin = session.getDate_Fin();
+                if (dateFin != null) {
+                    Timestamp maintenant = new Timestamp(System.currentTimeMillis());
+                    if (maintenant.after(dateFin)) {
+                        return "Impossible d'ajouter un candidat : la date de fin de la session ("
+                                + dateFin + ") est dépassée.";
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
     public static void avantCreationCandidature(MHRCandidature candidature) {
         if (candidature == null) return;
         candidature.setDate_Creation(new Timestamp(System.currentTimeMillis()));
@@ -386,12 +457,26 @@ public final class RecrutementValidatorService {
         if (evaluation == null) return null;
         BigDecimal score = evaluation.getScore();
         BigDecimal scoreMax = evaluation.getScoreMax();
+        if (score != null && score.compareTo(BigDecimal.ZERO) < 0) {
+            return "Le score ne peut pas être négatif (" + score + ").";
+        }
         if (score != null && scoreMax != null
                 && scoreMax.compareTo(BigDecimal.ZERO) > 0
                 && score.compareTo(scoreMax) > 0) {
-            return "Le score (" + score + ") ne peut pas dépasser le maximum (" + scoreMax + ")";
+            return "Le score (" + score + ") ne peut pas dépasser le maximum (" + scoreMax + ").";
         }
         return null;
+    }
+
+    /**
+     * Met à jour automatiquement IsCompetenceEvalue quand un score est saisi ou effacé.
+     */
+    public static void majIsCompetenceEvalue(MHRCandidatEvaluation evaluation) {
+        if (evaluation == null) return;
+        if (!evaluation.is_ValueChanged("Score")) return;
+        BigDecimal score = evaluation.getScore();
+        boolean evalue = (score != null && score.compareTo(BigDecimal.ZERO) > 0);
+        evaluation.setIsCompetenceEvalue(evalue);
     }
 
     public static void actualiserCandidature(Integer sessionRecrutementID,
