@@ -442,10 +442,15 @@ public final class RecrutementValidatorService {
                 calculerRangCandidatures(sessionID, trxName);
         if (listeCandidatures == null) return;
         for (BeanCandidatEvaluation c : listeCandidatures) {
-            MHRCandidature cand = new MHRCandidature(Env.getCtx(), c.getCandidatureID(), trxName);
-            cand.setRangCandidat(c.getRang());
-            cand.setScoreTotal(c.getScoreTotal());
-            cand.save(trxName);
+            DB.executeUpdateEx(
+                "UPDATE HR_Candidature SET RangCandidat=?, ScoreTotal=?, Updated=now(), UpdatedBy=?"
+                + " WHERE HR_Candidature_ID=?",
+                new Object[]{
+                    c.getRang(),
+                    c.getScoreTotal(),
+                    Env.getAD_User_ID(Env.getCtx()),
+                    c.getCandidatureID()
+                }, trxName);
         }
     }
 
@@ -487,11 +492,15 @@ public final class RecrutementValidatorService {
                 calculerRangCandidatures(sessionRecrutementID, trxName);
         if (listeCandidatures == null) return;
         for (BeanCandidatEvaluation candidature : listeCandidatures) {
-            MHRCandidature c = new MHRCandidature(
-                    Env.getCtx(), candidature.getCandidatureID(), trxName);
-            c.setRangCandidat(candidature.getRang());
-            c.setScoreTotal(candidature.getScoreTotal());
-            c.save(trxName);
+            DB.executeUpdateEx(
+                "UPDATE HR_Candidature SET RangCandidat=?, ScoreTotal=?, Updated=now(), UpdatedBy=?"
+                + " WHERE HR_Candidature_ID=?",
+                new Object[]{
+                    candidature.getRang(),
+                    candidature.getScoreTotal(),
+                    Env.getAD_User_ID(Env.getCtx()),
+                    candidature.getCandidatureID()
+                }, trxName);
         }
         NotificationControler.notify(
                 NotificationEvent.CANDIDATURE_CLASSEE, candidatEvaluation);
@@ -534,11 +543,11 @@ public final class RecrutementValidatorService {
                 total = total.add(eval.getScoreMax().multiply(pond));
             }
         }
-        MHRCandidature cand = new MHRCandidature(Env.getCtx(), candidatureID, trxName);
-        if (cand != null && cand.get_ID() > 0) {
-            cand.setScoreTotalMax(total);
-            cand.save(trxName);
-        }
+        DB.executeUpdateEx(
+            "UPDATE HR_Candidature SET ScoreTotalMax=?, Updated=now(), UpdatedBy=?"
+            + " WHERE HR_Candidature_ID=?",
+            new Object[]{total, Env.getAD_User_ID(Env.getCtx()), candidatureID},
+            trxName);
     }
 
     /** Recalcule ScoreTotalMax pour tous les candidats d'une session */
