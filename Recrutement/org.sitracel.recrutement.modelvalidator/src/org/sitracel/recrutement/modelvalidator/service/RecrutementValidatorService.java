@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.logging.Level;
 
 import org.compiere.util.CLogger;
+import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.sitracel.bean.BeanCandidatEvaluation;
 import org.sitracel.bean.BeanEvaluationCompetence;
@@ -301,6 +302,14 @@ public final class RecrutementValidatorService {
     public static void avantCreationCandidature(MHRCandidature candidature) {
         if (candidature == null) return;
         candidature.setDate_Creation(new Timestamp(System.currentTimeMillis()));
+        // Génération automatique de l'identifiant CAND-YYYY-NNNNN
+        if (candidature.getName() == null || candidature.getName().trim().isEmpty()) {
+            int seq = DB.getSQLValueEx(candidature.get_TrxName(),
+                "SELECT nextval('adempiere.hr_candidature_seq')");
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            String name = String.format("CAND-%d-%05d", cal.get(java.util.Calendar.YEAR), seq);
+            candidature.setName(name);
+        }
     }
 
     public static void apresCreationCandidature(MHRCandidature candidature) {
