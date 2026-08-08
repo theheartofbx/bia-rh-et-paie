@@ -203,6 +203,12 @@ public class ProcessControllerRecrutement {
         candidature.setIsRejetee(false);
         candidature.setDate_Validation(new Timestamp(System.currentTimeMillis()));
         candidature.setDate_Rejet(null);
+
+        // Session 19 : marquer le candidat comme employe
+        int bpartnerID = candidature.getC_BPartner_ID();
+        if (bpartnerID > 0) {
+            DB.executeUpdateEx("UPDATE C_BPartner SET IsEmployee='Y' WHERE C_BPartner_ID=" + bpartnerID, null);
+        }
         candidature.save();
         return "Candidature validée.";
     }
@@ -214,6 +220,13 @@ public class ProcessControllerRecrutement {
 
         if ("Y".equals(candidature.get_Value("IsRejetee")))
             throw new AdempiereException("Cette candidature est déjà rejetée.");
+
+        // Session 19 : empecher le rejet si un contrat existe deja
+        int nbContrats = DB.getSQLValueEx(null,
+            "SELECT COUNT(*) FROM HR_Contrat WHERE HR_Candidature_ID=? AND IsActive='Y'",
+            candidatureID);
+        if (nbContrats > 0)
+            throw new AdempiereException("Impossible de rejeter : un contrat a deja ete cree pour cette candidature.");
 
         BeanIdentifiant bi = MCBPartner.getIdentifiant(adUserID, null);
         if (bi == null) return null;

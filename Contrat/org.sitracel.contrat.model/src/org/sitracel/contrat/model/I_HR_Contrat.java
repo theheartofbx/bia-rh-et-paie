@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
+import org.sitracel.recrutement.model.I_HR_Candidature;
 
 /** Generated Interface for HR_Contrat
  *  @author iDempiere (generated) 
@@ -142,6 +143,17 @@ au :
 
 	/** Get Date de Rupture	  */
 	public Timestamp getDate_Rupture();
+
+    /** Column name HR_Candidature_ID */
+    public static final String COLUMNNAME_HR_Candidature_ID = "HR_Candidature_ID";
+
+	/** Set Candidature	  */
+	public void setHR_Candidature_ID (int HR_Candidature_ID);
+
+	/** Get Candidature	  */
+	public int getHR_Candidature_ID();
+
+	public I_HR_Candidature getHR_Candidature() throws RuntimeException;
 
     /** Column name HR_ContratStatut_ID */
     public static final String COLUMNNAME_HR_ContratStatut_ID = "HR_ContratStatut_ID";

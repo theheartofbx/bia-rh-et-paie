@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
 import org.compiere.model.*;
+import org.sitracel.recrutement.model.I_HR_Candidature;
 
 /** Generated Model for HR_Contrat
  *  @author iDempiere (generated)
@@ -32,7 +33,7 @@ public class X_HR_Contrat extends PO implements I_HR_Contrat, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260630L;
+	private static final long serialVersionUID = 20260807L;
 
     /** Standard Constructor */
     public X_HR_Contrat (Properties ctx, int HR_Contrat_ID, String trxName)
@@ -139,7 +140,7 @@ public class X_HR_Contrat extends PO implements I_HR_Contrat, I_Persistent
 	*/
 	public void setDate_Debut (Timestamp Date_Debut)
 	{
-		set_ValueNoCheck (COLUMNNAME_Date_Debut, Date_Debut);
+		set_Value (COLUMNNAME_Date_Debut, Date_Debut);
 	}
 
 	/** Get à Partir de :.
@@ -155,7 +156,7 @@ public class X_HR_Contrat extends PO implements I_HR_Contrat, I_Persistent
 	*/
 	public void setDate_Fin (Timestamp Date_Fin)
 	{
-		set_ValueNoCheck (COLUMNNAME_Date_Fin, Date_Fin);
+		set_Value (COLUMNNAME_Date_Fin, Date_Fin);
 	}
 
 	/** Get Jusqu&#039;au :.
@@ -196,6 +197,33 @@ public class X_HR_Contrat extends PO implements I_HR_Contrat, I_Persistent
 		return (Timestamp)get_Value(COLUMNNAME_Date_Rupture);
 	}
 
+	public I_HR_Candidature getHR_Candidature() throws RuntimeException
+	{
+		return (I_HR_Candidature)MTable.get(getCtx(), I_HR_Candidature.Table_ID)
+			.getPO(getHR_Candidature_ID(), get_TrxName());
+	}
+
+	/** Set Candidature.
+		@param HR_Candidature_ID Candidature
+	*/
+	public void setHR_Candidature_ID (int HR_Candidature_ID)
+	{
+		if (HR_Candidature_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_HR_Candidature_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_HR_Candidature_ID, Integer.valueOf(HR_Candidature_ID));
+	}
+
+	/** Get Candidature.
+		@return Candidature	  */
+	public int getHR_Candidature_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Candidature_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	public I_HR_ContratStatut getHR_ContratStatut() throws RuntimeException
 	{
 		return (I_HR_ContratStatut)MTable.get(getCtx(), I_HR_ContratStatut.Table_ID)
@@ -208,9 +236,9 @@ public class X_HR_Contrat extends PO implements I_HR_Contrat, I_Persistent
 	public void setHR_ContratStatut_ID (int HR_ContratStatut_ID)
 	{
 		if (HR_ContratStatut_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_HR_ContratStatut_ID, null);
+			set_Value (COLUMNNAME_HR_ContratStatut_ID, null);
 		else
-			set_ValueNoCheck (COLUMNNAME_HR_ContratStatut_ID, Integer.valueOf(HR_ContratStatut_ID));
+			set_Value (COLUMNNAME_HR_ContratStatut_ID, Integer.valueOf(HR_ContratStatut_ID));
 	}
 
 	/** Get Statuts Contrat de travail.
@@ -235,9 +263,9 @@ public class X_HR_Contrat extends PO implements I_HR_Contrat, I_Persistent
 	public void setHR_ContratType_ID (int HR_ContratType_ID)
 	{
 		if (HR_ContratType_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_HR_ContratType_ID, null);
+			set_Value (COLUMNNAME_HR_ContratType_ID, null);
 		else
-			set_ValueNoCheck (COLUMNNAME_HR_ContratType_ID, Integer.valueOf(HR_ContratType_ID));
+			set_Value (COLUMNNAME_HR_ContratType_ID, Integer.valueOf(HR_ContratType_ID));
 	}
 
 	/** Get Type de Contrat.
