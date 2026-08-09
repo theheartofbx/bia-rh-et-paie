@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Formation Model
+Bundle-SymbolicName: org.sitracel.formation.model
+Bundle-Version: 1.0.0.qualifier
+Export-Package: org.sitracel.formation.model
+Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
+ org.adempiere.plugin.utils;bundle-version="4.1.0"
+Service-Component: OSGI-INF/*.xml
+Automatic-Module-Name: org.sitracel.formation.model
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
