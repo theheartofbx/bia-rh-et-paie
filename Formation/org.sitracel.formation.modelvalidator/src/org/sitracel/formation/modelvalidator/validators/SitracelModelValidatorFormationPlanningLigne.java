@@ -21,7 +21,7 @@ public class SitracelModelValidatorFormationPlanningLigne {
             }
         }
 
-        // S3 : Date_Planning comprise entre Date_Debut et Date_Fin de la session
+        // S3 : Date_Planning dans la période de la session
         if (datePlanning != null && planningID > 0) {
             int sessionID = DB.getSQLValueEx(null,
                 "SELECT HR_FormationSession_ID FROM HR_FormationPlanning WHERE HR_FormationPlanning_ID=?",
@@ -42,41 +42,47 @@ public class SitracelModelValidatorFormationPlanningLigne {
             }
         }
 
-        // M7 : Anti-collision horaire (même lieu ou même encadrant, même date)
+        // M7 : Anti-collision horaire
         if (datePlanning != null && heureDebut != null && !heureDebut.isEmpty()
                 && heureFin != null && !heureFin.isEmpty()) {
             String lieu = (String) po.get_Value("Lieu");
             int encadrantID = po.get_ValueAsInt("Encadrant_ID");
 
-            // Collision par lieu
             if (lieu != null && !lieu.trim().isEmpty()) {
                 int conflitLieu = DB.getSQLValueEx(null,
                     "SELECT COUNT(*) FROM HR_FormationPlanningLigne"
                     + " WHERE HR_FormationPlanningLigne_ID != ?"
-                    + " AND Date_Planning = ?"
-                    + " AND Lieu = ?"
-                    + " AND IsActive='Y'"
-                    + " AND Heure_Debut < ?"
-                    + " AND Heure_Fin > ?",
+                    + " AND Date_Planning = ? AND Lieu = ? AND IsActive='Y'"
+                    + " AND Heure_Debut < ? AND Heure_Fin > ?",
                     ligneID, datePlanning, lieu, heureFin, heureDebut);
                 if (conflitLieu > 0) {
                     return "Collision horaire : le lieu '" + lieu + "' est déjà occupé sur ce créneau.";
                 }
             }
 
-            // Collision par encadrant
             if (encadrantID > 0) {
                 int conflitEncadrant = DB.getSQLValueEx(null,
                     "SELECT COUNT(*) FROM HR_FormationPlanningLigne"
                     + " WHERE HR_FormationPlanningLigne_ID != ?"
-                    + " AND Date_Planning = ?"
-                    + " AND Encadrant_ID = ?"
-                    + " AND IsActive='Y'"
-                    + " AND Heure_Debut < ?"
-                    + " AND Heure_Fin > ?",
+                    + " AND Date_Planning = ? AND Encadrant_ID = ? AND IsActive='Y'"
+                    + " AND Heure_Debut < ? AND Heure_Fin > ?",
                     ligneID, datePlanning, encadrantID, heureFin, heureDebut);
                 if (conflitEncadrant > 0) {
                     return "Collision horaire : l'encadrant est déjà affecté sur ce créneau.";
+                }
+            }
+        }
+
+        // Bloquer modification si planning a des participants assignés
+        if (!newRecord && po.is_ValueChanged("IsOk")) {
+            String newIsOk = (String) po.get_Value("IsOk");
+            if ("N".equals(newIsOk)) {
+                int nbPartSurPlanning = DB.getSQLValueEx(null,
+                    "SELECT COUNT(*) FROM HR_FormationParticipant"
+                    + " WHERE HR_FormationPlanning_ID=? AND IsActive='Y'",
+                    planningID);
+                if (nbPartSurPlanning > 0) {
+                    return "Impossible de modifier : " + nbPartSurPlanning + " participant(s) sont déjà assignés à ce planning.";
                 }
             }
         }
@@ -94,23 +100,26 @@ public class SitracelModelValidatorFormationPlanningLigne {
     }
 
     public static String afterSave(PO po, boolean newRecord) {
-        // M2 : Vérifier si TOUTES les lignes du planning sont IsOk → mettre Planning.IsOk
-        int planningID = po.get_ValueAsInt("HR_FormationPlanning_ID");
-        if (planningID > 0) {
-            int totalLignes = DB.getSQLValueEx(null,
-                "SELECT COUNT(*) FROM HR_FormationPlanningLigne"
-                + " WHERE HR_FormationPlanning_ID=? AND IsActive='Y'",
-                planningID);
-            int lignesOk = DB.getSQLValueEx(null,
-                "SELECT COUNT(*) FROM HR_FormationPlanningLigne"
-                + " WHERE HR_FormationPlanning_ID=? AND IsActive='Y' AND IsOk='Y'",
-                planningID);
-
-            String newIsOk = (totalLignes > 0 && totalLignes == lignesOk) ? "Y" : "N";
-            DB.executeUpdateEx(
-                "UPDATE HR_FormationPlanning SET IsOk='" + newIsOk + "' WHERE HR_FormationPlanning_ID=" + planningID,
-                null);
-        }
+        recalculerIsOkPlanning(po.get_ValueAsInt("HR_FormationPlanning_ID"));
         return null;
+    }
+
+    public static String afterDelete(PO po) {
+        recalculerIsOkPlanning(po.get_ValueAsInt("HR_FormationPlanning_ID"));
+        return null;
+    }
+
+    private static void recalculerIsOkPlanning(int planningID) {
+        if (planningID <= 0) return;
+        int totalLignes = DB.getSQLValueEx(null,
+            "SELECT COUNT(*) FROM HR_FormationPlanningLigne WHERE HR_FormationPlanning_ID=? AND IsActive='Y'",
+            planningID);
+        int lignesOk = DB.getSQLValueEx(null,
+            "SELECT COUNT(*) FROM HR_FormationPlanningLigne WHERE HR_FormationPlanning_ID=? AND IsActive='Y' AND IsOk='Y'",
+            planningID);
+        String newIsOk = (totalLignes > 0 && totalLignes == lignesOk) ? "Y" : "N";
+        DB.executeUpdateEx(
+            "UPDATE HR_FormationPlanning SET IsOk='" + newIsOk + "' WHERE HR_FormationPlanning_ID=" + planningID,
+            null);
     }
 }
