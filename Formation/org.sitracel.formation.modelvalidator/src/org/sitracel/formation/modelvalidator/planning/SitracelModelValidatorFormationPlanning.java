@@ -27,6 +27,35 @@ public class SitracelModelValidatorFormationPlanning implements ModelValidator {
     @Override
     public String modelChange(PO po, int type) throws Exception {
         int planningID = po.get_ID();
+        int sessionID = po.get_ValueAsInt("HR_FormationSession_ID");
+
+        // ========== BEFORE_NEW ==========
+        if (type == TYPE_BEFORE_NEW) {
+            // G2 : Bloquer si le catalogue de la session n'a aucun programme
+            if (sessionID > 0) {
+                int catalogueID = DB.getSQLValueEx(null,
+                    "SELECT HR_FormationCatalogue_ID FROM HR_FormationSession WHERE HR_FormationSession_ID=?",
+                    sessionID);
+                if (catalogueID > 0) {
+                    int nbProg = DB.getSQLValueEx(null,
+                        "SELECT COUNT(*) FROM HR_FormationProgramme WHERE HR_FormationCatalogue_ID=? AND IsActive='Y'",
+                        catalogueID);
+                    if (nbProg == 0)
+                        return "Impossible de creer un planning : le catalogue n'a aucun programme defini. Ajoutez des modules au catalogue d'abord.";
+                }
+            }
+
+            // G3 : Anti-doublon nom dans la même session
+            String nom = (String) po.get_Value("Name");
+            if (nom != null && !nom.trim().isEmpty() && sessionID > 0) {
+                int doublon = DB.getSQLValueEx(null,
+                    "SELECT COUNT(*) FROM HR_FormationPlanning"
+                    + " WHERE HR_FormationSession_ID=? AND Name=? AND IsActive='Y'",
+                    sessionID, nom);
+                if (doublon > 0)
+                    return "Un planning avec le nom '" + nom + "' existe deja dans cette session.";
+            }
+        }
 
         // ========== BEFORE_CHANGE ==========
         if (type == TYPE_BEFORE_CHANGE) {
@@ -38,7 +67,7 @@ public class SitracelModelValidatorFormationPlanning implements ModelValidator {
                         "SELECT COUNT(*) FROM HR_FormationParticipant WHERE HR_FormationPlanning_ID=? AND IsActive='Y'",
                         planningID);
                     if (nbPart > 0)
-                        return "Impossible : " + nbPart + " participant(s) sont assignés à ce planning.";
+                        return "Impossible : " + nbPart + " participant(s) sont assignes a ce planning.";
                 }
             }
 
@@ -50,16 +79,28 @@ public class SitracelModelValidatorFormationPlanning implements ModelValidator {
                 if (nbLignes > 0)
                     return "Impossible de changer la session : " + nbLignes + " ligne(s) de planning existent. Supprimez-les d'abord.";
             }
+
+            // G3 : Anti-doublon nom en cas de renommage
+            if (po.is_ValueChanged("Name")) {
+                String nom = (String) po.get_Value("Name");
+                if (nom != null && !nom.trim().isEmpty() && sessionID > 0) {
+                    int doublon = DB.getSQLValueEx(null,
+                        "SELECT COUNT(*) FROM HR_FormationPlanning"
+                        + " WHERE HR_FormationSession_ID=? AND Name=? AND HR_FormationPlanning_ID != ? AND IsActive='Y'",
+                        sessionID, nom, planningID);
+                    if (doublon > 0)
+                        return "Un planning avec le nom '" + nom + "' existe deja dans cette session.";
+                }
+            }
         }
 
         // ========== BEFORE_DELETE ==========
         if (type == TYPE_BEFORE_DELETE) {
-            // Bloquer si participants assignés
             int nbPart = DB.getSQLValueEx(null,
                 "SELECT COUNT(*) FROM HR_FormationParticipant WHERE HR_FormationPlanning_ID=? AND IsActive='Y'",
                 planningID);
             if (nbPart > 0)
-                return "Impossible de supprimer : " + nbPart + " participant(s) sont assignés à ce planning.";
+                return "Impossible de supprimer : " + nbPart + " participant(s) sont assignes a ce planning.";
 
             // Supprimer automatiquement les lignes
             DB.executeUpdateEx(
@@ -69,18 +110,12 @@ public class SitracelModelValidatorFormationPlanning implements ModelValidator {
 
         // ========== AFTER_NEW : auto-générer les lignes ==========
         if (type == TYPE_AFTER_NEW) {
-            int sessionID = po.get_ValueAsInt("HR_FormationSession_ID");
             if (sessionID <= 0) return null;
 
             int catalogueID = DB.getSQLValueEx(null,
                 "SELECT HR_FormationCatalogue_ID FROM HR_FormationSession WHERE HR_FormationSession_ID=?",
                 sessionID);
             if (catalogueID <= 0) return null;
-
-            int nbProgrammes = DB.getSQLValueEx(null,
-                "SELECT COUNT(*) FROM HR_FormationProgramme WHERE HR_FormationCatalogue_ID=? AND IsActive='Y'",
-                catalogueID);
-            if (nbProgrammes == 0) return null;
 
             int clientId = Env.getAD_Client_ID(Env.getCtx());
             int orgId = Env.getAD_Org_ID(Env.getCtx());

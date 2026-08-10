@@ -48,13 +48,13 @@ public class SitracelModelValidatorFormationPlanningLigne implements ModelValida
                     + " AND IsActive='Y'",
                     planningID, programmeID, moduleID, numeroPartie, ligneID);
                 if (doublon > 0)
-                    return "Cette ligne existe déjà : même module, même partie (" + numeroPartie + ").";
+                    return "Cette ligne existe deja : meme module, meme partie (" + numeroPartie + ").";
             }
 
             // S2 : Heure_Fin > Heure_Debut
             if (heureDebut != null && !heureDebut.isEmpty() && heureFin != null && !heureFin.isEmpty()) {
                 if (heureFin.compareTo(heureDebut) <= 0)
-                    return "L'heure de fin doit être postérieure à l'heure de début.";
+                    return "L'heure de fin doit etre posterieure a l'heure de debut.";
             }
 
             // S3 : Date_Planning dans la période de la session
@@ -67,9 +67,9 @@ public class SitracelModelValidatorFormationPlanningLigne implements ModelValida
                     Timestamp sessFin = (Timestamp) DB.getSQLValueTSEx(null,
                         "SELECT Date_Fin FROM HR_FormationSession WHERE HR_FormationSession_ID=?", sessionID);
                     if (sessDebut != null && datePlanning.before(sessDebut))
-                        return "La date du planning est antérieure à la date de début de la session.";
+                        return "La date du planning est anterieure a la date de debut de la session.";
                     if (sessFin != null && datePlanning.after(sessFin))
-                        return "La date du planning est postérieure à la date de fin de la session.";
+                        return "La date du planning est posterieure a la date de fin de la session.";
                 }
             }
 
@@ -86,7 +86,7 @@ public class SitracelModelValidatorFormationPlanningLigne implements ModelValida
                         + " AND Heure_Debut < ? AND Heure_Fin > ?",
                         ligneID, datePlanning, lieu, heureFin, heureDebut);
                     if (c > 0)
-                        return "Collision horaire : le lieu '" + lieu + "' est déjà occupé sur ce créneau.";
+                        return "Collision horaire : le lieu '" + lieu + "' est deja occupe sur ce creneau.";
                 }
 
                 if (encadrantID > 0) {
@@ -96,17 +96,17 @@ public class SitracelModelValidatorFormationPlanningLigne implements ModelValida
                         + " AND Heure_Debut < ? AND Heure_Fin > ?",
                         ligneID, datePlanning, encadrantID, heureFin, heureDebut);
                     if (c > 0)
-                        return "Collision horaire : l'encadrant est déjà affecté sur ce créneau.";
+                        return "Collision horaire : l'encadrant est deja affecte sur ce creneau.";
                 }
             }
 
-            // Bloquer modification si planning a des participants assignés et IsOk passe à N
+            // Bloquer modification si planning a des participants et IsOk passe à N
             if (type == TYPE_BEFORE_CHANGE && po.is_ValueChanged("IsOk") && "N".equals(po.get_Value("IsOk"))) {
                 int nbP = DB.getSQLValueEx(null,
                     "SELECT COUNT(*) FROM HR_FormationParticipant WHERE HR_FormationPlanning_ID=? AND IsActive='Y'",
                     planningID);
                 if (nbP > 0)
-                    return "Impossible de modifier : " + nbP + " participant(s) assignés à ce planning.";
+                    return "Impossible de modifier : " + nbP + " participant(s) assignes a ce planning.";
             }
 
             // M1 : Auto IsOk quand date + heures renseignées
@@ -119,7 +119,44 @@ public class SitracelModelValidatorFormationPlanningLigne implements ModelValida
             }
         }
 
-        // ========== AFTER_NEW / AFTER_CHANGE / AFTER_DELETE : recalcul IsOk parent ==========
+        // ========== BEFORE_DELETE ==========
+        if (type == TYPE_BEFORE_DELETE) {
+            int planningID = po.get_ValueAsInt("HR_FormationPlanning_ID");
+
+            // G1 : Bloquer suppression si le planning a des participants
+            if (planningID > 0) {
+                int nbPart = DB.getSQLValueEx(null,
+                    "SELECT COUNT(*) FROM HR_FormationParticipant WHERE HR_FormationPlanning_ID=? AND IsActive='Y'",
+                    planningID);
+                if (nbPart > 0)
+                    return "Impossible de supprimer cette ligne : " + nbPart + " participant(s) sont assignes a ce planning.";
+            }
+
+            // G7 : Avertir si ça rend le planning incomplet par rapport au programme
+            if (planningID > 0) {
+                int sessionID = DB.getSQLValueEx(null,
+                    "SELECT HR_FormationSession_ID FROM HR_FormationPlanning WHERE HR_FormationPlanning_ID=?", planningID);
+                if (sessionID > 0) {
+                    int catalogueID = DB.getSQLValueEx(null,
+                        "SELECT HR_FormationCatalogue_ID FROM HR_FormationSession WHERE HR_FormationSession_ID=?", sessionID);
+                    if (catalogueID > 0) {
+                        int totalAttendu = DB.getSQLValueEx(null,
+                            "SELECT COALESCE(SUM(Nombre_Partie), 0) FROM HR_FormationProgramme"
+                            + " WHERE HR_FormationCatalogue_ID=? AND IsActive='Y'", catalogueID);
+                        int totalActuel = DB.getSQLValueEx(null,
+                            "SELECT COUNT(*) FROM HR_FormationPlanningLigne"
+                            + " WHERE HR_FormationPlanning_ID=? AND IsActive='Y'", planningID);
+                        if ((totalActuel - 1) < totalAttendu) {
+                            return "Impossible de supprimer : le planning deviendrait incomplet ("
+                                + (totalActuel - 1) + "/" + totalAttendu + " lignes). "
+                                + "Supprimez le planning entier si vous souhaitez le reconstruire.";
+                        }
+                    }
+                }
+            }
+        }
+
+        // ========== AFTER : recalcul IsOk parent ==========
         if (type == TYPE_AFTER_NEW || type == TYPE_AFTER_CHANGE || type == TYPE_AFTER_DELETE) {
             int planningID = po.get_ValueAsInt("HR_FormationPlanning_ID");
             if (planningID > 0) {

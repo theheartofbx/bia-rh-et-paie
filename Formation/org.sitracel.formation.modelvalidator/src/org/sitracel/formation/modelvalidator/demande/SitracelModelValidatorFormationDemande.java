@@ -25,6 +25,7 @@ public class SitracelModelValidatorFormationDemande implements ModelValidator {
     @Override
     public String modelChange(PO po, int type) throws Exception {
         if (type == TYPE_BEFORE_NEW) {
+            // Pré-remplir C_BPartner_ID
             int bpartnerID = po.get_ValueAsInt("C_BPartner_ID");
             if (bpartnerID <= 0) {
                 int userID = Env.getAD_User_ID(Env.getCtx());
@@ -32,20 +33,34 @@ public class SitracelModelValidatorFormationDemande implements ModelValidator {
                     "SELECT C_BPartner_ID FROM AD_User WHERE AD_User_ID=?", userID);
                 if (bpFromUser > 0) po.set_ValueOfColumn("C_BPartner_ID", bpFromUser);
             }
+
             int sessionID = po.get_ValueAsInt("HR_FormationSession_ID");
             if (sessionID > 0) {
+                // Session doit être validée
                 String isValidee = DB.getSQLValueStringEx(null,
                     "SELECT IsValidee FROM HR_FormationSession WHERE HR_FormationSession_ID=?", sessionID);
                 if (!"Y".equals(isValidee))
-                    return "Impossible : la session n'est pas encore validée.";
+                    return "Impossible : la session n'est pas encore validee.";
+
+                // G5 : Anti-doublon serveur
+                int bpID = po.get_ValueAsInt("C_BPartner_ID");
+                if (bpID > 0) {
+                    int doublon = DB.getSQLValueEx(null,
+                        "SELECT COUNT(*) FROM HR_FormationDemande"
+                        + " WHERE HR_FormationSession_ID=? AND C_BPartner_ID=? AND IsActive='Y'",
+                        sessionID, bpID);
+                    if (doublon > 0)
+                        return "Vous avez deja soumis une demande pour cette session.";
+                }
             }
         }
+
         if (type == TYPE_BEFORE_DELETE) {
             int nbPart = DB.getSQLValueEx(null,
                 "SELECT COUNT(*) FROM HR_FormationParticipant WHERE HR_FormationDemande_ID=? AND IsActive='Y'",
                 po.get_ID());
             if (nbPart > 0)
-                return "Impossible de supprimer : un participant a été créé depuis cette demande.";
+                return "Impossible de supprimer : un participant a ete cree depuis cette demande.";
         }
         return null;
     }
