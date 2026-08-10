@@ -31,7 +31,7 @@ public class X_HR_FormationParticipant extends PO implements I_HR_FormationParti
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260809L;
+	private static final long serialVersionUID = 20260810L;
 
     /** Standard Constructor */
     public X_HR_FormationParticipant (Properties ctx, int HR_FormationParticipant_ID, String trxName)
@@ -124,33 +124,6 @@ public class X_HR_FormationParticipant extends PO implements I_HR_FormationParti
 	public int getC_BPartner_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_BPartner_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
-	public I_HR_FormatioStatutP getHR_FormatioStatutP() throws RuntimeException
-	{
-		return (I_HR_FormatioStatutP)MTable.get(getCtx(), I_HR_FormatioStatutP.Table_ID)
-			.getPO(getHR_FormatioStatutP_ID(), get_TrxName());
-	}
-
-	/** Set Statut Participants Formation.
-		@param HR_FormatioStatutP_ID Statut Participants Formation
-	*/
-	public void setHR_FormatioStatutP_ID (int HR_FormatioStatutP_ID)
-	{
-		if (HR_FormatioStatutP_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_HR_FormatioStatutP_ID, null);
-		else
-			set_ValueNoCheck (COLUMNNAME_HR_FormatioStatutP_ID, Integer.valueOf(HR_FormatioStatutP_ID));
-	}
-
-	/** Get Statut Participants Formation.
-		@return Statut Participants Formation	  */
-	public int getHR_FormatioStatutP_ID()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_HR_FormatioStatutP_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
@@ -268,6 +241,33 @@ public class X_HR_FormationParticipant extends PO implements I_HR_FormationParti
 	public int getHR_FormationSession_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_FormationSession_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public I_HR_FormationStatutP getHR_FormationStatutP() throws RuntimeException
+	{
+		return (I_HR_FormationStatutP)MTable.get(getCtx(), I_HR_FormationStatutP.Table_ID)
+			.getPO(getHR_FormationStatutP_ID(), get_TrxName());
+	}
+
+	/** Set Statut Participants Formation.
+		@param HR_FormationStatutP_ID Statut Participants Formation
+	*/
+	public void setHR_FormationStatutP_ID (int HR_FormationStatutP_ID)
+	{
+		if (HR_FormationStatutP_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_HR_FormationStatutP_ID, null);
+		else
+			set_ValueNoCheck (COLUMNNAME_HR_FormationStatutP_ID, Integer.valueOf(HR_FormationStatutP_ID));
+	}
+
+	/** Get Statut Participants Formation.
+		@return Statut Participants Formation	  */
+	public int getHR_FormationStatutP_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_HR_FormationStatutP_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();

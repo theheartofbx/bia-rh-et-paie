@@ -32,7 +32,7 @@ public class X_HR_FormationCatalogue extends PO implements I_HR_FormationCatalog
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260809L;
+	private static final long serialVersionUID = 20260810L;
 
     /** Standard Constructor */
     public X_HR_FormationCatalogue (Properties ctx, int HR_FormationCatalogue_ID, String trxName)

@@ -21,18 +21,18 @@ import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Interface for HR_FormationParticipant
+/** Generated Interface for HR_FormationStatutP
  *  @author iDempiere (generated) 
  *  @version Release 12
  */
 @SuppressWarnings("all")
-public interface I_HR_FormationParticipant 
+public interface I_HR_FormationStatutP 
 {
 
-    /** TableName=HR_FormationParticipant */
-    public static final String Table_Name = "HR_FormationParticipant";
+    /** TableName=HR_FormationStatutP */
+    public static final String Table_Name = "HR_FormationStatutP";
 
-    /** AD_Table_ID=1016262 */
+    /** AD_Table_ID=1016565 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -64,21 +64,6 @@ public interface I_HR_FormationParticipant
 	  */
 	public int getAD_Org_ID();
 
-    /** Column name C_BPartner_ID */
-    public static final String COLUMNNAME_C_BPartner_ID = "C_BPartner_ID";
-
-	/** Set Business Partner .
-	  * Identifies a Business Partner
-	  */
-	public void setC_BPartner_ID (int C_BPartner_ID);
-
-	/** Get Business Partner .
-	  * Identifies a Business Partner
-	  */
-	public int getC_BPartner_ID();
-
-	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException;
-
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
 
@@ -95,56 +80,18 @@ public interface I_HR_FormationParticipant
 	  */
 	public int getCreatedBy();
 
-    /** Column name HR_FormationDemande_ID */
-    public static final String COLUMNNAME_HR_FormationDemande_ID = "HR_FormationDemande_ID";
+    /** Column name Description */
+    public static final String COLUMNNAME_Description = "Description";
 
-	/** Set Demande de Participation Formation	  */
-	public void setHR_FormationDemande_ID (int HR_FormationDemande_ID);
+	/** Set Description.
+	  * Optional short description of the record
+	  */
+	public void setDescription (String Description);
 
-	/** Get Demande de Participation Formation	  */
-	public int getHR_FormationDemande_ID();
-
-	public I_HR_FormationDemande getHR_FormationDemande() throws RuntimeException;
-
-    /** Column name HR_FormationParticipant_ID */
-    public static final String COLUMNNAME_HR_FormationParticipant_ID = "HR_FormationParticipant_ID";
-
-	/** Set Participants Formation	  */
-	public void setHR_FormationParticipant_ID (int HR_FormationParticipant_ID);
-
-	/** Get Participants Formation	  */
-	public int getHR_FormationParticipant_ID();
-
-    /** Column name HR_FormationParticipant_UU */
-    public static final String COLUMNNAME_HR_FormationParticipant_UU = "HR_FormationParticipant_UU";
-
-	/** Set HR_FormationParticipant_UU	  */
-	public void setHR_FormationParticipant_UU (String HR_FormationParticipant_UU);
-
-	/** Get HR_FormationParticipant_UU	  */
-	public String getHR_FormationParticipant_UU();
-
-    /** Column name HR_FormationPlanning_ID */
-    public static final String COLUMNNAME_HR_FormationPlanning_ID = "HR_FormationPlanning_ID";
-
-	/** Set Planning de Formation	  */
-	public void setHR_FormationPlanning_ID (int HR_FormationPlanning_ID);
-
-	/** Get Planning de Formation	  */
-	public int getHR_FormationPlanning_ID();
-
-	public I_HR_FormationPlanning getHR_FormationPlanning() throws RuntimeException;
-
-    /** Column name HR_FormationSession_ID */
-    public static final String COLUMNNAME_HR_FormationSession_ID = "HR_FormationSession_ID";
-
-	/** Set Session de Formation	  */
-	public void setHR_FormationSession_ID (int HR_FormationSession_ID);
-
-	/** Get Session de Formation	  */
-	public int getHR_FormationSession_ID();
-
-	public I_HR_FormationSession getHR_FormationSession() throws RuntimeException;
+	/** Get Description.
+	  * Optional short description of the record
+	  */
+	public String getDescription();
 
     /** Column name HR_FormationStatutP_ID */
     public static final String COLUMNNAME_HR_FormationStatutP_ID = "HR_FormationStatutP_ID";
@@ -155,7 +102,14 @@ public interface I_HR_FormationParticipant
 	/** Get Statut Participants Formation	  */
 	public int getHR_FormationStatutP_ID();
 
-	public I_HR_FormationStatutP getHR_FormationStatutP() throws RuntimeException;
+    /** Column name HR_FormationStatutP_UU */
+    public static final String COLUMNNAME_HR_FormationStatutP_UU = "HR_FormationStatutP_UU";
+
+	/** Set HR_FormationStatutP_UU	  */
+	public void setHR_FormationStatutP_UU (String HR_FormationStatutP_UU);
+
+	/** Get HR_FormationStatutP_UU	  */
+	public String getHR_FormationStatutP_UU();
 
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
@@ -169,6 +123,19 @@ public interface I_HR_FormationParticipant
 	  * The record is active in the system
 	  */
 	public boolean isActive();
+
+    /** Column name Name */
+    public static final String COLUMNNAME_Name = "Name";
+
+	/** Set Name.
+	  * Alphanumeric identifier of the entity
+	  */
+	public void setName (String Name);
+
+	/** Get Name.
+	  * Alphanumeric identifier of the entity
+	  */
+	public String getName();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
@@ -185,4 +152,17 @@ public interface I_HR_FormationParticipant
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
+
+    /** Column name Value */
+    public static final String COLUMNNAME_Value = "Value";
+
+	/** Set Search Key.
+	  * Search key for the record in the format required - must be unique
+	  */
+	public void setValue (String Value);
+
+	/** Get Search Key.
+	  * Search key for the record in the format required - must be unique
+	  */
+	public String getValue();
 }

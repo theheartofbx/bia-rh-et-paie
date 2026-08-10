@@ -32,7 +32,7 @@ public class X_HR_FormationPlanning extends PO implements I_HR_FormationPlanning
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260809L;
+	private static final long serialVersionUID = 20260810L;
 
     /** Standard Constructor */
     public X_HR_FormationPlanning (Properties ctx, int HR_FormationPlanning_ID, String trxName)

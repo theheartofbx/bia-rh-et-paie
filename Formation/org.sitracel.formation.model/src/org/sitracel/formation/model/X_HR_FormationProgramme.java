@@ -31,7 +31,7 @@ public class X_HR_FormationProgramme extends PO implements I_HR_FormationProgram
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260809L;
+	private static final long serialVersionUID = 20260810L;
 
     /** Standard Constructor */
     public X_HR_FormationProgramme (Properties ctx, int HR_FormationProgramme_ID, String trxName)

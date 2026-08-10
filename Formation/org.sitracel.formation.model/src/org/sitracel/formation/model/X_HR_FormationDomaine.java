@@ -32,7 +32,7 @@ public class X_HR_FormationDomaine extends PO implements I_HR_FormationDomaine, 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260809L;
+	private static final long serialVersionUID = 20260810L;
 
     /** Standard Constructor */
     public X_HR_FormationDomaine (Properties ctx, int HR_FormationDomaine_ID, String trxName)

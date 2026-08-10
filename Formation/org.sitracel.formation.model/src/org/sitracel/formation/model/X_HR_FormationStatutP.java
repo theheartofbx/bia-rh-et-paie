@@ -22,11 +22,11 @@ import java.util.Properties;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Model for HR_FormationSessionStatut
+/** Generated Model for HR_FormationStatutP
  *  @author iDempiere (generated)
  *  @version Release 12 - $Id$ */
-@org.adempiere.base.Model(table="HR_FormationSessionStatut")
-public class X_HR_FormationSessionStatut extends PO implements I_HR_FormationSessionStatut, I_Persistent
+@org.adempiere.base.Model(table="HR_FormationStatutP")
+public class X_HR_FormationStatutP extends PO implements I_HR_FormationStatutP, I_Persistent
 {
 
 	/**
@@ -35,51 +35,51 @@ public class X_HR_FormationSessionStatut extends PO implements I_HR_FormationSes
 	private static final long serialVersionUID = 20260810L;
 
     /** Standard Constructor */
-    public X_HR_FormationSessionStatut (Properties ctx, int HR_FormationSessionStatut_ID, String trxName)
+    public X_HR_FormationStatutP (Properties ctx, int HR_FormationStatutP_ID, String trxName)
     {
-      super (ctx, HR_FormationSessionStatut_ID, trxName);
-      /** if (HR_FormationSessionStatut_ID == 0)
+      super (ctx, HR_FormationStatutP_ID, trxName);
+      /** if (HR_FormationStatutP_ID == 0)
         {
-			setHR_FormationSessionStatut_ID (0);
+			setHR_FormationStatutP_ID (0);
 			setName (null);
         } */
     }
 
     /** Standard Constructor */
-    public X_HR_FormationSessionStatut (Properties ctx, int HR_FormationSessionStatut_ID, String trxName, String ... virtualColumns)
+    public X_HR_FormationStatutP (Properties ctx, int HR_FormationStatutP_ID, String trxName, String ... virtualColumns)
     {
-      super (ctx, HR_FormationSessionStatut_ID, trxName, virtualColumns);
-      /** if (HR_FormationSessionStatut_ID == 0)
+      super (ctx, HR_FormationStatutP_ID, trxName, virtualColumns);
+      /** if (HR_FormationStatutP_ID == 0)
         {
-			setHR_FormationSessionStatut_ID (0);
+			setHR_FormationStatutP_ID (0);
 			setName (null);
         } */
     }
 
     /** Standard Constructor */
-    public X_HR_FormationSessionStatut (Properties ctx, String HR_FormationSessionStatut_UU, String trxName)
+    public X_HR_FormationStatutP (Properties ctx, String HR_FormationStatutP_UU, String trxName)
     {
-      super (ctx, HR_FormationSessionStatut_UU, trxName);
-      /** if (HR_FormationSessionStatut_UU == null)
+      super (ctx, HR_FormationStatutP_UU, trxName);
+      /** if (HR_FormationStatutP_UU == null)
         {
-			setHR_FormationSessionStatut_ID (0);
+			setHR_FormationStatutP_ID (0);
 			setName (null);
         } */
     }
 
     /** Standard Constructor */
-    public X_HR_FormationSessionStatut (Properties ctx, String HR_FormationSessionStatut_UU, String trxName, String ... virtualColumns)
+    public X_HR_FormationStatutP (Properties ctx, String HR_FormationStatutP_UU, String trxName, String ... virtualColumns)
     {
-      super (ctx, HR_FormationSessionStatut_UU, trxName, virtualColumns);
-      /** if (HR_FormationSessionStatut_UU == null)
+      super (ctx, HR_FormationStatutP_UU, trxName, virtualColumns);
+      /** if (HR_FormationStatutP_UU == null)
         {
-			setHR_FormationSessionStatut_ID (0);
+			setHR_FormationStatutP_ID (0);
 			setName (null);
         } */
     }
 
     /** Load Constructor */
-    public X_HR_FormationSessionStatut (Properties ctx, ResultSet rs, String trxName)
+    public X_HR_FormationStatutP (Properties ctx, ResultSet rs, String trxName)
     {
       super (ctx, rs, trxName);
     }
@@ -101,7 +101,7 @@ public class X_HR_FormationSessionStatut extends PO implements I_HR_FormationSes
 
     public String toString()
     {
-      StringBuilder sb = new StringBuilder ("X_HR_FormationSessionStatut[")
+      StringBuilder sb = new StringBuilder ("X_HR_FormationStatutP[")
         .append(get_ID()).append(",Name=").append(getName()).append("]");
       return sb.toString();
     }
@@ -122,40 +122,40 @@ public class X_HR_FormationSessionStatut extends PO implements I_HR_FormationSes
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
-	/** Set Statut de la Session de Formation.
-		@param HR_FormationSessionStatut_ID Statut de la Session de Formation
+	/** Set Statut Participants Formation.
+		@param HR_FormationStatutP_ID Statut Participants Formation
 	*/
-	public void setHR_FormationSessionStatut_ID (int HR_FormationSessionStatut_ID)
+	public void setHR_FormationStatutP_ID (int HR_FormationStatutP_ID)
 	{
-		if (HR_FormationSessionStatut_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_HR_FormationSessionStatut_ID, null);
+		if (HR_FormationStatutP_ID < 1)
+			set_ValueNoCheck (COLUMNNAME_HR_FormationStatutP_ID, null);
 		else
-			set_ValueNoCheck (COLUMNNAME_HR_FormationSessionStatut_ID, Integer.valueOf(HR_FormationSessionStatut_ID));
+			set_ValueNoCheck (COLUMNNAME_HR_FormationStatutP_ID, Integer.valueOf(HR_FormationStatutP_ID));
 	}
 
-	/** Get Statut de la Session de Formation.
-		@return Statut de la Session de Formation	  */
-	public int getHR_FormationSessionStatut_ID()
+	/** Get Statut Participants Formation.
+		@return Statut Participants Formation	  */
+	public int getHR_FormationStatutP_ID()
 	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_HR_FormationSessionStatut_ID);
+		Integer ii = (Integer)get_Value(COLUMNNAME_HR_FormationStatutP_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
 	}
 
-	/** Set HR_FormationSessionStatut_UU.
-		@param HR_FormationSessionStatut_UU HR_FormationSessionStatut_UU
+	/** Set HR_FormationStatutP_UU.
+		@param HR_FormationStatutP_UU HR_FormationStatutP_UU
 	*/
-	public void setHR_FormationSessionStatut_UU (String HR_FormationSessionStatut_UU)
+	public void setHR_FormationStatutP_UU (String HR_FormationStatutP_UU)
 	{
-		set_Value (COLUMNNAME_HR_FormationSessionStatut_UU, HR_FormationSessionStatut_UU);
+		set_Value (COLUMNNAME_HR_FormationStatutP_UU, HR_FormationStatutP_UU);
 	}
 
-	/** Get HR_FormationSessionStatut_UU.
-		@return HR_FormationSessionStatut_UU	  */
-	public String getHR_FormationSessionStatut_UU()
+	/** Get HR_FormationStatutP_UU.
+		@return HR_FormationStatutP_UU	  */
+	public String getHR_FormationStatutP_UU()
 	{
-		return (String)get_Value(COLUMNNAME_HR_FormationSessionStatut_UU);
+		return (String)get_Value(COLUMNNAME_HR_FormationStatutP_UU);
 	}
 
 	/** Set Name.

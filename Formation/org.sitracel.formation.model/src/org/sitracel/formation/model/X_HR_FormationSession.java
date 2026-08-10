@@ -33,7 +33,7 @@ public class X_HR_FormationSession extends PO implements I_HR_FormationSession, 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260809L;
+	private static final long serialVersionUID = 20260810L;
 
     /** Standard Constructor */
     public X_HR_FormationSession (Properties ctx, int HR_FormationSession_ID, String trxName)

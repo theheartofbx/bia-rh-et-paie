@@ -32,7 +32,7 @@ public class X_HR_FormationDemande extends PO implements I_HR_FormationDemande, 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260809L;
+	private static final long serialVersionUID = 20260810L;
 
     /** Standard Constructor */
     public X_HR_FormationDemande (Properties ctx, int HR_FormationDemande_ID, String trxName)
