@@ -3,6 +3,15 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Formation ModelValidator
 Bundle-SymbolicName: org.sitracel.formation.modelvalidator
 Bundle-Version: 1.0.0.qualifier
+Export-Package: org.sitracel.formation.modelvalidator.factory,
+ org.sitracel.formation.modelvalidator.catalogue,
+ org.sitracel.formation.modelvalidator.module,
+ org.sitracel.formation.modelvalidator.programme,
+ org.sitracel.formation.modelvalidator.session,
+ org.sitracel.formation.modelvalidator.planning,
+ org.sitracel.formation.modelvalidator.planningligne,
+ org.sitracel.formation.modelvalidator.participant,
+ org.sitracel.formation.modelvalidator.demande
 Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
  org.adempiere.plugin.utils;bundle-version="4.1.0",
  org.sitracel.formation.model;bundle-version="1.0.0"
