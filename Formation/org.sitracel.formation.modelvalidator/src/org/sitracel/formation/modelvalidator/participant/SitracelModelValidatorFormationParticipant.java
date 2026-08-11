@@ -122,6 +122,15 @@ public class SitracelModelValidatorFormationParticipant implements ModelValidato
             if (planningID > 0) {
                 supprimerAbsencesParticipant(bpartnerID, planningID);
             }
+
+            // Remettre la demande en etat non traitee
+            int demandeID = po.get_ValueAsInt("HR_FormationDemande_ID");
+            if (demandeID > 0) {
+                DB.executeUpdateEx(
+                    "UPDATE HR_FormationDemande SET IsValidee='N', Date_Decision=NULL, Valide_Rejete_Par_Nom_ID=NULL"
+                    + " WHERE HR_FormationDemande_ID=" + demandeID,
+                    null);
+            }
         }
 
         return null;
