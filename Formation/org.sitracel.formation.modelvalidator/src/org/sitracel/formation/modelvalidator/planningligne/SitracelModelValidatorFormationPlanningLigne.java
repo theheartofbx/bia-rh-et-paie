@@ -95,7 +95,7 @@ public class SitracelModelValidatorFormationPlanningLigne implements ModelValida
                     + " AND HR_FormationPlanningLigne_ID != ?"
                     + " AND Date_Planning = ?"
                     + " AND IsActive='Y'"
-                    + " AND Heure_Debut < ?::time AND Heure_Fin > ?::time",
+                    + " AND Heure_Debut < ? AND Heure_Fin > ?",
                     planningID, ligneID, datePlanning, heureFin, heureDebut);
                 if (c > 0)
                     return "Collision horaire : un autre module est deja prevu sur ce creneau dans ce planning.";
