@@ -299,6 +299,15 @@ public class ProcessControllerFormation {
                 int clientId = Env.getAD_Client_ID(Env.getCtx());
                 int orgId = Env.getAD_Org_ID(Env.getCtx());
 
+                String matriculeEmploye = DB.getSQLValueStringEx(null,
+                    "SELECT Matricule FROM C_BPartner WHERE C_BPartner_ID=?", bpartnerID);
+                if (matriculeEmploye == null) matriculeEmploye = "N/A";
+                int posteEmployeID = DB.getSQLValueEx(null,
+                    "SELECT HR_Job_ID FROM HR_Affectation WHERE C_BPartner_ID=? AND IsActive='Y' ORDER BY Date_Debut DESC FETCH FIRST 1 ROWS ONLY", bpartnerID);
+                if (posteEmployeID < 0) posteEmployeID = 0;
+                int posteApprouveurID = DB.getSQLValueEx(null,
+                    "SELECT HR_Job_ID FROM HR_Affectation WHERE C_BPartner_ID=? AND IsActive='Y' ORDER BY Date_Debut DESC FETCH FIRST 1 ROWS ONLY", approuvParID);
+                if (posteApprouveurID < 0) posteApprouveurID = 0;
                 Calendar cal = Calendar.getInstance();
                 Timestamp courant = dateDebut;
                 while (!courant.after(dateFin)) {
@@ -316,12 +325,18 @@ public class ProcessControllerFormation {
                             + " Created, CreatedBy, Updated, UpdatedBy, IsActive,"
                             + " C_BPartner_ID, Date_Absence, HR_Type_Absence_ID,"
                             + " Date_Emission, IsConge, IsDemandeExplication,"
-                            + " IsCongeTraite, IsDemandeExplicationTraite"
+                            + " IsCongeTraite, IsDemandeExplicationTraite,"
+                            + " Emis_Par_Nom_ID, Emis_Par_Poste_ID,"
+                            + " Matricule_Employe, Poste_Employe_ID"
                             + ") VALUES ("
                             + absID + ", " + clientId + ", " + orgId + ","
                             + " now(), " + userID + ", now(), " + userID + ", 'Y',"
                             + " " + bpartnerID + ", " + DB.TO_DATE(courant) + ", " + typeAbsID + ","
-                            + " now(), 'N', 'N', 'Y', 'Y')",
+                            + " now(), 'N', 'N', 'Y', 'Y',"
+                            + " " + approuvParID + ","
+                            + " COALESCE((SELECT HR_Job_ID FROM HR_Affectation WHERE C_BPartner_ID=" + approuvParID + " AND IsActive='Y' ORDER BY Date_Debut DESC FETCH FIRST 1 ROWS ONLY), 0),"
+                            + " COALESCE((SELECT Matricule FROM C_BPartner WHERE C_BPartner_ID=" + bpartnerID + "), 'N/A'),"
+                            + " COALESCE((SELECT HR_Job_ID FROM HR_Affectation WHERE C_BPartner_ID=" + bpartnerID + " AND IsActive='Y' ORDER BY Date_Debut DESC FETCH FIRST 1 ROWS ONLY), 0))",
                             null);
                     }
 
