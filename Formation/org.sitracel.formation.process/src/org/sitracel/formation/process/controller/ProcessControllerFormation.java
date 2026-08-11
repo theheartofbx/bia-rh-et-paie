@@ -3,58 +3,89 @@ package org.sitracel.formation.process.controller;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 
 public class ProcessControllerFormation {
 
+    private static final String TYPE_ABSENCE_FORMATION = "Formation";
+
+    private static int getTypeAbsenceFormationID() {
+        return DB.getSQLValueEx(null,
+            "SELECT HR_Type_Absence_ID FROM HR_Type_Absence WHERE Nom_Absence=?",
+            TYPE_ABSENCE_FORMATION);
+    }
+
     // =====================================================
     // F1 : Valider Session
     // =====================================================
     public static String validerSession(int sessionID) {
-        // Vérifier que la session existe et n'est pas déjà validée
         String isValidee = DB.getSQLValueStringEx(null,
             "SELECT IsValidee FROM HR_FormationSession WHERE HR_FormationSession_ID=?",
             sessionID);
         if ("Y".equals(isValidee)) {
-            throw new AdempiereException("Cette session est déjà validée.");
+            throw new AdempiereException("Cette session est deja validee.");
         }
 
-        // Vérifier qu'il y a au moins un planning avec des lignes
         int nbLignes = DB.getSQLValueEx(null,
             "SELECT COUNT(*) FROM HR_FormationPlanningLigne pl"
             + " JOIN HR_FormationPlanning p ON p.HR_FormationPlanning_ID = pl.HR_FormationPlanning_ID"
             + " WHERE p.HR_FormationSession_ID=? AND pl.IsActive='Y'",
             sessionID);
         if (nbLignes == 0) {
-            throw new AdempiereException("Impossible de valider : aucun planning n'a été généré pour cette session.");
+            throw new AdempiereException("Impossible de valider : aucun planning n'a ete genere pour cette session.");
         }
 
-        // Mettre à jour le statut
         DB.executeUpdateEx(
             "UPDATE HR_FormationSession SET IsValidee='Y', Date_Validation=now() WHERE HR_FormationSession_ID=" + sessionID,
             null);
 
-        // TODO Phase 3 : notification FORMATION_SESSION_VALIDEE à tous les employés actifs
-
-        return "Session de formation validée avec succès. Les employés seront notifiés.";
+        return "Session de formation validee avec succes.";
     }
 
     // =====================================================
     // F2 : Annuler Session
     // =====================================================
     public static String annulerSession(int sessionID) {
-        String isValidee = DB.getSQLValueStringEx(null,
-            "SELECT IsValidee FROM HR_FormationSession WHERE HR_FormationSession_ID=?",
-            sessionID);
-
-        // Vérifier qu'on n'annule pas une session déjà terminée
-        // On utilise la valeur du statut via la table de référence
-        // Pour l'instant on vérifie juste que ce n'est pas déjà annulé via un flag simple
         int nbParticipants = DB.getSQLValueEx(null,
             "SELECT COUNT(*) FROM HR_FormationParticipant WHERE HR_FormationSession_ID=? AND IsActive='Y'",
             sessionID);
+
+        // Supprimer les absences Formation de tous les participants
+        if (nbParticipants > 0) {
+            Timestamp dateDebut = (Timestamp) DB.getSQLValueTSEx(null,
+                "SELECT Date_Debut FROM HR_FormationSession WHERE HR_FormationSession_ID=?", sessionID);
+            Timestamp dateFin = (Timestamp) DB.getSQLValueTSEx(null,
+                "SELECT Date_Fin FROM HR_FormationSession WHERE HR_FormationSession_ID=?", sessionID);
+            int typeAbsID = getTypeAbsenceFormationID();
+
+            if (dateDebut != null && dateFin != null && typeAbsID > 0) {
+                String sqlParticipants = "SELECT C_BPartner_ID FROM HR_FormationParticipant"
+                    + " WHERE HR_FormationSession_ID=? AND IsActive='Y'";
+                PreparedStatement pstmt = null;
+                ResultSet rs = null;
+                try {
+                    pstmt = DB.prepareStatement(sqlParticipants, null);
+                    pstmt.setInt(1, sessionID);
+                    rs = pstmt.executeQuery();
+                    while (rs.next()) {
+                        int bpID = rs.getInt("C_BPartner_ID");
+                        DB.executeUpdateEx(
+                            "DELETE FROM HR_Absence WHERE C_BPartner_ID=" + bpID
+                            + " AND HR_Type_Absence_ID=" + typeAbsID
+                            + " AND Date_Absence >= " + DB.TO_DATE(dateDebut)
+                            + " AND Date_Absence <= " + DB.TO_DATE(dateFin),
+                            null);
+                    }
+                } catch (Exception e) {
+                    throw new AdempiereException("Erreur suppression absences : " + e.getMessage());
+                } finally {
+                    DB.close(rs, pstmt);
+                }
+            }
+        }
 
         // Désactiver tous les participants
         if (nbParticipants > 0) {
@@ -75,41 +106,34 @@ public class ProcessControllerFormation {
             "UPDATE HR_FormationSession SET IsValidee='N' WHERE HR_FormationSession_ID=" + sessionID,
             null);
 
-        // TODO Phase 3 : notification FORMATION_SESSION_ANNULEE aux participants
-        // TODO Phase 3 : supprimer les absences de type Formation associées
-
-        return "Session annulée. " + nbParticipants + " participant(s) désinscrits.";
+        return "Session annulee. " + nbParticipants + " participant(s) desinscrit(s), absences supprimees.";
     }
 
     // =====================================================
-    // F3 : Générer Planning
+    // F3 : Générer Planning (inchangé - déplacé dans ModelValidator)
     // =====================================================
     public static String genererPlanning(int sessionID) {
-        // Vérifier que la session n'est pas déjà validée
         String isValidee = DB.getSQLValueStringEx(null,
             "SELECT IsValidee FROM HR_FormationSession WHERE HR_FormationSession_ID=?",
             sessionID);
         if ("Y".equals(isValidee)) {
-            throw new AdempiereException("Impossible de générer le planning : la session est déjà validée.");
+            throw new AdempiereException("Impossible de generer le planning : la session est deja validee.");
         }
 
-        // Récupérer le catalogue de la session
         int catalogueID = DB.getSQLValueEx(null,
             "SELECT HR_FormationCatalogue_ID FROM HR_FormationSession WHERE HR_FormationSession_ID=?",
             sessionID);
         if (catalogueID <= 0) {
-            throw new AdempiereException("Aucun catalogue associé à cette session.");
+            throw new AdempiereException("Aucun catalogue associe a cette session.");
         }
 
-        // Vérifier qu'il y a un programme défini
         int nbProgrammes = DB.getSQLValueEx(null,
             "SELECT COUNT(*) FROM HR_FormationProgramme WHERE HR_FormationCatalogue_ID=? AND IsActive='Y'",
             catalogueID);
         if (nbProgrammes == 0) {
-            throw new AdempiereException("Le catalogue n'a aucun programme défini. Ajoutez des modules au catalogue d'abord.");
+            throw new AdempiereException("Le catalogue n'a aucun programme defini.");
         }
 
-        // Créer l'en-tête du planning
         int planningID = DB.getNextID(Env.getAD_Client_ID(Env.getCtx()), "HR_FormationPlanning", null);
         String sessionName = DB.getSQLValueStringEx(null,
             "SELECT Name FROM HR_FormationSession WHERE HR_FormationSession_ID=?",
@@ -130,7 +154,6 @@ public class ProcessControllerFormation {
             + sessionID + ", 'Planning - " + (sessionName != null ? sessionName.replace("'", "''") : "") + "', 'N')",
             null);
 
-        // Parcourir le programme et créer les lignes
         int totalLignes = 0;
         String sql = "SELECT HR_FormationProgramme_ID, HR_FormationModule_ID, Nombre_Partie, SeqNo"
             + " FROM HR_FormationProgramme"
@@ -171,12 +194,12 @@ public class ProcessControllerFormation {
                 }
             }
         } catch (Exception e) {
-            throw new AdempiereException("Erreur lors de la génération du planning : " + e.getMessage());
+            throw new AdempiereException("Erreur generation planning : " + e.getMessage());
         } finally {
             DB.close(rs, pstmt);
         }
 
-        return "Planning généré avec succès : " + nbProgrammes + " module(s), " + totalLignes + " ligne(s) créées. Renseignez les dates, horaires, lieux et encadrants.";
+        return "Planning genere : " + nbProgrammes + " module(s), " + totalLignes + " ligne(s).";
     }
 
     // =====================================================
@@ -187,17 +210,16 @@ public class ProcessControllerFormation {
             "SELECT IsValidee FROM HR_FormationDemande WHERE HR_FormationDemande_ID=?",
             demandeID);
         if ("Y".equals(isValidee)) {
-            throw new AdempiereException("Cette demande est déjà approuvée.");
+            throw new AdempiereException("Cette demande est deja approuvee.");
         }
 
         String isRejetee = DB.getSQLValueStringEx(null,
             "SELECT IsRejetee FROM HR_FormationDemande WHERE HR_FormationDemande_ID=?",
             demandeID);
         if ("Y".equals(isRejetee)) {
-            throw new AdempiereException("Cette demande a déjà été rejetée.");
+            throw new AdempiereException("Cette demande a deja ete rejetee.");
         }
 
-        // Récupérer les infos de la demande
         int sessionID = DB.getSQLValueEx(null,
             "SELECT HR_FormationSession_ID FROM HR_FormationDemande WHERE HR_FormationDemande_ID=?",
             demandeID);
@@ -205,7 +227,7 @@ public class ProcessControllerFormation {
             "SELECT C_BPartner_ID FROM HR_FormationDemande WHERE HR_FormationDemande_ID=?",
             demandeID);
 
-        // Vérifier le nombre de places
+        // Vérifier nombre de places
         int nbPlaces = DB.getSQLValueEx(null,
             "SELECT COALESCE(Nombre_Places, 0) FROM HR_FormationSession WHERE HR_FormationSession_ID=?",
             sessionID);
@@ -214,17 +236,34 @@ public class ProcessControllerFormation {
                 "SELECT COUNT(*) FROM HR_FormationParticipant WHERE HR_FormationSession_ID=? AND IsActive='Y'",
                 sessionID);
             if (nbParticipants >= nbPlaces) {
-                throw new AdempiereException("Impossible d'approuver : toutes les places sont prises (" + nbPlaces + "/" + nbPlaces + ").");
+                throw new AdempiereException("Toutes les places sont prises (" + nbPlaces + "/" + nbPlaces + ").");
             }
         }
 
-        // Vérifier que l'employé n'est pas déjà participant
+        // Vérifier doublon
         int dejaInscrit = DB.getSQLValueEx(null,
             "SELECT COUNT(*) FROM HR_FormationParticipant"
             + " WHERE HR_FormationSession_ID=? AND C_BPartner_ID=? AND IsActive='Y'",
             sessionID, bpartnerID);
         if (dejaInscrit > 0) {
-            throw new AdempiereException("Cet employé est déjà inscrit comme participant à cette session.");
+            throw new AdempiereException("Cet employe est deja inscrit comme participant.");
+        }
+
+        // Vérifier disponibilité : l'employé a-t-il une absence sur la période de la session ?
+        Timestamp dateDebut = (Timestamp) DB.getSQLValueTSEx(null,
+            "SELECT Date_Debut FROM HR_FormationSession WHERE HR_FormationSession_ID=?", sessionID);
+        Timestamp dateFin = (Timestamp) DB.getSQLValueTSEx(null,
+            "SELECT Date_Fin FROM HR_FormationSession WHERE HR_FormationSession_ID=?", sessionID);
+
+        if (dateDebut != null && dateFin != null) {
+            int nbAbsences = DB.getSQLValueEx(null,
+                "SELECT COUNT(*) FROM HR_Absence"
+                + " WHERE C_BPartner_ID=? AND Date_Absence >= ? AND Date_Absence <= ? AND IsActive='Y'",
+                bpartnerID, dateDebut, dateFin);
+            if (nbAbsences > 0) {
+                throw new AdempiereException("Impossible d'approuver : l'employe a " + nbAbsences
+                    + " jour(s) d'absence (conge, suspension ou autre) durant la periode de formation.");
+            }
         }
 
         // Approuver la demande
@@ -238,7 +277,7 @@ public class ProcessControllerFormation {
             + " WHERE HR_FormationDemande_ID=" + demandeID,
             null);
 
-        // Créer automatiquement le participant
+        // Créer le participant
         int participantID = DB.getNextID(Env.getAD_Client_ID(Env.getCtx()), "HR_FormationParticipant", null);
         DB.executeUpdateEx(
             "INSERT INTO HR_FormationParticipant ("
@@ -253,9 +292,46 @@ public class ProcessControllerFormation {
             + " " + sessionID + ", " + bpartnerID + ", " + demandeID + ")",
             null);
 
-        // TODO Phase 3 : notification FORMATION_DEMANDE_APPROUVEE à l'employé
+        // Créer les absences de type Formation pour chaque jour ouvrable
+        if (dateDebut != null && dateFin != null) {
+            int typeAbsID = getTypeAbsenceFormationID();
+            if (typeAbsID > 0) {
+                int clientId = Env.getAD_Client_ID(Env.getCtx());
+                int orgId = Env.getAD_Org_ID(Env.getCtx());
 
-        return "Demande approuvée. L'employé a été inscrit comme participant.";
+                Calendar cal = Calendar.getInstance();
+                Timestamp courant = dateDebut;
+                while (!courant.after(dateFin)) {
+                    cal.setTime(courant);
+                    boolean estDimanche = cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
+                    boolean estFerie = DB.getSQLValueEx(null,
+                        "SELECT COUNT(*) FROM HR_Public_Holiday WHERE Date_Jour_Ferie=? AND IsActive='Y'",
+                        courant) > 0;
+
+                    if (!estDimanche && !estFerie) {
+                        int absID = DB.getNextID(clientId, "HR_Absence", null);
+                        DB.executeUpdateEx(
+                            "INSERT INTO HR_Absence ("
+                            + "HR_Absence_ID, AD_Client_ID, AD_Org_ID,"
+                            + " Created, CreatedBy, Updated, UpdatedBy, IsActive,"
+                            + " C_BPartner_ID, Date_Absence, HR_Type_Absence_ID,"
+                            + " Date_Emission, IsConge, IsDemandeExplication,"
+                            + " IsCongeTraite, IsDemandeExplicationTraite"
+                            + ") VALUES ("
+                            + absID + ", " + clientId + ", " + orgId + ","
+                            + " now(), " + userID + ", now(), " + userID + ", 'Y',"
+                            + " " + bpartnerID + ", " + DB.TO_DATE(courant) + ", " + typeAbsID + ","
+                            + " now(), 'N', 'N', 'Y', 'Y')",
+                            null);
+                    }
+
+                    cal.add(Calendar.DAY_OF_MONTH, 1);
+                    courant = new Timestamp(cal.getTimeInMillis());
+                }
+            }
+        }
+
+        return "Demande approuvee. Participant inscrit et absences Formation creees.";
     }
 
     // =====================================================
@@ -266,22 +342,21 @@ public class ProcessControllerFormation {
             "SELECT IsValidee FROM HR_FormationDemande WHERE HR_FormationDemande_ID=?",
             demandeID);
         if ("Y".equals(isValidee)) {
-            throw new AdempiereException("Impossible de rejeter : cette demande est déjà approuvée.");
+            throw new AdempiereException("Impossible de rejeter : cette demande est deja approuvee.");
         }
 
         String isRejetee = DB.getSQLValueStringEx(null,
             "SELECT IsRejetee FROM HR_FormationDemande WHERE HR_FormationDemande_ID=?",
             demandeID);
         if ("Y".equals(isRejetee)) {
-            throw new AdempiereException("Cette demande est déjà rejetée.");
+            throw new AdempiereException("Cette demande est deja rejetee.");
         }
 
-        // Vérifier que le motif de rejet est renseigné
         String motifRejet = DB.getSQLValueStringEx(null,
             "SELECT Motif_Rejet FROM HR_FormationDemande WHERE HR_FormationDemande_ID=?",
             demandeID);
         if (motifRejet == null || motifRejet.trim().isEmpty()) {
-            throw new AdempiereException("Veuillez renseigner le motif de rejet avant de rejeter la demande.");
+            throw new AdempiereException("Veuillez renseigner le motif de rejet.");
         }
 
         int userID = Env.getAD_User_ID(Env.getCtx());
@@ -294,8 +369,6 @@ public class ProcessControllerFormation {
             + " WHERE HR_FormationDemande_ID=" + demandeID,
             null);
 
-        // TODO Phase 3 : notification FORMATION_DEMANDE_REJETEE à l'employé
-
-        return "Demande rejetée.";
+        return "Demande rejetee.";
     }
 }
