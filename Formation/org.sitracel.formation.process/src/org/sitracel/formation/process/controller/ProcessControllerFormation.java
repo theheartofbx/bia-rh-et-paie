@@ -53,37 +53,25 @@ public class ProcessControllerFormation {
             "SELECT COUNT(*) FROM HR_FormationParticipant WHERE HR_FormationSession_ID=? AND IsActive='Y'",
             sessionID);
 
-        // Supprimer les absences Formation de tous les participants
+        // Supprimer les absences Formation de tous les participants (basees sur le planning)
         if (nbParticipants > 0) {
-            Timestamp dateDebut = (Timestamp) DB.getSQLValueTSEx(null,
-                "SELECT Date_Debut FROM HR_FormationSession WHERE HR_FormationSession_ID=?", sessionID);
-            Timestamp dateFin = (Timestamp) DB.getSQLValueTSEx(null,
-                "SELECT Date_Fin FROM HR_FormationSession WHERE HR_FormationSession_ID=?", sessionID);
             int typeAbsID = getTypeAbsenceFormationID();
-
-            if (dateDebut != null && dateFin != null && typeAbsID > 0) {
-                String sqlParticipants = "SELECT C_BPartner_ID FROM HR_FormationParticipant"
-                    + " WHERE HR_FormationSession_ID=? AND IsActive='Y'";
-                PreparedStatement pstmt = null;
-                ResultSet rs = null;
-                try {
-                    pstmt = DB.prepareStatement(sqlParticipants, null);
-                    pstmt.setInt(1, sessionID);
-                    rs = pstmt.executeQuery();
-                    while (rs.next()) {
-                        int bpID = rs.getInt("C_BPartner_ID");
-                        DB.executeUpdateEx(
-                            "DELETE FROM HR_Absence WHERE C_BPartner_ID=" + bpID
-                            + " AND HR_Type_Absence_ID=" + typeAbsID
-                            + " AND Date_Absence >= " + DB.TO_DATE(dateDebut)
-                            + " AND Date_Absence <= " + DB.TO_DATE(dateFin),
-                            null);
-                    }
-                } catch (Exception e) {
-                    throw new AdempiereException("Erreur suppression absences : " + e.getMessage());
-                } finally {
-                    DB.close(rs, pstmt);
-                }
+            if (typeAbsID > 0) {
+                DB.executeUpdateEx(
+                    "DELETE FROM HR_Absence WHERE HR_Type_Absence_ID=" + typeAbsID
+                    + " AND C_BPartner_ID IN ("
+                    + "   SELECT C_BPartner_ID FROM HR_FormationParticipant"
+                    + "   WHERE HR_FormationSession_ID=" + sessionID + " AND IsActive='Y'"
+                    + " )"
+                    + " AND Date_Absence IN ("
+                    + "   SELECT pl.Date_Planning FROM HR_FormationPlanningLigne pl"
+                    + "   JOIN HR_FormationPlanning p ON p.HR_FormationPlanning_ID = pl.HR_FormationPlanning_ID"
+                    + "   WHERE p.HR_FormationSession_ID=" + sessionID
+                    + "   AND pl.IsActive='Y' AND pl.Date_Planning IS NOT NULL"
+                    + " )",
+                    null);
+            }
+        }
             }
         }
 
@@ -292,63 +280,7 @@ public class ProcessControllerFormation {
             + " " + sessionID + ", " + bpartnerID + ", " + demandeID + ")",
             null);
 
-        // Créer les absences de type Formation pour chaque jour ouvrable
-        if (dateDebut != null && dateFin != null) {
-            int typeAbsID = getTypeAbsenceFormationID();
-            if (typeAbsID > 0) {
-                int clientId = Env.getAD_Client_ID(Env.getCtx());
-                int orgId = Env.getAD_Org_ID(Env.getCtx());
-
-                String matriculeEmploye = DB.getSQLValueStringEx(null,
-                    "SELECT Value FROM C_BPartner WHERE C_BPartner_ID=?", bpartnerID);
-                if (matriculeEmploye == null) matriculeEmploye = "N/A";
-                int posteEmployeID = DB.getSQLValueEx(null,
-                    "SELECT HR_Job_ID FROM HR_Affectation WHERE C_BPartner_ID=? AND IsActive='Y' ORDER BY Date_Debut DESC FETCH FIRST 1 ROWS ONLY", bpartnerID);
-                if (posteEmployeID < 0) posteEmployeID = 0;
-                int posteApprouveurID = DB.getSQLValueEx(null,
-                    "SELECT HR_Job_ID FROM HR_Affectation WHERE C_BPartner_ID=? AND IsActive='Y' ORDER BY Date_Debut DESC FETCH FIRST 1 ROWS ONLY", approuvParID);
-                if (posteApprouveurID < 0) posteApprouveurID = 0;
-                String matriculeApprouveur = DB.getSQLValueStringEx(null,
-                    "SELECT Value FROM C_BPartner WHERE C_BPartner_ID=?", approuvParID);
-                if (matriculeApprouveur == null) matriculeApprouveur = "N/A";
-                Calendar cal = Calendar.getInstance();
-                Timestamp courant = dateDebut;
-                while (!courant.after(dateFin)) {
-                    cal.setTime(courant);
-                    boolean estDimanche = cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
-                    boolean estFerie = DB.getSQLValueEx(null,
-                        "SELECT COUNT(*) FROM HR_Public_Holiday WHERE Date_Jour_Ferie=? AND IsActive='Y'",
-                        courant) > 0;
-
-                    if (!estDimanche && !estFerie) {
-                        int absID = DB.getNextID(clientId, "HR_Absence", null);
-                        DB.executeUpdateEx(
-                            "INSERT INTO HR_Absence ("
-                            + "HR_Absence_ID, AD_Client_ID, AD_Org_ID,"
-                            + " Created, CreatedBy, Updated, UpdatedBy, IsActive,"
-                            + " C_BPartner_ID, Date_Absence, HR_Type_Absence_ID,"
-                            + " Date_Emission, IsConge, IsDemandeExplication,"
-                            + " IsCongeTraite, IsDemandeExplicationTraite,"
-                            + " Emis_Par_Nom_ID, Emis_Par_Poste_ID, Emis_Par_Matricule,"
-                            + " Matricule_Employe, Poste_Employe_ID"
-                            + ") VALUES ("
-                            + absID + ", " + clientId + ", " + orgId + ","
-                            + " now(), " + userID + ", now(), " + userID + ", 'Y',"
-                            + " " + bpartnerID + ", " + DB.TO_DATE(courant) + ", " + typeAbsID + ","
-                            + " now(), 'N', 'N', 'Y', 'Y',"
-                            + " " + approuvParID + ", " + posteApprouveurID + ", '" + matriculeApprouveur + "',"
-                            + " '" + matriculeEmploye + "',"
-                            + " " + posteEmployeID + ")",
-                            null);
-                    }
-
-                    cal.add(Calendar.DAY_OF_MONTH, 1);
-                    courant = new Timestamp(cal.getTimeInMillis());
-                }
-            }
-        }
-
-        return "Demande approuvee. Participant inscrit et absences Formation creees.";
+        return "Demande approuvee. L'employe a ete inscrit comme participant.";
     }
 
     // =====================================================
