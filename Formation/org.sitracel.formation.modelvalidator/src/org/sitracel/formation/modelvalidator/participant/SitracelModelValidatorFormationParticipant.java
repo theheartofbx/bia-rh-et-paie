@@ -100,7 +100,8 @@ public class SitracelModelValidatorFormationParticipant implements ModelValidato
 
             if (type == TYPE_AFTER_CHANGE && po.is_ValueChanged("HR_FormationPlanning_ID")) {
                 // Supprimer les absences de l'ancien planning
-                int oldPlanningID = ((Number) po.get_ValueOld("HR_FormationPlanning_ID")).intValue();
+                Object oldVal = po.get_ValueOld("HR_FormationPlanning_ID");
+                int oldPlanningID = (oldVal != null) ? ((Number) oldVal).intValue() : 0;
                 if (oldPlanningID > 0) {
                     supprimerAbsencesParticipant(bpartnerID, oldPlanningID);
                 }
