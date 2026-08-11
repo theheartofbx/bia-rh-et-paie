@@ -3,7 +3,6 @@ package org.sitracel.formation.process.controller;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.util.Calendar;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
@@ -53,7 +52,7 @@ public class ProcessControllerFormation {
             "SELECT COUNT(*) FROM HR_FormationParticipant WHERE HR_FormationSession_ID=? AND IsActive='Y'",
             sessionID);
 
-        // Supprimer les absences Formation de tous les participants (basees sur le planning)
+        // Supprimer les absences Formation basees sur le planning
         if (nbParticipants > 0) {
             int typeAbsID = getTypeAbsenceFormationID();
             if (typeAbsID > 0) {
@@ -72,24 +71,22 @@ public class ProcessControllerFormation {
                     null);
             }
         }
-            }
-        }
 
-        // Désactiver tous les participants
+        // Desactiver tous les participants
         if (nbParticipants > 0) {
             DB.executeUpdateEx(
                 "UPDATE HR_FormationParticipant SET IsActive='N' WHERE HR_FormationSession_ID=" + sessionID,
                 null);
         }
 
-        // Désactiver toutes les demandes en attente
+        // Desactiver toutes les demandes en attente
         DB.executeUpdateEx(
             "UPDATE HR_FormationDemande SET IsActive='N'"
             + " WHERE HR_FormationSession_ID=" + sessionID
             + " AND IsValidee='N' AND IsRejetee='N'",
             null);
 
-        // Marquer la session comme non validée
+        // Marquer la session comme non validee
         DB.executeUpdateEx(
             "UPDATE HR_FormationSession SET IsValidee='N' WHERE HR_FormationSession_ID=" + sessionID,
             null);
@@ -98,7 +95,7 @@ public class ProcessControllerFormation {
     }
 
     // =====================================================
-    // F3 : Générer Planning (inchangé - déplacé dans ModelValidator)
+    // F3 : Generer Planning
     // =====================================================
     public static String genererPlanning(int sessionID) {
         String isValidee = DB.getSQLValueStringEx(null,
@@ -215,7 +212,7 @@ public class ProcessControllerFormation {
             "SELECT C_BPartner_ID FROM HR_FormationDemande WHERE HR_FormationDemande_ID=?",
             demandeID);
 
-        // Vérifier nombre de places
+        // Verifier nombre de places
         int nbPlaces = DB.getSQLValueEx(null,
             "SELECT COALESCE(Nombre_Places, 0) FROM HR_FormationSession WHERE HR_FormationSession_ID=?",
             sessionID);
@@ -228,7 +225,7 @@ public class ProcessControllerFormation {
             }
         }
 
-        // Vérifier doublon
+        // Verifier doublon
         int dejaInscrit = DB.getSQLValueEx(null,
             "SELECT COUNT(*) FROM HR_FormationParticipant"
             + " WHERE HR_FormationSession_ID=? AND C_BPartner_ID=? AND IsActive='Y'",
@@ -237,7 +234,7 @@ public class ProcessControllerFormation {
             throw new AdempiereException("Cet employe est deja inscrit comme participant.");
         }
 
-        // Vérifier disponibilité : l'employé a-t-il une absence sur la période de la session ?
+        // Verifier disponibilite sur la periode de la session (garde-fou global)
         Timestamp dateDebut = (Timestamp) DB.getSQLValueTSEx(null,
             "SELECT Date_Debut FROM HR_FormationSession WHERE HR_FormationSession_ID=?", sessionID);
         Timestamp dateFin = (Timestamp) DB.getSQLValueTSEx(null,
@@ -265,7 +262,7 @@ public class ProcessControllerFormation {
             + " WHERE HR_FormationDemande_ID=" + demandeID,
             null);
 
-        // Créer le participant
+        // Creer le participant (les absences seront creees par le ModelValidator quand le planning sera assigne)
         int participantID = DB.getNextID(Env.getAD_Client_ID(Env.getCtx()), "HR_FormationParticipant", null);
         DB.executeUpdateEx(
             "INSERT INTO HR_FormationParticipant ("
