@@ -20,6 +20,9 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
+import org.sitracel.conge.model.I_HR_Autorisation_Conge;
+import org.sitracel.contrat.model.I_HR_Contrat;
+import org.sitracel.mission.model.I_HR_Appreciation;
 
 /** Generated Interface for HR_Stage
  *  @author iDempiere (generated) 

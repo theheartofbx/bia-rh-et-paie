@@ -21,8 +21,15 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.compiere.util.Env;
+import org.sitracel.conge.model.I_HR_Autorisation_Conge;
+import org.sitracel.contrat.model.I_HR_Contrat;
+import org.sitracel.mission.model.I_HR_Appreciation;
 
 /** Generated Model for HR_Stage
  *  @author iDempiere (generated)

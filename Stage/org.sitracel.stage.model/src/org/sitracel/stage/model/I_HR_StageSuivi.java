@@ -18,8 +18,10 @@ package org.sitracel.stage.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
+import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
+import org.sitracel.mission.model.I_HR_Appreciation;
 
 /** Generated Interface for HR_StageSuivi
  *  @author iDempiere (generated) 
