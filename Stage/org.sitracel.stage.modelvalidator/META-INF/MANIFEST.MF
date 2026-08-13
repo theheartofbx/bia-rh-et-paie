@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Stage ModelValidator
+Bundle-SymbolicName: org.sitracel.stage.modelvalidator
+Bundle-Version: 1.0.0.qualifier
+Export-Package: org.sitracel.stage.modelvalidator.factory
+Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
+ org.adempiere.plugin.utils;bundle-version="4.1.0",
+ org.sitracel.stage.model;bundle-version="1.0.0"
+Service-Component: OSGI-INF/*.xml
+Automatic-Module-Name: org.sitracel.stage.modelvalidator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
