@@ -3,7 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Stage ModelValidator
 Bundle-SymbolicName: org.sitracel.stage.modelvalidator
 Bundle-Version: 1.0.0.qualifier
-Export-Package: org.sitracel.stage.modelvalidator.factory
+Export-Package: org.sitracel.stage.modelvalidator.factory,
+ org.sitracel.stage.modelvalidator.stage,
+ org.sitracel.stage.modelvalidator.suivi,
+ org.sitracel.stage.modelvalidator.programmeligne
 Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
  org.adempiere.plugin.utils;bundle-version="4.1.0",
  org.sitracel.stage.model;bundle-version="1.0.0"
