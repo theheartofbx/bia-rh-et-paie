@@ -13,6 +13,8 @@ public class SitracelStageModelValidatorFactory implements IModelValidationFacto
         list.add(new org.sitracel.stage.modelvalidator.stage.SitracelModelValidatorStage());
         list.add(new org.sitracel.stage.modelvalidator.suivi.SitracelModelValidatorStageSuivi());
         list.add(new org.sitracel.stage.modelvalidator.programmeligne.SitracelModelValidatorStageProgrammeLigne());
+        list.add(new org.sitracel.stage.modelvalidator.programme.SitracelModelValidatorStageProgramme());
+        list.add(new org.sitracel.stage.modelvalidator.objectif.SitracelModelValidatorStageObjectif());
         return list;
     }
 }

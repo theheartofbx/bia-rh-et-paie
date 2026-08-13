@@ -20,6 +20,13 @@ public class ValiderStage extends SvrProcess {
             return "Le stage est déjà validé.";
         }
 
+        // Vérifier que le stage n'est pas rejeté
+        String isRejetee = DB.getSQLValueString(get_TrxName(),
+            "SELECT IsRejetee FROM HR_Stage WHERE HR_Stage_ID = ?", stageId);
+        if ("Y".equals(isRejetee)) {
+            return "Le stage est rejeté, il ne peut pas être validé.";
+        }
+
         // Vérifier que le score a été calculé
         int scoreTotal = DB.getSQLValue(get_TrxName(),
             "SELECT COALESCE(Score_Total, -1) FROM HR_Stage WHERE HR_Stage_ID = ?", stageId);

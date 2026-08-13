@@ -29,6 +29,9 @@ public class SitracelModelValidatorStage implements ModelValidator {
         if (type == TYPE_BEFORE_NEW || type == TYPE_BEFORE_CHANGE) {
             return beforeSave(po, type == TYPE_BEFORE_NEW);
         }
+        if (type == TYPE_BEFORE_DELETE) {
+            return beforeDelete(po);
+        }
         return null;
     }
 
@@ -45,12 +48,15 @@ public class SitracelModelValidatorStage implements ModelValidator {
         }
 
         // Garde-fou 2 : Contrat obligatoire et de type Stage (HR_ContratType_ID = 303)
-        int contratId = (Integer) po.get_Value("HR_Contrat_ID");
-        if (contratId > 0) {
-            int typeContrat = DB.getSQLValue(po.get_TrxName(),
-                "SELECT HR_ContratType_ID FROM HR_Contrat WHERE HR_Contrat_ID = ?", contratId);
-            if (typeContrat != 303) {
-                return "Le contrat sélectionné n'est pas de type Stage.";
+        Object contratObj = po.get_Value("HR_Contrat_ID");
+        if (contratObj != null) {
+            int contratId = (Integer) contratObj;
+            if (contratId > 0) {
+                int typeContrat = DB.getSQLValue(po.get_TrxName(),
+                    "SELECT HR_ContratType_ID FROM HR_Contrat WHERE HR_Contrat_ID = ?", contratId);
+                if (typeContrat != 303) {
+                    return "Le contrat sélectionné n'est pas de type Stage.";
+                }
             }
         }
 
@@ -61,19 +67,46 @@ public class SitracelModelValidatorStage implements ModelValidator {
             return "La date de fin ne peut pas être antérieure à la date de début.";
         }
 
-        // Garde-fou 4 : Empêcher modification manuelle des indicateurs
+        // Garde-fou 4 : IsValidee et IsRejetee mutuellement exclusifs
+        boolean isValidee = "Y".equals(po.get_Value("IsValidee").toString());
+        boolean isRejetee = "Y".equals(po.get_Value("IsRejetee").toString());
+        if (isValidee && isRejetee) {
+            return "Un stage ne peut pas être à la fois validé et rejeté.";
+        }
+
+        // Garde-fou 5 : Anti-doublon stagiaire actif (un seul stage non validé par BPartner)
+        int bpartnerId = (Integer) po.get_Value("C_BPartner_ID");
+        int stageId = po.get_ID();
+        if (isNew || po.is_ValueChanged("C_BPartner_ID")) {
+            int count = DB.getSQLValue(po.get_TrxName(),
+                "SELECT COUNT(*) FROM HR_Stage WHERE C_BPartner_ID = ? AND IsValidee = 'N' AND IsRejetee = 'N' AND IsActive = 'Y' AND HR_Stage_ID != ?",
+                bpartnerId, stageId);
+            if (count > 0) {
+                return "Ce stagiaire a déjà un stage en cours (non validé/non rejeté).";
+            }
+        }
+
+        // Garde-fou 6 : Empêcher modification manuelle des indicateurs
         if (!isNew) {
             String[] indicateurs = {"NombreObjectifs", "NombreDefinis", "NombreEvalues", "PourcentageAvancement"};
             for (String col : indicateurs) {
                 Object oldVal = po.get_ValueOld(col);
                 Object newVal = po.get_Value(col);
                 if (oldVal != null && newVal != null && !oldVal.equals(newVal)) {
-                    // Remettre l'ancienne valeur silencieusement
                     po.set_ValueNoCheck(col, oldVal);
                 }
             }
         }
 
+        return null;
+    }
+
+    private String beforeDelete(PO po) {
+        // Empêcher suppression si stage validé
+        boolean isValidee = "Y".equals(po.get_Value("IsValidee").toString());
+        if (isValidee) {
+            return "Impossible de supprimer un stage validé.";
+        }
         return null;
     }
 }

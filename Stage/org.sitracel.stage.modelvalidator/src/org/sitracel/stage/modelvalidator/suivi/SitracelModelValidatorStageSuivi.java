@@ -30,6 +30,9 @@ public class SitracelModelValidatorStageSuivi implements ModelValidator {
         if (type == TYPE_BEFORE_NEW || type == TYPE_BEFORE_CHANGE) {
             return beforeSave(po, type == TYPE_BEFORE_NEW);
         }
+        if (type == TYPE_BEFORE_DELETE) {
+            return beforeDelete(po);
+        }
         if (type == TYPE_AFTER_NEW || type == TYPE_AFTER_CHANGE || type == TYPE_AFTER_DELETE) {
             updateIndicateurs(po, type == TYPE_AFTER_DELETE);
         }
@@ -49,7 +52,14 @@ public class SitracelModelValidatorStageSuivi implements ModelValidator {
             return "Le stage est validé, aucune modification n'est possible.";
         }
 
-        // Garde-fou 2 : Dates du suivi dans la période du stage
+        // Garde-fou 2 : Stage rejeté → lecture seule
+        String isRejetee = DB.getSQLValueString(po.get_TrxName(),
+            "SELECT IsRejetee FROM HR_Stage WHERE HR_Stage_ID = ?", stageId);
+        if ("Y".equals(isRejetee)) {
+            return "Le stage est rejeté, aucune modification n'est possible.";
+        }
+
+        // Garde-fou 3 : Dates du suivi dans la période du stage
         Timestamp suiviDebut = (Timestamp) po.get_Value("Date_Debut");
         Timestamp suiviFin = (Timestamp) po.get_Value("Date_Fin");
         if (suiviDebut != null || suiviFin != null) {
@@ -69,7 +79,22 @@ public class SitracelModelValidatorStageSuivi implements ModelValidator {
             return "La date de fin ne peut pas être antérieure à la date de début.";
         }
 
-        // Garde-fou 3 : Score <= ScoreMax
+        // Garde-fou 4 : IsEvalue impossible si IsOk = N
+        boolean isEvalue = "Y".equals(po.get_Value("IsEvalue").toString());
+        boolean isOk = "Y".equals(po.get_Value("IsOk").toString());
+        if (isEvalue && !isOk) {
+            return "Impossible d'évaluer un objectif qui n'est pas encore défini (Défini = Non).";
+        }
+
+        // Garde-fou 5 : Score obligatoire si IsEvalue = Y
+        if (isEvalue) {
+            Object scoreObj = po.get_Value("Score");
+            if (scoreObj == null || ((BigDecimal) scoreObj).compareTo(BigDecimal.ZERO) == 0) {
+                return "Le score est obligatoire pour marquer un objectif comme évalué.";
+            }
+        }
+
+        // Garde-fou 6 : Score <= ScoreMax et >= 0
         Object scoreObj = po.get_Value("Score");
         Object scoreMaxObj = po.get_Value("ScoreMax");
         if (scoreObj != null && scoreMaxObj != null) {
@@ -78,9 +103,32 @@ public class SitracelModelValidatorStageSuivi implements ModelValidator {
             if (score.compareTo(BigDecimal.ZERO) < 0) {
                 return "Le score ne peut pas être négatif.";
             }
-            if (score.compareTo(scoreMax) > 0) {
+            if (scoreMax.compareTo(BigDecimal.ZERO) > 0 && score.compareTo(scoreMax) > 0) {
                 return "Le score (" + score + ") ne peut pas dépasser le score maximum (" + scoreMax + ").";
             }
+        }
+
+        // Garde-fou 7 : Auto-remplir Date_Evaluation quand IsEvalue passe à Y
+        if (isEvalue && po.is_ValueChanged("IsEvalue")) {
+            po.set_ValueNoCheck("Date_Evaluation", new Timestamp(System.currentTimeMillis()));
+        }
+
+        return null;
+    }
+
+    private String beforeDelete(PO po) {
+        int stageId = (Integer) po.get_Value("HR_Stage_ID");
+
+        String isValidee = DB.getSQLValueString(po.get_TrxName(),
+            "SELECT IsValidee FROM HR_Stage WHERE HR_Stage_ID = ?", stageId);
+        if ("Y".equals(isValidee)) {
+            return "Impossible de supprimer un objectif d'un stage validé.";
+        }
+
+        String isRejetee = DB.getSQLValueString(po.get_TrxName(),
+            "SELECT IsRejetee FROM HR_Stage WHERE HR_Stage_ID = ?", stageId);
+        if ("Y".equals(isRejetee)) {
+            return "Impossible de supprimer un objectif d'un stage rejeté.";
         }
 
         return null;
@@ -89,7 +137,8 @@ public class SitracelModelValidatorStageSuivi implements ModelValidator {
     private void updateIndicateurs(PO po, boolean isDelete) {
         int stageId;
         if (isDelete) {
-            stageId = (Integer) po.get_ValueOld("HR_Stage_ID");
+            Object old = po.get_ValueOld("HR_Stage_ID");
+            stageId = old != null ? (Integer) old : 0;
         } else {
             stageId = (Integer) po.get_Value("HR_Stage_ID");
         }

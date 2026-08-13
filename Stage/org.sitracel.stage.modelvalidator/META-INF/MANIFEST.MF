@@ -6,7 +6,9 @@ Bundle-Version: 1.0.0.qualifier
 Export-Package: org.sitracel.stage.modelvalidator.factory,
  org.sitracel.stage.modelvalidator.stage,
  org.sitracel.stage.modelvalidator.suivi,
- org.sitracel.stage.modelvalidator.programmeligne
+ org.sitracel.stage.modelvalidator.programmeligne,
+ org.sitracel.stage.modelvalidator.programme,
+ org.sitracel.stage.modelvalidator.objectif
 Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
  org.adempiere.plugin.utils;bundle-version="4.1.0",
  org.sitracel.stage.model;bundle-version="1.0.0"
