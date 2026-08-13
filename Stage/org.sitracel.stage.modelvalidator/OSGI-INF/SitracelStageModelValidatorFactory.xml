@@ -3,6 +3,6 @@
    <implementation class="org.sitracel.stage.modelvalidator.factory.SitracelStageModelValidatorFactory"/>
    <property name="service.ranking" type="Integer" value="100"/>
    <service>
-      <provide interface="org.adempiere.base.IModelValidationFactory"/>
+      <provide interface="org.adempiere.base.IModelValidatorFactory"/>
    </service>
 </scr:component>

@@ -37,6 +37,10 @@ public class GenererPlanningStage extends SvrProcess {
             return "Le planning existe déjà (" + existant + " objectifs). Supprimez les lignes existantes avant de regénérer.";
         }
 
+        // Récupérer l'AD_Org_ID du stage
+        int orgId = DB.getSQLValue(get_TrxName(),
+            "SELECT AD_Org_ID FROM HR_Stage WHERE HR_Stage_ID = ?", stageId);
+
         // Récupérer les lignes du programme et créer les lignes de suivi
         int count = 0;
         String sql = "SELECT HR_StageProgrammeLigne_ID, HR_StageObjectif_ID, SeqNo, Ponderation_Defaut, ScoreMax_Defaut "
@@ -60,7 +64,7 @@ public class GenererPlanningStage extends SvrProcess {
                 if (!rs.wasNull()) suivi.setPonderation(ponderation);
                 java.math.BigDecimal scoreMax = rs.getBigDecimal("ScoreMax_Defaut");
                 if (scoreMax != null) suivi.setScoreMax(scoreMax);
-                suivi.setAD_Org_ID(getAD_Org_ID());
+                suivi.setAD_Org_ID(orgId);
                 suivi.saveEx(get_TrxName());
                 count++;
             }

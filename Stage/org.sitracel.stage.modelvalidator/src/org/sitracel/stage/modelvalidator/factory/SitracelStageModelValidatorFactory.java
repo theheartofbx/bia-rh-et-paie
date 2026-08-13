@@ -1,20 +1,22 @@
 package org.sitracel.stage.modelvalidator.factory;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.adempiere.base.IModelValidationFactory;
+import org.adempiere.base.IModelValidatorFactory;
 import org.compiere.model.ModelValidator;
+import org.sitracel.stage.modelvalidator.stage.*;
+import org.sitracel.stage.modelvalidator.suivi.*;
+import org.sitracel.stage.modelvalidator.programmeligne.*;
+import org.sitracel.stage.modelvalidator.programme.*;
+import org.sitracel.stage.modelvalidator.objectif.*;
 
-public class SitracelStageModelValidatorFactory implements IModelValidationFactory {
+public class SitracelStageModelValidatorFactory implements IModelValidatorFactory {
 
     @Override
-    public List<ModelValidator> newModelValidatorInstances() {
-        List<ModelValidator> list = new ArrayList<>();
-        list.add(new org.sitracel.stage.modelvalidator.stage.SitracelModelValidatorStage());
-        list.add(new org.sitracel.stage.modelvalidator.suivi.SitracelModelValidatorStageSuivi());
-        list.add(new org.sitracel.stage.modelvalidator.programmeligne.SitracelModelValidatorStageProgrammeLigne());
-        list.add(new org.sitracel.stage.modelvalidator.programme.SitracelModelValidatorStageProgramme());
-        list.add(new org.sitracel.stage.modelvalidator.objectif.SitracelModelValidatorStageObjectif());
-        return list;
+    public ModelValidator newModelValidatorInstance(String className) {
+        if (className.endsWith("SitracelModelValidatorStage")) return new SitracelModelValidatorStage();
+        if (className.endsWith("SitracelModelValidatorStageSuivi")) return new SitracelModelValidatorStageSuivi();
+        if (className.endsWith("SitracelModelValidatorStageProgrammeLigne")) return new SitracelModelValidatorStageProgrammeLigne();
+        if (className.endsWith("SitracelModelValidatorStageProgramme")) return new SitracelModelValidatorStageProgramme();
+        if (className.endsWith("SitracelModelValidatorStageObjectif")) return new SitracelModelValidatorStageObjectif();
+        return null;
     }
 }
