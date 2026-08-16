@@ -118,4 +118,10 @@ public class ContratValidatorRepository {
         }
         return null;
     }
+
+    public static String getNomEmploye(int bpartnerId, String trxName) {
+        return DB.getSQLValueString(trxName,
+            "SELECT Name FROM C_BPartner WHERE C_BPartner_ID = ?", bpartnerId);
+    }
+
 }

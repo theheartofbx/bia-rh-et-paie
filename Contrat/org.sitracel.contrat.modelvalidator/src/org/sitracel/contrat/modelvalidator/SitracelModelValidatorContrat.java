@@ -8,16 +8,6 @@ import org.sitracel.contrat.model.MHRAffectation;
 import org.sitracel.contrat.model.MHRContrat;
 import org.sitracel.contrat.modelvalidator.service.ContratValidatorService;
 
-/**
- * ModelValidator sur HR_Contrat et HR_Affectation.
- *
- * Règle appliquée : pour un même employé (C_BPartner_ID), deux contrats
- * ne peuvent pas se chevaucher dans le temps, et deux affectations non
- * plus (un employé = une seule affectation active à la fois).
- *
- * MINCE : toute la logique est déléguée à ContratValidatorService.
- * Ne pas ajouter de logique métier directement ici.
- */
 public class SitracelModelValidatorContrat implements ModelValidator {
 
     @Override
@@ -38,21 +28,21 @@ public class SitracelModelValidatorContrat implements ModelValidator {
 
     @Override
     public String modelChange(PO po, int type) throws Exception {
-        if (po == null) {
-            return null;
-        }
-
-        boolean evenementPertinent = (type == TYPE_BEFORE_NEW || type == TYPE_BEFORE_CHANGE);
-        if (!evenementPertinent) {
-            return null;
-        }
+        if (po == null) return null;
 
         if (po instanceof MHRContrat) {
-            return ContratValidatorService.validerContrat((MHRContrat) po);
+            if (type == TYPE_BEFORE_NEW || type == TYPE_BEFORE_CHANGE) {
+                return ContratValidatorService.validerContrat((MHRContrat) po);
+            }
+            if (type == TYPE_AFTER_NEW || type == TYPE_AFTER_CHANGE) {
+                ContratValidatorService.genererName((MHRContrat) po);
+            }
         }
 
         if (po instanceof MHRAffectation) {
-            return ContratValidatorService.validerAffectation((MHRAffectation) po);
+            if (type == TYPE_BEFORE_NEW || type == TYPE_BEFORE_CHANGE) {
+                return ContratValidatorService.validerAffectation((MHRAffectation) po);
+            }
         }
 
         return null;

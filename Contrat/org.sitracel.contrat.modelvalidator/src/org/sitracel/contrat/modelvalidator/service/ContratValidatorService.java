@@ -235,4 +235,28 @@ public class ContratValidatorService {
         String fin = affectation.getDate_Fin() != null ? formaterDate(affectation.getDate_Fin()) : "en cours";
         return "affectation du " + debut + " (" + fin + ")";
     }
+
+    // =========================================================================
+    // GENERATION DU NOM D'AFFICHAGE
+    // =========================================================================
+
+    public static void genererName(MHRContrat contrat) {
+        if (contrat.getC_BPartner_ID() <= 0) return;
+
+        String nomEmploye = ContratValidatorRepository.getNomEmploye(
+            contrat.getC_BPartner_ID(), contrat.get_TrxName());
+        String nomType = getNomTypeContrat(contrat);
+        String dateDebut = contrat.getDate_Debut() != null 
+            ? formaterDate(contrat.getDate_Debut()) : "?";
+        int contratId = contrat.getHR_Contrat_ID();
+
+        String name = (nomEmploye != null ? nomEmploye : "?")
+            + " - " + (nomType != null ? nomType : "?")
+            + " - " + dateDebut
+            + " (" + contratId + ")";
+
+        contrat.set_ValueNoCheck("Name", name);
+        contrat.saveEx(contrat.get_TrxName());
+    }
+
 }
