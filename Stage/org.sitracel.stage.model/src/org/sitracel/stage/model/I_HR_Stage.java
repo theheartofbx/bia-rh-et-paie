@@ -18,9 +18,9 @@ package org.sitracel.stage.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
+import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
-import org.sitracel.conge.model.I_HR_Autorisation_Conge;
 import org.sitracel.contrat.model.I_HR_Contrat;
 import org.sitracel.mission.model.I_HR_Appreciation;
 
@@ -90,6 +90,17 @@ public interface I_HR_Stage
 
 	/** Get Commentaire_Global	  */
 	public String getCommentaire_Global();
+
+    /** Column name Contrat_ID */
+    public static final String COLUMNNAME_Contrat_ID = "Contrat_ID";
+
+	/** Set Contrat	  */
+	public void setContrat_ID (int Contrat_ID);
+
+	/** Get Contrat	  */
+	public int getContrat_ID();
+
+	public I_HR_Contrat getContrat() throws RuntimeException;
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -169,17 +180,6 @@ au :
 	public int getHR_Appreciation_ID();
 
 	public I_HR_Appreciation getHR_Appreciation() throws RuntimeException;
-
-    /** Column name HR_Contrat_ID */
-    public static final String COLUMNNAME_HR_Contrat_ID = "HR_Contrat_ID";
-
-	/** Set Contrat	  */
-	public void setHR_Contrat_ID (int HR_Contrat_ID);
-
-	/** Get Contrat	  */
-	public int getHR_Contrat_ID();
-
-	public I_HR_Contrat getHR_Contrat() throws RuntimeException;
 
     /** Column name HR_StageProgramme_ID */
     public static final String COLUMNNAME_HR_StageProgramme_ID = "HR_StageProgramme_ID";
@@ -321,13 +321,13 @@ Objectifs	  */
     /** Column name Tuteur_ID */
     public static final String COLUMNNAME_Tuteur_ID = "Tuteur_ID";
 
-	/** Set Tuteur_ID	  */
+	/** Set Tuteur	  */
 	public void setTuteur_ID (int Tuteur_ID);
 
-	/** Get Tuteur_ID	  */
+	/** Get Tuteur	  */
 	public int getTuteur_ID();
 
-	public I_HR_Autorisation_Conge getTuteur() throws RuntimeException;
+	public org.compiere.model.I_C_BPartner getTuteur() throws RuntimeException;
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";

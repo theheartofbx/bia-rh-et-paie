@@ -27,7 +27,6 @@ import org.compiere.model.MTable;
 import org.compiere.model.PO;
 import org.compiere.model.POInfo;
 import org.compiere.util.Env;
-import org.sitracel.conge.model.I_HR_Autorisation_Conge;
 import org.sitracel.contrat.model.I_HR_Contrat;
 import org.sitracel.mission.model.I_HR_Appreciation;
 
@@ -41,7 +40,7 @@ public class X_HR_Stage extends PO implements I_HR_Stage, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260813L;
+	private static final long serialVersionUID = 20260816L;
 
     /** Standard Constructor */
     public X_HR_Stage (Properties ctx, int HR_Stage_ID, String trxName)
@@ -166,6 +165,33 @@ public class X_HR_Stage extends PO implements I_HR_Stage, I_Persistent
 		return (String)get_Value(COLUMNNAME_Commentaire_Global);
 	}
 
+	public I_HR_Contrat getContrat() throws RuntimeException
+	{
+		return (I_HR_Contrat)MTable.get(getCtx(), I_HR_Contrat.Table_ID)
+			.getPO(getContrat_ID(), get_TrxName());
+	}
+
+	/** Set Contrat.
+		@param Contrat_ID Contrat
+	*/
+	public void setContrat_ID (int Contrat_ID)
+	{
+		if (Contrat_ID < 1)
+			set_Value (COLUMNNAME_Contrat_ID, null);
+		else
+			set_Value (COLUMNNAME_Contrat_ID, Integer.valueOf(Contrat_ID));
+	}
+
+	/** Get Contrat.
+		@return Contrat	  */
+	public int getContrat_ID()
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_Contrat_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set à Partir de :.
 		@param Date_Debut à Partir de :
 	*/
@@ -251,33 +277,6 @@ public class X_HR_Stage extends PO implements I_HR_Stage, I_Persistent
 	public int getHR_Appreciation_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Appreciation_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
-	public I_HR_Contrat getHR_Contrat() throws RuntimeException
-	{
-		return (I_HR_Contrat)MTable.get(getCtx(), I_HR_Contrat.Table_ID)
-			.getPO(getHR_Contrat_ID(), get_TrxName());
-	}
-
-	/** Set Contrat.
-		@param HR_Contrat_ID Contrat
-	*/
-	public void setHR_Contrat_ID (int HR_Contrat_ID)
-	{
-		if (HR_Contrat_ID < 1)
-			set_ValueNoCheck (COLUMNNAME_HR_Contrat_ID, null);
-		else
-			set_ValueNoCheck (COLUMNNAME_HR_Contrat_ID, Integer.valueOf(HR_Contrat_ID));
-	}
-
-	/** Get Contrat.
-		@return Contrat	  */
-	public int getHR_Contrat_ID()
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_HR_Contrat_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
@@ -512,14 +511,14 @@ public class X_HR_Stage extends PO implements I_HR_Stage, I_Persistent
 		return (String)get_Value(COLUMNNAME_Theme);
 	}
 
-	public I_HR_Autorisation_Conge getTuteur() throws RuntimeException
+	public org.compiere.model.I_C_BPartner getTuteur() throws RuntimeException
 	{
-		return (I_HR_Autorisation_Conge)MTable.get(getCtx(), I_HR_Autorisation_Conge.Table_ID)
+		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_ID)
 			.getPO(getTuteur_ID(), get_TrxName());
 	}
 
-	/** Set Tuteur_ID.
-		@param Tuteur_ID Tuteur_ID
+	/** Set Tuteur.
+		@param Tuteur_ID Tuteur
 	*/
 	public void setTuteur_ID (int Tuteur_ID)
 	{
@@ -529,8 +528,8 @@ public class X_HR_Stage extends PO implements I_HR_Stage, I_Persistent
 			set_Value (COLUMNNAME_Tuteur_ID, Integer.valueOf(Tuteur_ID));
 	}
 
-	/** Get Tuteur_ID.
-		@return Tuteur_ID	  */
+	/** Get Tuteur.
+		@return Tuteur	  */
 	public int getTuteur_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Tuteur_ID);

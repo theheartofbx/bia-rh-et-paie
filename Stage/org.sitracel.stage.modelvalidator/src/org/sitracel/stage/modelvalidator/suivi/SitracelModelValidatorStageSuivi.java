@@ -80,8 +80,10 @@ public class SitracelModelValidatorStageSuivi implements ModelValidator {
         }
 
         // Garde-fou 4 : IsEvalue impossible si IsOk = N
-        boolean isEvalue = "Y".equals(po.get_Value("IsEvalue").toString());
-        boolean isOk = "Y".equals(po.get_Value("IsOk").toString());
+        Object isEvalueObj = po.get_Value("IsEvalue");
+        Object isOkObj = po.get_Value("IsOk");
+        boolean isEvalue = isEvalueObj != null && "Y".equals(isEvalueObj.toString());
+        boolean isOk = isOkObj != null && "Y".equals(isOkObj.toString());
         if (isEvalue && !isOk) {
             return "Impossible d'évaluer un objectif qui n'est pas encore défini (Défini = Non).";
         }
