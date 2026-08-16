@@ -18,7 +18,8 @@ package org.sitracel.contrat.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import org.compiere.model.*;
+
+import org.compiere.model.MTable;
 import org.compiere.util.KeyNamePair;
 import org.sitracel.recrutement.model.I_HR_Candidature;
 
@@ -216,6 +217,19 @@ au :
 
 	/** Get Motif de Rupture	  */
 	public String getMotif_Rupture();
+
+    /** Column name Name */
+    public static final String COLUMNNAME_Name = "Name";
+
+	/** Set Name.
+	  * Alphanumeric identifier of the entity
+	  */
+	public void setName (String Name);
+
+	/** Get Name.
+	  * Alphanumeric identifier of the entity
+	  */
+	public String getName();
 
     /** Column name Reference_Document */
     public static final String COLUMNNAME_Reference_Document = "Reference_Document";

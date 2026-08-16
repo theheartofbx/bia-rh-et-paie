@@ -20,7 +20,11 @@ package org.sitracel.contrat.model;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
-import org.compiere.model.*;
+
+import org.compiere.model.I_Persistent;
+import org.compiere.model.MTable;
+import org.compiere.model.PO;
+import org.compiere.model.POInfo;
 import org.sitracel.recrutement.model.I_HR_Candidature;
 
 /** Generated Model for HR_Contrat
@@ -33,7 +37,7 @@ public class X_HR_Contrat extends PO implements I_HR_Contrat, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260807L;
+	private static final long serialVersionUID = 20260816L;
 
     /** Standard Constructor */
     public X_HR_Contrat (Properties ctx, int HR_Contrat_ID, String trxName)
@@ -103,7 +107,7 @@ public class X_HR_Contrat extends PO implements I_HR_Contrat, I_Persistent
     public String toString()
     {
       StringBuilder sb = new StringBuilder ("X_HR_Contrat[")
-        .append(get_ID()).append("]");
+        .append(get_ID()).append(",Name=").append(getName()).append("]");
       return sb.toString();
     }
 
@@ -327,6 +331,22 @@ public class X_HR_Contrat extends PO implements I_HR_Contrat, I_Persistent
 	public String getMotif_Rupture()
 	{
 		return (String)get_Value(COLUMNNAME_Motif_Rupture);
+	}
+
+	/** Set Name.
+		@param Name Alphanumeric identifier of the entity
+	*/
+	public void setName (String Name)
+	{
+		set_Value (COLUMNNAME_Name, Name);
+	}
+
+	/** Get Name.
+		@return Alphanumeric identifier of the entity
+	  */
+	public String getName()
+	{
+		return (String)get_Value(COLUMNNAME_Name);
 	}
 
 	/** Set Référence document.
