@@ -16,32 +16,27 @@ public class GenererPlanningStage extends SvrProcess {
     protected String doIt() throws Exception {
         int stageId = getRecord_ID();
 
-        // Vérifier que le stage n'est pas validé
         String isValidee = DB.getSQLValueString(get_TrxName(),
             "SELECT IsValidee FROM HR_Stage WHERE HR_Stage_ID = ?", stageId);
         if ("Y".equals(isValidee)) {
             return "Le stage est déjà validé, impossible de regénérer le planning.";
         }
 
-        // Vérifier qu'un programme est assigné
         int programmeId = DB.getSQLValue(get_TrxName(),
             "SELECT HR_StageProgramme_ID FROM HR_Stage WHERE HR_Stage_ID = ?", stageId);
         if (programmeId <= 0) {
             return "Aucun programme n'est assigné à ce stage. Veuillez d'abord sélectionner un programme.";
         }
 
-        // Vérifier qu'il n'y a pas déjà des lignes de suivi
         int existant = DB.getSQLValue(get_TrxName(),
             "SELECT COUNT(*) FROM HR_StageSuivi WHERE HR_Stage_ID = ? AND IsActive = 'Y'", stageId);
         if (existant > 0) {
             return "Le planning existe déjà (" + existant + " objectifs). Supprimez les lignes existantes avant de regénérer.";
         }
 
-        // Récupérer l'AD_Org_ID du stage
         int orgId = DB.getSQLValue(get_TrxName(),
             "SELECT AD_Org_ID FROM HR_Stage WHERE HR_Stage_ID = ?", stageId);
 
-        // Récupérer les lignes du programme et créer les lignes de suivi
         int count = 0;
         String sql = "SELECT HR_StageProgrammeLigne_ID, HR_StageObjectif_ID, SeqNo, Ponderation_Defaut, ScoreMax_Defaut "
                    + "FROM HR_StageProgrammeLigne "
@@ -60,6 +55,8 @@ public class GenererPlanningStage extends SvrProcess {
                 suivi.setHR_StageProgrammeLigne_ID(rs.getInt("HR_StageProgrammeLigne_ID"));
                 suivi.setHR_StageObjectif_ID(rs.getInt("HR_StageObjectif_ID"));
                 suivi.set_ValueNoCheck("SeqNo", rs.getInt("SeqNo"));
+                suivi.set_ValueNoCheck("IsOk", "N");
+                suivi.set_ValueNoCheck("IsEvalue", "N");
                 int ponderation = rs.getInt("Ponderation_Defaut");
                 if (!rs.wasNull()) suivi.setPonderation(ponderation);
                 java.math.BigDecimal scoreMax = rs.getBigDecimal("ScoreMax_Defaut");

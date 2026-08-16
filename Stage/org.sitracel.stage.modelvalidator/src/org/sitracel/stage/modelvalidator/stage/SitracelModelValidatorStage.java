@@ -48,7 +48,7 @@ public class SitracelModelValidatorStage implements ModelValidator {
         }
 
         // Garde-fou 2 : Contrat obligatoire et de type Stage (HR_ContratType_ID = 303)
-        Object contratObj = po.get_Value("HR_Contrat_ID");
+        Object contratObj = po.get_Value("Contrat_ID");
         if (contratObj != null) {
             int contratId = (Integer) contratObj;
             if (contratId > 0) {
