@@ -79,40 +79,44 @@ public class SitracelModelValidatorStageSuivi implements ModelValidator {
             return "La date de fin ne peut pas être antérieure à la date de début.";
         }
 
-        // Garde-fou 4 : IsEvalue impossible si IsOk = N
-        Object isEvalueObj = po.get_Value("IsEvalue");
-        Object isOkObj = po.get_Value("IsOk");
-        boolean isEvalue = isEvalueObj != null && "Y".equals(isEvalueObj.toString());
-        boolean isOk = isOkObj != null && "Y".equals(isOkObj.toString());
-        if (isEvalue && !isOk) {
-            return "Impossible d'évaluer un objectif qui n'est pas encore défini (Défini = Non).";
+        // Auto-flag IsOk : Date_Debut ET Date_Fin renseignées
+        if (suiviDebut != null && suiviFin != null) {
+            po.set_ValueNoCheck("IsOk", "Y");
+        } else {
+            po.set_ValueNoCheck("IsOk", "N");
         }
 
-        // Garde-fou 5 : Score obligatoire si IsEvalue = Y
-        if (isEvalue) {
-            Object scoreObj = po.get_Value("Score");
-            if (scoreObj == null || ((BigDecimal) scoreObj).compareTo(BigDecimal.ZERO) == 0) {
-                return "Le score est obligatoire pour marquer un objectif comme évalué.";
-            }
-        }
-
-        // Garde-fou 6 : Score <= ScoreMax et >= 0
+        // Auto-flag IsEvalue : Score renseigné et > 0
         Object scoreObj = po.get_Value("Score");
-        Object scoreMaxObj = po.get_Value("ScoreMax");
-        if (scoreObj != null && scoreMaxObj != null) {
+        boolean hasScore = scoreObj != null && ((BigDecimal) scoreObj).compareTo(BigDecimal.ZERO) > 0;
+
+        if (hasScore) {
+            // Vérifier que l'objectif est défini avant d'évaluer
+            if (suiviDebut == null || suiviFin == null) {
+                return "Impossible d'évaluer un objectif dont les dates ne sont pas renseignées.";
+            }
+            po.set_ValueNoCheck("IsEvalue", "Y");
+            if (po.is_ValueChanged("Score") || po.get_Value("Date_Evaluation") == null) {
+                po.set_ValueNoCheck("Date_Evaluation", new Timestamp(System.currentTimeMillis()));
+            }
+        } else {
+            po.set_ValueNoCheck("IsEvalue", "N");
+            po.set_ValueNoCheck("Date_Evaluation", null);
+        }
+
+        // Garde-fou : Score <= ScoreMax et >= 0
+        if (scoreObj != null) {
             BigDecimal score = (BigDecimal) scoreObj;
-            BigDecimal scoreMax = (BigDecimal) scoreMaxObj;
             if (score.compareTo(BigDecimal.ZERO) < 0) {
                 return "Le score ne peut pas être négatif.";
             }
-            if (scoreMax.compareTo(BigDecimal.ZERO) > 0 && score.compareTo(scoreMax) > 0) {
-                return "Le score (" + score + ") ne peut pas dépasser le score maximum (" + scoreMax + ").";
+            Object scoreMaxObj = po.get_Value("ScoreMax");
+            if (scoreMaxObj != null) {
+                BigDecimal scoreMax = (BigDecimal) scoreMaxObj;
+                if (scoreMax.compareTo(BigDecimal.ZERO) > 0 && score.compareTo(scoreMax) > 0) {
+                    return "Le score (" + score + ") ne peut pas dépasser le score maximum (" + scoreMax + ").";
+                }
             }
-        }
-
-        // Garde-fou 7 : Auto-remplir Date_Evaluation quand IsEvalue passe à Y
-        if (isEvalue && po.is_ValueChanged("IsEvalue")) {
-            po.set_ValueNoCheck("Date_Evaluation", new Timestamp(System.currentTimeMillis()));
         }
 
         return null;
