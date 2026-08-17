@@ -157,7 +157,13 @@ public class SitracelModelValidatorStageSuivi implements ModelValidator {
             "NombreEvalues = (SELECT COUNT(*) FROM HR_StageSuivi WHERE HR_Stage_ID = " + stageId + " AND IsActive = 'Y' AND IsEvalue = 'Y'), " +
             "PourcentageAvancement = (SELECT CASE WHEN COUNT(*) = 0 THEN 0 ELSE " +
             "ROUND(COUNT(CASE WHEN IsEvalue = 'Y' THEN 1 END)::NUMERIC / COUNT(*)::NUMERIC * 100, 0) END " +
-            "FROM HR_StageSuivi WHERE HR_Stage_ID = " + stageId + " AND IsActive = 'Y') " +
+            "FROM HR_StageSuivi WHERE HR_Stage_ID = " + stageId + " AND IsActive = 'Y'), " +
+            "Score_Total = (SELECT CASE WHEN COALESCE(SUM(Ponderation),0) = 0 THEN COALESCE(SUM(Score),0) " +
+            "ELSE ROUND(SUM(Score * Ponderation)::NUMERIC / SUM(Ponderation)::NUMERIC, 2) END " +
+            "FROM HR_StageSuivi WHERE HR_Stage_ID = " + stageId + " AND IsActive = 'Y' AND IsEvalue = 'Y'), " +
+            "ScoreMax_Total = (SELECT CASE WHEN COALESCE(SUM(Ponderation),0) = 0 THEN COALESCE(SUM(ScoreMax),0) " +
+            "ELSE ROUND(SUM(ScoreMax * Ponderation)::NUMERIC / SUM(Ponderation)::NUMERIC, 2) END " +
+            "FROM HR_StageSuivi WHERE HR_Stage_ID = " + stageId + " AND IsActive = 'Y' AND IsEvalue = 'Y') " +
             "WHERE HR_Stage_ID = " + stageId,
             po.get_TrxName());
     }
