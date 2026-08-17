@@ -158,12 +158,10 @@ public class SitracelModelValidatorStageSuivi implements ModelValidator {
             "PourcentageAvancement = (SELECT CASE WHEN COUNT(*) = 0 THEN 0 ELSE " +
             "ROUND(COUNT(CASE WHEN IsEvalue = 'Y' THEN 1 END)::NUMERIC / COUNT(*)::NUMERIC * 100, 0) END " +
             "FROM HR_StageSuivi WHERE HR_Stage_ID = " + stageId + " AND IsActive = 'Y'), " +
-            "Score_Total = (SELECT CASE WHEN COALESCE(SUM(Ponderation),0) = 0 THEN COALESCE(SUM(Score),0) " +
-            "ELSE ROUND(SUM(Score * Ponderation)::NUMERIC / SUM(Ponderation)::NUMERIC, 2) END " +
-            "FROM HR_StageSuivi WHERE HR_Stage_ID = " + stageId + " AND IsActive = 'Y' AND IsEvalue = 'Y'), " +
-            "ScoreMax_Total = (SELECT CASE WHEN COALESCE(SUM(Ponderation),0) = 0 THEN COALESCE(SUM(ScoreMax),0) " +
-            "ELSE ROUND(SUM(ScoreMax * Ponderation)::NUMERIC / SUM(Ponderation)::NUMERIC, 2) END " +
-            "FROM HR_StageSuivi WHERE HR_Stage_ID = " + stageId + " AND IsActive = 'Y' AND IsEvalue = 'Y') " +
+            "Score_Total = COALESCE((SELECT SUM(COALESCE(Score,0) * CASE WHEN COALESCE(Ponderation,0) = 0 THEN 1 ELSE Ponderation END) " +
+            "FROM HR_StageSuivi WHERE HR_Stage_ID = " + stageId + " AND IsActive = 'Y' AND IsEvalue = 'Y'), 0), " +
+            "ScoreMax_Total = COALESCE((SELECT SUM(COALESCE(ScoreMax,0) * CASE WHEN COALESCE(Ponderation,0) = 0 THEN 1 ELSE Ponderation END) " +
+            "FROM HR_StageSuivi WHERE HR_Stage_ID = " + stageId + " AND IsActive = 'Y'), 0) " +
             "WHERE HR_Stage_ID = " + stageId,
             po.get_TrxName());
     }
