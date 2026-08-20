@@ -33,7 +33,7 @@ public class X_HR_EvalLigne extends PO implements I_HR_EvalLigne, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260819L;
+	private static final long serialVersionUID = 20260820L;
 
     /** Standard Constructor */
     public X_HR_EvalLigne (Properties ctx, int HR_EvalLigne_ID, String trxName)

@@ -34,7 +34,7 @@ public class X_HR_Eval extends PO implements I_HR_Eval, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260819L;
+	private static final long serialVersionUID = 20260820L;
 
     /** Standard Constructor */
     public X_HR_Eval (Properties ctx, int HR_Eval_ID, String trxName)
@@ -327,6 +327,21 @@ public class X_HR_Eval extends PO implements I_HR_Eval, I_Persistent
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Générer Évaluation.
+		@param GenererEvaluation Générer Évaluation
+	*/
+	public void setGenererEvaluation (String GenererEvaluation)
+	{
+		set_Value (COLUMNNAME_GenererEvaluation, GenererEvaluation);
+	}
+
+	/** Get Générer Évaluation.
+		@return Générer Évaluation	  */
+	public String getGenererEvaluation()
+	{
+		return (String)get_Value(COLUMNNAME_GenererEvaluation);
 	}
 
 	public I_HR_EvalAppreciation getHR_EvalAppreciation() throws RuntimeException
@@ -709,6 +724,36 @@ public class X_HR_Eval extends PO implements I_HR_Eval, I_Persistent
 		return ii.intValue();
 	}
 
+	/** Set Renvoyer vers Employé.
+		@param RenvoyerVersEmploye Renvoyer vers Employé
+	*/
+	public void setRenvoyerVersEmploye (String RenvoyerVersEmploye)
+	{
+		set_Value (COLUMNNAME_RenvoyerVersEmploye, RenvoyerVersEmploye);
+	}
+
+	/** Get Renvoyer vers Employé.
+		@return Renvoyer vers Employé	  */
+	public String getRenvoyerVersEmploye()
+	{
+		return (String)get_Value(COLUMNNAME_RenvoyerVersEmploye);
+	}
+
+	/** Set Renvoyer vers N1.
+		@param RenvoyerVersN1 Renvoyer vers N1
+	*/
+	public void setRenvoyerVersN1 (String RenvoyerVersN1)
+	{
+		set_Value (COLUMNNAME_RenvoyerVersN1, RenvoyerVersN1);
+	}
+
+	/** Get Renvoyer vers N1.
+		@return Renvoyer vers N1	  */
+	public String getRenvoyerVersN1()
+	{
+		return (String)get_Value(COLUMNNAME_RenvoyerVersN1);
+	}
+
 	/** Set Score Total .
 		@param ScoreTotal Score Total 
 	*/
@@ -743,5 +788,51 @@ public class X_HR_Eval extends PO implements I_HR_Eval, I_Persistent
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
+	}
+
+	/** Set Soumettre Employé.
+		@param SoumettreEmploye Soumettre Employé
+	*/
+	public void setSoumettreEmploye (String SoumettreEmploye)
+	{
+		set_Value (COLUMNNAME_SoumettreEmploye, SoumettreEmploye);
+	}
+
+	/** Get Soumettre Employé.
+		@return Soumettre Employé	  */
+	public String getSoumettreEmploye()
+	{
+		return (String)get_Value(COLUMNNAME_SoumettreEmploye);
+	}
+
+	/** Set Soumettre N1.
+		@param SoumettreN1 Soumettre N1
+	*/
+	public void setSoumettreN1 (String SoumettreN1)
+	{
+		set_Value (COLUMNNAME_SoumettreN1, SoumettreN1);
+	}
+
+	/** Get Soumettre N1.
+		@return Soumettre N1	  */
+	public String getSoumettreN1()
+	{
+		return (String)get_Value(COLUMNNAME_SoumettreN1);
+	}
+
+	/** Set Valider .
+		@param Valider Valider 
+	*/
+	public void setValider (String Valider)
+	{
+		set_Value (COLUMNNAME_Valider, Valider);
+	}
+
+	/** Get Valider .
+		@return Valider 
+	  */
+	public String getValider()
+	{
+		return (String)get_Value(COLUMNNAME_Valider);
 	}
 }

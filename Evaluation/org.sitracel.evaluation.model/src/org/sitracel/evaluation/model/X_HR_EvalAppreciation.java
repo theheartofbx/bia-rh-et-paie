@@ -31,7 +31,7 @@ public class X_HR_EvalAppreciation extends PO implements I_HR_EvalAppreciation, 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260819L;
+	private static final long serialVersionUID = 20260820L;
 
     /** Standard Constructor */
     public X_HR_EvalAppreciation (Properties ctx, int HR_EvalAppreciation_ID, String trxName)

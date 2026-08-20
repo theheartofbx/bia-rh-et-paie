@@ -33,7 +33,7 @@ public class X_HR_EvalObjectif extends PO implements I_HR_EvalObjectif, I_Persis
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260819L;
+	private static final long serialVersionUID = 20260820L;
 
     /** Standard Constructor */
     public X_HR_EvalObjectif (Properties ctx, int HR_EvalObjectif_ID, String trxName)

@@ -175,6 +175,15 @@ public interface I_HR_Eval
 
 	public org.compiere.model.I_C_BPartner getEvaluateur_N2() throws RuntimeException;
 
+    /** Column name GenererEvaluation */
+    public static final String COLUMNNAME_GenererEvaluation = "GenererEvaluation";
+
+	/** Set Générer Évaluation	  */
+	public void setGenererEvaluation (String GenererEvaluation);
+
+	/** Get Générer Évaluation	  */
+	public String getGenererEvaluation();
+
     /** Column name HR_EvalAppreciation_ID */
     public static final String COLUMNNAME_HR_EvalAppreciation_ID = "HR_EvalAppreciation_ID";
 
@@ -382,6 +391,24 @@ Objectifs Réussis	  */
 	/** Get Avancement (%)	  */
 	public int getPourcentageAvancement();
 
+    /** Column name RenvoyerVersEmploye */
+    public static final String COLUMNNAME_RenvoyerVersEmploye = "RenvoyerVersEmploye";
+
+	/** Set Renvoyer vers Employé	  */
+	public void setRenvoyerVersEmploye (String RenvoyerVersEmploye);
+
+	/** Get Renvoyer vers Employé	  */
+	public String getRenvoyerVersEmploye();
+
+    /** Column name RenvoyerVersN1 */
+    public static final String COLUMNNAME_RenvoyerVersN1 = "RenvoyerVersN1";
+
+	/** Set Renvoyer vers N1	  */
+	public void setRenvoyerVersN1 (String RenvoyerVersN1);
+
+	/** Get Renvoyer vers N1	  */
+	public String getRenvoyerVersN1();
+
     /** Column name ScoreTotal */
     public static final String COLUMNNAME_ScoreTotal = "ScoreTotal";
 
@@ -400,6 +427,24 @@ Objectifs Réussis	  */
 	/** Get Score Total Maximum	  */
 	public BigDecimal getScoreTotalMax();
 
+    /** Column name SoumettreEmploye */
+    public static final String COLUMNNAME_SoumettreEmploye = "SoumettreEmploye";
+
+	/** Set Soumettre Employé	  */
+	public void setSoumettreEmploye (String SoumettreEmploye);
+
+	/** Get Soumettre Employé	  */
+	public String getSoumettreEmploye();
+
+    /** Column name SoumettreN1 */
+    public static final String COLUMNNAME_SoumettreN1 = "SoumettreN1";
+
+	/** Set Soumettre N1	  */
+	public void setSoumettreN1 (String SoumettreN1);
+
+	/** Get Soumettre N1	  */
+	public String getSoumettreN1();
+
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
 
@@ -415,4 +460,17 @@ Objectifs Réussis	  */
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
+
+    /** Column name Valider */
+    public static final String COLUMNNAME_Valider = "Valider";
+
+	/** Set Valider .
+	  * Valider 
+	  */
+	public void setValider (String Valider);
+
+	/** Get Valider .
+	  * Valider 
+	  */
+	public String getValider();
 }
