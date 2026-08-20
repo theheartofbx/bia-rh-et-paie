@@ -64,6 +64,15 @@ public interface I_HR_EvalGrille
 	  */
 	public int getAD_Org_ID();
 
+    /** Column name Annuler */
+    public static final String COLUMNNAME_Annuler = "Annuler";
+
+	/** Set Annuler	  */
+	public void setAnnuler (String Annuler);
+
+	/** Get Annuler	  */
+	public String getAnnuler();
+
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
 
@@ -185,6 +194,19 @@ public interface I_HR_EvalGrille
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
+
+    /** Column name Valider */
+    public static final String COLUMNNAME_Valider = "Valider";
+
+	/** Set Valider .
+	  * Valider 
+	  */
+	public void setValider (String Valider);
+
+	/** Get Valider .
+	  * Valider 
+	  */
+	public String getValider();
 
     /** Column name Value */
     public static final String COLUMNNAME_Value = "Value";

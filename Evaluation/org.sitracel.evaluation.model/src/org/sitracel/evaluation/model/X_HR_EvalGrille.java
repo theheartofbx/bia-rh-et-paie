@@ -115,6 +115,21 @@ public class X_HR_EvalGrille extends PO implements I_HR_EvalGrille, I_Persistent
       return sb.toString();
     }
 
+	/** Set Annuler.
+		@param Annuler Annuler
+	*/
+	public void setAnnuler (String Annuler)
+	{
+		set_Value (COLUMNNAME_Annuler, Annuler);
+	}
+
+	/** Get Annuler.
+		@return Annuler	  */
+	public String getAnnuler()
+	{
+		return (String)get_Value(COLUMNNAME_Annuler);
+	}
+
 	/** Set Description.
 		@param Description Optional short description of the record
 	*/
@@ -240,6 +255,22 @@ public class X_HR_EvalGrille extends PO implements I_HR_EvalGrille, I_Persistent
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
+	}
+
+	/** Set Valider .
+		@param Valider Valider 
+	*/
+	public void setValider (String Valider)
+	{
+		set_Value (COLUMNNAME_Valider, Valider);
+	}
+
+	/** Get Valider .
+		@return Valider 
+	  */
+	public String getValider()
+	{
+		return (String)get_Value(COLUMNNAME_Valider);
 	}
 
 	/** Set Search Key.
