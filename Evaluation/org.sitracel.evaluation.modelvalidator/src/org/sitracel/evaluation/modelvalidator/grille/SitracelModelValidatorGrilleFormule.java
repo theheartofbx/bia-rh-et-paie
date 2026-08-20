@@ -15,12 +15,18 @@ import org.sitracel.evaluation.model.I_HR_EvalGrilleFormule;
  * ModelValidator HR_EvalGrilleFormule
  *
  * BEFORE_NEW / BEFORE_CHANGE :
- *   1. Validation syntaxe formule (exp4j)
- *   2. Variables = acronymes de la grille
- *   3. Division par zéro (ScoreTest != 0 si au dénominateur)
- *   4. Calcul test avec les ScoreTest
- *   5. Vérification si() explicite
- *   6. Une seule formule IsPrincipale = Y par grille
+ *   1. Grille validée → lecture seule
+ *   2. Évaluations générées → interdire modification
+ *   3. Validation syntaxe formule (Nashorn)
+ *   4. Variables = acronymes de la grille
+ *   5. Division par zéro (ScoreTest != 0 si au dénominateur)
+ *   6. Calcul test avec les ScoreTest
+ *   7. Vérification si() explicite
+ *   8. Une seule formule IsPrincipale = Y par grille
+ *
+ * BEFORE_DELETE :
+ *   9. Grille validée → pas de suppression
+ *  10. Évaluations générées → interdire suppression
  */
 public class SitracelModelValidatorGrilleFormule implements ModelValidator {
 
@@ -57,6 +63,9 @@ public class SitracelModelValidatorGrilleFormule implements ModelValidator {
         if (type == TYPE_BEFORE_NEW || type == TYPE_BEFORE_CHANGE) {
             return beforeSave(po, type == TYPE_BEFORE_NEW);
         }
+        if (type == TYPE_BEFORE_DELETE) {
+            return beforeDelete(po);
+        }
         return null;
     }
 
@@ -73,6 +82,12 @@ public class SitracelModelValidatorGrilleFormule implements ModelValidator {
             "SELECT IsValidee FROM HR_EvalGrille WHERE HR_EvalGrille_ID = ?", grilleId);
         if ("Y".equals(isGrilleValidee)) {
             return "La grille est validée, aucune modification n'est possible.";
+        }
+
+        // --- Garde-fou : évaluations générées → interdire modification ---
+        if (!isNew) {
+            String errEval = verifierEvaluationsExistantes(grilleId, po.get_TrxName());
+            if (errEval != null) return errEval;
         }
 
         // --- Garde-fou : une seule formule IsPrincipale par grille ---
@@ -105,7 +120,7 @@ public class SitracelModelValidatorGrilleFormule implements ModelValidator {
             po.set_ValueOfColumn("IsValide", "N");
             po.set_ValueOfColumn("MessageErreur", "La grille n'a aucun objectif avec un acronyme.");
             po.set_ValueOfColumn("ResultatTest", null);
-            return null; // On laisse enregistrer mais invalide
+            return null;
         }
 
         // Étape 1 : extraire les variables de la formule
@@ -133,7 +148,6 @@ public class SitracelModelValidatorGrilleFormule implements ModelValidator {
         }
 
         // Étape 4 : division par zéro potentielle
-        // (vérification basique : variable après un /)
         for (String var : variablesFormule) {
             BigDecimal scoreTest = acronymes.get(var);
             if (scoreTest != null && scoreTest.compareTo(BigDecimal.ZERO) == 0) {
@@ -148,7 +162,7 @@ public class SitracelModelValidatorGrilleFormule implements ModelValidator {
             }
         }
 
-        // Étape 5 : calcul test avec exp4j
+        // Étape 5 : calcul test avec Nashorn
         try {
             double resultat = evaluerFormule(formule, acronymes);
             if (Double.isNaN(resultat) || Double.isInfinite(resultat)) {
@@ -174,8 +188,46 @@ public class SitracelModelValidatorGrilleFormule implements ModelValidator {
     }
 
     // =========================================================================
+    // BEFORE_DELETE
+    // =========================================================================
+
+    private String beforeDelete(PO po) {
+        int grilleId = (Integer) po.get_Value("HR_EvalGrille_ID");
+
+        // --- Garde-fou : grille validée → pas de suppression ---
+        String isGrilleValidee = DB.getSQLValueString(po.get_TrxName(),
+            "SELECT IsValidee FROM HR_EvalGrille WHERE HR_EvalGrille_ID = ?", grilleId);
+        if ("Y".equals(isGrilleValidee)) {
+            return "La grille est validée, aucune suppression n'est possible.";
+        }
+
+        // --- Garde-fou : évaluations générées → interdire suppression ---
+        String errEval = verifierEvaluationsExistantes(grilleId, po.get_TrxName());
+        if (errEval != null) return errEval;
+
+        return null;
+    }
+
+    // =========================================================================
     // MÉTHODES PRIVÉES
     // =========================================================================
+
+    /**
+     * Vérifie si des évaluations ont déjà été générées avec cette grille.
+     * Si oui, retourne un message d'erreur. Sinon retourne null.
+     */
+    private String verifierEvaluationsExistantes(int grilleId, String trxName) {
+        int nbEval = DB.getSQLValueEx(trxName,
+            "SELECT COUNT(*) FROM HR_Eval"
+            + " WHERE HR_EvalGrille_ID = ? AND IsGeneree = 'Y' AND IsActive = 'Y'",
+            grilleId);
+        if (nbEval > 0) {
+            return "Impossible : " + nbEval + " évaluation(s) ont déjà été générée(s) "
+                + "avec cette grille. La modification ou suppression d'une formule "
+                + "pourrait avoir des répercussions imprévisibles sur ces évaluations.";
+        }
+        return null;
+    }
 
     /**
      * Charger les acronymes et ScoreTest de la grille
@@ -204,8 +256,7 @@ public class SitracelModelValidatorGrilleFormule implements ModelValidator {
     }
 
     /**
-     * Extraire les variables (mots alphabétiques/underscores) de la formule
-     * en excluant les noms de fonctions connues
+     * Extraire les variables de la formule en excluant les fonctions connues
      */
     private Set<String> extraireVariables(String formule) {
         Set<String> fonctions = new HashSet<String>(Arrays.asList(
@@ -217,9 +268,7 @@ public class SitracelModelValidatorGrilleFormule implements ModelValidator {
         String[] tokens = normalized.split("\\s+");
         for (String token : tokens) {
             if (token.isEmpty()) continue;
-            // Ignorer les nombres purs
             if (token.matches("[0-9]+\\.?[0-9]*")) continue;
-            // Ignorer les fonctions
             if (fonctions.contains(token.toLowerCase())) continue;
             variables.add(token.toUpperCase());
         }
@@ -237,16 +286,12 @@ public class SitracelModelValidatorGrilleFormule implements ModelValidator {
         String lower = formule.toLowerCase();
         int idx = 0;
         while ((idx = lower.indexOf("si(", idx)) >= 0) {
-            // Vérifier que ce n'est pas un suffixe (ex: "reussi(")
             if (idx > 0 && Character.isLetterOrDigit(lower.charAt(idx - 1))) {
                 idx++;
                 continue;
             }
-            // Trouver le premier argument après "si("
             int start = idx + 3;
-            // Sauter les espaces
             while (start < lower.length() && lower.charAt(start) == ' ') start++;
-            // Vérifier que le premier argument commence par une fonction de comparaison
             boolean found = false;
             for (String comp : comparaisons) {
                 if (lower.startsWith(comp + "(", start)) {
@@ -264,19 +309,17 @@ public class SitracelModelValidatorGrilleFormule implements ModelValidator {
     }
 
     /**
-     * Vérifier si une variable est au dénominateur (après un /)
+     * Vérifier si une variable est au dénominateur
      */
     private boolean estAuDenominateur(String formule, String variable) {
         String normalized = formule.replaceAll("\\s+", "");
         int idx = 0;
         while ((idx = normalized.indexOf("/", idx)) >= 0) {
             idx++;
-            // Sauter les espaces et parenthèses ouvrantes
             while (idx < normalized.length()
                     && (normalized.charAt(idx) == ' ' || normalized.charAt(idx) == '(')) {
                 idx++;
             }
-            // Extraire le token suivant
             int start = idx;
             while (idx < normalized.length()
                     && (Character.isLetterOrDigit(normalized.charAt(idx))
@@ -290,19 +333,13 @@ public class SitracelModelValidatorGrilleFormule implements ModelValidator {
     }
 
     /**
-     * Évaluer la formule avec exp4j en utilisant les valeurs de test
-     *
-     * NOTE : exp4j doit être disponible dans le classpath.
-     * Si ce n'est pas le cas, on utilise le moteur JavaScript (Nashorn)
-     * disponible en Java 8.
+     * Évaluer la formule avec Nashorn (Java 8)
      */
     private double evaluerFormule(String formule, Map<String, BigDecimal> variables)
             throws Exception {
-        // Utilisation de Nashorn (Java 8) comme moteur d'évaluation
         javax.script.ScriptEngine engine =
             new javax.script.ScriptEngineManager().getEngineByName("js");
 
-        // Enregistrer les fonctions personnalisées
         StringBuilder script = new StringBuilder();
         script.append("function min(a,b){ return Math.min(a,b); }\n");
         script.append("function max(a,b){ return Math.max(a,b); }\n");
@@ -322,13 +359,11 @@ public class SitracelModelValidatorGrilleFormule implements ModelValidator {
         script.append("function entre(x,mn,mx){ return (x>=mn&&x<=mx)?1:0; }\n");
         script.append("function si(c,v,f){ return c==1?v:f; }\n");
 
-        // Déclarer les variables
         for (Map.Entry<String, BigDecimal> entry : variables.entrySet()) {
             double val = entry.getValue() != null ? entry.getValue().doubleValue() : 0.0;
             script.append("var " + entry.getKey() + " = " + val + ";\n");
         }
 
-        // Évaluer la formule
         script.append(formule);
 
         Object result = engine.eval(script.toString());

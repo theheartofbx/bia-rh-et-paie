@@ -7,6 +7,9 @@ import org.sitracel.evaluation.modelvalidator.grille.SitracelModelValidatorGrill
 import org.sitracel.evaluation.modelvalidator.grille.SitracelModelValidatorGrilleFormule;
 import org.sitracel.evaluation.modelvalidator.eval.SitracelModelValidatorEval;
 import org.sitracel.evaluation.modelvalidator.eval.SitracelModelValidatorEvalLigne;
+import org.sitracel.evaluation.modelvalidator.reference.SitracelModelValidatorAppreciation;
+import org.sitracel.evaluation.modelvalidator.reference.SitracelModelValidatorObjectif;
+import org.sitracel.evaluation.modelvalidator.reference.SitracelModelValidatorPeriode;
 
 public class SitracelEvaluationModelValidatorFactory implements IModelValidatorFactory {
 
@@ -25,6 +28,13 @@ public class SitracelEvaluationModelValidatorFactory implements IModelValidatorF
                 return new SitracelModelValidatorEval();
             case "org.sitracel.evaluation.modelvalidator.eval.SitracelModelValidatorEvalLigne":
                 return new SitracelModelValidatorEvalLigne();
+            // --- Référence ---
+            case "org.sitracel.evaluation.modelvalidator.reference.SitracelModelValidatorAppreciation":
+                return new SitracelModelValidatorAppreciation();
+            case "org.sitracel.evaluation.modelvalidator.reference.SitracelModelValidatorObjectif":
+                return new SitracelModelValidatorObjectif();
+            case "org.sitracel.evaluation.modelvalidator.reference.SitracelModelValidatorPeriode":
+                return new SitracelModelValidatorPeriode();
             default:
                 return null;
         }

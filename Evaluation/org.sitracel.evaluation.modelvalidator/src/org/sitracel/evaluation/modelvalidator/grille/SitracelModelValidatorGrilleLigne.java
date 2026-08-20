@@ -14,17 +14,19 @@ import org.sitracel.evaluation.model.I_HR_EvalGrilleLigne;
  * ModelValidator HR_EvalGrilleLigne
  *
  * BEFORE_NEW / BEFORE_CHANGE :
- *   1. Acronyme unique dans la grille
- *   2. Format acronyme : majuscules, chiffres, underscores uniquement
- *   3. ScoreMin < ScoreMax
- *   4. SeuilEchec < SeuilValidation (si les deux renseignés)
- *   5. Auto-copie des propriétés depuis l'objectif du catalogue
- *
- * BEFORE_CHANGE (acronyme modifié) :
- *   6. Invalider les formules qui utilisaient l'ancien acronyme
+ *   1. Grille validée → lecture seule
+ *   2. Évaluations générées → interdire modification
+ *   3. Acronyme unique dans la grille
+ *   4. Format acronyme : [A-Z0-9_]+
+ *   5. ScoreMin < ScoreMax
+ *   6. SeuilEchec < SeuilValidation
+ *   7. Auto-copie depuis l'objectif du catalogue
+ *   8. Renommage acronyme → invalider les formules
  *
  * BEFORE_DELETE :
- *   7. Invalider les formules qui utilisent cet acronyme
+ *   9. Grille validée → pas de suppression
+ *  10. Évaluations générées → interdire suppression
+ *  11. Invalider les formules qui utilisent cet acronyme
  */
 public class SitracelModelValidatorGrilleLigne implements ModelValidator {
 
@@ -83,7 +85,13 @@ public class SitracelModelValidatorGrilleLigne implements ModelValidator {
             return "La grille est validée, aucune modification n'est possible.";
         }
 
-        // --- Garde-fou 1 : format acronyme ---
+        // --- Garde-fou : évaluations générées → interdire modification ---
+        if (!isNew) {
+            String errEval = verifierEvaluationsExistantes(grilleId, po.get_TrxName());
+            if (errEval != null) return errEval;
+        }
+
+        // --- Garde-fou : format acronyme ---
         if (acronyme == null || acronyme.trim().isEmpty()) {
             return "L'acronyme est obligatoire.";
         }
@@ -95,7 +103,7 @@ public class SitracelModelValidatorGrilleLigne implements ModelValidator {
                 + "' est invalide. Seuls les majuscules, chiffres et underscores sont autorisés.";
         }
 
-        // --- Garde-fou 2 : acronyme unique dans la grille ---
+        // --- Garde-fou : acronyme unique dans la grille ---
         String sqlDoublon = "SELECT COUNT(*) FROM HR_EvalGrilleLigne"
             + " WHERE HR_EvalGrille_ID = ? AND Acronyme = ? AND IsActive = 'Y'"
             + " AND HR_EvalGrilleLigne_ID != ?";
@@ -105,7 +113,7 @@ public class SitracelModelValidatorGrilleLigne implements ModelValidator {
             return "L'acronyme '" + acronyme + "' est déjà utilisé dans cette grille.";
         }
 
-        // --- Garde-fou 3 : ScoreMin < ScoreMax ---
+        // --- Garde-fou : ScoreMin < ScoreMax ---
         BigDecimal scoreMin = (BigDecimal) po.get_Value("ScoreMin");
         BigDecimal scoreMax = (BigDecimal) po.get_Value("ScoreMax");
         if (scoreMin != null && scoreMax != null
@@ -114,7 +122,7 @@ public class SitracelModelValidatorGrilleLigne implements ModelValidator {
                 + ") doit être inférieur au score maximum (" + scoreMax + ").";
         }
 
-        // --- Garde-fou 4 : SeuilEchec < SeuilValidation ---
+        // --- Garde-fou : SeuilEchec < SeuilValidation ---
         BigDecimal seuilEchec = (BigDecimal) po.get_Value("SeuilEchec");
         BigDecimal seuilValidation = (BigDecimal) po.get_Value("SeuilValidation");
         if (seuilEchec != null && seuilValidation != null
@@ -157,6 +165,10 @@ public class SitracelModelValidatorGrilleLigne implements ModelValidator {
             return "La grille est validée, aucune suppression n'est possible.";
         }
 
+        // --- Garde-fou : évaluations générées → interdire suppression ---
+        String errEval = verifierEvaluationsExistantes(grilleId, po.get_TrxName());
+        if (errEval != null) return errEval;
+
         // --- Invalider les formules qui utilisent cet acronyme ---
         String acronyme = (String) po.get_Value("Acronyme");
         if (acronyme != null && !acronyme.isEmpty()) {
@@ -173,32 +185,43 @@ public class SitracelModelValidatorGrilleLigne implements ModelValidator {
     // =========================================================================
 
     /**
+     * Vérifie si des évaluations ont déjà été générées avec cette grille.
+     */
+    private String verifierEvaluationsExistantes(int grilleId, String trxName) {
+        int nbEval = DB.getSQLValueEx(trxName,
+            "SELECT COUNT(*) FROM HR_Eval"
+            + " WHERE HR_EvalGrille_ID = ? AND IsGeneree = 'Y' AND IsActive = 'Y'",
+            grilleId);
+        if (nbEval > 0) {
+            return "Impossible : " + nbEval + " évaluation(s) ont déjà été générée(s) "
+                + "avec cette grille. La modification ou suppression "
+                + "pourrait avoir des répercussions imprévisibles sur ces évaluations.";
+        }
+        return null;
+    }
+
+    /**
      * Auto-remplir les propriétés depuis l'objectif du catalogue
      */
     private void autoRemplirDepuisObjectif(PO po, int objectifId) {
         String trx = po.get_TrxName();
 
-        // IsProgressif
         String isProgressif = DB.getSQLValueString(trx,
             "SELECT IsProgressif FROM HR_EvalObjectif WHERE HR_EvalObjectif_ID = ?", objectifId);
         if (isProgressif != null) po.set_ValueOfColumn("IsProgressif", isProgressif);
 
-        // IsBinaire
         String isBinaire = DB.getSQLValueString(trx,
             "SELECT IsBinaire FROM HR_EvalObjectif WHERE HR_EvalObjectif_ID = ?", objectifId);
         if (isBinaire != null) po.set_ValueOfColumn("IsBinaire", isBinaire);
 
-        // IsSubjectif
         String isSubjectif = DB.getSQLValueString(trx,
             "SELECT IsSubjectif FROM HR_EvalObjectif WHERE HR_EvalObjectif_ID = ?", objectifId);
         if (isSubjectif != null) po.set_ValueOfColumn("IsSubjectif", isSubjectif);
 
-        // IsPourcentage
         String isPourcentage = DB.getSQLValueString(trx,
             "SELECT IsPourcentage FROM HR_EvalObjectif WHERE HR_EvalObjectif_ID = ?", objectifId);
         if (isPourcentage != null) po.set_ValueOfColumn("IsPourcentage", isPourcentage);
 
-        // ScoreMax_Defaut → ScoreMax
         BigDecimal scoreMaxDefaut = DB.getSQLValueBD(trx,
             "SELECT ScoreMax_Defaut FROM HR_EvalObjectif WHERE HR_EvalObjectif_ID = ?", objectifId);
         if (scoreMaxDefaut != null && po.get_Value("ScoreMax") == null) {
@@ -211,9 +234,6 @@ public class SitracelModelValidatorGrilleLigne implements ModelValidator {
      */
     private void invaliderFormulesAvecAcronyme(int grilleId, String acronyme,
             String messageErreur, String trxName) {
-
-        // Recherche des formules contenant l'acronyme comme mot entier
-        // On utilise une recherche simple avec LIKE + vérification manuelle
         String sql = "SELECT HR_EvalGrilleFormule_ID, Formule"
             + " FROM HR_EvalGrilleFormule"
             + " WHERE HR_EvalGrille_ID = ? AND IsActive = 'Y'";
@@ -245,11 +265,8 @@ public class SitracelModelValidatorGrilleLigne implements ModelValidator {
 
     /**
      * Vérifie si la formule contient l'acronyme comme mot entier
-     * (pas comme sous-chaîne d'un autre acronyme)
      */
     private boolean contientAcronyme(String formule, String acronyme) {
-        // Remplacer les caractères non-alphanumériques par des espaces
-        // puis chercher le mot exact
         String normalized = formule.replaceAll("[^A-Za-z0-9_]", " ");
         String[] tokens = normalized.split("\\s+");
         for (String token : tokens) {
