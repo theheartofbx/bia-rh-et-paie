@@ -2,6 +2,7 @@ package org.sitracel.evaluation.process;
 
 import java.math.BigDecimal;
 import org.compiere.process.SvrProcess;
+import org.compiere.util.Env;
 import org.compiere.util.DB;
 
 /**
@@ -91,7 +92,7 @@ public class GenererEvaluation extends SvrProcess {
                     + "  ?, ?, ?, ?,"
                     + "  ?, 'N')",
                     new Object[]{
-                        nextId, getAD_Client_ID(), getAD_Org_ID(),
+                        nextId, getAD_Client_ID(), Env.getAD_Org_ID(getCtx()),
                         getAD_User_ID(), getAD_User_ID(),
                         evalId, grilleLigneId, seqNo, acronyme,
                         scoreMin, scoreMax, valeurCible, valeurMin, valeurMax,
@@ -131,7 +132,7 @@ public class GenererEvaluation extends SvrProcess {
                     + "  ?, ?, ?,"
                     + "  ?, 'N')",
                     new Object[]{
-                        nextId, getAD_Client_ID(), getAD_Org_ID(),
+                        nextId, getAD_Client_ID(), Env.getAD_Org_ID(getCtx()),
                         getAD_User_ID(), getAD_User_ID(),
                         evalId, grilleFormuleId, formule,
                         isPrincipale

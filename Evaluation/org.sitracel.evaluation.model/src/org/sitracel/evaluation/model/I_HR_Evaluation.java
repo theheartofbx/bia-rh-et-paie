@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
+import org.sitracel.model.I_HR_Formulaire;
 
 /** Generated Interface for HR_Evaluation
  *  @author iDempiere (generated) 

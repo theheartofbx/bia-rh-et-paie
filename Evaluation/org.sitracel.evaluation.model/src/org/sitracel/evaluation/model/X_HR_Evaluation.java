@@ -24,6 +24,7 @@ import java.util.Properties;
 import org.compiere.model.*;
 import org.compiere.util.Env;
 import org.compiere.util.KeyNamePair;
+import org.sitracel.model.I_HR_Formulaire;
 
 /** Generated Model for HR_Evaluation
  *  @author iDempiere (generated)
