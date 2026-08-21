@@ -11,22 +11,23 @@ import org.compiere.model.ModelValidator;
 import org.compiere.model.PO;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.sitracel.employe.HRContratService;
 import org.sitracel.evaluation.model.I_HR_EvalLigne;
 
 /**
  * ModelValidator HR_EvalLigne
  *
  * BEFORE_NEW / BEFORE_CHANGE :
- *   1. Garde-fou : évaluation validée → lecture seule
- *   2. Garde-fou : Score_Employe entre ScoreMin et ScoreMax
- *   3. Garde-fou : Score_N1 entre ScoreMin et ScoreMax
- *   4. Auto-calcul ScoreFinal : Score_N1 si renseigné, sinon Score_Employe
- *   5. Auto-flag IsEvalue = Y si ScoreFinal != null
+ *   1. Évaluation validée → lecture seule
+ *   2. Habilitation : qui peut modifier Score_Employe vs Score_N1
+ *   3. Score_Employe entre ScoreMin et ScoreMax
+ *   4. Score_N1 entre ScoreMin et ScoreMax
+ *   5. Auto-calcul ScoreFinal
+ *   6. Auto-flag IsEvalue
  *
  * AFTER_NEW / AFTER_CHANGE / AFTER_DELETE :
- *   6. Recalcul des indicateurs sur HR_Eval parent
- *   7. Recalcul des formules sur HR_EvalResultat (via Nashorn)
- *   8. Mise à jour ScoreTotal sur HR_Eval si formule principale
+ *   7. Recalcul indicateurs sur HR_Eval
+ *   8. Recalcul formules sur HR_EvalResultat
  */
 public class SitracelModelValidatorEvalLigne implements ModelValidator {
 
@@ -61,10 +62,10 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
     @Override
     public String modelChange(PO po, int type) throws Exception {
         if (type == TYPE_BEFORE_NEW || type == TYPE_BEFORE_CHANGE) {
-            return beforeSave(po);
+            return beforeSave(po, type == TYPE_BEFORE_NEW);
         }
         if (type == TYPE_AFTER_NEW || type == TYPE_AFTER_CHANGE || type == TYPE_AFTER_DELETE) {
-            recalculerParent(po, type == TYPE_AFTER_DELETE);
+            recalculerParent(po);
         }
         return null;
     }
@@ -73,23 +74,30 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
     // BEFORE_NEW / BEFORE_CHANGE
     // =========================================================================
 
-    private String beforeSave(PO po) {
+    private String beforeSave(PO po, boolean isNew) {
         int evalId = (Integer) po.get_Value("HR_Eval_ID");
+        String trx = po.get_TrxName();
 
         // --- Garde-fou 1 : évaluation validée → lecture seule ---
-        String isValidee = DB.getSQLValueString(po.get_TrxName(),
+        String isValidee = DB.getSQLValueString(trx,
             "SELECT IsValidee FROM HR_Eval WHERE HR_Eval_ID = ?", evalId);
         if ("Y".equals(isValidee)) {
             return "L'évaluation est validée, aucune modification n'est possible.";
+        }
+
+        // --- Garde-fou 2 : habilitation ---
+        if (!isNew) {
+            String errHabilitation = verifierHabilitation(po, evalId, trx);
+            if (errHabilitation != null) return errHabilitation;
         }
 
         // --- Récupérer les bornes ---
         BigDecimal scoreMin = (BigDecimal) po.get_Value("ScoreMin");
         BigDecimal scoreMax = (BigDecimal) po.get_Value("ScoreMax");
 
-        // --- Garde-fou 2 : Score_Employe entre ScoreMin et ScoreMax ---
+        // --- Garde-fou 3 : Score_Employe entre ScoreMin et ScoreMax ---
         BigDecimal scoreEmploye = (BigDecimal) po.get_Value("Score_Employe");
-        if (scoreEmploye != null && scoreEmploye.compareTo(BigDecimal.ZERO) != 0) {
+        if (scoreEmploye != null) {
             if (scoreMin != null && scoreEmploye.compareTo(scoreMin) < 0) {
                 return "Le score employé (" + scoreEmploye
                     + ") ne peut pas être inférieur au minimum (" + scoreMin + ").";
@@ -100,9 +108,9 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
             }
         }
 
-        // --- Garde-fou 3 : Score_N1 entre ScoreMin et ScoreMax ---
+        // --- Garde-fou 4 : Score_N1 entre ScoreMin et ScoreMax ---
         BigDecimal scoreN1 = (BigDecimal) po.get_Value("Score_N1");
-        if (scoreN1 != null && scoreN1.compareTo(BigDecimal.ZERO) != 0) {
+        if (scoreN1 != null) {
             if (scoreMin != null && scoreN1.compareTo(scoreMin) < 0) {
                 return "Le score N+1 (" + scoreN1
                     + ") ne peut pas être inférieur au minimum (" + scoreMin + ").";
@@ -115,35 +123,74 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
 
         // --- Auto-calcul ScoreFinal ---
         BigDecimal scoreFinal = null;
-        if (scoreN1 != null && scoreN1.compareTo(BigDecimal.ZERO) != 0) {
+        if (scoreN1 != null) {
             scoreFinal = scoreN1;
-        } else if (scoreEmploye != null && scoreEmploye.compareTo(BigDecimal.ZERO) != 0) {
+        } else if (scoreEmploye != null) {
             scoreFinal = scoreEmploye;
         }
         po.set_ValueOfColumn("ScoreFinal", scoreFinal);
 
         // --- Auto-flag IsEvalue ---
-        boolean isEvalue = (scoreFinal != null && scoreFinal.compareTo(BigDecimal.ZERO) != 0);
-        po.set_ValueOfColumn("IsEvalue", isEvalue ? "Y" : "N");
+        po.set_ValueOfColumn("IsEvalue", scoreFinal != null ? "Y" : "N");
 
         return null;
     }
 
     // =========================================================================
-    // AFTER_NEW / AFTER_CHANGE / AFTER_DELETE
+    // HABILITATION
     // =========================================================================
 
-    private void recalculerParent(PO po, boolean isDelete) {
+    /**
+     * Vérifie que l'utilisateur connecté a le droit de modifier
+     * les champs qu'il modifie :
+     * - Score_Employe / Commentaire_Employe → employé évalué ou RH
+     * - Score_N1 / Commentaire_N1 → N+1 désigné ou RH
+     */
+    private String verifierHabilitation(PO po, int evalId, String trx) {
+        boolean scoreEmployeChange = po.is_ValueChanged("Score_Employe")
+            || po.is_ValueChanged("Commentaire_Employe");
+        boolean scoreN1Change = po.is_ValueChanged("Score_N1")
+            || po.is_ValueChanged("Commentaire_N1");
+
+        if (!scoreEmployeChange && !scoreN1Change) return null;
+
+        int adUserId = Env.getAD_User_ID(Env.getCtx());
+        boolean isRH = HRContratService.isUserRH(adUserId, trx);
+        if (isRH) return null;
+
+        int bpartnerConnecte = DB.getSQLValueEx(trx,
+            "SELECT C_BPartner_ID FROM AD_User WHERE AD_User_ID = ?", adUserId);
+
+        if (scoreEmployeChange) {
+            int bpartnerEvalue = DB.getSQLValueEx(trx,
+                "SELECT C_BPartner_ID FROM HR_Eval WHERE HR_Eval_ID = ?", evalId);
+            if (bpartnerConnecte != bpartnerEvalue) {
+                return "Seul l'employé évalué peut modifier son score et son commentaire.";
+            }
+        }
+
+        if (scoreN1Change) {
+            int evaluateurN1 = DB.getSQLValueEx(trx,
+                "SELECT Evaluateur_N1_ID FROM HR_Eval WHERE HR_Eval_ID = ?", evalId);
+            if (bpartnerConnecte != evaluateurN1) {
+                return "Seul le N+1 désigné peut modifier le score et le commentaire N+1.";
+            }
+        }
+
+        return null;
+    }
+
+    // =========================================================================
+    // AFTER — RECALCUL PARENT
+    // =========================================================================
+
+    private void recalculerParent(PO po) {
         int evalId = (Integer) po.get_Value("HR_Eval_ID");
         String trx = po.get_TrxName();
 
         try {
-            // --- Recalcul des indicateurs ---
             recalculerIndicateurs(evalId, trx);
-
-            // --- Recalcul des formules ---
             recalculerFormules(evalId, trx);
-
         } catch (Exception e) {
             log.severe("Erreur recalcul parent eval=" + evalId + " : " + e.getMessage());
         }
@@ -165,20 +212,20 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
         int nbReussis = DB.getSQLValueEx(trx,
             "SELECT COUNT(*) FROM HR_EvalLigne"
             + " WHERE HR_Eval_ID = ? AND IsActive = 'Y' AND IsEvalue = 'Y'"
-            + " AND SeuilValidation IS NOT NULL AND SeuilValidation > 0"
+            + " AND SeuilValidation IS NOT NULL"
             + " AND ScoreFinal >= SeuilValidation", evalId);
 
         int nbEchec = DB.getSQLValueEx(trx,
             "SELECT COUNT(*) FROM HR_EvalLigne"
             + " WHERE HR_Eval_ID = ? AND IsActive = 'Y' AND IsEvalue = 'Y'"
-            + " AND SeuilEchec IS NOT NULL AND SeuilEchec > 0"
+            + " AND SeuilEchec IS NOT NULL"
             + " AND ScoreFinal < SeuilEchec", evalId);
 
         int nbEliminatoires = DB.getSQLValueEx(trx,
             "SELECT COUNT(*) FROM HR_EvalLigne"
             + " WHERE HR_Eval_ID = ? AND IsActive = 'Y' AND IsEvalue = 'Y'"
             + " AND IsEliminatoire = 'Y'"
-            + " AND SeuilEchec IS NOT NULL AND SeuilEchec > 0"
+            + " AND SeuilEchec IS NOT NULL"
             + " AND ScoreFinal < SeuilEchec", evalId);
 
         int pctAvancement = (nbObjectifs > 0)
@@ -203,7 +250,6 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
     // =========================================================================
 
     private void recalculerFormules(int evalId, String trx) {
-        // --- Charger les ScoreFinal de chaque ligne par acronyme ---
         Map<String, BigDecimal> scores = new LinkedHashMap<String, BigDecimal>();
         String sqlLignes = "SELECT Acronyme, ScoreFinal FROM HR_EvalLigne"
             + " WHERE HR_Eval_ID = ? AND IsActive = 'Y' AND Acronyme IS NOT NULL";
@@ -228,7 +274,6 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
             DB.close(rs, pstmt);
         }
 
-        // --- Pour chaque résultat, évaluer la formule ---
         String sqlResultats = "SELECT HR_EvalResultat_ID, Formule, IsPrincipale"
             + " FROM HR_EvalResultat"
             + " WHERE HR_Eval_ID = ? AND IsActive = 'Y'";
@@ -260,7 +305,6 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
                             resultatId
                         }, trx);
 
-                    // --- Si formule principale → ScoreTotal ---
                     if ("Y".equals(isPrincipale)) {
                         DB.executeUpdateEx(
                             "UPDATE HR_Eval SET ScoreTotal = ?,"
@@ -298,17 +342,12 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
     // MOTEUR DE FORMULES (Nashorn - Java 8)
     // =========================================================================
 
-    /**
-     * Évaluer la formule avec Nashorn (Java 8)
-     */
     private double evaluerFormule(String formule, Map<String, BigDecimal> variables)
             throws Exception {
         javax.script.ScriptEngine engine =
             new javax.script.ScriptEngineManager().getEngineByName("js");
 
         StringBuilder script = new StringBuilder();
-
-        // Fonctions personnalisées
         script.append("function min(a,b){ return Math.min(a,b); }\n");
         script.append("function max(a,b){ return Math.max(a,b); }\n");
         script.append("function abs(a){ return Math.abs(a); }\n");
@@ -327,13 +366,11 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
         script.append("function entre(x,mn,mx){ return (x>=mn&&x<=mx)?1:0; }\n");
         script.append("function si(c,v,f){ return c==1?v:f; }\n");
 
-        // Variables
         for (Map.Entry<String, BigDecimal> entry : variables.entrySet()) {
             double val = entry.getValue() != null ? entry.getValue().doubleValue() : 0.0;
             script.append("var " + entry.getKey() + " = " + val + ";\n");
         }
 
-        // Formule
         script.append(formule);
 
         Object result = engine.eval(script.toString());
