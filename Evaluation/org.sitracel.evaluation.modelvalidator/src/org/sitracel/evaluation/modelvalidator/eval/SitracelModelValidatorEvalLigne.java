@@ -132,34 +132,47 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
     // HABILITATION
     // =========================================================================
 
+    /**
+     * Habilitation stricte : chacun ses champs, même le RH.
+     * - Score_Employe, Commentaire_Employe, IsOk, ValeurRealisee → employé uniquement
+     * - Score_N1, Commentaire_N1 → N+1 uniquement
+     * - ValeurCible → RH uniquement
+     */
     private String verifierHabilitation(PO po, int evalId, String trx) {
-        boolean scoreEmployeChange = po.is_ValueChanged("Score_Employe")
-            || po.is_ValueChanged("Commentaire_Employe");
-        boolean scoreN1Change = po.is_ValueChanged("Score_N1")
+        boolean champsEmploye = po.is_ValueChanged("Score_Employe")
+            || po.is_ValueChanged("Commentaire_Employe")
+            || po.is_ValueChanged("IsOk")
+            || po.is_ValueChanged("ValeurRealisee");
+        boolean champsN1 = po.is_ValueChanged("Score_N1")
             || po.is_ValueChanged("Commentaire_N1");
+        boolean champsRH = po.is_ValueChanged("ValeurCible");
 
-        if (!scoreEmployeChange && !scoreN1Change) return null;
+        if (!champsEmploye && !champsN1 && !champsRH) return null;
 
         int adUserId = Env.getAD_User_ID(Env.getCtx());
-        boolean isRH = HRContratService.isUserRH(adUserId, trx);
-        if (isRH) return null;
-
         int bpartnerConnecte = DB.getSQLValueEx(trx,
             "SELECT C_BPartner_ID FROM AD_User WHERE AD_User_ID = ?", adUserId);
 
-        if (scoreEmployeChange) {
+        if (champsEmploye) {
             int bpartnerEvalue = DB.getSQLValueEx(trx,
                 "SELECT C_BPartner_ID FROM HR_Eval WHERE HR_Eval_ID = ?", evalId);
             if (bpartnerConnecte != bpartnerEvalue) {
-                return "Seul l'employé évalué peut modifier son score et son commentaire.";
+                return "Seul l\'employé évalué peut renseigner ses scores et commentaires.";
             }
         }
 
-        if (scoreN1Change) {
+        if (champsN1) {
             int evaluateurN1 = DB.getSQLValueEx(trx,
                 "SELECT Evaluateur_N1_ID FROM HR_Eval WHERE HR_Eval_ID = ?", evalId);
             if (bpartnerConnecte != evaluateurN1) {
-                return "Seul le N+1 désigné peut modifier le score et le commentaire N+1.";
+                return "Seul le N+1 désigné peut renseigner le score et commentaire N+1.";
+            }
+        }
+
+        if (champsRH) {
+            boolean isRH = HRContratService.isUserRH(adUserId, trx);
+            if (!isRH) {
+                return "Seul le service RH peut modifier la valeur cible.";
             }
         }
 

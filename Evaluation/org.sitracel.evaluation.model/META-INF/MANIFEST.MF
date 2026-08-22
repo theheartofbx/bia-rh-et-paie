@@ -7,6 +7,8 @@ Export-Package: org.sitracel.evaluation.model,
  org.sitracel.evaluation.model.engine
 Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
  org.adempiere.plugin.utils;bundle-version="4.1.0"
+Bundle-ClassPath: .,
+ lib/exp4j-0.4.8.jar
 Service-Component: OSGI-INF/*.xml
 Automatic-Module-Name: org.sitracel.evaluation.model
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

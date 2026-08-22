@@ -13,6 +13,9 @@ import org.sitracel.employe.HRContratService;
  * Copie les lignes de HR_EvalGrilleLigne → HR_EvalLigne
  * Copie les formules de HR_EvalGrilleFormule → HR_EvalResultat
  * Met IsGeneree = Y
+ *
+ * Note : ValeurCible n'existe que dans HR_EvalLigne (personnalisable
+ * par l'évaluateur), pas dans HR_EvalGrilleLigne.
  */
 public class GenererEvaluation extends SvrProcess {
 
@@ -52,7 +55,7 @@ public class GenererEvaluation extends SvrProcess {
 
         // --- Copier les lignes de la grille → HR_EvalLigne ---
         String sqlLignes = "SELECT HR_EvalGrilleLigne_ID, SeqNo, Acronyme,"
-            + " ScoreMin, ScoreMax, ValeurCible, ValeurMin, ValeurMax,"
+            + " ScoreMin, ScoreMax, ValeurMin, ValeurMax,"
             + " SeuilValidation, SeuilEchec,"
             + " IsProgressif, IsBinaire, IsSubjectif, IsPourcentage, IsEliminatoire"
             + " FROM HR_EvalGrilleLigne"
@@ -76,16 +79,15 @@ public class GenererEvaluation extends SvrProcess {
                 String acronyme = rs.getString(3);
                 BigDecimal scoreMin = rs.getBigDecimal(4);
                 BigDecimal scoreMax = rs.getBigDecimal(5);
-                BigDecimal valeurCible = rs.getBigDecimal(6);
-                BigDecimal valeurMin = rs.getBigDecimal(7);
-                BigDecimal valeurMax = rs.getBigDecimal(8);
-                BigDecimal seuilValidation = rs.getBigDecimal(9);
-                BigDecimal seuilEchec = rs.getBigDecimal(10);
-                String isProgressif = rs.getString(11);
-                String isBinaire = rs.getString(12);
-                String isSubjectif = rs.getString(13);
-                String isPourcentage = rs.getString(14);
-                String isEliminatoire = rs.getString(15);
+                BigDecimal valeurMin = rs.getBigDecimal(6);
+                BigDecimal valeurMax = rs.getBigDecimal(7);
+                BigDecimal seuilValidation = rs.getBigDecimal(8);
+                BigDecimal seuilEchec = rs.getBigDecimal(9);
+                String isProgressif = rs.getString(10);
+                String isBinaire = rs.getString(11);
+                String isSubjectif = rs.getString(12);
+                String isPourcentage = rs.getString(13);
+                String isEliminatoire = rs.getString(14);
 
                 int nextId = DB.getNextID(clientId, "HR_EvalLigne", get_TrxName());
                 DB.executeUpdateEx(
@@ -93,21 +95,21 @@ public class GenererEvaluation extends SvrProcess {
                     + " (HR_EvalLigne_ID, AD_Client_ID, AD_Org_ID,"
                     + "  Created, CreatedBy, Updated, UpdatedBy, IsActive,"
                     + "  HR_Eval_ID, HR_EvalGrilleLigne_ID, SeqNo, Acronyme,"
-                    + "  ScoreMin, ScoreMax, ValeurCible, ValeurMin, ValeurMax,"
+                    + "  ScoreMin, ScoreMax, ValeurMin, ValeurMax,"
                     + "  SeuilValidation, SeuilEchec,"
                     + "  IsProgressif, IsBinaire, IsSubjectif, IsPourcentage,"
-                    + "  IsEliminatoire, IsEvalue)"
+                    + "  IsEliminatoire, IsEvalue, IsOk)"
                     + " VALUES (?, ?, ?, now(), ?, now(), ?, 'Y',"
                     + "  ?, ?, ?, ?,"
-                    + "  ?, ?, ?, ?, ?,"
+                    + "  ?, ?, ?, ?,"
                     + "  ?, ?,"
                     + "  ?, ?, ?, ?,"
-                    + "  ?, 'N')",
+                    + "  ?, 'N', 'N')",
                     new Object[]{
                         nextId, clientId, orgId,
                         userId, userId,
                         evalId, grilleLigneId, seqNo, acronyme,
-                        scoreMin, scoreMax, valeurCible, valeurMin, valeurMax,
+                        scoreMin, scoreMax, valeurMin, valeurMax,
                         seuilValidation, seuilEchec,
                         isProgressif, isBinaire, isSubjectif, isPourcentage,
                         isEliminatoire
