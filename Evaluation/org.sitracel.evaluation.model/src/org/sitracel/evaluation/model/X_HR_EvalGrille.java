@@ -33,7 +33,7 @@ public class X_HR_EvalGrille extends PO implements I_HR_EvalGrille, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260820L;
+	private static final long serialVersionUID = 20260822L;
 
     /** Standard Constructor */
     public X_HR_EvalGrille (Properties ctx, int HR_EvalGrille_ID, String trxName)

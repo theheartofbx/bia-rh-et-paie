@@ -34,7 +34,7 @@ public class X_HR_Eval extends PO implements I_HR_Eval, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260820L;
+	private static final long serialVersionUID = 20260822L;
 
     /** Standard Constructor */
     public X_HR_Eval (Properties ctx, int HR_Eval_ID, String trxName)

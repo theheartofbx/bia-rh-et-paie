@@ -1,7 +1,6 @@
 package org.sitracel.evaluation.modelvalidator.eval;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -13,6 +12,7 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.sitracel.employe.HRContratService;
 import org.sitracel.evaluation.model.I_HR_EvalLigne;
+import org.sitracel.evaluation.model.engine.EvalFormulaEngine;
 
 /**
  * ModelValidator HR_EvalLigne
@@ -27,7 +27,7 @@ import org.sitracel.evaluation.model.I_HR_EvalLigne;
  *
  * AFTER_NEW / AFTER_CHANGE / AFTER_DELETE :
  *   7. Recalcul indicateurs sur HR_Eval
- *   8. Recalcul formules sur HR_EvalResultat
+ *   8. Recalcul formules sur HR_EvalResultat (via EvalFormulaEngine)
  */
 public class SitracelModelValidatorEvalLigne implements ModelValidator {
 
@@ -35,10 +35,6 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
             SitracelModelValidatorEvalLigne.class.getName());
 
     private int m_AD_Client_ID = -1;
-
-    // =========================================================================
-    // INITIALISATION
-    // =========================================================================
 
     @Override
     public void initialize(ModelValidationEngine engine, MClient client) {
@@ -54,10 +50,6 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
 
     @Override
     public String docValidate(PO po, int timing) { return null; }
-
-    // =========================================================================
-    // DISPATCH
-    // =========================================================================
 
     @Override
     public String modelChange(PO po, int type) throws Exception {
@@ -140,12 +132,6 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
     // HABILITATION
     // =========================================================================
 
-    /**
-     * Vérifie que l'utilisateur connecté a le droit de modifier
-     * les champs qu'il modifie :
-     * - Score_Employe / Commentaire_Employe → employé évalué ou RH
-     * - Score_N1 / Commentaire_N1 → N+1 désigné ou RH
-     */
     private String verifierHabilitation(PO po, int evalId, String trx) {
         boolean scoreEmployeChange = po.is_ValueChanged("Score_Employe")
             || po.is_ValueChanged("Commentaire_Employe");
@@ -246,10 +232,11 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
     }
 
     // =========================================================================
-    // RECALCUL DES FORMULES
+    // RECALCUL DES FORMULES (via EvalFormulaEngine)
     // =========================================================================
 
     private void recalculerFormules(int evalId, String trx) {
+        // --- Charger les ScoreFinal par acronyme ---
         Map<String, BigDecimal> scores = new LinkedHashMap<String, BigDecimal>();
         String sqlLignes = "SELECT Acronyme, ScoreFinal FROM HR_EvalLigne"
             + " WHERE HR_Eval_ID = ? AND IsActive = 'Y' AND Acronyme IS NOT NULL";
@@ -274,6 +261,7 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
             DB.close(rs, pstmt);
         }
 
+        // --- Pour chaque résultat, évaluer la formule ---
         String sqlResultats = "SELECT HR_EvalResultat_ID, Formule, IsPrincipale"
             + " FROM HR_EvalResultat"
             + " WHERE HR_Eval_ID = ? AND IsActive = 'Y'";
@@ -290,9 +278,7 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
                 if (formule == null || formule.trim().isEmpty()) continue;
 
                 try {
-                    double resultat = evaluerFormule(formule, scores);
-                    BigDecimal bdResultat = BigDecimal.valueOf(resultat)
-                        .setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal resultat = EvalFormulaEngine.evaluer(formule, scores);
 
                     DB.executeUpdateEx(
                         "UPDATE HR_EvalResultat SET"
@@ -300,7 +286,7 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
                         + " Updated = now(), UpdatedBy = ?"
                         + " WHERE HR_EvalResultat_ID = ?",
                         new Object[]{
-                            bdResultat,
+                            resultat,
                             Env.getAD_User_ID(Env.getCtx()),
                             resultatId
                         }, trx);
@@ -311,7 +297,7 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
                             + " Updated = now(), UpdatedBy = ?"
                             + " WHERE HR_Eval_ID = ?",
                             new Object[]{
-                                bdResultat,
+                                resultat,
                                 Env.getAD_User_ID(Env.getCtx()),
                                 evalId
                             }, trx);
@@ -325,7 +311,7 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
                         + " Updated = now(), UpdatedBy = ?"
                         + " WHERE HR_EvalResultat_ID = ?",
                         new Object[]{
-                            "Erreur de calcul : " + e.getMessage(),
+                            e.getMessage(),
                             Env.getAD_User_ID(Env.getCtx()),
                             resultatId
                         }, trx);
@@ -336,47 +322,5 @@ public class SitracelModelValidatorEvalLigne implements ModelValidator {
         } finally {
             DB.close(rs, pstmt);
         }
-    }
-
-    // =========================================================================
-    // MOTEUR DE FORMULES (Nashorn - Java 8)
-    // =========================================================================
-
-    private double evaluerFormule(String formule, Map<String, BigDecimal> variables)
-            throws Exception {
-        javax.script.ScriptEngine engine =
-            new javax.script.ScriptEngineManager().getEngineByName("js");
-
-        StringBuilder script = new StringBuilder();
-        script.append("function min(a,b){ return Math.min(a,b); }\n");
-        script.append("function max(a,b){ return Math.max(a,b); }\n");
-        script.append("function abs(a){ return Math.abs(a); }\n");
-        script.append("function round(a){ return Math.round(a); }\n");
-        script.append("function floor(a){ return Math.floor(a); }\n");
-        script.append("function ceil(a){ return Math.ceil(a); }\n");
-        script.append("function pow(a,b){ return Math.pow(a,b); }\n");
-        script.append("function sqrt(a){ return Math.sqrt(a); }\n");
-        script.append("function clamp(x,mn,mx){ return Math.min(Math.max(x,mn),mx); }\n");
-        script.append("function pct(v,t){ return (v/t)*100; }\n");
-        script.append("function sup(a,b){ return a>b?1:0; }\n");
-        script.append("function supeg(a,b){ return a>=b?1:0; }\n");
-        script.append("function inf(a,b){ return a<b?1:0; }\n");
-        script.append("function infeg(a,b){ return a<=b?1:0; }\n");
-        script.append("function egal(a,b){ return a==b?1:0; }\n");
-        script.append("function entre(x,mn,mx){ return (x>=mn&&x<=mx)?1:0; }\n");
-        script.append("function si(c,v,f){ return c==1?v:f; }\n");
-
-        for (Map.Entry<String, BigDecimal> entry : variables.entrySet()) {
-            double val = entry.getValue() != null ? entry.getValue().doubleValue() : 0.0;
-            script.append("var " + entry.getKey() + " = " + val + ";\n");
-        }
-
-        script.append(formule);
-
-        Object result = engine.eval(script.toString());
-        if (result instanceof Number) {
-            return ((Number) result).doubleValue();
-        }
-        throw new Exception("La formule ne retourne pas un nombre.");
     }
 }

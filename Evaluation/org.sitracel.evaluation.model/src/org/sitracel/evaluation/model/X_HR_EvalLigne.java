@@ -33,7 +33,7 @@ public class X_HR_EvalLigne extends PO implements I_HR_EvalLigne, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260820L;
+	private static final long serialVersionUID = 20260822L;
 
     /** Standard Constructor */
     public X_HR_EvalLigne (Properties ctx, int HR_EvalLigne_ID, String trxName)
@@ -330,6 +330,28 @@ public class X_HR_EvalLigne extends PO implements I_HR_EvalLigne, I_Persistent
 	public boolean isEvalue()
 	{
 		Object oo = get_Value(COLUMNNAME_IsEvalue);
+		if (oo != null)
+		{
+			 if (oo instanceof Boolean)
+				 return ((Boolean)oo).booleanValue();
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Ok.
+		@param IsOk Ok
+	*/
+	public void setIsOk (boolean IsOk)
+	{
+		set_Value (COLUMNNAME_IsOk, Boolean.valueOf(IsOk));
+	}
+
+	/** Get Ok.
+		@return Ok	  */
+	public boolean isOk()
+	{
+		Object oo = get_Value(COLUMNNAME_IsOk);
 		if (oo != null)
 		{
 			 if (oo instanceof Boolean)

@@ -198,6 +198,15 @@ public interface I_HR_EvalLigne
 	/** Get Évalué	  */
 	public boolean isEvalue();
 
+    /** Column name IsOk */
+    public static final String COLUMNNAME_IsOk = "IsOk";
+
+	/** Set Ok	  */
+	public void setIsOk (boolean IsOk);
+
+	/** Get Ok	  */
+	public boolean isOk();
+
     /** Column name IsPourcentage */
     public static final String COLUMNNAME_IsPourcentage = "IsPourcentage";
 

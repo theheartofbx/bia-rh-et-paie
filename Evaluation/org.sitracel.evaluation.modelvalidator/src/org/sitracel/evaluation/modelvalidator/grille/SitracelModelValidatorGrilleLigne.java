@@ -98,6 +98,20 @@ public class SitracelModelValidatorGrilleLigne implements ModelValidator {
         acronyme = acronyme.trim().toUpperCase();
         po.set_ValueOfColumn("Acronyme", acronyme);
 
+        // --- Garde-fou : SeqNo unique dans la grille ---
+        Object seqNoObj = po.get_Value("SeqNo");
+        if (seqNoObj != null) {
+            int seqNo = ((Number) seqNoObj).intValue();
+            String sqlSeq = "SELECT COUNT(*) FROM HR_EvalGrilleLigne"
+                + " WHERE HR_EvalGrille_ID = ? AND SeqNo = ? AND IsActive = 'Y'"
+                + " AND HR_EvalGrilleLigne_ID != ?";
+            int doublonSeq = DB.getSQLValueEx(po.get_TrxName(), sqlSeq,
+                grilleId, seqNo, isNew ? 0 : ligneId);
+            if (doublonSeq > 0) {
+                return "Le numéro de séquence " + seqNo + " est déjà utilisé dans cette grille.";
+            }
+        }
+
         if (!acronyme.matches("[A-Z0-9_]+")) {
             return "L'acronyme '" + acronyme
                 + "' est invalide. Seuls les majuscules, chiffres et underscores sont autorisés.";

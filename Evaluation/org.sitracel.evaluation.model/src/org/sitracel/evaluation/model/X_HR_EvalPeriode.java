@@ -32,7 +32,7 @@ public class X_HR_EvalPeriode extends PO implements I_HR_EvalPeriode, I_Persiste
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260820L;
+	private static final long serialVersionUID = 20260822L;
 
     /** Standard Constructor */
     public X_HR_EvalPeriode (Properties ctx, int HR_EvalPeriode_ID, String trxName)

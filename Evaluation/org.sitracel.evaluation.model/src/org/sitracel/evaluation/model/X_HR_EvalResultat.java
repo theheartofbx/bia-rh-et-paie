@@ -33,7 +33,7 @@ public class X_HR_EvalResultat extends PO implements I_HR_EvalResultat, I_Persis
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20260820L;
+	private static final long serialVersionUID = 20260822L;
 
     /** Standard Constructor */
     public X_HR_EvalResultat (Properties ctx, int HR_EvalResultat_ID, String trxName)
