@@ -1,21 +1,22 @@
 package org.sitracel.evaluation.process;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.sitracel.employe.HRContratService;
+import org.sitracel.evaluation.model.engine.EvalFormulaEngine;
 
 /**
  * Processus : Générer les lignes et résultats d'une évaluation
  *
  * Habilitation : RH uniquement
- * Copie les lignes de HR_EvalGrilleLigne → HR_EvalLigne
- * Copie les formules de HR_EvalGrilleFormule → HR_EvalResultat
- * Met IsGeneree = Y
- *
- * Note : ValeurCible n'existe que dans HR_EvalLigne (personnalisable
- * par l'évaluateur), pas dans HR_EvalGrilleLigne.
+ * 1. Copie les lignes de HR_EvalGrilleLigne → HR_EvalLigne
+ * 2. Copie les formules de HR_EvalGrilleFormule → HR_EvalResultat
+ * 3. Calcule ScoreMin et ScoreMax de chaque résultat
+ * 4. Met IsGeneree = Y
  */
 public class GenererEvaluation extends SvrProcess {
 
@@ -53,6 +54,10 @@ public class GenererEvaluation extends SvrProcess {
             return "La grille n'est pas validée. Validez-la d'abord.";
         }
 
+        int clientId = getAD_Client_ID();
+        int orgId = Env.getAD_Org_ID(getCtx());
+        int userId = Env.getAD_User_ID(getCtx());
+
         // --- Copier les lignes de la grille → HR_EvalLigne ---
         String sqlLignes = "SELECT HR_EvalGrilleLigne_ID, SeqNo, Acronyme,"
             + " ScoreMin, ScoreMax, ValeurMin, ValeurMax,"
@@ -62,9 +67,9 @@ public class GenererEvaluation extends SvrProcess {
             + " WHERE HR_EvalGrille_ID = ? AND IsActive = 'Y'"
             + " ORDER BY SeqNo";
 
-        int clientId = getAD_Client_ID();
-        int orgId = Env.getAD_Org_ID(getCtx());
-        int userId = Env.getAD_User_ID(getCtx());
+        // Collecter les ScoreMin et ScoreMax par acronyme pour le calcul des bornes
+        Map<String, BigDecimal> acronymeScoreMin = new LinkedHashMap<String, BigDecimal>();
+        Map<String, BigDecimal> acronymeScoreMax = new LinkedHashMap<String, BigDecimal>();
 
         java.sql.PreparedStatement pstmt = null;
         java.sql.ResultSet rs = null;
@@ -88,6 +93,14 @@ public class GenererEvaluation extends SvrProcess {
                 String isSubjectif = rs.getString(12);
                 String isPourcentage = rs.getString(13);
                 String isEliminatoire = rs.getString(14);
+
+                // Stocker les bornes par acronyme
+                if (acronyme != null) {
+                    acronymeScoreMin.put(acronyme.toUpperCase(),
+                        scoreMin != null ? scoreMin : BigDecimal.ZERO);
+                    acronymeScoreMax.put(acronyme.toUpperCase(),
+                        scoreMax != null ? scoreMax : BigDecimal.TEN);
+                }
 
                 int nextId = DB.getNextID(clientId, "HR_EvalLigne", get_TrxName());
                 DB.executeUpdateEx(
@@ -135,21 +148,35 @@ public class GenererEvaluation extends SvrProcess {
                 String formule = rs.getString(2);
                 String isPrincipale = rs.getString(3);
 
+                // Calculer ScoreMin et ScoreMax du résultat
+                BigDecimal resultatMin = null;
+                BigDecimal resultatMax = null;
+                try {
+                    resultatMin = EvalFormulaEngine.evaluer(formule, acronymeScoreMin);
+                } catch (Exception e) {
+                    // Si erreur, on laisse null
+                }
+                try {
+                    resultatMax = EvalFormulaEngine.evaluer(formule, acronymeScoreMax);
+                } catch (Exception e) {
+                    // Si erreur, on laisse null
+                }
+
                 int nextId = DB.getNextID(clientId, "HR_EvalResultat", get_TrxName());
                 DB.executeUpdateEx(
                     "INSERT INTO HR_EvalResultat"
                     + " (HR_EvalResultat_ID, AD_Client_ID, AD_Org_ID,"
                     + "  Created, CreatedBy, Updated, UpdatedBy, IsActive,"
                     + "  HR_Eval_ID, HR_EvalGrilleFormule_ID, Formule,"
-                    + "  IsPrincipale, IsCalcule)"
+                    + "  IsPrincipale, IsCalcule, ScoreMin, ScoreMax)"
                     + " VALUES (?, ?, ?, now(), ?, now(), ?, 'Y',"
                     + "  ?, ?, ?,"
-                    + "  ?, 'N')",
+                    + "  ?, 'N', ?, ?)",
                     new Object[]{
                         nextId, clientId, orgId,
                         userId, userId,
                         evalId, grilleFormuleId, formule,
-                        isPrincipale
+                        isPrincipale, resultatMin, resultatMax
                     }, get_TrxName());
                 nbFormules++;
             }
@@ -157,16 +184,23 @@ public class GenererEvaluation extends SvrProcess {
             DB.close(rs, pstmt);
         }
 
-        // --- Mettre à jour l'évaluation ---
+        // --- Mettre à jour ScoreTotalMax sur HR_Eval ---
+        BigDecimal scoreTotalMax = DB.getSQLValueBD(get_TrxName(),
+            "SELECT ScoreMax FROM HR_EvalResultat"
+            + " WHERE HR_Eval_ID = ? AND IsPrincipale = 'Y' AND IsActive = 'Y'",
+            evalId);
+
         DB.executeUpdateEx(
             "UPDATE HR_Eval SET IsGeneree = 'Y',"
             + " NombreObjectifs = ?, NombreEvalues = 0,"
             + " NombreReussis = 0, NombreEchec = 0,"
-            + " NombreEliminatoires = 0, PourcentageAvancement = 0"
+            + " NombreEliminatoires = 0, PourcentageAvancement = 0,"
+            + " ScoreTotalMax = ?"
             + " WHERE HR_Eval_ID = ?",
-            new Object[]{ nbLignes, evalId }, get_TrxName());
+            new Object[]{ nbLignes, scoreTotalMax, evalId }, get_TrxName());
 
         return "Évaluation générée : " + nbLignes + " objectif(s), "
-            + nbFormules + " formule(s).";
+            + nbFormules + " formule(s)."
+            + (scoreTotalMax != null ? " Score max possible : " + scoreTotalMax : "");
     }
 }
