@@ -74,14 +74,17 @@ public class SitracelModelValidatorElementBasePaieEmploye implements ModelValida
 
         // Récupérer tous les contrats de l'employé qui intersectent la période
         // triés par date_debut ASC pour vérifier la continuité
+        // Ne ramener que les contrats au statut Actif — les contrats
+        // Termines/Rompus ne doivent pas bloquer la creation d'elements de paie
         String sql = "SELECT c.hr_contrat_id, c.date_debut, c.date_fin, cs.name AS statut "
                 + "FROM adempiere.hr_contrat c "
                 + "JOIN adempiere.hr_contratstatut cs "
                 + "  ON cs.hr_contratstatut_id = c.hr_contratstatut_id "
                 + "WHERE c.c_bpartner_id = ? "
                 + "  AND c.isactive = 'Y' "
-                + "  AND c.date_debut <= ? " // commence avant ou à la fin de notre période
-                + "  AND (c.date_fin IS NULL OR c.date_fin >= ?) " // finit après ou à la date_debut
+                + "  AND cs.name = 'Actif' "
+                + "  AND c.date_debut <= ? "
+                + "  AND (c.date_fin IS NULL OR c.date_fin >= ?) "
                 + "ORDER BY c.date_debut ASC";
 
         // La borne droite de notre période (date_fin si renseignée, sinon date_debut)
@@ -118,15 +121,8 @@ public class SitracelModelValidatorElementBasePaieEmploye implements ModelValida
             return buildMessageAucunContrat(dateDebut, dateFin);
         }
 
-        // Vérifier les statuts — tous les contrats couvrants doivent être Actifs
-        for (PeriodeContrat c : contrats) {
-            if (!"Actif".equalsIgnoreCase(c.statut)) {
-                return "Un contrat couvrant cette période a le statut \""
-                        + c.statut
-                        + "\". Seul un contrat avec le statut \"Actif\" est accepté. "
-                        + "Veuillez vérifier le statut du contrat (ID: " + c.contratId + ").";
-            }
-        }
+        // Les contrats non-Actifs sont filtres en amont par la requete SQL.
+        // Si la liste est vide ici, c'est qu'aucun contrat Actif ne couvre la periode.
 
         // Vérifier que le premier contrat couvre bien la date de début
         PeriodeContrat premier = contrats.get(0);

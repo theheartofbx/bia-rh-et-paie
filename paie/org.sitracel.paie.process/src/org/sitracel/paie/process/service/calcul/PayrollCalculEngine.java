@@ -413,31 +413,30 @@ public class PayrollCalculEngine {
     private static MHRElementBasePaieEmploye getContratActif(
             int bpartnerId, Timestamp dateReference, String trxName) {
 
-        String sql;
-        if (dateReference != null) {
-            sql = "SELECT * FROM " + I_HR_ElementBasePaieEmploye.Table_Name
+        // dateReference est OBLIGATOIRE — sans elle on ne peut pas determiner
+        // quel element de paie couvre la periode. Refuser proprement.
+        if (dateReference == null) {
+            log.severe("getContratActif : dateReference est null — "
+                + "la periode salariale n'a pas de Date_Debut_Defaut. "
+                + "Calcul impossible pour bpartnerId=" + bpartnerId);
+            return null;
+        }
+
+        String sql = "SELECT * FROM " + I_HR_ElementBasePaieEmploye.Table_Name
                 + " WHERE " + I_HR_ElementBasePaieEmploye.COLUMNNAME_C_BPartner_ID + "=?"
                 + " AND " + I_HR_ElementBasePaieEmploye.COLUMNNAME_IsActive + "='Y'"
                 + " AND " + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut + "<=?"
                 + " AND (" + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Fin + " IS NULL"
                 + "   OR " + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Fin + ">=?)"
                 + " ORDER BY " + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut + " DESC";
-        } else {
-            sql = "SELECT * FROM " + I_HR_ElementBasePaieEmploye.Table_Name
-                + " WHERE " + I_HR_ElementBasePaieEmploye.COLUMNNAME_C_BPartner_ID + "=?"
-                + " AND " + I_HR_ElementBasePaieEmploye.COLUMNNAME_IsActive + "='Y'"
-                + " ORDER BY " + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut + " DESC";
-        }
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
-            if (dateReference != null) {
-                pstmt.setTimestamp(2, dateReference);
-                pstmt.setTimestamp(3, dateReference);
-            }
+            pstmt.setTimestamp(2, dateReference);
+            pstmt.setTimestamp(3, dateReference);
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 return new MHRElementBasePaieEmploye(Env.getCtx(), rs, trxName);
@@ -672,6 +671,7 @@ public class PayrollCalculEngine {
         putSafe(variables, "PREN", contrat.getPrime_Rendement());
         putSafe(variables, "PRES", contrat.getPrime_Responsabilite());
         putSafe(variables, "PRI",  contrat.getPrime_Risque());
+        putSafe(variables, "IDE",  contrat.getIndemnite_Deces());
 
         // Initialiser les éléments calculés à zéro
         variables.put("SBR",    BigDecimal.ZERO);

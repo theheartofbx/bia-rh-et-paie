@@ -465,17 +465,25 @@ public class CongeCalculEngine {
      */
     private static MHRElementBasePaieEmploye getContratActifALaDate(
             int bpartnerId, Timestamp date, String trxName) {
+
+        if (date == null) {
+            log.warning("getContratActifALaDate : date null pour bpartnerId=" + bpartnerId);
+            return null;
+        }
+
         String sql = "SELECT * FROM adempiere.hr_elementbasepaieemploye"
                 + " WHERE c_bpartner_id=?"
                 + " AND isactive='Y'"
                 + " AND date_debut<=?"
+                + " AND (date_fin IS NULL OR date_fin>=?)"
                 + " ORDER BY date_debut DESC";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         try {
             pstmt = DB.prepareStatement(sql, trxName);
             pstmt.setInt(1, bpartnerId);
-            pstmt.setTimestamp(2, date != null ? date : new Timestamp(System.currentTimeMillis()));
+            pstmt.setTimestamp(2, date);
+            pstmt.setTimestamp(3, date);
             rs = pstmt.executeQuery();
             if (rs.next()) return new MHRElementBasePaieEmploye(Env.getCtx(), rs, trxName);
         } catch (SQLException e) {

@@ -162,7 +162,11 @@ public final class HREmployeRepository {
 
         String sql = "SELECT * FROM " + I_HR_ElementBasePaieEmploye.Table_Name
             + " WHERE " + I_HR_ElementBasePaieEmploye.COLUMNNAME_C_BPartner_ID + " = ?"
+            + " AND " + I_HR_ElementBasePaieEmploye.COLUMNNAME_IsActive + " = 'Y'"
             + " AND " + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut + " <= ?"
+            + " AND (" + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Fin + " IS NULL"
+            + "   OR " + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Fin + " >= "
+            +            I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut + ")"
             + " ORDER BY " + I_HR_ElementBasePaieEmploye.COLUMNNAME_Date_Debut + " DESC";
 
         PreparedStatement pstmt = null;
